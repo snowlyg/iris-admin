@@ -1,30 +1,52 @@
 package main
 
 import (
-	_ "IrisYouQiKangApi/models"
-	"github.com/astaxie/beego/orm"
-	_ "github.com/go-sql-driver/mysql"
+	"IrisYouQiKangApi/controllers"
+	"IrisYouQiKangApi/models"
+	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/core/router"
+	"github.com/kataras/iris/middleware/logger"
 )
-
-func init() {
-
-	maxIdle := 30
-	maxConn := 30
-	dataSource := "root:UHC0JC5s6DEg9BRXYuDJnqbdl1ecL4gV@tcp(127.0.0.1:3306)/goyouqikang?charset=utf8&loc=Asia%2FShanghai"
-
-	orm.RegisterDataBase("default", "mysql", dataSource, maxIdle, maxConn)
-
-	// create table
-	orm.RunSyncdb("default", false, true)
-
-}
 
 func main() {
 
+	api := iris.New()
+	api.Use(logger.New())
+	api.OnErrorCode(iris.StatusNotFound, controllers.NotFound)
+	api.OnErrorCode(iris.StatusInternalServerError, controllers.InternalServerError)
 
-	app := newApp()
+	iris.RegisterOnInterrupt(func() {
+		models.DB.Close()
+	})
 
-	app.Run(iris.Addr(":8080"))
+	jwtHandler := jwtHandler()
 
+	// or	"github.com/iris-contrib/middleware/cors"
+	crs := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
+		AllowedMethods:   []string{"PUT", "PATCH", "GET", "POST", "OPTIONS"},
+		AllowedHeaders:   []string{"*"},
+		ExposedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
+		AllowCredentials: true,
+	})
+
+	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
+	{
+
+		v1.Post("/admin/login", controllers.UserAdminLogin)
+		//v1.Post("/admin/logout", controllers.UserAdminLogout)
+
+		v1.PartyFunc("/admin", func(admin router.Party) {
+			admin.Use(jwtHandler.Serve)
+			admin.Get("/", controllers.GetHomeData)
+			admin.PartyFunc("/users", func(users router.Party) {
+				//users.Get("/", controllers.GetAllUsers)
+				users.Get("/profile", controllers.GetProfile)
+			})
+		})
+
+	}
+
+	api.Run(iris.Addr(":80"))
 }

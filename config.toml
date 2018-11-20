@@ -1,0 +1,36 @@
+#
+# settings related to recompiling and reruning app when source changes
+#
+[hotreload]
+  # file suffixes to watch for changes
+  suffixes = [".go"]
+
+  # files/directories to ignore
+  ignore = []
+
+#
+# general application settings
+#
+[app]
+  # additional application arguments
+  args = []
+  addr = ":3000"
+
+  [app.logger]
+    level = "INFO"
+    name = "application"
+
+# 运行参数
+[mysql]
+  connect = "root:UHC0JC5s6DEg9BRXYuDJnqbdl1ecL4gV@tcp(127.0.0.1:3306)/goyouqikang?charset=utf8"
+  MaxIdle = 10
+  MaxOpen = 100
+[mongodb]
+  connect = "mongodb://root:123456@127.0.0.1:27017/admin"
+[redis]
+  connect = "127.0.0.1:6379"
+  db = 0
+  maxidle = 100
+  maxactive = 1000
+[neo4j]
+    connect = "http://10.10.43.111:7474/db/data"

@@ -8,9 +8,13 @@ import (
 	"time"
 )
 
-func GetProfile(ctx iris.Context) {
+type AdminUserLogin struct {
+	Username string
+	Password string
+}
 
-	if (ctx.Method() == "OPTIONS") {
+func GetProfile(ctx iris.Context) {
+	if ctx.Method() == "OPTIONS" {
 		return
 	}
 
@@ -27,13 +31,13 @@ func GetProfile(ctx iris.Context) {
 }
 
 func UserAdminLogin(ctx iris.Context) {
-	userLogin := new(models.UserLogin)
+	aul := new(AdminUserLogin)
 
-	if (ctx.Method() == "OPTIONS") {
+	if ctx.Method() == "OPTIONS" {
 		return
 	}
 
-	if err := ctx.ReadJSON(&userLogin); err != nil {
+	if err := ctx.ReadJSON(&aul); err != nil {
 		//ctx.WriteString(err.Error())
 		ctx.StatusCode(http.StatusOK)
 		ctx.JSON(iris.Map{
@@ -45,8 +49,8 @@ func UserAdminLogin(ctx iris.Context) {
 		return
 	}
 
-	err1 := validate.Var(userLogin.Username, "required,min=4,max=20")
-	err2 := validate.Var(userLogin.Password, "required,min=6,max=20")
+	err1 := validate.Var(aul.Username, "required,min=4,max=20")
+	err2 := validate.Var(aul.Password, "required,min=6,max=20")
 	if err1 != nil || err2 != nil {
 		//fmt.Println("usernameError:", err1)
 		//fmt.Println("passwordError:", err2)
@@ -60,7 +64,7 @@ func UserAdminLogin(ctx iris.Context) {
 		return
 	}
 
-	user, err := models.UserAdminCheckLogin(userLogin)
+	u, err := models.UserAdminCheckLogin(aul.Username, aul.Password)
 
 	if err != nil {
 		//ctx.WriteString(err.Error())
@@ -79,9 +83,9 @@ func UserAdminLogin(ctx iris.Context) {
 
 	// Set claims
 	claims := token.Claims.(jwt.MapClaims)
-	claims["userId"] = user.Id
-	claims["username"] = user.Username
-	claims["name"] = user.Name
+	claims["userId"] = u.Id
+	claims["username"] = u.Username
+	claims["name"] = u.Name
 	claims["admin"] = true
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
@@ -110,3 +114,78 @@ func UserAdminLogin(ctx iris.Context) {
 	return
 
 }
+
+//func GetAllUsers(ctx iris.Context) {
+//
+//	alldata := models.AllData{
+//		Limit: 200,
+//	}
+//
+//	if err := ctx.ReadJSON(&alldata); err != nil {
+//		// Handle error.
+//	}
+//	var (
+//		fields []string
+//		sortby []string
+//		order  []string
+//		query  = make(map[string]string)
+//	)
+//
+//	// fields: col1,col2,entity.col3
+//	if alldata.Fields != "" {
+//		fields = strings.Split(alldata.Fields, ",")
+//	}
+//
+//	// sortby: col1,col2
+//	if alldata.Sortby != "" {
+//		sortby = strings.Split(alldata.Sortby, ",")
+//	}
+//	// order: desc,asc
+//	if alldata.Order != "" {
+//		order = strings.Split(alldata.Order, ",")
+//	}
+//	// query: k:v,k:v
+//	if alldata.Query != "" {
+//		for _, cond := range strings.Split(alldata.Query, ",") {
+//			kv := strings.SplitN(cond, ":", 2)
+//			if len(kv) != 2 {
+//				ctx.StatusCode(http.StatusOK)
+//				ctx.JSON(iris.Map{
+//					"status": false,
+//					"data":   "",
+//					"msg":    "Error: invalid query key/value pair",
+//				})
+//
+//				return
+//			}
+//			k, v := kv[0], kv[1]
+//			query[k] = v
+//		}
+//	}
+//
+//	l, err := models.GetAllUsers(query, fields, sortby, order, alldata.Offset, alldata.Limit)
+//	if err != nil {
+//		ctx.StatusCode(http.StatusOK)
+//		ctx.JSON(iris.Map{
+//			"status": true,
+//			"data":   "",
+//			"msg":    err.Error(),
+//		})
+//
+//		return
+//	} else {
+//		ctx.StatusCode(http.StatusOK)
+//		ctx.JSON(iris.Map{
+//			"status": true,
+//			"data":   l,
+//			"msg":    "",
+//		})
+//
+//		return
+//	}
+//
+//}
+//
+//func UserAdminLogout(ctx iris.Context) {
+//
+//}

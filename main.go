@@ -2,6 +2,7 @@ package main
 
 import (
 	"IrisYouQiKangApi/controllers"
+	"IrisYouQiKangApi/middleware"
 	"IrisYouQiKangApi/models"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
@@ -13,14 +14,13 @@ func main() {
 
 	api := iris.New()
 	api.Use(logger.New())
+
 	api.OnErrorCode(iris.StatusNotFound, controllers.NotFound)
 	api.OnErrorCode(iris.StatusInternalServerError, controllers.InternalServerError)
 
 	iris.RegisterOnInterrupt(func() {
 		models.DB.Close()
 	})
-
-	jwtHandler := jwtHandler()
 
 	// or	"github.com/iris-contrib/middleware/cors"
 	crs := cors.New(cors.Options{
@@ -35,13 +35,13 @@ func main() {
 	{
 
 		v1.Post("/admin/login", controllers.UserAdminLogin)
-		//v1.Post("/admin/logout", controllers.UserAdminLogout)
 
 		v1.PartyFunc("/admin", func(admin router.Party) {
-			admin.Use(jwtHandler.Serve)
+			admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken)
 			admin.Get("/", controllers.GetHomeData)
+			admin.Get("/logout", controllers.UserAdminLogout)
 			admin.PartyFunc("/users", func(users router.Party) {
-				//users.Get("/", controllers.GetAllUsers)
+				users.Get("/", controllers.GetAllUsers)
 				users.Get("/profile", controllers.GetProfile)
 			})
 		})

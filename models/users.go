@@ -1,49 +1,77 @@
 package models
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
 type Users struct {
-	Id               int       `xorm:"not null pk autoincr INT(10)"`
-	Name             string    `xorm:"not null VARCHAR(191)"`
-	Username         string    `xorm:"VARCHAR(191)"`
-	Password         string    `xorm:"not null VARCHAR(191)"`
-	Confirmed        int       `xorm:"not null default 0 TINYINT(1)"`
-	IsClient         int       `xorm:"not null default 0 TINYINT(1)"`
-	IsFrozen         int       `xorm:"not null default 0 TINYINT(1)"`
-	IsAudit          int       `xorm:"not null default 0 TINYINT(1)"`
-	IsClientAdmin    int       `xorm:"not null default 0 TINYINT(1)"`
-	WechatName       string    `xorm:"VARCHAR(191)"`
-	WechatAvatar     string    `xorm:"VARCHAR(191)"`
-	Email            string    `xorm:"unique VARCHAR(191)"`
-	OpenId           string    `xorm:"unique VARCHAR(191)"`
-	WechatVerfiyTime time.Time `xorm:"DATETIME"`
-	IsWechatVerfiy   int       `xorm:"not null default 0 TINYINT(1)"`
-	Phone            string    `xorm:"unique VARCHAR(191)"`
-	RoleId           int       `xorm:"INT(10)"`
-	RememberToken    string    `xorm:"VARCHAR(100)"`
-	CreatedAt        time.Time `xorm:"TIMESTAMP"`
-	UpdatedAt        time.Time `xorm:"TIMESTAMP"`
-	DeletedAt        time.Time `xorm:"TIMESTAMP"`
+	Id               uint `gorm:"primary_key"`
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
+	DeletedAt        *time.Time `sql:"index"`
+	Name             string     `gorm:"not null VARCHAR(191)"`
+	Username         string     `gorm:"VARCHAR(191)"`
+	Password         string     `gorm:"not null VARCHAR(191)"`
+	Confirmed        int        `gorm:"not null default 0 TINYINT(1)"`
+	IsClient         int        `gorm:"not null default 0 TINYINT(1)"`
+	IsFrozen         int        `gorm:"not null default 0 TINYINT(1)"`
+	IsAudit          int        `gorm:"not null default 0 TINYINT(1)"`
+	IsClientAdmin    int        `gorm:"not null default 0 TINYINT(1)"`
+	WechatName       string     `gorm:"VARCHAR(191)"`
+	WechatAvatar     string     `gorm:"VARCHAR(191)"`
+	Email            string     `gorm:"unique VARCHAR(191)"`
+	OpenId           string     `gorm:"unique VARCHAR(191)"`
+	WechatVerfiyTime time.Time
+	IsWechatVerfiy   int    `gorm:"not null default 0 TINYINT(1)"`
+	Phone            string `gorm:"unique VARCHAR(191)"`
+	Role             Roles
+	RememberToken    string `gorm:"VARCHAR(100)"`
 }
 
-func UserAdminCheckLogin(username, password string) (u *Users, err error) {
+func init() {
+	DB.AutoMigrate(&Users{})
+}
 
-	u = &Users{Username: username}
-	_, err = DB.Get(u)
+/**
+ * 校验用户登录
+ * @method UserAdminCheckLogin
+ * @param  {[type]}       username string [description]
+ */
+func UserAdminCheckLogin(username string) Users {
+	var u Users
+	DB.Where("username =  ?", username).First(&u)
+	return u
+}
 
-	if err != nil {
-		return
-	}
+/**
+ * 通过 id 获取 user 记录
+ * @method GetUserById
+ * @param  {[type]}       user  *Users [description]
+ */
+func (user *Users) GetUserById() (has bool, err error) {
+	DB.First(user)
+	return
+}
 
-	//hashPassword,err := bcrypt.GenerateFromPassword()
-	err = bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+/**
+ * 获取所有的账号
+ * @method GetAllUsers
+ * @param  {[type]} kw string [description]
+ * @param  {[type]} cp int    [description]
+ * @param  {[type]} mp int    [description]
+ */
+func GetAllUsers(kw string, cp int, mp int) (aj ApiJson) {
 
-	if err != nil {
-		return
-	}
+	users := make([]Users, 0)
+	DB.Model(Users{}).Where(" is_client = ?", 0).Offset(cp - 1).Limit(mp).Association("roles").Find(&users)
+
+	Tools.Debug(users)
+
+	auts := TransFormData(users)
+
+	aj.State = true
+	aj.Data = auts
+	aj.Msg = "操作成功"
 
 	return
 }

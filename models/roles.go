@@ -1,17 +1,15 @@
 package models
 
-import (
-	"time"
-)
+import "time"
 
 type Roles struct {
-	Id          int       `xorm:"not null pk autoincr INT(10)"`
-	Name        string    `xorm:"not null VARCHAR(191)"`
-	GuardName   string    `xorm:"not null VARCHAR(191)"`
-	DisplayName string    `xorm:"VARCHAR(191)"`
-	Description string    `xorm:"VARCHAR(191)"`
-	DeletedAt   time.Time `xorm:"TIMESTAMP"`
-	CreatedAt   time.Time `xorm:"TIMESTAMP"`
-	UpdatedAt   time.Time `xorm:"TIMESTAMP"`
-	Level       int       `xorm:"not null default 0 INT(10)"`
+	Id          uint `gorm:"primary_key"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   *time.Time `sql:"index"`
+	Name        string     `gorm:"not null VARCHAR(191)"`
+	GuardName   string     `gorm:"not null VARCHAR(191)"`
+	DisplayName string     `gorm:"VARCHAR(191)"`
+	Description string     `gorm:"VARCHAR(191)"`
+	Level       int        `gorm:"not null default 0 INT(10)"`
 }

@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"IrisYouQiKangApi/tools"
 	"gopkg.in/go-playground/validator.v9"
-	"www/pizzaCmsApi/tools"
 )
 
 var (
@@ -15,7 +15,6 @@ func init() {
 	Tools = tools.New()
 }
 
-//////////私有方法
 /**
  * 返回数据格式不合法的字符串
  * @method ErrorValidate
@@ -29,8 +28,6 @@ func errorData(errs ...error) string {
 	for _, err := range errs {
 		if err != nil {
 			s += err.Error() + "<br/>"
-			// Tools.Logs(Tools.StructToString(err))
-			// Tools.Logs(err.Value)
 		}
 	}
 	return s

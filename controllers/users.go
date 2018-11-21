@@ -1,11 +1,10 @@
 package controllers
 
 import (
+	"IrisYouQiKangApi/logic"
 	"IrisYouQiKangApi/models"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/kataras/iris"
 	"net/http"
-	"time"
 )
 
 type AdminUserLogin struct {
@@ -13,179 +12,98 @@ type AdminUserLogin struct {
 	Password string
 }
 
+/**
+* @api {get} /profile 获取登陆用户信息
+* @apiName 获取登陆用户信息
+* @apiGroup Users
+* @apiVersion 1.0.0
+* @apiDescription 获取登陆用户信息
+* @apiSampleRequest /profile
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission 登陆用户
+ */
 func GetProfile(ctx iris.Context) {
-	if ctx.Method() == "OPTIONS" {
-		return
-	}
-
-	jwtClaims := ctx.Values().Get("jwt").(*jwt.Token).Claims
-
+	aun := ctx.Values().Get("auth_user_name")
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(iris.Map{
-		"Code": true,
-		"data": jwtClaims,
-		"Msg":  "",
-	})
-
-	return
+	ctx.JSON(models.ApiJson{State: true, Data: aun, Msg: "操作成功"})
 }
 
+/**
+* @api {post} /login 用户登陆
+* @apiName 用户登陆
+* @apiGroup Users
+* @apiVersion 1.0.0
+* @apiDescription 用户登陆
+* @apiSampleRequest /login
+* @apiParam {string} username 用户名
+* @apiParam {string} password 密码
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
 func UserAdminLogin(ctx iris.Context) {
 	aul := new(AdminUserLogin)
 
-	if ctx.Method() == "OPTIONS" {
-		return
-	}
-
 	if err := ctx.ReadJSON(&aul); err != nil {
-		//ctx.WriteString(err.Error())
-		ctx.StatusCode(http.StatusOK)
-		ctx.JSON(iris.Map{
-			"status":       false,
-			"access_token": "",
-			"msg":          err.Error(),
-		})
-
-		return
+		ctx.StatusCode(iris.StatusUnauthorized)
+		ctx.JSON(errorData(err))
+	} else {
+		err1 := validate.Var(aul.Username, "required,min=4,max=20")
+		err2 := validate.Var(aul.Password, "required,min=5,max=20")
+		if err1 != nil || err2 != nil {
+			ctx.StatusCode(iris.StatusUnauthorized)
+			ctx.JSON(errorData(err1, err2))
+		} else {
+			ctx.StatusCode(iris.StatusOK)
+			ctx.JSON(logic.UserAdminCheckLogin(aul.Username, aul.Password))
+		}
 	}
-
-	err1 := validate.Var(aul.Username, "required,min=4,max=20")
-	err2 := validate.Var(aul.Password, "required,min=6,max=20")
-	if err1 != nil || err2 != nil {
-		//fmt.Println("usernameError:", err1)
-		//fmt.Println("passwordError:", err2)
-		ctx.StatusCode(http.StatusOK)
-		ctx.JSON(iris.Map{
-			"status":       false,
-			"access_token": "",
-			"msg":          errorValidate(),
-		})
-
-		return
-	}
-
-	u, err := models.UserAdminCheckLogin(aul.Username, aul.Password)
-
-	if err != nil {
-		//ctx.WriteString(err.Error())
-		ctx.StatusCode(http.StatusOK)
-		ctx.JSON(iris.Map{
-			"status":       false,
-			"access_token": "",
-			"msg":          err.Error(),
-		})
-
-		return
-	}
-
-	// Create token
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	// Set claims
-	claims := token.Claims.(jwt.MapClaims)
-	claims["userId"] = u.Id
-	claims["username"] = u.Username
-	claims["name"] = u.Name
-	claims["admin"] = true
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-
-	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte("secret"))
-	if err != nil {
-		//ctx.WriteString(err.Error())
-		ctx.StatusCode(http.StatusOK)
-		ctx.JSON(iris.Map{
-			"status":       false,
-			"access_token": "",
-			"msg":          err,
-			"expire":       claims["exp"],
-		})
-
-		return
-	}
-
-	ctx.StatusCode(http.StatusOK)
-	ctx.JSON(iris.Map{
-		"status":       true,
-		"access_token": t,
-		"msg":          "",
-	})
-
-	return
-
 }
 
-//func GetAllUsers(ctx iris.Context) {
-//
-//	alldata := models.AllData{
-//		Limit: 200,
-//	}
-//
-//	if err := ctx.ReadJSON(&alldata); err != nil {
-//		// Handle error.
-//	}
-//	var (
-//		fields []string
-//		sortby []string
-//		order  []string
-//		query  = make(map[string]string)
-//	)
-//
-//	// fields: col1,col2,entity.col3
-//	if alldata.Fields != "" {
-//		fields = strings.Split(alldata.Fields, ",")
-//	}
-//
-//	// sortby: col1,col2
-//	if alldata.Sortby != "" {
-//		sortby = strings.Split(alldata.Sortby, ",")
-//	}
-//	// order: desc,asc
-//	if alldata.Order != "" {
-//		order = strings.Split(alldata.Order, ",")
-//	}
-//	// query: k:v,k:v
-//	if alldata.Query != "" {
-//		for _, cond := range strings.Split(alldata.Query, ",") {
-//			kv := strings.SplitN(cond, ":", 2)
-//			if len(kv) != 2 {
-//				ctx.StatusCode(http.StatusOK)
-//				ctx.JSON(iris.Map{
-//					"status": false,
-//					"data":   "",
-//					"msg":    "Error: invalid query key/value pair",
-//				})
-//
-//				return
-//			}
-//			k, v := kv[0], kv[1]
-//			query[k] = v
-//		}
-//	}
-//
-//	l, err := models.GetAllUsers(query, fields, sortby, order, alldata.Offset, alldata.Limit)
-//	if err != nil {
-//		ctx.StatusCode(http.StatusOK)
-//		ctx.JSON(iris.Map{
-//			"status": true,
-//			"data":   "",
-//			"msg":    err.Error(),
-//		})
-//
-//		return
-//	} else {
-//		ctx.StatusCode(http.StatusOK)
-//		ctx.JSON(iris.Map{
-//			"status": true,
-//			"data":   l,
-//			"msg":    "",
-//		})
-//
-//		return
-//	}
-//
-//}
-//
-//func UserAdminLogout(ctx iris.Context) {
-//
-//}
+/**
+* @api {get} /users 获取所有的账号
+* @apiName 获取所有的账号
+* @apiGroup Users
+* @apiVersion 1.0.0
+* @apiDescription 获取所有的账号
+* @apiSampleRequest /users
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
+func GetAllUsers(ctx iris.Context) {
+	cp := Tools.ParseInt(ctx.FormValue("cp"), 1)
+	mp := Tools.ParseInt(ctx.FormValue("mp"), 20)
+	kw := ctx.FormValue("kw")
+
+	ctx.StatusCode(iris.StatusOK)
+	ctx.JSON(models.GetAllUsers(kw, cp, mp))
+}
+
+/**
+* @api {get} /logout 用户退出登陆
+* @apiName 用户退出登陆
+* @apiGroup Users
+* @apiVersion 1.0.0
+* @apiDescription 用户退出登陆
+* @apiSampleRequest /logout
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
+func UserAdminLogout(ctx iris.Context) {
+	json := models.ApiJson{}
+	aui := ctx.Values().GetString("auth_user_id")
+
+	uid := uint(Tools.ParseInt(aui, 0))
+
+	json = logic.UserAdminLogout(uid)
+
+	ctx.StatusCode(http.StatusOK)
+	ctx.JSON(json)
+}

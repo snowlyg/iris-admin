@@ -22,7 +22,7 @@
 
 # 运行参数
 [mysql]
-  connect = "root:UHC0JC5s6DEg9BRXYuDJnqbdl1ecL4gV@tcp(127.0.0.1:3306)/goyouqikang?charset=utf8"
+  connect = "root:UHC0JC5s6DEg9BRXYuDJnqbdl1ecL4gV@/goyouqikang?charset=utf8&parseTime=True&loc=Local"
   MaxIdle = 10
   MaxOpen = 100
 [mongodb]

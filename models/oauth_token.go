@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/go-xorm/cmd/xorm/models"
 	"time"
 )
 
@@ -55,7 +54,7 @@ func GetOauthTokenByToken(token string) OauthToken {
  */
 func UpdateOauthTokenByUserId(user_id uint) (affected int64, err error) {
 
-	DB.Model(&models.OauthToken{}).Where("revoked = ?", 0).Where("user_id = ?", user_id).Updates(map[string]interface{}{"revoked": 1})
+	DB.Model(&OauthToken{}).Where("revoked = ?", 0).Where("user_id = ?", user_id).Updates(map[string]interface{}{"revoked": 1})
 
 	return
 }

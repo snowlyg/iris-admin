@@ -85,6 +85,27 @@ func GetAllUsers(ctx iris.Context) {
 }
 
 /**
+* @api {get} /clients 获取所有的客户联系人
+* @apiName 获取所有的客户联系人
+* @apiGroup Clients
+* @apiVersion 1.0.0
+* @apiDescription 获取所有的客户联系人
+* @apiSampleRequest /clients
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
+func GetAllClients(ctx iris.Context) {
+	cp := Tools.ParseInt(ctx.FormValue("cp"), 1)
+	mp := Tools.ParseInt(ctx.FormValue("mp"), 20)
+	kw := ctx.FormValue("kw")
+
+	ctx.StatusCode(iris.StatusOK)
+	ctx.JSON(models.GetAllClients(kw, cp, mp))
+}
+
+/**
 * @api {get} /logout 用户退出登陆
 * @apiName 用户退出登陆
 * @apiGroup Users

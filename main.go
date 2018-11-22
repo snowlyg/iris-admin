@@ -10,6 +10,10 @@ import (
 	"github.com/kataras/iris/middleware/logger"
 )
 
+func init() {
+
+}
+
 func main() {
 
 	api := iris.New()
@@ -37,16 +41,45 @@ func main() {
 		v1.Post("/admin/login", controllers.UserAdminLogin)
 
 		v1.PartyFunc("/admin", func(admin router.Party) {
+
 			admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken)
 			admin.Get("/", controllers.GetHomeData)
 			admin.Get("/logout", controllers.UserAdminLogout)
+
 			admin.PartyFunc("/users", func(users router.Party) {
 				users.Get("/", controllers.GetAllUsers)
 				users.Get("/profile", controllers.GetProfile)
 			})
-		})
 
+			admin.PartyFunc("/roles", func(roles router.Party) {
+				roles.Get("/", controllers.GetAllRoles)
+			})
+
+			admin.PartyFunc("/perms", func(perms router.Party) {
+				perms.Get("/", controllers.GetAllPerms)
+			})
+
+			admin.PartyFunc("/orders", func(orders router.Party) {
+				orders.Get("/", controllers.GetAllOrders)
+			})
+
+			admin.PartyFunc("/clients", func(clients router.Party) {
+				clients.Get("/", controllers.GetAllClients)
+			})
+
+			admin.PartyFunc("/plans", func(plans router.Party) {
+				plans.Get("/", controllers.GetAllPlans)
+				plans.Get("/parent", controllers.GetAllParentPlans)
+			})
+
+			admin.PartyFunc("/companies", func(companies router.Party) {
+				companies.Get("/", controllers.GetAllCompanies)
+			})
+
+		})
 	}
+
+	defer models.DB.Close()
 
 	api.Run(iris.Addr(":80"))
 }

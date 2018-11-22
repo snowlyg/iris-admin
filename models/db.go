@@ -31,7 +31,8 @@ func init() {
 		panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
 	}
 
-	defer DB.Close()
+	//DB.AutoMigrate(&OauthToken{}, &Users{})
+
 }
 
 /**

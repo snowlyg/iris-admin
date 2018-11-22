@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 type Tools struct {
@@ -151,6 +152,16 @@ func (t *Tools) Base64Decode(str string) string {
 		return ""
 	}
 	return string(s)
+}
+
+/**
+ * base64 解码
+ * @method func
+ * @param  {[type]} t *Tools        [description]
+ * @return {[type]}   [description]
+ */
+func (t *Tools) TimeFormat(time *time.Time) string {
+	return time.Format("2006-01-02 15:04:05")
 }
 
 /**

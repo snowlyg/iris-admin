@@ -15,7 +15,7 @@ type AdminUserTranform struct {
 	WechatVerfiyTime string `json:"wechat_verfiy_time"`
 	IsWechatVerfiy   bool   `json:"is_wechat_verfiy"`
 	Phone            string `json:"phone"`
-	RoleId           int    `json:"role_id"`
+	RoleId           uint   `json:"role_id"`
 	RoleName         string `json:"role_name"`
 	RememberToken    string `json:"remember_token"`
 	CreatedAt        string `json:"created_at"`
@@ -23,13 +23,13 @@ type AdminUserTranform struct {
 	DeletedAt        string `json:"deleted_at"`
 }
 
-func TransFormData(users []Users) (auts []AdminUserTranform) {
+func TransFormUsers(users []Users) (auts []AdminUserTranform) {
 
 	auts = make([]AdminUserTranform, 0)
 
 	for _, v := range users {
 		aut := AdminUserTranform{}
-		aut.Id = v.Id
+		aut.Id = v.ID
 		aut.Name = v.Name
 		aut.Username = v.Username
 
@@ -67,13 +67,16 @@ func TransFormData(users []Users) (auts []AdminUserTranform) {
 		aut.Email = v.Email
 		aut.OpenId = v.OpenId
 		aut.Phone = v.Phone
-		//aut.RoleId = v.Role.ID
-		//aut.RoleName = v.Role.Name
+		aut.RoleId = v.Role.ID
+		aut.RoleName = v.Role.Name
 		aut.RememberToken = v.RememberToken
-		aut.CreatedAt = v.CreatedAt.String()
-		aut.UpdatedAt = v.UpdatedAt.String()
-		aut.DeletedAt = v.DeletedAt.String()
-
+		aut.CreatedAt = Tools.TimeFormat(&v.CreatedAt)
+		aut.UpdatedAt = Tools.TimeFormat(&v.UpdatedAt)
+		if v.DeletedAt == nil {
+			aut.DeletedAt = ""
+		} else {
+			aut.DeletedAt = Tools.TimeFormat(v.DeletedAt)
+		}
 		auts = append(auts, aut)
 	}
 

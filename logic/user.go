@@ -15,7 +15,7 @@ import (
  */
 func UserAdminCheckLogin(username, password string) models.ApiJson {
 	user := models.UserAdminCheckLogin(username)
-	if user.Id == 0 {
+	if user.ID == 0 {
 		return models.ApiJson{State: false, Msg: "用户不存在"}
 	} else {
 		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
@@ -31,14 +31,13 @@ func UserAdminCheckLogin(username, password string) models.ApiJson {
 				return models.ApiJson{State: true, Msg: err.Error()}
 			}
 
-			oauth_token := models.OauthToken{
-				Token:     tokenString,
-				UserId:    user.Id,
-				Secret:    "secret",
-				Revoked:   0,
-				ExpressIn: time.Now().Add(time.Hour * time.Duration(1)).Unix(),
-				CreatedAt: time.Now(),
-			}
+			oauth_token := new(models.OauthToken)
+			oauth_token.Token = tokenString
+			oauth_token.UserId = user.ID
+			oauth_token.Secret = "secret"
+			oauth_token.Revoked = 0
+			oauth_token.ExpressIn = time.Now().Add(time.Hour * time.Duration(1)).Unix()
+			oauth_token.CreatedAt = time.Now()
 
 			return oauth_token.OauthTokenCreate()
 
@@ -55,9 +54,10 @@ func UserAdminCheckLogin(username, password string) models.ApiJson {
  */
 func GetUserById(id uint) models.ApiJson {
 
-	user := models.Users{Id: id}
+	user := new(models.Users)
+	user.ID = id
 
-	if user.Id == 0 {
+	if user.ID == 0 {
 		return models.ApiJson{State: false, Msg: "用户不存在"}
 	}
 

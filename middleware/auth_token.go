@@ -24,10 +24,12 @@ func AuthToken(ctx iris.Context) {
 		ctx.Next()
 	}
 
-	user := models.Users{Id: token.UserId}
+	user := new(models.Users)
+	user.ID = token.UserId
+
 	user.GetUserById() //获取 user 信息
 
-	ctx.Values().Set("auth_user_id", user.Id)
+	ctx.Values().Set("auth_user_id", user.ID)
 	ctx.Values().Set("auth_user_name", user.Name)
 
 	ctx.Next() // execute the "after" handler registered via `DoneGlobal`.

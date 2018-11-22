@@ -1,19 +1,16 @@
 package models
 
 import (
-	"time"
+	"github.com/jinzhu/gorm"
 )
 
 type OauthToken struct {
-	Id        uint `gorm:"primary_key"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time `sql:"index"`
-	Token     string     `gorm:"not null default '' comment('Token') VARCHAR(191)"`
-	UserId    uint       `gorm:"not null default '' comment('UserId') VARCHAR(191)"`
-	Secret    string     `gorm:"not null default '' comment('Secret') VARCHAR(191)"`
-	ExpressIn int64      `gorm:"not null default 0 comment('是否是标准库') BIGINT(20)"`
-	Revoked   int        `gorm:"not null TINYINT(1)"`
+	gorm.Model
+	Token     string `gorm:"not null default '' comment('Token') VARCHAR(191)"`
+	UserId    uint   `gorm:"not null default '' comment('UserId') VARCHAR(191)"`
+	Secret    string `gorm:"not null default '' comment('Secret') VARCHAR(191)"`
+	ExpressIn int64  `gorm:"not null default 0 comment('是否是标准库') BIGINT(20)"`
+	Revoked   int    `gorm:"not null TINYINT(1)"`
 }
 
 type Token struct {
@@ -21,7 +18,7 @@ type Token struct {
 }
 
 func init() {
-	DB.AutoMigrate(new(OauthToken))
+	DB.AutoMigrate(&OauthToken{})
 }
 
 /**

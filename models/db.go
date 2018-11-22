@@ -2,11 +2,11 @@ package models
 
 import (
 	"IrisYouQiKangApi/config"
+	"IrisYouQiKangApi/redis"
 	"IrisYouQiKangApi/tools"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"www/pizzaCmsApi/redis"
 )
 
 var (

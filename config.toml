@@ -14,7 +14,10 @@
 [app]
   # additional application arguments
   args = []
-  addr = ":3000"
+  name = "IrisYouQiKang"
+  url  = "http://localhost"
+  doc = "./apidoc"
+  addr = ":80"
 
   [app.logger]
     level = "INFO"

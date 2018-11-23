@@ -14,6 +14,9 @@ type Config struct {
 
 type app struct {
 	Addr string
+	Url  string
+	Name string
+	Doc  string
 }
 
 type mysql struct {

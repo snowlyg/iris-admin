@@ -39,11 +39,16 @@ func main() {
 
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
-		DocTitle: "Iris",
-		DocPath:  "apidoc.html",
-		BaseUrls: map[string]string{"Production": "", "Staging": ""},
+		DocTitle: models.Config.App.Name,
+		DocPath:  models.Config.App.Doc + "/index.html",
+		BaseUrls: map[string]string{"Production": models.Config.App.Url, "Staging": ""},
 	})
 	api.Use(irisyaag.New()) // <- IMPORTANT, register the middleware.
+
+	api.RegisterView(iris.HTML(models.Config.App.Doc, ".html"))
+	api.Handle("GET", "/v1/docs", func(ctx iris.Context) {
+		ctx.View("index.html")
+	})
 
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{

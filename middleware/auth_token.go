@@ -20,7 +20,7 @@ func AuthToken(ctx iris.Context) {
 	token := models.GetOauthTokenByToken(u.Raw) //获取 access_token 信息
 	if token.Revoked == 1 || token.ExpressIn < time.Now().Unix() {
 		ctx.StatusCode(http.StatusUnauthorized)
-		ctx.JSON(models.ApiJson{State: false, Data: "", Msg: "token 已经过期"})
+		ctx.JSON(models.ApiJson{Status: false, Data: "", Msg: "token 已经过期"})
 		ctx.Next()
 
 		return

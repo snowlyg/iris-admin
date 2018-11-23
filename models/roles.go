@@ -29,7 +29,7 @@ func GetAllRoles(kw string, cp int, mp int) (aj ApiJson) {
 
 	auts := TransFormRoles(roles)
 
-	aj.State = true
+	aj.Status = true
 	aj.Data = auts
 	aj.Msg = "操作成功"
 

@@ -1,8 +1,16 @@
 package models
 
 import (
+	"GoYouQiKangApi/models"
+	"IrisYouQiKangApi/controllers"
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
 	"time"
+)
+
+const (
+	Frozen   = 1
+	ReFrozen = 0
 )
 
 type Users struct {
@@ -48,8 +56,89 @@ func UserAdminCheckLogin(username string) Users {
  * @method GetUserById
  * @param  {[type]}       user  *Users [description]
  */
-func (user *Users) GetUserById() (has bool, err error) {
+func (user *Users) GetUserById() (aj ApiJson) {
+
 	DB.First(user)
+	us := []Users{*user}
+	tu := TransFormUsers(us)[0]
+
+	aj.Status = true
+	aj.Data = tu
+	aj.Msg = "操作成功"
+
+	return
+}
+
+/**
+ * 通过 id 冻结 user
+ * @method FrozenUserById
+ * @param  {[type]}       user  *Users [description]
+ */
+func (user *Users) FrozenUserById() (aj ApiJson) {
+	DB.Model(&user).Update("is_frozen", Frozen)
+
+	if user.IsFrozen == Frozen {
+		aj.Status = true
+		aj.Msg = "操作成功"
+	} else {
+		aj.Status = false
+		aj.Msg = "操作失败"
+	}
+
+	return
+}
+
+/**
+ * 通过 id 解冻 user
+ * @method RefrozenUserById
+ * @param  {[type]}       user  *Users [description]
+ */
+func (user *Users) RefrozenUserById() (aj ApiJson) {
+	DB.Model(&user).Update("is_frozen", ReFrozen)
+
+	if user.IsFrozen == ReFrozen {
+		aj.Status = true
+		aj.Msg = "操作成功"
+	} else {
+		aj.Status = false
+		aj.Msg = "操作失败"
+	}
+
+	return
+}
+
+/**
+ * 通过 id 设置负责人
+ * @method SetAuditUserById
+ * @param  {[type]}   user  *Users [description]
+ */
+func (user *Users) SetAuditUserById() (aj ApiJson) {
+
+	DB.Model(models.Users{}).Where("is_audit=?", 1).Updates(map[string]interface{}{"is_audit": 0})
+	DB.Model(&user).Update("is_audit", 1)
+
+	if user.IsAudit == 1 {
+		aj.Status = true
+		aj.Msg = "操作成功"
+	} else {
+		aj.Status = false
+		aj.Msg = "操作失败"
+	}
+
+	return
+}
+
+/**
+ * 通过 id 设置负责人
+ * @method SetAuditUserById
+ * @param  {[type]}   user  *Users [description]
+ */
+func (user *Users) DeleteUserById() (aj ApiJson) {
+	DB.Delete(&user)
+
+	aj.Status = true
+	aj.Msg = "操作成功"
+
 	return
 }
 
@@ -69,7 +158,7 @@ func GetAllUsers(kw string, cp int, mp int) (aj ApiJson) {
 
 	auts := TransFormUsers(users)
 
-	aj.State = true
+	aj.Status = true
 	aj.Data = auts
 	aj.Msg = "操作成功"
 
@@ -92,8 +181,40 @@ func GetAllClients(kw string, cp int, mp int) (aj ApiJson) {
 
 	auts := TransFormUsers(users)
 
-	aj.State = true
+	aj.Status = true
 	aj.Data = auts
+	aj.Msg = "操作成功"
+
+	return
+}
+
+/**
+ * 获取所有的客户联系人
+ * @method GetAllClients
+ * @param  {[type]} kw string [description]
+ * @param  {[type]} cp int    [description]
+ * @param  {[type]} mp int    [description]
+ */
+func CreateUser(aul controllers.AdminUserLogin) (aj ApiJson) {
+	hp, e := bcrypt.GenerateFromPassword([]byte(aul.Password), bcrypt.DefaultCost)
+	if e != nil {
+
+	}
+
+	user := Users{
+		Username: aul.Username,
+		Password: string(hp),
+		Name:     aul.Name,
+		Phone:    aul.Phone,
+	}
+
+	DB.Create(&user)
+
+	us := []Users{user}
+	tu := TransFormUsers(us)[0]
+
+	aj.Status = true
+	aj.Data = tu
 	aj.Msg = "操作成功"
 
 	return

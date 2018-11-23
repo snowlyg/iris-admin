@@ -39,7 +39,7 @@ func init() {
  * 用于api输出信息
  */
 type ApiJson struct {
-	State bool        `json:"state"`
-	Msg   interface{} `json:"msg"`
-	Data  interface{} `json:"data"`
+	Status bool        `json:"status"`
+	Msg    interface{} `json:"msg"`
+	Data   interface{} `json:"data"`
 }

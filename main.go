@@ -26,7 +26,7 @@ func main() {
 	// or	"github.com/iris-contrib/middleware/cors"
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
-		AllowedMethods:   []string{"PUT", "PATCH", "GET", "POST", "OPTIONS"},
+		AllowedMethods:   []string{"PUT", "PATCH", "GET", "POST", "OPTIONS", "DELETE"},
 		AllowedHeaders:   []string{"*"},
 		ExposedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
 		AllowCredentials: true,
@@ -54,6 +54,13 @@ func main() {
 
 			admin.PartyFunc("/users", func(users router.Party) {
 				users.Get("/", controllers.GetAllUsers)
+				users.Get("/{id:uint}", controllers.GetUser)
+				users.Post("/", controllers.CreateUser)
+				users.Post("/{id:uint}/update", controllers.UpdateUser)
+				users.Get("/{id:uint}/frozen", controllers.FrozenUser)
+				users.Get("/{id:uint}/audit", controllers.SetUserAudit)
+				users.Get("/{id:uint}/refrozen", controllers.RefrozenUser)
+				users.Delete("/{id:uint}", controllers.DeleteUser)
 				users.Get("/profile", controllers.GetProfile)
 			})
 

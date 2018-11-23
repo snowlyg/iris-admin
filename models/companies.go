@@ -26,7 +26,7 @@ func GetAllCompanies(kw string, cp int, mp int) (aj ApiJson) {
 
 	auts := TransFormCompanies(companies)
 
-	aj.State = true
+	aj.Status = true
 	aj.Data = auts
 	aj.Msg = "操作成功"
 

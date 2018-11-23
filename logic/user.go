@@ -16,7 +16,7 @@ import (
 func UserAdminCheckLogin(username, password string) models.ApiJson {
 	user := models.UserAdminCheckLogin(username)
 	if user.ID == 0 {
-		return models.ApiJson{State: false, Msg: "用户不存在"}
+		return models.ApiJson{Status: false, Msg: "用户不存在"}
 	} else {
 		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 		if err == nil {
@@ -28,7 +28,7 @@ func UserAdminCheckLogin(username, password string) models.ApiJson {
 			tokenString, err := token.SignedString([]byte("secret"))
 
 			if err != nil {
-				return models.ApiJson{State: true, Msg: err.Error()}
+				return models.ApiJson{Status: true, Msg: err.Error()}
 			}
 
 			oauth_token := new(models.OauthToken)
@@ -42,37 +42,9 @@ func UserAdminCheckLogin(username, password string) models.ApiJson {
 			return oauth_token.OauthTokenCreate()
 
 		} else {
-			return models.ApiJson{State: false, Msg: "用户名或密码错误"}
+			return models.ApiJson{Status: false, Msg: "用户名或密码错误"}
 		}
 	}
-}
-
-/**
- * 通过 token 获取 access_token 记录
- * @method GetOauthTokenByToken
- * @param  {[type]}       token string [description]
- */
-func GetUserById(id uint) models.ApiJson {
-
-	user := new(models.Users)
-	user.ID = id
-
-	if user.ID == 0 {
-		return models.ApiJson{State: false, Msg: "用户不存在"}
-	}
-
-	has, err := user.GetUserById()
-
-	if err != nil {
-		return models.ApiJson{State: false, Data: "", Msg: err.Error()}
-	}
-
-	if !has {
-		return models.ApiJson{State: false, Data: "", Msg: "没有数据"}
-	}
-
-	return models.ApiJson{State: true, Data: user, Msg: "操作成功"}
-
 }
 
 /**
@@ -105,6 +77,6 @@ func UserAdminLogout(user_id uint) (json models.ApiJson) {
 //		}
 //		return models.UserAdminDele(idsInt)
 //	} else {
-//		return models.ApiJson{State: false, Msg: "id is error"}
+//		return models.ApiJson{Status: false, Msg: "id is error"}
 //	}
 //}

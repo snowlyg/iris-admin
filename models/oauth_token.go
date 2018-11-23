@@ -30,7 +30,7 @@ func (ot *OauthToken) OauthTokenCreate() ApiJson {
 	DB.Create(ot)
 	response := Token{ot.Token}
 
-	return ApiJson{State: true, Data: response, Msg: "登陆成功"}
+	return ApiJson{Status: true, Data: response, Msg: "登陆成功"}
 }
 
 /**

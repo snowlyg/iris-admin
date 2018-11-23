@@ -28,7 +28,7 @@ func GetAllPerms(kw string, cp int, mp int) (aj ApiJson) {
 
 	auts := TransFormPerms(perms)
 
-	aj.State = true
+	aj.Status = true
 	aj.Data = auts
 	aj.Msg = "操作成功"
 

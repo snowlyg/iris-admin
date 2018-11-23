@@ -28,7 +28,7 @@ func GetAllPlans(kw string, cp int, mp int) (aj ApiJson) {
 
 	auts := TransFormPlans(orders)
 
-	aj.State = true
+	aj.Status = true
 	aj.Data = auts
 	aj.Msg = "操作成功"
 
@@ -51,7 +51,7 @@ func GetAllParentPlans(kw string, cp int, mp int) (aj ApiJson) {
 
 	auts := TransFormPlans(orders)
 
-	aj.State = true
+	aj.Status = true
 	aj.Data = auts
 	aj.Msg = "操作成功"
 

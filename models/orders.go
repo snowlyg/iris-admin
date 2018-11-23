@@ -31,7 +31,7 @@ func GetAllOrders(kw string, cp int, mp int) (aj ApiJson) {
 
 	auts := TransFormOrders(orders)
 
-	aj.State = true
+	aj.Status = true
 	aj.Data = auts
 	aj.Msg = "操作成功"
 

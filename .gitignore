@@ -1,4 +1,4 @@
 config.toml
 IrisYouQiKangApi.exe
-.idea/
+.idea/*
 apidoc/*

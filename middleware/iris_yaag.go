@@ -12,6 +12,9 @@ import (
 func NewYaag() context.Handler {
 	return func(ctx context.Context) {
 
+		/*
+		*过滤 OPTIONS 请求，无需生成文档
+		*/
 		if !yaag.IsOn() || ctx.Method() == "OPTIONS" {
 			// execute the main handler and exit if yaag is off.
 			ctx.Next()

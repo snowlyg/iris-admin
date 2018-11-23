@@ -22,6 +22,8 @@ func AuthToken(ctx iris.Context) {
 		ctx.StatusCode(http.StatusUnauthorized)
 		ctx.JSON(models.ApiJson{State: false, Data: "", Msg: "token 已经过期"})
 		ctx.Next()
+
+		return
 	}
 
 	user := new(models.Users)

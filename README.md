@@ -47,9 +47,8 @@
 ```
 
 
-
 自动成功 api 文档 (访问过接口就会自动成功)
-1.打开 apidoc.html 修改里面的
+1.打开 apidoc/index.html 修改里面的
 
 ```
 https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -60,3 +59,5 @@ https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 ```
 https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ```
+
+2.访问文档，从浏览器直接打开 apidoc/index.html

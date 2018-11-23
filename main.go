@@ -4,17 +4,12 @@ import (
 	"IrisYouQiKangApi/controllers"
 	"IrisYouQiKangApi/middleware"
 	"IrisYouQiKangApi/models"
-	"github.com/betacraft/yaag/irisyaag"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/core/router"
 	"github.com/kataras/iris/middleware/logger"
 )
-
-func init() {
-
-}
 
 func main() {
 
@@ -43,15 +38,11 @@ func main() {
 		DocPath:  models.Config.App.Doc + "/index.html",
 		BaseUrls: map[string]string{"Production": models.Config.App.Url, "Staging": ""},
 	})
-	api.Use(irisyaag.New()) // <- IMPORTANT, register the middleware.
-
-	api.RegisterView(iris.HTML(models.Config.App.Doc, ".html"))
-	api.Handle("GET", "/v1/docs", func(ctx iris.Context) {
-		ctx.View("index.html")
-	})
 
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{
+
+		v1.Use(middleware.NewYaag()) // <- IMPORTANT, register the middleware.
 
 		v1.Post("/admin/login", controllers.UserAdminLogin)
 

@@ -2,45 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e047894b-7460-416a-b626-d44ae03a9bec" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/controllers/company.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/controllers/order.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/controllers/perm.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/controllers/plan.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/controllers/role.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/logic/role.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/companies_transform.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/orders_transform.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/perm_transform.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/plans_transform.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/role_transform.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/IrisYouQiKangApi.exe" beforeDir="false" afterPath="$PROJECT_DIR$/IrisYouQiKangApi.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/users.go" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logic/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/logic/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/auth_token.go" beforeDir="false" afterPath="$PROJECT_DIR$/middleware/auth_token.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/companies.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/companies.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/invitations.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/invitations.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/messages.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/messages.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/migrations.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/oauth_token.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/oauth_token.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/orders.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/orders.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/permissions.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/permissions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/plan_depart_questions.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/plan_depart_questions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/plan_departs.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/plan_departs.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/plans.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/plans.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/question_details.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/question_details.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/report_depart_questions.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/report_depart_questions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/report_departs.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/report_departs.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/reports.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/reports.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/revisions.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/revisions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/roles.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/roles.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/settings.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/settings.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/user_oauth_token.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/user_transform.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/user_transform.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/users.go" beforeDir="false" afterPath="$PROJECT_DIR$/models/users.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/tools.go" beforeDir="false" afterPath="$PROJECT_DIR$/tools/tools.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -61,41 +25,53 @@
     <session id="585254031">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="4" />
+          <entry key="project.closed" value="6" />
           <entry key="project.open.time.0" value="1" />
+          <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.18" value="1" />
           <entry key="project.open.time.22" value="1" />
           <entry key="project.open.time.28" value="2" />
           <entry key="project.open.time.5" value="1" />
-          <entry key="project.opened" value="6" />
+          <entry key="project.open.time.9" value="1" />
+          <entry key="project.opened" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="MD" value="3" />
+          <entry key="MD" value="5" />
           <entry key="conf" value="1" />
-          <entry key="go" value="249" />
-          <entry key="toml" value="4" />
+          <entry key="gitignore" value="1" />
+          <entry key="go" value="261" />
+          <entry key="html" value="4" />
+          <entry key="json" value="2" />
+          <entry key="lock" value="1" />
+          <entry key="toml" value="7" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Go" value="249" />
-          <entry key="PLAIN_TEXT" value="8" />
+          <entry key="Go" value="261" />
+          <entry key="HTML" value="4" />
+          <entry key="JSON" value="2" />
+          <entry key="PLAIN_TEXT" value="15" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="MD" value="161" />
-          <entry key="go" value="8021" />
-          <entry key="toml" value="20" />
-          <entry key="txt" value="49" />
+          <entry key="MD" value="332" />
+          <entry key="gitignore" value="31" />
+          <entry key="go" value="8201" />
+          <entry key="json" value="74" />
+          <entry key="toml" value="32" />
+          <entry key="txt" value="83" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Go" value="8021" />
-          <entry key="PLAIN_TEXT" value="230" />
+          <entry key="Git file" value="14" />
+          <entry key="Go" value="8201" />
+          <entry key="JSON" value="74" />
+          <entry key="PLAIN_TEXT" value="464" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.go.postfix.template.usages.trigger">
@@ -112,92 +88,89 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="585">
-              <caret line="70" column="49" selection-start-line="70" selection-start-column="49" selection-end-line="70" selection-end-column="49" />
-              <folding>
-                <element signature="e#14#268#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="858">
+              <caret line="43" column="51" selection-start-line="43" selection-start-column="51" selection-end-line="43" selection-end-column="51" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/role_transform.go">
+        <entry file="file://$PROJECT_DIR$/README.MD">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="583">
-              <caret line="32" column="9" selection-start-line="26" selection-start-column="4" selection-end-line="32" selection-end-column="9" />
+            <state relative-caret-position="858">
+              <caret line="33" column="14" selection-start-line="33" selection-start-column="14" selection-end-line="33" selection-end-column="14" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/users.go">
+        <entry file="file://$PROJECT_DIR$/apidoc.html.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="26">
-              <caret line="28" column="1" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
+            <state>
+              <caret column="54646" selection-start-column="54646" selection-end-column="54646" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/user_transform.go">
+        <entry file="file://$PROJECT_DIR$/../github.com/betacraft/yaag/yaag/config.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="559">
-              <caret line="78" column="9" selection-start-line="78" selection-start-column="9" selection-end-line="78" selection-end-column="9" />
+            <state relative-caret-position="52">
+              <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/Go/src/time/format.go">
+        <entry file="file://$PROJECT_DIR$/../github.com/betacraft/yaag/irisyaag/middleware.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="77" column="38" selection-start-line="77" selection-start-column="19" selection-end-line="77" selection-end-column="38" />
+            <state relative-caret-position="130">
+              <caret line="12" column="5" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/perm_transform.go">
+        <entry file="file://$PROJECT_DIR$/apidoc.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="702">
-              <caret line="30" column="9" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/orders_transform.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="453">
-              <caret line="34" column="9" selection-start-line="28" selection-start-column="8" selection-end-line="34" selection-end-column="9" />
+            <state relative-caret-position="312">
+              <caret line="12" column="14" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="14" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/models/companies_transform.go">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="546">
-              <caret line="33" column="57" lean-forward="true" selection-start-line="33" selection-start-column="57" selection-end-line="33" selection-end-column="57" />
+            <state relative-caret-position="78">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tools/tools.go">
+        <entry file="file://$PROJECT_DIR$/../github.com/caixw/apidoc/errors/handle.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="637">
-              <caret line="162" column="26" selection-start-line="162" selection-start-column="16" selection-end-line="162" selection-end-column="26" />
+            <state relative-caret-position="468">
+              <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/plans_transform.go">
+        <entry file="file://$PROJECT_DIR$/redis/redis.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="533">
-              <caret line="32" column="9" selection-start-line="32" selection-start-column="9" selection-end-line="32" selection-end-column="9" />
+            <state relative-caret-position="468">
+              <caret line="23" column="9" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config.toml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret selection-end-line="36" />
             </state>
           </provider>
         </entry>
@@ -208,7 +181,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Go Application" />
+        <option value="package.json" />
         <option value="Go File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -220,6 +195,9 @@
       <find>\	Id        uint \`gorm\:\&quot;primary_key\&quot;\`\n\	CreatedAt time\.Time\n\	UpdatedAt time\.Time\n\	DeletedAt \*time\.Time \`sql\:\&quot;index\&quot;\`</find>
       <find>grom.Model</find>
       <find>v.CreatedAt.Format(&quot;2006-01-02 15:04:05&quot;)</find>
+      <find>golang.org/x/crypto/bcrypt</find>
+      <find>bcrypt</find>
+      <find>crypto</find>
     </findStrings>
     <replaceStrings>
       <replace>grom.Model</replace>
@@ -233,16 +211,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/README.MD" />
-        <option value="$PROJECT_DIR$/logic/logic.go" />
-        <option value="$PROJECT_DIR$/redis/redis.go" />
-        <option value="$PROJECT_DIR$/jwt.go" />
-        <option value="$PROJECT_DIR$/common/errors/errors.go" />
-        <option value="$PROJECT_DIR$/controllers/validate.go" />
-        <option value="$PROJECT_DIR$/middleware/auth.go" />
-        <option value="$PROJECT_DIR$/middleware/jwt.go" />
-        <option value="$PROJECT_DIR$/../github.com/go-xorm/cmd/xorm/models/oauth_token.go" />
-        <option value="$PROJECT_DIR$/controllers/home.go" />
         <option value="$PROJECT_DIR$/transform/admin_user.go" />
         <option value="$PROJECT_DIR$/config.toml" />
         <option value="$PROJECT_DIR$/models/db.go" />
@@ -271,12 +239,10 @@
         <option value="$PROJECT_DIR$/models/invitations.go" />
         <option value="$PROJECT_DIR$/models/plan_depart_questions.go" />
         <option value="$PROJECT_DIR$/models/plan_departs.go" />
-        <option value="$PROJECT_DIR$/logic/user.go" />
         <option value="$PROJECT_DIR$/middleware/auth_token.go" />
         <option value="$PROJECT_DIR$/controllers/plan.go" />
         <option value="$PROJECT_DIR$/models/oauth_token.go" />
         <option value="$PROJECT_DIR$/models/plans.go" />
-        <option value="$PROJECT_DIR$/main.go" />
         <option value="$PROJECT_DIR$/tools/tools.go" />
         <option value="$PROJECT_DIR$/models/role_transform.go" />
         <option value="$PROJECT_DIR$/models/user_transform.go" />
@@ -284,6 +250,18 @@
         <option value="$PROJECT_DIR$/models/perm_transform.go" />
         <option value="$PROJECT_DIR$/models/orders_transform.go" />
         <option value="$PROJECT_DIR$/models/companies_transform.go" />
+        <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/logic/user.go" />
+        <option value="$PROJECT_DIR$/Gopkg.toml" />
+        <option value="$PROJECT_DIR$/apidoc.json" />
+        <option value="$PROJECT_DIR$/controllers/user.go" />
+        <option value="$PROJECT_DIR$/controllers/hello_controller.go" />
+        <option value="$PROJECT_DIR$/apidoc/index.html" />
+        <option value="$PROJECT_DIR$/apidoc.html.json" />
+        <option value="$PROJECT_DIR$/apidoc.html" />
+        <option value="$PROJECT_DIR$/main.go" />
+        <option value="$PROJECT_DIR$/README.MD" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -327,31 +305,6 @@
               <item name="IrIsYouQiKangApi" type="b2602c69:ProjectViewProjectNode" />
               <item name="IrisYouQiKangApi" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="IrIsYouQiKangApi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="IrisYouQiKangApi" type="462c0819:PsiDirectoryNode" />
-              <item name="controllers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="IrIsYouQiKangApi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="IrisYouQiKangApi" type="462c0819:PsiDirectoryNode" />
-              <item name="logic" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="IrIsYouQiKangApi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="IrisYouQiKangApi" type="462c0819:PsiDirectoryNode" />
-              <item name="middleware" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="IrIsYouQiKangApi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="IrisYouQiKangApi" type="462c0819:PsiDirectoryNode" />
-              <item name="models" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="IrIsYouQiKangApi" type="b2602c69:ProjectViewProjectNode" />
-              <item name="IrisYouQiKangApi" type="462c0819:PsiDirectoryNode" />
-              <item name="tools" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -360,28 +313,30 @@
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="GO_FMT" value="true" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
+    <property name="go.vendoring.notification.had.been.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../www/pizzaCmsApi" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="Images" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\go\src\IrisYouQiKangApi\models" />
-      <recent name="D:\go\src\IrisYouQiKangApi\controllers" />
-      <recent name="D:\go\src\IrisYouQiKangApi\logic" />
-      <recent name="D:\go\src\IrisYouQiKangApi" />
-      <recent name="D:\go\src\IrisYouQiKangApi\config" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\go\src\IrisYouQiKangApi\models" />
       <recent name="D:\go\src\IrisYouQiKangApi\transforms" />
       <recent name="D:\go\src\IrisYouQiKangApi\middleware" />
       <recent name="D:\go\src\IrisYouQiKangApi" />
       <recent name="D:\go\src\IrisYouQiKangApi\errors" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\go\src\IrisYouQiKangApi" />
+      <recent name="D:\go\src\IrisYouQiKangApi\models" />
+      <recent name="D:\go\src\IrisYouQiKangApi\controllers" />
+      <recent name="D:\go\src\IrisYouQiKangApi\logic" />
+      <recent name="D:\go\src\IrisYouQiKangApi\config" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -423,7 +378,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26599148" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27132195" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -435,8 +390,9 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32899022" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32899022" />
-      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49946696" weight="0.32899022" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50053304" side_tool="true" weight="0.32899022" />
+      <window_info anchor="bottom" id="Messages" order="11" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -452,139 +408,11 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="去除了 beego orm  采用 xorm.并且参照 zuoyanart/pizzaCmsApi 项目进行了重构。" />
     <MESSAGE value="去除了 重新换gorm 采用 xorm.并且参照 zuoyanart/pizzaCmsApi 项目进行了重构。" />
-    <option name="LAST_COMMIT_MESSAGE" value="去除了 重新换gorm 采用 xorm.并且参照 zuoyanart/pizzaCmsApi 项目进行了重构。" />
+    <MESSAGE value="完成了后台相关模块的列表接口" />
+    <MESSAGE value="增加说明文档和git 文件过虑" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加说明文档和git 文件过虑" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../github.com/kataras/iris/core/memstore/memstore.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="753" column="16" selection-start-line="753" selection-start-column="16" selection-end-line="753" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../github.com/go-xorm/xorm/session_update.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="144" column="24" selection-start-line="144" selection-start-column="24" selection-end-line="144" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../github.com/go-xorm/cmd/xorm/models/oauth_token.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="11" column="52" selection-start-line="11" selection-start-column="52" selection-end-line="11" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/validate.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="611">
-          <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../www/pizzaCmsApi/model/userAdmin.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="90" column="5" selection-start-line="90" selection-start-column="5" selection-end-line="90" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/home.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="364">
-          <caret line="14" selection-start-line="14" selection-end-line="14" />
-          <folding>
-            <element signature="e#21#58#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/transform/admin_user.go" />
-    <entry file="file://$PROJECT_DIR$/middleware/jwt.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../github.com/jinzhu/gorm/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="592" column="13" selection-start-line="592" selection-start-column="13" selection-end-line="592" selection-end-column="13" />
-          <folding>
-            <element signature="e#14#95#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/db.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="676">
-          <caret line="35" selection-start-line="35" selection-end-line="35" />
-          <folding>
-            <element signature="e#16#180#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../GoYouQiKangApi/models/roles.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1170">
-          <caret line="53" column="5" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config.toml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="624">
-          <caret line="24" column="101" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="101" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/role.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="7" selection-start-line="7" selection-end-line="27" />
-          <folding>
-            <element signature="e#21#83#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controllers/user.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="533">
-          <caret line="104" column="33" selection-start-line="104" selection-start-column="33" selection-end-line="104" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/migrations.go">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/question_details.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="10" column="40" selection-start-line="10" selection-start-column="40" selection-end-line="10" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/report_departs.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="8" column="29" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
-          <caret line="9" column="29" selection-start-line="9" selection-start-column="29" selection-end-line="9" selection-end-column="29" />
-          <caret line="10" column="29" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/reports.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="130">
-          <caret line="5" column="14" selection-start-line="5" selection-start-column="14" selection-end-line="5" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/revisions.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="520">
@@ -600,13 +428,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/user_oauth_token.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/models/user_oauth_token.go" />
     <entry file="file://$PROJECT_DIR$/models/permissions.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="130">
@@ -627,9 +449,6 @@
           <caret line="19" column="17" selection-start-line="19" selection-start-column="17" selection-end-line="19" selection-end-column="17" />
           <caret line="25" column="32" selection-start-line="25" selection-start-column="32" selection-end-line="25" selection-end-column="32" />
           <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
-          <folding>
-            <element signature="e#21#85#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -674,9 +493,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="182">
           <caret line="7" column="14" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
-          <folding>
-            <element signature="e#16#60#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -722,9 +538,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="494">
           <caret line="19" selection-start-line="19" selection-end-line="19" />
-          <folding>
-            <element signature="e#15#104#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -735,27 +548,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/logic/user.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-637">
-          <caret line="58" selection-start-line="58" selection-end-line="58" />
-          <folding>
-            <element signature="e#15#121#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/logic/role.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="26">
           <caret line="1" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/middleware/auth_token.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="31" column="44" selection-start-line="31" selection-start-column="44" selection-end-line="31" selection-end-column="44" />
         </state>
       </provider>
     </entry>
@@ -780,16 +576,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="70" column="49" selection-start-line="70" selection-start-column="49" selection-end-line="70" selection-end-column="49" />
-          <folding>
-            <element signature="e#14#268#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Go/src/time/format.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="322">
@@ -801,13 +587,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="637">
           <caret line="162" column="26" selection-start-line="162" selection-start-column="16" selection-end-line="162" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/users.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="26">
-          <caret line="28" column="1" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
         </state>
       </provider>
     </entry>
@@ -848,8 +627,132 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/models/companies_transform.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="546">
-          <caret line="33" column="57" lean-forward="true" selection-start-line="33" selection-start-column="57" selection-end-line="33" selection-end-column="57" />
+        <state relative-caret-position="585">
+          <caret line="33" column="57" selection-start-line="33" selection-start-column="57" selection-end-line="33" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendor/github.com/dgrijalva/jwt-go/doc.go" />
+    <entry file="file://$PROJECT_DIR$/Gopkg.lock" />
+    <entry file="file://$PROJECT_DIR$/Gopkg.toml" />
+    <entry file="file://$PROJECT_DIR$/middleware/jwt.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/users.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="650">
+          <caret line="28" column="1" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/db.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="728">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/middleware/auth_token.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="650">
+          <caret line="31" column="44" selection-start-line="31" selection-start-column="44" selection-end-line="31" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logic/user.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1183">
+          <caret line="37" column="35" selection-start-line="37" selection-start-column="35" selection-end-line="37" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/user.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-637">
+          <caret line="33" column="20" selection-start-line="33" selection-start-column="20" selection-end-line="33" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controllers/hello_controller.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="8" column="1" selection-start-line="8" selection-start-column="1" selection-end-line="8" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apidoc.json" />
+    <entry file="file://$PROJECT_DIR$/apidoc/index.html" />
+    <entry file="file://$PROJECT_DIR$/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="858">
+          <caret line="43" column="51" selection-start-line="43" selection-start-column="51" selection-end-line="43" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.MD">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="858">
+          <caret line="33" column="14" selection-start-line="33" selection-start-column="14" selection-end-line="33" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apidoc.html.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="54646" selection-start-column="54646" selection-end-column="54646" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../github.com/betacraft/yaag/yaag/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="52">
+          <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../github.com/betacraft/yaag/irisyaag/middleware.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="12" column="5" selection-start-line="12" selection-start-column="5" selection-end-line="12" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apidoc.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="12" column="14" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../github.com/caixw/apidoc/errors/handle.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="18" column="5" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/redis/redis.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="23" column="9" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.toml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
         </state>
       </provider>
     </entry>

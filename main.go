@@ -4,6 +4,8 @@ import (
 	"IrisYouQiKangApi/controllers"
 	"IrisYouQiKangApi/middleware"
 	"IrisYouQiKangApi/models"
+	"github.com/betacraft/yaag/irisyaag"
+	"github.com/betacraft/yaag/yaag"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/core/router"
@@ -34,6 +36,14 @@ func main() {
 		ExposedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
 		AllowCredentials: true,
 	})
+
+	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
+		On:       true,
+		DocTitle: "Iris",
+		DocPath:  "apidoc.html",
+		BaseUrls: map[string]string{"Production": "", "Staging": ""},
+	})
+	api.Use(irisyaag.New()) // <- IMPORTANT, register the middleware.
 
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{
@@ -78,8 +88,5 @@ func main() {
 
 		})
 	}
-
-	defer models.DB.Close()
-
 	api.Run(iris.Addr(":80"))
 }

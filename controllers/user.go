@@ -13,7 +13,7 @@ type AdminUserLogin struct {
 }
 
 /**
-* @api {get} /profile 获取登陆用户信息
+* @api {get} /admin/users/profile 获取登陆用户信息
 * @apiName 获取登陆用户信息
 * @apiGroup Users
 * @apiVersion 1.0.0
@@ -31,7 +31,7 @@ func GetProfile(ctx iris.Context) {
 }
 
 /**
-* @api {post} /login 用户登陆
+* @api {post} /admin/login 用户登陆
 * @apiName 用户登陆
 * @apiGroup Users
 * @apiVersion 1.0.0

@@ -9,14 +9,6 @@ import (
 	"net/http"
 )
 
-type AdminUserLogin struct {
-	Username string `json:"username" validate:"required,gte=4,lte=50"`
-	Password string `json:"password" validate:"required"`
-	Name     string `json:"name" validate:"required,gte=4,lte=50"`
-	Phone    string `json:"phone" validate:"required"`
-	RoleId   uint   `json:"role_id" validate:"required"`
-}
-
 /**
 * @api {get} /admin/users/profile 获取登陆用户信息
 * @apiName 获取登陆用户信息
@@ -72,7 +64,7 @@ func GetUser(ctx iris.Context) {
 * @apiPermission null
  */
 func UserAdminLogin(ctx iris.Context) {
-	aul := new(AdminUserLogin)
+	aul := new(models.AdminUserLogin)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -105,7 +97,7 @@ func UserAdminLogin(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateUser(ctx iris.Context) {
-	aul := new(AdminUserLogin)
+	aul := new(models.AdminUserLogin)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -188,7 +180,7 @@ func CreateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateUser(ctx iris.Context) {
-	aul := new(AdminUserLogin)
+	aul := new(models.AdminUserLogin)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)

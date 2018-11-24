@@ -1,10 +1,8 @@
 package models
 
 import (
-	"GoYouQiKangApi/models"
-	"IrisYouQiKangApi/controllers"
+	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
-	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -114,7 +112,7 @@ func (user *Users) RefrozenUserById() (aj ApiJson) {
  */
 func (user *Users) SetAuditUserById() (aj ApiJson) {
 
-	DB.Model(models.Users{}).Where("is_audit=?", 1).Updates(map[string]interface{}{"is_audit": 0})
+	DB.Model(Users{}).Where("is_audit=?", 1).Updates(map[string]interface{}{"is_audit": 0})
 	DB.Model(&user).Update("is_audit", 1)
 
 	if user.IsAudit == 1 {
@@ -195,15 +193,16 @@ func GetAllClients(kw string, cp int, mp int) (aj ApiJson) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateUser(aul controllers.AdminUserLogin) (aj ApiJson) {
-	hp, e := bcrypt.GenerateFromPassword([]byte(aul.Password), bcrypt.DefaultCost)
+func CreateUser(aul *AdminUserLogin) (aj ApiJson) {
+	salt, e := bcrypt.Salt(10)
+	hash, e := bcrypt.Hash(aul.Password, salt)
 	if e != nil {
 
 	}
 
 	user := Users{
 		Username: aul.Username,
-		Password: string(hp),
+		Password: string(hash),
 		Name:     aul.Name,
 		Phone:    aul.Phone,
 	}

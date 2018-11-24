@@ -3,7 +3,7 @@ package logic
 import (
 	"IrisYouQiKangApi/models"
 	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/jameskeane/bcrypt"
 	"time"
 )
 
@@ -18,8 +18,13 @@ func UserAdminCheckLogin(username, password string) models.ApiJson {
 	if user.ID == 0 {
 		return models.ApiJson{Status: false, Msg: "用户不存在"}
 	} else {
-		err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-		if err == nil {
+		salt, err := bcrypt.Salt(10)
+		hash, err := bcrypt.Hash(password, salt)
+		if err != nil {
+			return models.ApiJson{Status: true, Msg: err.Error()}
+		}
+
+		if bcrypt.Match(password, hash) {
 			token := jwt.New(jwt.SigningMethodHS256)
 			claims := make(jwt.MapClaims)
 			claims["exp"] = time.Now().Add(time.Hour * time.Duration(1)).Unix()

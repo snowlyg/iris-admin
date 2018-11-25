@@ -11,9 +11,9 @@ import (
 	"github.com/kataras/iris/middleware/logger"
 )
 
-func main() {
+func NewApp() (api *iris.Application) {
 
-	api := iris.New()
+	api = iris.New()
 	api.Use(logger.New())
 
 	api.OnErrorCode(iris.StatusNotFound, controllers.NotFound)
@@ -91,5 +91,11 @@ func main() {
 
 		})
 	}
-	api.Run(iris.Addr(":80"))
+
+	return
+}
+
+func main() {
+	app := NewApp()
+	app.Run(iris.Addr(":80"))
 }

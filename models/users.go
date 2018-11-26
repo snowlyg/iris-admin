@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisYouQiKangApi/system"
 	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
 	"time"
@@ -35,7 +36,7 @@ type Users struct {
 }
 
 func init() {
-	DB.AutoMigrate(&Users{})
+	system.DB.AutoMigrate(&Users{})
 }
 
 /**
@@ -45,7 +46,7 @@ func init() {
  */
 func UserAdminCheckLogin(username string) Users {
 	var u Users
-	DB.Where("username =  ?", username).First(&u)
+	system.DB.Where("username =  ?", username).First(&u)
 	return u
 }
 
@@ -56,7 +57,7 @@ func UserAdminCheckLogin(username string) Users {
  */
 func (user *Users) GetUserById() (aj ApiJson) {
 
-	DB.First(user)
+	system.DB.First(user)
 	us := []Users{*user}
 	tu := TransFormUsers(us)[0]
 
@@ -73,7 +74,7 @@ func (user *Users) GetUserById() (aj ApiJson) {
  * @param  {[type]}       user  *Users [description]
  */
 func (user *Users) FrozenUserById() (aj ApiJson) {
-	DB.Model(&user).Update("is_frozen", Frozen)
+	system.DB.Model(&user).Update("is_frozen", Frozen)
 
 	if user.IsFrozen == Frozen {
 		aj.Status = true
@@ -92,7 +93,7 @@ func (user *Users) FrozenUserById() (aj ApiJson) {
  * @param  {[type]}       user  *Users [description]
  */
 func (user *Users) RefrozenUserById() (aj ApiJson) {
-	DB.Model(&user).Update("is_frozen", ReFrozen)
+	system.DB.Model(&user).Update("is_frozen", ReFrozen)
 
 	if user.IsFrozen == ReFrozen {
 		aj.Status = true
@@ -112,8 +113,8 @@ func (user *Users) RefrozenUserById() (aj ApiJson) {
  */
 func (user *Users) SetAuditUserById() (aj ApiJson) {
 
-	DB.Model(Users{}).Where("is_audit=?", 1).Updates(map[string]interface{}{"is_audit": 0})
-	DB.Model(&user).Update("is_audit", 1)
+	system.DB.Model(Users{}).Where("is_audit=?", 1).Updates(map[string]interface{}{"is_audit": 0})
+	system.DB.Model(&user).Update("is_audit", 1)
 
 	if user.IsAudit == 1 {
 		aj.Status = true
@@ -132,7 +133,7 @@ func (user *Users) SetAuditUserById() (aj ApiJson) {
  * @param  {[type]}   user  *Users [description]
  */
 func (user *Users) DeleteUserById() (aj ApiJson) {
-	DB.Delete(&user)
+	system.DB.Delete(&user)
 
 	aj.Status = true
 	aj.Msg = "操作成功"
@@ -150,9 +151,9 @@ func (user *Users) DeleteUserById() (aj ApiJson) {
 func GetAllUsers(kw string, cp int, mp int) (aj ApiJson) {
 	users := make([]Users, 0)
 	if len(kw) > 0 {
-		DB.Model(Users{}).Where(" is_client = ?", 0).Where("name=?", kw).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
+		system.DB.Model(Users{}).Where(" is_client = ?", 0).Where("name=?", kw).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
 	}
-	DB.Model(Users{}).Where(" is_client = ?", 0).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
+	system.DB.Model(Users{}).Where(" is_client = ?", 0).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
 
 	auts := TransFormUsers(users)
 
@@ -173,9 +174,9 @@ func GetAllUsers(kw string, cp int, mp int) (aj ApiJson) {
 func GetAllClients(kw string, cp int, mp int) (aj ApiJson) {
 	users := make([]Users, 0)
 	if len(kw) > 0 {
-		DB.Model(Users{}).Where(" is_client = ?", 1).Where("name=?", kw).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
+		system.DB.Model(Users{}).Where(" is_client = ?", 1).Where("name=?", kw).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
 	}
-	DB.Model(Users{}).Where(" is_client = ?", 1).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
+	system.DB.Model(Users{}).Where(" is_client = ?", 1).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
 
 	auts := TransFormUsers(users)
 
@@ -207,7 +208,7 @@ func CreateUser(aul *AdminUserLogin) (aj ApiJson) {
 		Phone:    aul.Phone,
 	}
 
-	DB.Create(&user)
+	system.DB.Create(&user)
 
 	us := []Users{user}
 	tu := TransFormUsers(us)[0]

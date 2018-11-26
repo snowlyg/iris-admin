@@ -1,5 +1,7 @@
 package models
 
+import "IrisYouQiKangApi/system"
+
 type AdminOrderTranform struct {
 	Id          uint   `json:"id"`
 	Name        string `json:"name"`
@@ -26,17 +28,17 @@ func TransFormOrders(orders []Orders) (auts []AdminOrderTranform) {
 		aut.PlanId = v.PlanId
 		aut.CompanyId = v.CompanyId
 		aut.CreatedAt = v.CreatedAt.Format("2006-01-02 15:04:05")
-		aut.CreatedAt = Tools.TimeFormat(&v.CreatedAt)
-		aut.UpdatedAt = Tools.TimeFormat(&v.UpdatedAt)
+		aut.CreatedAt = system.Tools.TimeFormat(&v.CreatedAt)
+		aut.UpdatedAt = system.Tools.TimeFormat(&v.UpdatedAt)
 		if v.DeletedAt == nil {
 			aut.DeletedAt = ""
 		} else {
-			aut.DeletedAt = Tools.TimeFormat(v.DeletedAt)
+			aut.DeletedAt = system.Tools.TimeFormat(v.DeletedAt)
 		}
 		if v.StartAt == nil {
 			aut.StartAt = ""
 		} else {
-			aut.StartAt = Tools.TimeFormat(v.StartAt)
+			aut.StartAt = system.Tools.TimeFormat(v.StartAt)
 		}
 		auts = append(auts, aut)
 	}

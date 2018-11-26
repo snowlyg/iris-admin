@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisYouQiKangApi/system"
 	"github.com/jinzhu/gorm"
 )
 
@@ -10,6 +11,10 @@ type Permissions struct {
 	GuardName   string `gorm:"not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
+}
+
+func init() {
+	system.DB.AutoMigrate(&Permissions{})
 }
 
 /**
@@ -22,9 +27,9 @@ type Permissions struct {
 func GetAllPerms(kw string, cp int, mp int) (aj ApiJson) {
 	perms := make([]Permissions, 0)
 	if len(kw) > 0 {
-		DB.Model(Permissions{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&perms)
+		system.DB.Model(Permissions{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&perms)
 	}
-	DB.Model(Permissions{}).Offset(cp - 1).Limit(mp).Find(&perms)
+	system.DB.Model(Permissions{}).Offset(cp - 1).Limit(mp).Find(&perms)
 
 	auts := TransFormPerms(perms)
 

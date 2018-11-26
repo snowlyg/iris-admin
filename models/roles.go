@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisYouQiKangApi/system"
 	"github.com/jinzhu/gorm"
 )
 
@@ -13,6 +14,10 @@ type Roles struct {
 	Level       int    `gorm:"not null default 0 INT(10)"`
 }
 
+func init() {
+	system.DB.AutoMigrate(&Roles{})
+}
+
 /**
  * 获取所有的账号
  * @method GetAllRoles
@@ -23,9 +28,9 @@ type Roles struct {
 func GetAllRoles(kw string, cp int, mp int) (aj ApiJson) {
 	roles := make([]Roles, 0)
 	if len(kw) > 0 {
-		DB.Model(Roles{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&roles)
+		system.DB.Model(Roles{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&roles)
 	}
-	DB.Model(Roles{}).Offset(cp - 1).Limit(mp).Find(&roles)
+	system.DB.Model(Roles{}).Offset(cp - 1).Limit(mp).Find(&roles)
 
 	auts := TransFormRoles(roles)
 

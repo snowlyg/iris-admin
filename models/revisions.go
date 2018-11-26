@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisYouQiKangApi/system"
 	"github.com/jinzhu/gorm"
 )
 
@@ -19,4 +20,8 @@ type Revisions struct {
 	Browser          string `gorm:"VARCHAR(191)"`
 	Platform         string `gorm:"VARCHAR(191)"`
 	Language         string `gorm:"VARCHAR(191)"`
+}
+
+func init() {
+	system.DB.AutoMigrate(&Revisions{})
 }

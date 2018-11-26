@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisYouQiKangApi/system"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -15,6 +16,10 @@ type Orders struct {
 	CompanyId   int        `gorm:"not null index INT(10)"`
 }
 
+func init() {
+	system.DB.AutoMigrate(&Orders{})
+}
+
 /**
  * 获取所有的订单
  * @method GetAllOrders
@@ -25,9 +30,9 @@ type Orders struct {
 func GetAllOrders(kw string, cp int, mp int) (aj ApiJson) {
 	orders := make([]Orders, 0)
 	if len(kw) > 0 {
-		DB.Model(Orders{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&orders)
+		system.DB.Model(Orders{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&orders)
 	}
-	DB.Model(Orders{}).Offset(cp - 1).Limit(mp).Find(&orders)
+	system.DB.Model(Orders{}).Offset(cp - 1).Limit(mp).Find(&orders)
 
 	auts := TransFormOrders(orders)
 

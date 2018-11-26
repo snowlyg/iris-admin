@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisYouQiKangApi/system"
 	"github.com/jinzhu/gorm"
 )
 
@@ -18,7 +19,7 @@ type Token struct {
 }
 
 func init() {
-	DB.AutoMigrate(&OauthToken{})
+	system.DB.AutoMigrate(&OauthToken{})
 }
 
 /**
@@ -27,7 +28,7 @@ func init() {
  */
 func (ot *OauthToken) OauthTokenCreate() (response Token, status bool, msg string) {
 
-	DB.Create(ot)
+	system.DB.Create(ot)
 	response = Token{ot.Token}
 	status = true
 	msg = "登陆成功"
@@ -42,7 +43,7 @@ func (ot *OauthToken) OauthTokenCreate() (response Token, status bool, msg strin
  */
 func GetOauthTokenByToken(token string) OauthToken {
 	var ot OauthToken
-	DB.Where("token =  ?", token).First(&ot)
+	system.DB.Where("token =  ?", token).First(&ot)
 	return ot
 }
 
@@ -53,7 +54,7 @@ func GetOauthTokenByToken(token string) OauthToken {
  */
 func UpdateOauthTokenByUserId(user_id uint) (affected int64, err error) {
 
-	DB.Model(&OauthToken{}).Where("revoked = ?", 0).Where("user_id = ?", user_id).Updates(map[string]interface{}{"revoked": 1})
+	system.DB.Model(&OauthToken{}).Where("revoked = ?", 0).Where("user_id = ?", user_id).Updates(map[string]interface{}{"revoked": 1})
 
 	return
 }

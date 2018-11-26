@@ -1,13 +1,12 @@
 package main
 
 import (
-	"IrisYouQiKangApi/config"
 	"IrisYouQiKangApi/logic"
-	"IrisYouQiKangApi/tools"
+	"IrisYouQiKangApi/system"
 	"github.com/iris-contrib/httpexpect"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/httptest"
-	"github.com/pelletier/go-toml"
+	"github.com/kataras/iris/sessions"
 	"testing"
 )
 
@@ -21,18 +20,13 @@ type BaseCase struct {
 }
 
 var (
-	Config *toml.Tree        //config
-	Tools  *tools.Tools      //tools
-	App    *iris.Application //tools
+	App *iris.Application //iris.Applications
 )
 
 func TestMain(m *testing.M) {
-	Config = config.New()
-	Tools = tools.New()
+	system.Redis.Set("iris", sessions.LifeTime{}, "project_env", "testing", false)
 	App = NewApp()
-
 	m.Run()
-
 }
 
 //单元测试 post 方法
@@ -52,7 +46,10 @@ func (bc *BaseCase) post(t *testing.T) (e *httpexpect.Expect) {
 //单元测试 get 方法
 func (bc *BaseCase) get(t *testing.T) (e *httpexpect.Expect) {
 	e = httptest.New(t, App)
-	at, _, _ := logic.UserAdminCheckLogin(Config.Get("test.LoginUser").(string), Config.Get("test.LoginPwd").(string))
+	at, _, _ := logic.UserAdminCheckLogin(
+		system.Config.Get("test.LoginUser").(string),
+		system.Config.Get("test.LoginPwd").(string),
+	)
 
 	if bc.Data != nil {
 		e.GET(bc.Url).WithHeader("Authorization", "Bearer "+at.Token).

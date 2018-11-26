@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisYouQiKangApi/system"
 	"github.com/jinzhu/gorm"
 )
 
@@ -9,4 +10,8 @@ type QuestionDetails struct {
 	Question             string `gorm:"not null comment('追加问题') VARCHAR(191)"`
 	Answer               string `gorm:"not null comment('追加问题回答') LONGTEXT"`
 	PlanDepartQuestionId int    `gorm:"not null index INT(10)"`
+}
+
+func init() {
+	system.DB.AutoMigrate(&QuestionDetails{})
 }

@@ -1,6 +1,9 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"IrisYouQiKangApi/system"
+	"github.com/jinzhu/gorm"
+)
 
 type Companies struct {
 	gorm.Model
@@ -8,6 +11,10 @@ type Companies struct {
 	Creator string `gorm:"not null comment('创建人') VARCHAR(191)"`
 	Logo    string `gorm:"comment('logo') VARCHAR(191)"`
 	Preview int    `gorm:"default 0 comment('设置演示数据') INT(1)"`
+}
+
+func init() {
+	system.DB.AutoMigrate(&Companies{})
 }
 
 /**
@@ -20,9 +27,9 @@ type Companies struct {
 func GetAllCompanies(kw string, cp int, mp int) (aj ApiJson) {
 	companies := make([]Companies, 0)
 	if len(kw) > 0 {
-		DB.Model(Companies{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&companies)
+		system.DB.Model(Companies{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&companies)
 	}
-	DB.Model(Companies{}).Offset(cp - 1).Limit(mp).Find(&companies)
+	system.DB.Model(Companies{}).Offset(cp - 1).Limit(mp).Find(&companies)
 
 	auts := TransFormCompanies(companies)
 

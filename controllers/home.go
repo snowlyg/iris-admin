@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"IrisYouQiKangApi/models"
+	"IrisYouQiKangApi/system"
 	"github.com/kataras/iris"
 	"net/http"
 )
@@ -16,9 +17,9 @@ func GetHomeData(ctx iris.Context) {
 	oc, cc, cp := 0, 0, 0
 	hd := new(HomeData)
 
-	models.DB.Model(&models.Orders{}).Count(&oc)
-	models.DB.Model(&models.Users{}).Where("is_client = ?", 1).Count(&cc)
-	models.DB.Model(&models.Companies{}).Count(&cp)
+	system.DB.Model(&models.Orders{}).Count(&oc)
+	system.DB.Model(&models.Users{}).Where("is_client = ?", 1).Count(&cc)
+	system.DB.Model(&models.Companies{}).Count(&cp)
 
 	hd.Orders = oc
 	hd.Clients = cc

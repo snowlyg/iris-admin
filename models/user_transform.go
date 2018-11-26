@@ -1,5 +1,7 @@
 package models
 
+import "IrisYouQiKangApi/system"
+
 type AdminUserTranform struct {
 	Id               uint   `json:"id"`
 	Name             string `json:"name"`
@@ -70,12 +72,12 @@ func TransFormUsers(users []Users) (auts []AdminUserTranform) {
 		aut.RoleId = v.Role.ID
 		aut.RoleName = v.Role.Name
 		aut.RememberToken = v.RememberToken
-		aut.CreatedAt = Tools.TimeFormat(&v.CreatedAt)
-		aut.UpdatedAt = Tools.TimeFormat(&v.UpdatedAt)
+		aut.CreatedAt = system.Tools.TimeFormat(&v.CreatedAt)
+		aut.UpdatedAt = system.Tools.TimeFormat(&v.UpdatedAt)
 		if v.DeletedAt == nil {
 			aut.DeletedAt = ""
 		} else {
-			aut.DeletedAt = Tools.TimeFormat(v.DeletedAt)
+			aut.DeletedAt = system.Tools.TimeFormat(v.DeletedAt)
 		}
 		auts = append(auts, aut)
 	}

@@ -1,10 +1,9 @@
 package main
 
 import (
-	"IrisYouQiKangApi/config"
 	"IrisYouQiKangApi/controllers"
 	"IrisYouQiKangApi/middleware"
-	"IrisYouQiKangApi/models"
+	"IrisYouQiKangApi/system"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
@@ -21,7 +20,7 @@ func NewApp() (api *iris.Application) {
 	api.OnErrorCode(iris.StatusInternalServerError, controllers.InternalServerError)
 
 	iris.RegisterOnInterrupt(func() {
-		models.DB.Close()
+		system.DB.Close()
 	})
 
 	// or	"github.com/iris-contrib/middleware/cors"
@@ -33,12 +32,14 @@ func NewApp() (api *iris.Application) {
 		AllowCredentials: true,
 	})
 
-	Config := config.New()
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
-		DocTitle: Config.Get("app.name").(string),
-		DocPath:  Config.Get("app.doc").(string) + "/index.html",
-		BaseUrls: map[string]string{"Production": Config.Get("app.url").(string), "Staging": ""},
+		DocTitle: system.Config.Get("app.name").(string),
+		DocPath:  system.Config.Get("app.doc").(string) + "/index.html",
+		BaseUrls: map[string]string{
+			"Production": system.Config.Get("app.url").(string),
+			"Staging":    "",
+		},
 	})
 
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)

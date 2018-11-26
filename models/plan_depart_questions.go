@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisYouQiKangApi/system"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -24,4 +25,8 @@ type PlanDepartQuestions struct {
 	Conclusion         string    `gorm:"comment('最终结论 需要富文本') LONGTEXT"`
 	ConclusionEditer   string    `gorm:"comment('最终结论执行人') VARCHAR(191)"`
 	PlanDepartId       int       `gorm:"not null index INT(10)"`
+}
+
+func init() {
+	system.DB.AutoMigrate(&PlanDepartQuestions{})
 }

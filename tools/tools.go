@@ -170,6 +170,6 @@ func (t *Tools) TimeFormat(time *time.Time) string {
  * @param  {[type]} s string        [description]
  * @return {[type]}   [description]
  */
-func (t *Tools) Debug(s interface{}) {
+func (t *Tools) Debug(s ...interface{}) {
 	log.Println(s)
 }

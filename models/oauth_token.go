@@ -25,12 +25,14 @@ func init() {
  * oauth_token
  * @method OauthTokenCreate
  */
-func (ot *OauthToken) OauthTokenCreate() ApiJson {
+func (ot *OauthToken) OauthTokenCreate() (response Token, status bool, msg string) {
 
 	DB.Create(ot)
-	response := Token{ot.Token}
+	response = Token{ot.Token}
+	status = true
+	msg = "登陆成功"
 
-	return ApiJson{Status: true, Data: response, Msg: "登陆成功"}
+	return
 }
 
 /**

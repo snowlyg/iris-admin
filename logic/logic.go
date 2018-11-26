@@ -2,18 +2,29 @@ package logic
 
 import (
 	"IrisYouQiKangApi/config"
-	"IrisYouQiKangApi/redis"
-	"IrisYouQiKangApi/tools"
+	"github.com/kataras/iris/sessions/sessiondb/redis"
+	"github.com/kataras/iris/sessions/sessiondb/redis/service"
+	"github.com/pelletier/go-toml"
+	"time"
 )
 
 var (
-	Tools  *tools.Tools
-	Redis  *redis.Redis
-	Config *config.Config //config
+	//Tools  *tools.Tools
+	Redis  *redis.Database //redis
+	Config *toml.Tree      //config
 )
 
 func init() {
+	//Tools = tools.New()
 	Config = config.New()
-	Tools = tools.New()
-	Redis = redis.New(Config.Redis.Connect, Config.Redis.DB, Config.Redis.MaxIdle, Config.Redis.MaxActive)
+	configTree := Config.Get("redis").(*toml.Tree)
+	Redis = redis.New(service.Config{
+		Network:     configTree.Get("Network").(string),
+		Addr:        configTree.Get("Addr").(string),
+		Password:    configTree.Get("Password").(string),
+		Database:    configTree.Get("Database").(string),
+		MaxIdle:     int(configTree.Get("MaxIdle").(int64)),
+		MaxActive:   int(configTree.Get("MaxActive").(int64)),
+		IdleTimeout: time.Duration(5) * time.Minute,
+		Prefix:      configTree.Get("Network").(string)}) // optionally configure the bridge between your redis server
 }

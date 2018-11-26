@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"IrisYouQiKangApi/logic"
 	"IrisYouQiKangApi/models"
 	"fmt"
 	"github.com/kataras/iris"
 	"gopkg.in/go-playground/validator.v9"
-	"net/http"
 )
 
 /**
@@ -50,39 +48,6 @@ func GetUser(ctx iris.Context) {
 }
 
 /**
-* @api {post} /admin/login 用户登陆
-* @apiName 用户登陆
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 用户登陆
-* @apiSampleRequest /admin/login
-* @apiParam {string} username 用户名
-* @apiParam {string} password 密码
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission null
- */
-func UserAdminLogin(ctx iris.Context) {
-	aul := new(models.AdminUserLogin)
-
-	if err := ctx.ReadJSON(&aul); err != nil {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON(errorData(err))
-	} else {
-		err1 := validate.Var(aul.Username, "required,min=4,max=20")
-		err2 := validate.Var(aul.Password, "required,min=5,max=20")
-		if err1 != nil || err2 != nil {
-			ctx.StatusCode(iris.StatusUnauthorized)
-			ctx.JSON(errorData(err1, err2))
-		} else {
-			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(logic.UserAdminCheckLogin(aul.Username, aul.Password))
-		}
-	}
-}
-
-/**
 * @api {post} /admin/users/ 新建账号
 * @apiName 新建账号
 * @apiGroup Users
@@ -106,10 +71,6 @@ func CreateUser(ctx iris.Context) {
 		err := validate.Struct(aul)
 
 		if err != nil {
-
-			// This check is only needed when your code could produce
-			// an invalid value for validation such as interface with nil
-			// value most including myself do not usually have code like this.
 			if _, ok := err.(*validator.InvalidValidationError); ok {
 				ctx.StatusCode(iris.StatusInternalServerError)
 				ctx.WriteString(err.Error())
@@ -130,21 +91,6 @@ func CreateUser(ctx iris.Context) {
 				fmt.Println(err.Value())
 				fmt.Println(err.Param())
 				fmt.Println()
-
-				// Or collect these as json objects
-				// and send back to the client the collected errors via ctx.JSON
-				// {
-				// 	"namespace":        err.Namespace(),
-				// 	"field":            err.Field(),
-				// 	"struct_namespace": err.StructNamespace(),
-				// 	"struct_field":     err.StructField(),
-				// 	"tag":              err.Tag(),
-				// 	"actual_tag":       err.ActualTag(),
-				// 	"kind":             err.Kind().String(),
-				// 	"type":             err.Type().String(),
-				// 	"value":            fmt.Sprintf("%v", err.Value()),
-				// 	"param":            err.Param(),
-				// }
 			}
 		} else {
 			ctx.StatusCode(iris.StatusOK)
@@ -186,14 +132,14 @@ func UpdateUser(ctx iris.Context) {
 		ctx.StatusCode(iris.StatusUnauthorized)
 		ctx.JSON(errorData(err))
 	} else {
-		err1 := validate.Var(aul.Username, "required,min=4,max=20")
-		err2 := validate.Var(aul.Password, "required,min=5,max=20")
-		if err1 != nil || err2 != nil {
+		err = validate.Var(aul.Username, "required,min=4,max=20")
+		err = validate.Var(aul.Password, "required,min=5,max=20")
+		if err != nil {
 			ctx.StatusCode(iris.StatusUnauthorized)
-			ctx.JSON(errorData(err1, err2))
+			ctx.JSON(err.Error())
 		} else {
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(logic.UserAdminCheckLogin(aul.Username, aul.Password))
+			ctx.JSON(true)
 		}
 	}
 }
@@ -330,28 +276,4 @@ func GetAllClients(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(models.GetAllClients(kw, cp, mp))
-}
-
-/**
-* @api {get} /logout 用户退出登陆
-* @apiName 用户退出登陆
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 用户退出登陆
-* @apiSampleRequest /logout
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission null
- */
-func UserAdminLogout(ctx iris.Context) {
-	json := models.ApiJson{}
-	aui := ctx.Values().GetString("auth_user_id")
-
-	uid := uint(Tools.ParseInt(aui, 0))
-
-	json = logic.UserAdminLogout(uid)
-
-	ctx.StatusCode(http.StatusOK)
-	ctx.JSON(json)
 }

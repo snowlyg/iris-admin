@@ -1,6 +1,7 @@
 package main
 
 import (
+	"IrisYouQiKangApi/config"
 	"IrisYouQiKangApi/controllers"
 	"IrisYouQiKangApi/middleware"
 	"IrisYouQiKangApi/models"
@@ -32,11 +33,12 @@ func NewApp() (api *iris.Application) {
 		AllowCredentials: true,
 	})
 
+	Config := config.New()
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
-		DocTitle: models.Config.App.Name,
-		DocPath:  models.Config.App.Doc + "/index.html",
-		BaseUrls: map[string]string{"Production": models.Config.App.Url, "Staging": ""},
+		DocTitle: Config.Get("app.name").(string),
+		DocPath:  Config.Get("app.doc").(string) + "/index.html",
+		BaseUrls: map[string]string{"Production": Config.Get("app.url").(string), "Staging": ""},
 	})
 
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)

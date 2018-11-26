@@ -13,18 +13,13 @@ import (
  * @param  {[type]}  id       int    [description]
  * @param  {[type]}  password string [description]
  */
-func UserAdminCheckLogin(username, password string) models.ApiJson {
+func UserAdminCheckLogin(username, password string) (response models.Token, status bool, msg string) {
 	user := models.UserAdminCheckLogin(username)
 	if user.ID == 0 {
-		return models.ApiJson{Status: false, Msg: "用户不存在"}
+		msg = "用户不存在"
+		return
 	} else {
-		salt, err := bcrypt.Salt(10)
-		hash, err := bcrypt.Hash(password, salt)
-		if err != nil {
-			return models.ApiJson{Status: true, Msg: err.Error()}
-		}
-
-		if bcrypt.Match(password, hash) {
+		if ok := bcrypt.Match(password, user.Password); ok {
 			token := jwt.New(jwt.SigningMethodHS256)
 			claims := make(jwt.MapClaims)
 			claims["exp"] = time.Now().Add(time.Hour * time.Duration(1)).Unix()
@@ -33,7 +28,8 @@ func UserAdminCheckLogin(username, password string) models.ApiJson {
 			tokenString, err := token.SignedString([]byte("secret"))
 
 			if err != nil {
-				return models.ApiJson{Status: true, Msg: err.Error()}
+				msg = err.Error()
+				return
 			}
 
 			oauth_token := new(models.OauthToken)
@@ -47,7 +43,8 @@ func UserAdminCheckLogin(username, password string) models.ApiJson {
 			return oauth_token.OauthTokenCreate()
 
 		} else {
-			return models.ApiJson{Status: false, Msg: "用户名或密码错误"}
+			msg = "用户名或密码错误"
+			return
 		}
 	}
 }

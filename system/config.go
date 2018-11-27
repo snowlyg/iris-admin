@@ -1,4 +1,4 @@
-package config
+package system
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
  * 返回单例实例
  * @method New
  */
-func New() *toml.Tree {
+func configNew() *toml.Tree {
 	config, err := toml.LoadFile("config.toml")
 
 	if err != nil {

@@ -24,8 +24,10 @@ var (
 )
 
 func TestMain(m *testing.M) {
+
 	//设置测试环境
 	system.RedisSet("env_t", system.Config.Get("app.env").(string), 0)
+
 	//删除测试数据表，保持测试环境
 	ttn := system.RedisGet("test_table_name")
 	App = NewApp()
@@ -38,7 +40,6 @@ func TestMain(m *testing.M) {
 	m.Run()
 
 	system.DB.DropTable(ttn)
-
 }
 
 //单元测试 post 方法
@@ -59,7 +60,7 @@ func (bc *BaseCase) post(t *testing.T) (e *httpexpect.Expect) {
 func (bc *BaseCase) get(t *testing.T) (e *httpexpect.Expect) {
 	e = httptest.New(t, App)
 	at, _, _ := logic.UserAdminCheckLogin(
-		system.Config.Get("test.LoginUser").(string),
+		system.Config.Get("test.LoginUserName").(string),
 		system.Config.Get("test.LoginPwd").(string),
 	)
 
@@ -90,10 +91,10 @@ func SetTestTableName(tn string) {
 func CreaterSystemAdmin() *models.AdminUserTranform {
 
 	aul := new(models.AdminUserLogin)
-	aul.Username = system.Config.Get("test.LoginUser").(string)
+	aul.Username = system.Config.Get("test.LoginUserName").(string)
 	aul.Password = system.Config.Get("test.LoginPwd").(string)
 	aul.Phone = "12345678"
-	aul.Name = system.Config.Get("test.LoginUser").(string)
+	aul.Name = system.Config.Get("test.LoginName").(string)
 	aul.RoleId = 1
 
 	return models.CreateUser(aul)

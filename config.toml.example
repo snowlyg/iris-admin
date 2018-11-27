@@ -1,0 +1,53 @@
+[hotreload]
+  suffixes = [".go"]
+  ignore = []
+
+[app]
+
+  #app 环境 test local
+  env = "testing"
+  #app 名称
+  name = "IrisYouQiKang"
+  #app url
+  url  = "http://localhost"
+  #app 文档地址
+  doc = "./apidoc"
+  addr = ":80"
+
+  [app.logger]
+    level = "INFO"
+    name = "application"
+
+#数据库驱动
+[database]
+    dirver = "mysql"
+
+[mysql]
+  connect = "root:you_password@/you_database_name?charset=utf8&parseTime=True&loc=Local"
+
+[mongodb]
+  connect = "mongodb://root:123456@127.0.0.1:27017/admin"
+
+[sqlite]
+  connect = "/tmp/gorm.db"
+
+#reids
+[redis]
+  Addr = "127.0.0.1:6379"
+  Password = ""
+  DB = 0
+
+[neo4j]
+    connect = "http://10.10.43.111:7474/db/data"
+
+[test]
+    #测试登陆用户名
+    LoginUserName = "you_test_user_name"
+    #测试用户名
+    LoginName = "you_test_name"
+    #测试用户密码
+    LoginPwd = "you_test_user_password"
+    #测试数据库驱动
+    DataBaseDriver = "sqlite3"
+    #测试数据库
+    DataBaseConnect = "/tmp/gorm.db"

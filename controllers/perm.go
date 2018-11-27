@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"IrisYouQiKangApi/models"
+	"IrisYouQiKangApi/system"
 	"github.com/kataras/iris"
 )
 
@@ -18,8 +19,8 @@ import (
 * @apiPermission null
  */
 func GetAllPerms(ctx iris.Context) {
-	cp := Tools.ParseInt(ctx.FormValue("cp"), 1)
-	mp := Tools.ParseInt(ctx.FormValue("mp"), 20)
+	cp := system.Tools.ParseInt(ctx.FormValue("cp"), 1)
+	mp := system.Tools.ParseInt(ctx.FormValue("mp"), 20)
 	kw := ctx.FormValue("kw")
 
 	ctx.StatusCode(iris.StatusOK)

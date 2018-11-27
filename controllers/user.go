@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"IrisYouQiKangApi/models"
+	"IrisYouQiKangApi/system"
 	"fmt"
 	"github.com/kataras/iris"
 	"gopkg.in/go-playground/validator.v9"
@@ -249,8 +250,8 @@ func DeleteUser(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllUsers(ctx iris.Context) {
-	cp := Tools.ParseInt(ctx.FormValue("cp"), 1)
-	mp := Tools.ParseInt(ctx.FormValue("mp"), 20)
+	cp := system.Tools.ParseInt(ctx.FormValue("cp"), 1)
+	mp := system.Tools.ParseInt(ctx.FormValue("mp"), 20)
 	kw := ctx.FormValue("kw")
 
 	ctx.StatusCode(iris.StatusOK)
@@ -270,8 +271,8 @@ func GetAllUsers(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllClients(ctx iris.Context) {
-	cp := Tools.ParseInt(ctx.FormValue("cp"), 1)
-	mp := Tools.ParseInt(ctx.FormValue("mp"), 20)
+	cp := system.Tools.ParseInt(ctx.FormValue("cp"), 1)
+	mp := system.Tools.ParseInt(ctx.FormValue("mp"), 20)
 	kw := ctx.FormValue("kw")
 
 	ctx.StatusCode(iris.StatusOK)

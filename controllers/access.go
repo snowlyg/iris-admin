@@ -3,6 +3,7 @@ package controllers
 import (
 	"IrisYouQiKangApi/logic"
 	"IrisYouQiKangApi/models"
+	"IrisYouQiKangApi/system"
 	"github.com/kataras/iris"
 	"net/http"
 )
@@ -66,7 +67,7 @@ func UserAdminLogout(ctx iris.Context) {
 	json := models.ApiJson{}
 	aui := ctx.Values().GetString("auth_user_id")
 
-	uid := uint(Tools.ParseInt(aui, 0))
+	uid := uint(system.Tools.ParseInt(aui, 0))
 
 	json = logic.UserAdminLogout(uid)
 

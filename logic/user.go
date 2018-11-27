@@ -75,7 +75,7 @@ func UserAdminLogout(user_id uint) (json models.ApiJson) {
 //	if length > 0 {
 //		var idsInt = make([]int, length, length)
 //		for i, id := range idsArr {
-//			idsInt[i] = Tools.ParseInt(id, 0)
+//			idsInt[i] =system.Tools.ParseInt(id, 0)
 //		}
 //		return models.UserAdminDele(idsInt)
 //	} else {

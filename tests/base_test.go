@@ -3,6 +3,7 @@ package main
 import (
 	"IrisYouQiKangApi/logic"
 	"IrisYouQiKangApi/models"
+	"IrisYouQiKangApi/routers"
 	"IrisYouQiKangApi/system"
 	"github.com/iris-contrib/httpexpect"
 	"github.com/kataras/iris"
@@ -20,13 +21,14 @@ type BaseCase struct {
 }
 
 var (
-	App *iris.Application //iris.Applications
+	app *iris.Application //iris.Applications
 )
 
 func TestMain(m *testing.M) {
-	//删除测试数据表，保持测试环境
+	//正在测试的数据表
 	ttn := system.RedisGet("test_table_name")
-	App = NewApp()
+	myapp := new(routers.MyApp)
+	app = myapp.NewApp()
 
 	//不是 users 表测试，自动创建系统管理员
 	if ttn != "users" {
@@ -35,12 +37,13 @@ func TestMain(m *testing.M) {
 
 	m.Run()
 
+	//删除测试数据表，保持测试环境
 	system.DB.DropTable(ttn)
 }
 
 //单元测试 post 方法
 func (bc *BaseCase) post(t *testing.T) (e *httpexpect.Expect) {
-	e = httptest.New(t, App, httptest.Configuration{Debug: false})
+	e = httptest.New(t, app, httptest.Configuration{Debug: false})
 	if bc.Data != nil {
 		e.POST(bc.Url).WithJSON(bc.Object).
 			Expect().Status(bc.StatusCode).JSON().Object().Values().Contains(bc.Status, bc.Msg, bc.Data)
@@ -54,7 +57,7 @@ func (bc *BaseCase) post(t *testing.T) (e *httpexpect.Expect) {
 
 //单元测试 get 方法
 func (bc *BaseCase) get(t *testing.T) (e *httpexpect.Expect) {
-	e = httptest.New(t, App)
+	e = httptest.New(t, app)
 	at, _, _ := logic.UserAdminCheckLogin(
 		system.Config.Get("test.LoginUserName").(string),
 		system.Config.Get("test.LoginPwd").(string),

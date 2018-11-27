@@ -91,6 +91,13 @@ godep restore
 ---
 ##### 单元测试 
 >单元测试我做了简单的封装，可以使用下面的方法写 get 请求的测试
+>
+>将测试文件放在项目目录下，执行  `godep save` 命令。会出现没有使用的依赖库，却报错依赖库不存在的问题。
+```
+godep: Package (github.com/sergi/go-diff/diffmatchpatch) not found
+```
+>
+>将单元测试的代码 移动到 `tests` 文件夹下， 可以解决执行  `godep save` 命令出现没有使用的依赖库没有加载的报错。
 
 
 ```

@@ -21,7 +21,6 @@ func init() {
 
 	//初始化reids
 	newRedis()
-
 	//设置数据库连接
 	setDatabase(Config.Get("database.dirver").(string))
 }

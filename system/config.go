@@ -10,7 +10,7 @@ import (
  * @method New
  */
 func configNew() *toml.Tree {
-	config, err := toml.LoadFile("config.toml")
+	config, err := toml.LoadFile("./config.toml")
 
 	if err != nil {
 		fmt.Println("Error ", err.Error())

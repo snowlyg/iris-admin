@@ -25,9 +25,9 @@ type AdminUserTranform struct {
 	DeletedAt        string `json:"deleted_at"`
 }
 
-func TransFormUsers(users []Users) (auts []AdminUserTranform) {
+func TransFormUsers(users []Users) (auts []*AdminUserTranform) {
 
-	auts = make([]AdminUserTranform, 0)
+	auts = make([]*AdminUserTranform, 0)
 
 	for _, v := range users {
 		aut := AdminUserTranform{}
@@ -79,7 +79,7 @@ func TransFormUsers(users []Users) (auts []AdminUserTranform) {
 		} else {
 			aut.DeletedAt = system.Tools.TimeFormat(v.DeletedAt)
 		}
-		auts = append(auts, aut)
+		auts = append(auts, &aut)
 	}
 
 	return

@@ -2,11 +2,11 @@ package main
 
 import (
 	"IrisYouQiKangApi/logic"
+	"IrisYouQiKangApi/models"
 	"IrisYouQiKangApi/system"
 	"github.com/iris-contrib/httpexpect"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/httptest"
-	"github.com/kataras/iris/sessions"
 	"testing"
 )
 
@@ -24,9 +24,21 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	system.Redis.Set("iris", sessions.LifeTime{}, "project_env", "testing", false)
+	//设置测试环境
+	system.RedisSet("env_t", system.Config.Get("app.env").(string), 0)
+	//删除测试数据表，保持测试环境
+	ttn := system.RedisGet("test_table_name")
 	App = NewApp()
+
+	//不是 users 表测试，自动创建系统管理员
+	if ttn != "users" {
+		CreaterSystemAdmin()
+	}
+
 	m.Run()
+
+	system.DB.DropTable(ttn)
+
 }
 
 //单元测试 post 方法
@@ -57,31 +69,32 @@ func (bc *BaseCase) get(t *testing.T) (e *httpexpect.Expect) {
 	} else {
 		e.GET(bc.Url).WithHeader("Authorization", "Bearer "+at.Token).
 			Expect().Status(bc.StatusCode).JSON().Object().Values().
-			Contains(bc.Status, bc.Msg).
-			Contains().Last().Object().Keys().Contains(
-			"created_at",
-			"deleted_at",
-			"email",
-			"id",
-			"is_audit",
-			"is_client",
-			"is_client_admin",
-			"is_frozen",
-			"is_wechat_verfiy",
-			"name",
-			"open_id",
-			"phone",
-			"remember_token",
-			"role_id",
-			"role_name",
-			"updated_at",
-			"username",
-			"wechat_avatar",
-			"wechat_name",
-			"wechat_verfiy_time",
-		)
-		//Element(2).Array().Length().Equal(20)
+			Contains(bc.Status, bc.Msg)
 	}
 
 	return
+}
+
+/**
+*设置测试数据表
+*@param tn stirng 数据表名称
+ */
+func SetTestTableName(tn string) {
+	system.RedisSet("test_table_name", tn, 0)
+}
+
+/**
+*创建系统管理员
+*@return   *models.AdminUserTranform api格式化后的数据格式
+ */
+func CreaterSystemAdmin() *models.AdminUserTranform {
+
+	aul := new(models.AdminUserLogin)
+	aul.Username = system.Config.Get("test.LoginUser").(string)
+	aul.Password = system.Config.Get("test.LoginPwd").(string)
+	aul.Phone = "12345678"
+	aul.Name = system.Config.Get("test.LoginUser").(string)
+	aul.RoleId = 1
+
+	return models.CreateUser(aul)
 }

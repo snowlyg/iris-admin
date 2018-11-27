@@ -8,23 +8,17 @@
 项目配置文件 config.toml
 
 ```
-#
-# settings related to recompiling and reruning app when source changes
-#
 [hotreload]
-  # file suffixes to watch for changes
   suffixes = [".go"]
-
-  # files/directories to ignore
   ignore = []
 
-#
-# general application settings
-#
+
 [app]
-  # additional application arguments
-  args = []
-  addr = ":3000"
+  env = "testing"
+  name = "IrisYouQiKang"
+  url  = "http://localhost"
+  doc = "./apidoc"
+  addr = ":80"
 
   [app.logger]
     level = "INFO"
@@ -33,17 +27,27 @@
 # 运行参数
 [mysql]
   connect = "root:UHC0JC5s6DEg9BRXYuDJnqbdl1ecL4gV@/goyouqikang?charset=utf8&parseTime=True&loc=Local"
-  MaxIdle = 10
-  MaxOpen = 100
+  MaxIdle = "10"
+  MaxOpen = "100"
+
 [mongodb]
   connect = "mongodb://root:123456@127.0.0.1:27017/admin"
+
+[sqlite]
+  connect = "/tmp/gorm.db"
+
 [redis]
-  connect = "127.0.0.1:6379"
-  db = 0
-  maxidle = 100
-  maxactive = 1000
+  Addr = "127.0.0.1:6379"
+  Password = ""
+  DB = 0
+
 [neo4j]
     connect = "http://10.10.43.111:7474/db/data"
+
+[test]
+    LoginUser = "admin"
+    LoginPwd = "admin123456"
+
 ```
 
 

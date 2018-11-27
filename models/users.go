@@ -194,12 +194,9 @@ func GetAllClients(kw string, cp int, mp int) (aj ApiJson) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateUser(aul *AdminUserLogin) (aj ApiJson) {
-	salt, e := bcrypt.Salt(10)
-	hash, e := bcrypt.Hash(aul.Password, salt)
-	if e != nil {
-
-	}
+func CreateUser(aul *AdminUserLogin) (tu *AdminUserTranform) {
+	salt, _ := bcrypt.Salt(10)
+	hash, _ := bcrypt.Hash(aul.Password, salt)
 
 	user := Users{
 		Username: aul.Username,
@@ -211,11 +208,7 @@ func CreateUser(aul *AdminUserLogin) (aj ApiJson) {
 	system.DB.Create(&user)
 
 	us := []Users{user}
-	tu := TransFormUsers(us)[0]
-
-	aj.Status = true
-	aj.Data = tu
-	aj.Msg = "操作成功"
+	tu = TransFormUsers(us)[0]
 
 	return
 }

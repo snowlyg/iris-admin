@@ -11,7 +11,7 @@ type OauthToken struct {
 	UserId    uint   `gorm:"not null default '' comment('UserId') VARCHAR(191)"`
 	Secret    string `gorm:"not null default '' comment('Secret') VARCHAR(191)"`
 	ExpressIn int64  `gorm:"not null default 0 comment('是否是标准库') BIGINT(20)"`
-	Revoked   int    `gorm:"not null TINYINT(1)"`
+	Revoked   bool
 }
 
 type Token struct {
@@ -26,12 +26,9 @@ func init() {
  * oauth_token
  * @method OauthTokenCreate
  */
-func (ot *OauthToken) OauthTokenCreate() (response Token, status bool, msg string) {
-
+func (ot *OauthToken) OauthTokenCreate() (response Token) {
 	system.DB.Create(ot)
 	response = Token{ot.Token}
-	status = true
-	msg = "登陆成功"
 
 	return
 }
@@ -41,10 +38,10 @@ func (ot *OauthToken) OauthTokenCreate() (response Token, status bool, msg strin
  * @method GetOauthTokenByToken
  * @param  {[type]}       token string [description]
  */
-func GetOauthTokenByToken(token string) OauthToken {
-	var ot OauthToken
+func GetOauthTokenByToken(token string) (ot *OauthToken) {
+	ot = new(OauthToken)
 	system.DB.Where("token =  ?", token).First(&ot)
-	return ot
+	return
 }
 
 /**
@@ -52,9 +49,8 @@ func GetOauthTokenByToken(token string) OauthToken {
  * @method UpdateOauthTokenByUserId
  *@param  {[type]}       user  *OauthToken [description]
  */
-func UpdateOauthTokenByUserId(user_id uint) (affected int64, err error) {
-
-	system.DB.Model(&OauthToken{}).Where("revoked = ?", 0).Where("user_id = ?", user_id).Updates(map[string]interface{}{"revoked": 1})
+func UpdateOauthTokenByUserId(user_id uint) (ot *OauthToken) {
+	system.DB.Model(ot).Where("revoked = ?", false).Where("user_id = ?", user_id).Updates(map[string]interface{}{"revoked": true})
 
 	return
 }

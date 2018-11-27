@@ -13,8 +13,7 @@ import (
 *@param diver string
  */
 func setDatabase(diver string) {
-	val := RedisGet("env_t")
-	if val == "testing" {
+	if Config.Get("app.env").(string) == "testing" {
 		configTree := Config.Get("test").(*toml.Tree)
 		DB, err = gorm.Open(configTree.Get("DataBaseDriver").(string), configTree.Get("DataBaseConnect").(string))
 	} else {

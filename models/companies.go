@@ -24,18 +24,11 @@ func init() {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func GetAllCompanies(kw string, cp int, mp int) (aj ApiJson) {
-	companies := make([]Companies, 0)
+func GetAllCompanies(kw string, cp int, mp int) (companies []*Companies) {
 	if len(kw) > 0 {
 		system.DB.Model(Companies{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&companies)
 	}
 	system.DB.Model(Companies{}).Offset(cp - 1).Limit(mp).Find(&companies)
-
-	auts := TransFormCompanies(companies)
-
-	aj.Status = true
-	aj.Data = auts
-	aj.Msg = "操作成功"
 
 	return
 }

@@ -36,11 +36,15 @@ func UserAdminCheckLogin(username, password string) (response models.Token, stat
 			oauth_token.Token = tokenString
 			oauth_token.UserId = user.ID
 			oauth_token.Secret = "secret"
-			oauth_token.Revoked = 0
+			oauth_token.Revoked = false
 			oauth_token.ExpressIn = time.Now().Add(time.Hour * time.Duration(1)).Unix()
 			oauth_token.CreatedAt = time.Now()
 
-			return oauth_token.OauthTokenCreate()
+			response = oauth_token.OauthTokenCreate()
+			status = true
+			msg = "登陆成功"
+
+			return
 
 		} else {
 			msg = "用户名或密码错误"
@@ -54,31 +58,8 @@ func UserAdminCheckLogin(username, password string) (response models.Token, stat
 * @method UserAdminLogout
 * @param  {[type]} ids string [description]
  */
-func UserAdminLogout(user_id uint) (json models.ApiJson) {
+func UserAdminLogout(user_id uint) bool {
+	ot := models.UpdateOauthTokenByUserId(user_id)
 
-	models.UpdateOauthTokenByUserId(user_id)
-
-	json.Data = true
-	json.Msg = "操作成功"
-
-	return
+	return ot.Revoked
 }
-
-///**
-// * 删除用户
-// * @method UserAdminDele
-// * @param  {[type]} ids string [description]
-// */
-//func UserAdminDele(ids string) models.ApiJson {
-//	idsArr := strings.Split(ids, ",")
-//	length := len(idsArr)
-//	if length > 0 {
-//		var idsInt = make([]int, length, length)
-//		for i, id := range idsArr {
-//			idsInt[i] =system.Tools.ParseInt(id, 0)
-//		}
-//		return models.UserAdminDele(idsInt)
-//	} else {
-//		return models.ApiJson{Status: false, Msg: "id is error"}
-//	}
-//}

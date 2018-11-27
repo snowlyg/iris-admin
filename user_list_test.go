@@ -15,7 +15,7 @@ func TestUsersList(t *testing.T) {
 	//创建系统管理员，测试 users 表需要手动创建。
 	//其他模型测试不需要手动创建
 	aul := CreaterSystemAdmin()
-	users := []*models.AdminUserTranform{aul}
+	users := []*models.Users{aul}
 
 	//发起 http 请求
 	//Url        string      //测试路由

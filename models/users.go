@@ -7,32 +7,27 @@ import (
 	"time"
 )
 
-const (
-	Frozen   = 1
-	ReFrozen = 0
-)
-
 type Users struct {
 	gorm.Model
 
 	Name             string `gorm:"not null VARCHAR(191)"`
 	Username         string `gorm:"VARCHAR(191)"`
 	Password         string `gorm:"not null VARCHAR(191)"`
-	Confirmed        int    `gorm:"not null default 0 TINYINT(1)"`
-	IsClient         int    `gorm:"not null default 0 TINYINT(1)"`
-	IsFrozen         int    `gorm:"not null default 0 TINYINT(1)"`
-	IsAudit          int    `gorm:"not null default 0 TINYINT(1)"`
-	IsClientAdmin    int    `gorm:"not null default 0 TINYINT(1)"`
+	Confirmed        bool
+	IsClient         bool
+	IsFrozen         bool
+	IsAudit          bool
+	IsClientAdmin    bool
+	IsWechatVerfiy   bool
 	WechatName       string `gorm:"VARCHAR(191)"`
 	WechatAvatar     string `gorm:"VARCHAR(191)"`
 	Email            string `gorm:"unique VARCHAR(191)"`
 	OpenId           string `gorm:"unique VARCHAR(191)"`
-	WechatVerfiyTime time.Time
-	IsWechatVerfiy   int    `gorm:"not null default 0 TINYINT(1)"`
 	Phone            string `gorm:"unique VARCHAR(191)"`
 	Role             Roles
 	RoleId           uint
-	RememberToken    string `gorm:"VARCHAR(100)"`
+	RememberToken    string
+	WechatVerfiyTime time.Time
 }
 
 func init() {
@@ -55,17 +50,9 @@ func UserAdminCheckLogin(username string) Users {
  * @method GetUserById
  * @param  {[type]}       user  *Users [description]
  */
-func (user *Users) GetUserById() (aj ApiJson) {
-
+func (user *Users) GetUserById() *Users {
 	system.DB.First(user)
-	us := []Users{*user}
-	tu := TransFormUsers(us)[0]
-
-	aj.Status = true
-	aj.Data = tu
-	aj.Msg = "操作成功"
-
-	return
+	return user
 }
 
 /**
@@ -73,18 +60,9 @@ func (user *Users) GetUserById() (aj ApiJson) {
  * @method FrozenUserById
  * @param  {[type]}       user  *Users [description]
  */
-func (user *Users) FrozenUserById() (aj ApiJson) {
-	system.DB.Model(&user).Update("is_frozen", Frozen)
-
-	if user.IsFrozen == Frozen {
-		aj.Status = true
-		aj.Msg = "操作成功"
-	} else {
-		aj.Status = false
-		aj.Msg = "操作失败"
-	}
-
-	return
+func (user *Users) FrozenUserById() bool {
+	system.DB.Model(&user).Update("is_frozen", true)
+	return user.IsFrozen
 }
 
 /**
@@ -92,18 +70,10 @@ func (user *Users) FrozenUserById() (aj ApiJson) {
  * @method RefrozenUserById
  * @param  {[type]}       user  *Users [description]
  */
-func (user *Users) RefrozenUserById() (aj ApiJson) {
-	system.DB.Model(&user).Update("is_frozen", ReFrozen)
+func (user *Users) RefrozenUserById() bool {
+	system.DB.Model(&user).Update("is_frozen", false)
 
-	if user.IsFrozen == ReFrozen {
-		aj.Status = true
-		aj.Msg = "操作成功"
-	} else {
-		aj.Status = false
-		aj.Msg = "操作失败"
-	}
-
-	return
+	return !user.IsFrozen
 }
 
 /**
@@ -111,20 +81,12 @@ func (user *Users) RefrozenUserById() (aj ApiJson) {
  * @method SetAuditUserById
  * @param  {[type]}   user  *Users [description]
  */
-func (user *Users) SetAuditUserById() (aj ApiJson) {
+func (user *Users) SetAuditUserById() bool {
 
-	system.DB.Model(Users{}).Where("is_audit=?", 1).Updates(map[string]interface{}{"is_audit": 0})
-	system.DB.Model(&user).Update("is_audit", 1)
+	system.DB.Model(Users{}).Where("is_audit=?", true).Updates(map[string]interface{}{"is_audit": false})
+	system.DB.Model(&user).Update("is_audit", true)
 
-	if user.IsAudit == 1 {
-		aj.Status = true
-		aj.Msg = "操作成功"
-	} else {
-		aj.Status = false
-		aj.Msg = "操作失败"
-	}
-
-	return
+	return user.IsAudit
 }
 
 /**
@@ -132,13 +94,10 @@ func (user *Users) SetAuditUserById() (aj ApiJson) {
  * @method SetAuditUserById
  * @param  {[type]}   user  *Users [description]
  */
-func (user *Users) DeleteUserById() (aj ApiJson) {
+func (user *Users) DeleteUserById() {
 	system.DB.Delete(&user)
 
-	aj.Status = true
-	aj.Msg = "操作成功"
-
-	return
+	system.Tools.Debug(user)
 }
 
 /**
@@ -148,19 +107,12 @@ func (user *Users) DeleteUserById() (aj ApiJson) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func GetAllUsers(kw string, cp int, mp int) (aj ApiJson) {
-	users := make([]Users, 0)
+func GetAllUsers(kw string, cp int, mp int) (users []*Users) {
 	if len(kw) > 0 {
 		system.DB.Model(Users{}).Where(" is_client = ?", 0).Where("name=?", kw).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
 	}
 	system.DB.Model(Users{}).Where(" is_client = ?", 0).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
 
-	auts := TransFormUsers(users)
-
-	aj.Status = true
-	aj.Data = auts
-	aj.Msg = "操作成功"
-
 	return
 }
 
@@ -171,19 +123,13 @@ func GetAllUsers(kw string, cp int, mp int) (aj ApiJson) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func GetAllClients(kw string, cp int, mp int) (aj ApiJson) {
-	users := make([]Users, 0)
+func GetAllClients(kw string, cp int, mp int) (users []*Users) {
+
 	if len(kw) > 0 {
 		system.DB.Model(Users{}).Where(" is_client = ?", 1).Where("name=?", kw).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
 	}
 	system.DB.Model(Users{}).Where(" is_client = ?", 1).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
 
-	auts := TransFormUsers(users)
-
-	aj.Status = true
-	aj.Data = auts
-	aj.Msg = "操作成功"
-
 	return
 }
 
@@ -194,21 +140,18 @@ func GetAllClients(kw string, cp int, mp int) (aj ApiJson) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateUser(aul *AdminUserLogin) (tu *AdminUserTranform) {
+func CreateUser(aul *AdminUserLogin) (user *Users) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
-	user := Users{
+	user = &Users{
 		Username: aul.Username,
 		Password: string(hash),
 		Name:     aul.Name,
 		Phone:    aul.Phone,
 	}
 
-	system.DB.Create(&user)
-
-	us := []Users{user}
-	tu = TransFormUsers(us)[0]
+	system.DB.Create(user)
 
 	return
 }

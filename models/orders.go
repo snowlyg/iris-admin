@@ -27,18 +27,12 @@ func init() {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func GetAllOrders(kw string, cp int, mp int) (aj ApiJson) {
-	orders := make([]Orders, 0)
+func GetAllOrders(kw string, cp int, mp int) (orders []*Orders) {
+
 	if len(kw) > 0 {
 		system.DB.Model(Orders{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&orders)
 	}
 	system.DB.Model(Orders{}).Offset(cp - 1).Limit(mp).Find(&orders)
-
-	auts := TransFormOrders(orders)
-
-	aj.Status = true
-	aj.Data = auts
-	aj.Msg = "操作成功"
 
 	return
 }

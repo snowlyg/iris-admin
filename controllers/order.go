@@ -22,7 +22,8 @@ func GetAllOrders(ctx iris.Context) {
 	cp := system.Tools.ParseInt(ctx.FormValue("cp"), 1)
 	mp := system.Tools.ParseInt(ctx.FormValue("mp"), 20)
 	kw := ctx.FormValue("kw")
+	orders := models.GetAllOrders(kw, cp, mp)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(models.GetAllOrders(kw, cp, mp))
+	ctx.JSON(apiResource(true, orders, "操作成功"))
 }

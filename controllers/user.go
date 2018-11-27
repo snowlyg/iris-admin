@@ -23,7 +23,7 @@ import (
 func GetProfile(ctx iris.Context) {
 	aun := ctx.Values().Get("auth_user_name")
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(models.ApiJson{Status: true, Data: aun, Msg: "操作成功"})
+	ctx.JSON(apiResource(true, aun, "操作成功"))
 }
 
 /**
@@ -40,12 +40,12 @@ func GetProfile(ctx iris.Context) {
  */
 func GetUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-
-	u := models.Users{}
+	u := new(models.Users)
 	u.ID = id
+	user := u.GetUserById()
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(u.GetUserById())
+	ctx.JSON(apiResource(true, user, "操作成功"))
 }
 
 /**
@@ -158,13 +158,18 @@ func UpdateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func FrozenUser(ctx iris.Context) {
-	id, _ := ctx.Params().GetUint("id")
 
+	id, _ := ctx.Params().GetUint("id")
 	u := models.Users{}
 	u.ID = id
 
+	is_frozen, msg := false, "冻结失败"
+	if is_frozen = u.FrozenUserById(); is_frozen {
+		msg = "冻结成功"
+	}
+
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(u.FrozenUserById())
+	ctx.JSON(apiResource(is_frozen, nil, msg))
 }
 
 /**
@@ -181,13 +186,16 @@ func FrozenUser(ctx iris.Context) {
  */
 func RefrozenUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-
 	u := models.Users{}
 	u.ID = id
 
-	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(u.RefrozenUserById())
+	is_frozen, msg := false, "解冻失败"
+	if is_frozen = u.FrozenUserById(); is_frozen {
+		msg = "解冻成功"
+	}
 
+	ctx.StatusCode(iris.StatusOK)
+	ctx.JSON(apiResource(is_frozen, nil, msg))
 }
 
 /**
@@ -204,13 +212,17 @@ func RefrozenUser(ctx iris.Context) {
  */
 func SetUserAudit(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-
 	u := models.Users{}
 	u.ID = id
 	u.SetAuditUserById()
 
+	is_audit, msg := false, "设置失败"
+	if is_audit = u.SetAuditUserById(); is_audit {
+		msg = "设置成功"
+	}
+
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(u.SetAuditUserById())
+	ctx.JSON(apiResource(is_audit, nil, msg))
 
 }
 
@@ -231,9 +243,10 @@ func DeleteUser(ctx iris.Context) {
 
 	u := models.Users{}
 	u.ID = id
+	u.DeleteUserById()
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(u.DeleteUserById())
+	ctx.JSON(apiResource(true, nil, "删除成功"))
 
 }
 
@@ -253,9 +266,10 @@ func GetAllUsers(ctx iris.Context) {
 	cp := system.Tools.ParseInt(ctx.FormValue("cp"), 1)
 	mp := system.Tools.ParseInt(ctx.FormValue("mp"), 20)
 	kw := ctx.FormValue("kw")
+	users := models.GetAllUsers(kw, cp, mp)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(models.GetAllUsers(kw, cp, mp))
+	ctx.JSON(apiResource(true, users, "操作成功"))
 }
 
 /**
@@ -274,7 +288,8 @@ func GetAllClients(ctx iris.Context) {
 	cp := system.Tools.ParseInt(ctx.FormValue("cp"), 1)
 	mp := system.Tools.ParseInt(ctx.FormValue("mp"), 20)
 	kw := ctx.FormValue("kw")
+	users := models.GetAllClients(kw, cp, mp)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(models.GetAllClients(kw, cp, mp))
+	ctx.JSON(apiResource(true, users, "操作成功"))
 }

@@ -22,9 +22,10 @@ func GetAllParentPlans(ctx iris.Context) {
 	cp := system.Tools.ParseInt(ctx.FormValue("cp"), 1)
 	mp := system.Tools.ParseInt(ctx.FormValue("mp"), 20)
 	kw := ctx.FormValue("kw")
+	plans := models.GetAllParentPlans(kw, cp, mp)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(models.GetAllParentPlans(kw, cp, mp))
+	ctx.JSON(apiResource(true, plans, "操作成功"))
 }
 
 /**

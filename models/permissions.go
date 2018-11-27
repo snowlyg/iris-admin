@@ -24,18 +24,12 @@ func init() {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func GetAllPerms(kw string, cp int, mp int) (aj ApiJson) {
-	perms := make([]Permissions, 0)
+func GetAllPerms(kw string, cp int, mp int) (perms []*Permissions) {
+
 	if len(kw) > 0 {
 		system.DB.Model(Permissions{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&perms)
 	}
 	system.DB.Model(Permissions{}).Offset(cp - 1).Limit(mp).Find(&perms)
-
-	auts := TransFormPerms(perms)
-
-	aj.Status = true
-	aj.Data = auts
-	aj.Msg = "操作成功"
 
 	return
 }

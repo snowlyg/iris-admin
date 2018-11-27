@@ -26,5 +26,5 @@ func GetHomeData(ctx iris.Context) {
 	hd.Companies = cp
 
 	ctx.StatusCode(http.StatusOK)
-	ctx.JSON(models.ApiJson{Status: true, Data: hd, Msg: "操作成功"})
+	ctx.JSON(apiResource(true, hd, "操作成功"))
 }

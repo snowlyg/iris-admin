@@ -24,10 +24,6 @@ var (
 )
 
 func TestMain(m *testing.M) {
-
-	//设置测试环境
-	system.RedisSet("env_t", system.Config.Get("app.env").(string), 0)
-
 	//删除测试数据表，保持测试环境
 	ttn := system.RedisGet("test_table_name")
 	App = NewApp()
@@ -88,8 +84,7 @@ func SetTestTableName(tn string) {
 *创建系统管理员
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
-func CreaterSystemAdmin() *models.AdminUserTranform {
-
+func CreaterSystemAdmin() *models.Users {
 	aul := new(models.AdminUserLogin)
 	aul.Username = system.Config.Get("test.LoginUserName").(string)
 	aul.Password = system.Config.Get("test.LoginPwd").(string)

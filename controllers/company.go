@@ -24,5 +24,6 @@ func GetAllCompanies(ctx iris.Context) {
 	kw := ctx.FormValue("kw")
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(models.GetAllCompanies(kw, cp, mp))
+	companies := models.GetAllCompanies(kw, cp, mp)
+	ctx.JSON(apiResource(true, companies, "操作成功"))
 }

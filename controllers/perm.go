@@ -22,7 +22,8 @@ func GetAllPerms(ctx iris.Context) {
 	cp := system.Tools.ParseInt(ctx.FormValue("cp"), 1)
 	mp := system.Tools.ParseInt(ctx.FormValue("mp"), 20)
 	kw := ctx.FormValue("kw")
+	perms := models.GetAllPerms(kw, cp, mp)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(models.GetAllPerms(kw, cp, mp))
+	ctx.JSON(apiResource(true, perms, "操作成功"))
 }

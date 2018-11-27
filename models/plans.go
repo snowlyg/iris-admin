@@ -23,18 +23,11 @@ func init() {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func GetAllPlans(kw string, cp int, mp int) (aj ApiJson) {
-	orders := make([]Plans, 0)
+func GetAllPlans(kw string, cp int, mp int) (plans []*Plans) {
 	if len(kw) > 0 {
-		system.DB.Model(Plans{}).Where("is_parent=?", 0).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&orders)
+		system.DB.Model(Plans{}).Where("is_parent=?", 0).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&plans)
 	}
-	system.DB.Model(Plans{}).Where("is_parent=?", 0).Offset(cp - 1).Limit(mp).Find(&orders)
-
-	auts := TransFormPlans(orders)
-
-	aj.Status = true
-	aj.Data = auts
-	aj.Msg = "操作成功"
+	system.DB.Model(Plans{}).Where("is_parent=?", 0).Offset(cp - 1).Limit(mp).Find(&plans)
 
 	return
 }
@@ -46,18 +39,11 @@ func GetAllPlans(kw string, cp int, mp int) (aj ApiJson) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func GetAllParentPlans(kw string, cp int, mp int) (aj ApiJson) {
-	orders := make([]Plans, 0)
+func GetAllParentPlans(kw string, cp int, mp int) (plans []*Plans) {
 	if len(kw) > 0 {
-		system.DB.Model(Plans{}).Where("is_parent=?", 1).Where("name=?", kw).Offset(cp - 1).Limit(mp).First(&orders)
+		system.DB.Model(Plans{}).Where("is_parent=?", 1).Where("name=?", kw).Offset(cp - 1).Limit(mp).First(&plans)
 	}
-	system.DB.Model(Plans{}).Where("is_parent=?", 1).Offset(cp - 1).Limit(mp).Find(&orders)
-
-	auts := TransFormPlans(orders)
-
-	aj.Status = true
-	aj.Data = auts
-	aj.Msg = "操作成功"
+	system.DB.Model(Plans{}).Where("is_parent=?", 1).Offset(cp - 1).Limit(mp).Find(&plans)
 
 	return
 }

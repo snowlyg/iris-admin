@@ -8,8 +8,6 @@ import (
 	"net/http"
 )
 
-var apiJson models.ApiJson
-
 /**
 * @api {post} /admin/login 用户登陆
 * @apiName 用户登陆
@@ -29,24 +27,18 @@ func UserAdminLogin(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		apiJson.Msg = "请求参数错误"
-		ctx.JSON(apiJson)
+		ctx.JSON(apiResource(false, nil, "请求参数错误"))
 	} else {
 		if UserNameErr := validate.Var(aul.Username, "required,min=4,max=20"); UserNameErr != nil {
 			ctx.StatusCode(iris.StatusOK)
-			apiJson.Msg = "用户名格式错误"
-			ctx.JSON(apiJson)
+			ctx.JSON(apiResource(false, nil, "用户名格式错误"))
 		} else if PwdErr := validate.Var(aul.Password, "required,min=5,max=20"); PwdErr != nil {
 			ctx.StatusCode(iris.StatusOK)
-			apiJson.Msg = "密码格式错误"
-			ctx.JSON(apiJson)
+			ctx.JSON(apiResource(false, nil, "密码格式错误"))
 		} else {
 			ctx.StatusCode(iris.StatusOK)
 			response, status, msg := logic.UserAdminCheckLogin(aul.Username, aul.Password)
-			apiJson.Msg = msg
-			apiJson.Status = status
-			apiJson.Data = response
-			ctx.JSON(apiJson)
+			ctx.JSON(apiResource(status, response, msg))
 		}
 	}
 }
@@ -64,13 +56,12 @@ func UserAdminLogin(ctx iris.Context) {
 * @apiPermission null
  */
 func UserAdminLogout(ctx iris.Context) {
-	json := models.ApiJson{}
 	aui := ctx.Values().GetString("auth_user_id")
 
 	uid := uint(system.Tools.ParseInt(aui, 0))
 
-	json = logic.UserAdminLogout(uid)
+	logic.UserAdminLogout(uid)
 
 	ctx.StatusCode(http.StatusOK)
-	ctx.JSON(json)
+	ctx.JSON(apiResource(true, nil, "退出登陆"))
 }

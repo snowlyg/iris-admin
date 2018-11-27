@@ -25,18 +25,11 @@ func init() {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func GetAllRoles(kw string, cp int, mp int) (aj ApiJson) {
-	roles := make([]Roles, 0)
+func GetAllRoles(kw string, cp int, mp int) (roles []*Roles) {
 	if len(kw) > 0 {
 		system.DB.Model(Roles{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&roles)
 	}
 	system.DB.Model(Roles{}).Offset(cp - 1).Limit(mp).Find(&roles)
-
-	auts := TransFormRoles(roles)
-
-	aj.Status = true
-	aj.Data = auts
-	aj.Msg = "操作成功"
 
 	return
 }

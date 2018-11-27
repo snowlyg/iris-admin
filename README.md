@@ -1,4 +1,4 @@
-# iris golang for youqikangapi
+# iris golang for api
 
 #### 项目介绍
 - 采用 iris 框架目后台 api （来自公司内部项目重构）

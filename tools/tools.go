@@ -3,7 +3,6 @@ package tools
 import (
 	"encoding/base64"
 	"encoding/json"
-	"log"
 	"math/rand"
 	"reflect"
 	"strconv"
@@ -162,14 +161,4 @@ func (t *Tools) Base64Decode(str string) string {
  */
 func (t *Tools) TimeFormat(time *time.Time) string {
 	return time.Format("2006-01-02 15:04:05")
-}
-
-/**
- * 控制台打印测试
- * @method log
- * @param  {[type]} s string        [description]
- * @return {[type]}   [description]
- */
-func (t *Tools) Debug(s ...interface{}) {
-	log.Println(s)
 }

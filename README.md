@@ -3,9 +3,11 @@
 #### 项目介绍
 - 采用 iris 框架目后台 api （来自公司内部项目重构）
 - 采用了 gorm 数据库模块 和 jwt 的单点登陆认证方式
-- 自己封装下一下 http 测试功能 （考虑重构成插件）
-- 测试默认使用了 sqlite 数据库
-- 使用 godep 依赖管理包（对比了其他包，还是选择用这个）
+- 测试默认使用了 sqlite3 数据库
+- 最开始想用 mvc 将 controller router model 分离开，还是受到 laravel 影响比较大。
+  不过在测试的时候不好切换数据库，使用了配置文件去标记运行环境。还是每次都要手动切换，十分麻烦。
+  如果不小心忘记改了，还会清空正常数据库的数据。
+  最后把 router model controller 都放在了 main 包下，用 c_ m_ l_ 的前缀方式去区分。 
 
 ---
 
@@ -16,98 +18,37 @@
 git clone https://git.dev.tencent.com/Dreamfish/IrisYouQiKangApi.git
 ```
 
->加载 godep 依赖管理包（已经安装可以跳过）
+>加载依赖管理包
 ```
-go get -u -v github.com/tools/godep
+ 本来是用 godep 管理的，使用后发现还是是有问题。暂时不使用依赖管理包，依赖要自行下载。
 ```
 
-
->加载 go 依赖库 
-```
-godep restore
+>项目配置文件 /config/config.toml
 
 ```
 
-
->项目配置文件 config.toml
-
-```
-[hotreload]
-  suffixes = [".go"]
-  ignore = []
-
-[app]
-
-  #app 环境 test local
-  env = "testing"
-  #app 名称
-  name = "IrisYouQiKang"
-  #app url
-  url  = "http://localhost"
-  #app 文档地址
-  doc = "./apidoc"
-  addr = ":80"
-
-  [app.logger]
-    level = "INFO"
-    name = "application"
-
-#数据库驱动
-[database]
-    dirver = "mysql"
-
-[mysql]
-  connect = "root:you_password@/you_database_name?charset=utf8&parseTime=True&loc=Local"
-
-[mongodb]
-  connect = "mongodb://root:123456@127.0.0.1:27017/admin"
-
-[sqlite]
-  connect = "/tmp/gorm.db"
-
-#reids
-[redis]
-  Addr = "127.0.0.1:6379"
-  Password = ""
-  DB = 0
-
-[neo4j]
-    connect = "http://10.10.43.111:7474/db/data"
-
-[test]
-    #测试登陆用户名
-    LoginUserName = "you_test_user_name"
-    #测试用户名
-    LoginName = "you_test_name"
-    #测试用户密码
-    LoginPwd = "you_test_user_password"
-    #测试数据库驱动
-    DataBaseDriver = "sqlite3"
-    #测试数据库
-    DataBaseConnect = "/tmp/gorm.db"
-
+cp config.toml.example config.toml
 ```
 
 ---
 ##### 单元测试 
 >单元测试我做了简单的封装，可以使用下面的方法写 get 请求的测试
->
+
 >将测试文件放在项目目录下，执行  `godep save` 命令。会出现没有使用的依赖库，却报错依赖库不存在的问题。
+
 ```
 godep: Package (github.com/sergi/go-diff/diffmatchpatch) not found
 ```
->
+
 >将单元测试的代码 移动到 `tests` 文件夹下， 可以解决执行  `godep save` 命令出现没有使用的依赖库没有加载的报错。
 
-
 ```
-//设置测试数据表
+    //设置测试数据表
+    //测试前后会自动创建和删除表
 	SetTestTableName("users")
 
-	//创建系统管理员，测试 users 表需要手动创建。
-	//其他模型测试不需要手动创建
-	aul := CreaterSystemAdmin()
-	users := []*models.AdminUserTranform{aul}
+	
+	users := []*Users{testAdminUser}
 
 	//发起 http 请求
 	//Url        string      //测试路由
@@ -125,12 +66,35 @@ godep: Package (github.com/sergi/go-diff/diffmatchpatch) not found
 ```
 //输入错误的登陆密码
 func TestUserLoginWithErrorPwd(t *testing.T) {
+
+    //设置测试数据表
+    //测试前后会自动创建和删除表
+	SetTestTableName("users")
+
 	oj := map[string]interface{}{
 		"username": system.Config.Get("test.LoginUserName").(string),
 		"password": "admin",
 	}
 	bc := BaseCase{"/v1/admin/login", oj, iris.StatusOK, false, "用户名或密码错误", nil}
 	bc.post(t)
+}
+```
+
+> login 请求
+
+```
+//输入错误的登陆密码
+func TestUserLoginWithErrorPwd(t *testing.T) {
+    //设置测试数据表
+    //测试前后会自动创建和删除表
+	SetTestTableName("users")
+
+	oj := map[string]interface{}{
+		"username": system.Config.Get("test.LoginUserName").(string),
+		"password": "admin",
+	}
+	bc := BaseCase{"/v1/admin/login", oj, iris.StatusOK, false, "用户名或密码错误", nil}
+	bc.login(t)
 }
 ```
 

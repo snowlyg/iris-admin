@@ -17,11 +17,12 @@ import (
 * @apiPermission null
  */
 func CGetAllParentPlans(ctx iris.Context) {
+	offset := t.ParseInt(ctx.FormValue("offset"), 1)
+	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	name := ctx.FormValue("name")
+	orderBy := ctx.FormValue("orderBy")
 
-	cp := t.ParseInt(ctx.FormValue("cp"), 1)
-	mp := t.ParseInt(ctx.FormValue("mp"), 20)
-	kw := ctx.FormValue("kw")
-	plans := MGetAllParentPlans(kw, cp, mp)
+	plans := MGetAllParentPlans(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(apiResource(true, plans, "操作成功"))
@@ -40,11 +41,11 @@ func CGetAllParentPlans(ctx iris.Context) {
 * @apiPermission null
  */
 func CGetAllPlans(ctx iris.Context) {
-
-	cp := t.ParseInt(ctx.FormValue("cp"), 1)
-	mp := t.ParseInt(ctx.FormValue("mp"), 20)
-	kw := ctx.FormValue("kw")
+	offset := t.ParseInt(ctx.FormValue("offset"), 1)
+	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	name := ctx.FormValue("name")
+	orderBy := ctx.FormValue("orderBy")
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(MGetAllPlans(kw, cp, mp))
+	ctx.JSON(MGetAllPlans(name, orderBy, offset, limit))
 }

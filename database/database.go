@@ -15,12 +15,9 @@ import (
 func New(conf *toml.Tree, appEnv string) *gorm.DB {
 
 	if appEnv == "testing" {
+
 		configTree := conf.Get("test").(*toml.Tree)
 		DB, err := gorm.Open(configTree.Get("DataBaseDriver").(string), configTree.Get("DataBaseConnect").(string))
-		if err != nil {
-			panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
-		}
-
 		if err != nil {
 			panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
 		}
@@ -28,6 +25,7 @@ func New(conf *toml.Tree, appEnv string) *gorm.DB {
 		return DB
 
 	} else {
+
 		driver := conf.Get("database.dirver").(string)
 		configTree := conf.Get(driver).(*toml.Tree)
 		DB, err := gorm.Open(driver, configTree.Get("connect").(string))
@@ -37,6 +35,5 @@ func New(conf *toml.Tree, appEnv string) *gorm.DB {
 		}
 
 		return DB
-
 	}
 }

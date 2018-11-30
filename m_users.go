@@ -1,9 +1,10 @@
 package main
 
 import (
+	"time"
+
 	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
 type Users struct {
@@ -95,40 +96,45 @@ func (user *Users) DeleteUserById() {
 
 /**
  * 获取所有的账号
- * @method GetAllUsers
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
+ * @method MGetAllUsers
+ * @param  {[type]} name string [description]
+ * @param  {[type]} username string [description]
+ * @param  {[type]} orderBy string [description]
+ * @param  {[type]} offset int    [description]
+ * @param  {[type]} limit int    [description]
  */
-func MGetAllUsers(kw string, cp int, mp int) (users []*Users) {
-	if len(kw) > 0 {
-		db.Model(Users{}).Where(" is_client = ?", 0).Where("name=?", kw).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
-	}
-	db.Model(Users{}).Where(" is_client = ?", 0).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
+func MGetAllUsers(name, username, orderBy string, offset, limit int) (users []*Users) {
+	searchKeys := make(map[string]interface{})
+	searchKeys["name"] = name
+	searchKeys["username"] = username
+	searchKeys["is_client"] = false
 
+	MGetAll(searchKeys, orderBy, "Role", offset, limit).Find(&users)
 	return
 }
 
 /**
  * 获取所有的客户联系人
- * @method GetAllClients
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
+ * @method MGetAllClients
+ * @param  {[type]} name string [description]
+ * @param  {[type]} username string [description]
+ * @param  {[type]} orderBy string [description]
+ * @param  {[type]} offset int    [description]
+ * @param  {[type]} limit int    [description]
  */
-func MGetAllClients(kw string, cp int, mp int) (users []*Users) {
+func MGetAllClients(name, username, orderBy string, offset, limit int) (users []*Users) {
+	searchKeys := make(map[string]interface{})
+	searchKeys["name"] = name
+	searchKeys["username"] = username
+	searchKeys["is_client"] = false
 
-	if len(kw) > 0 {
-		db.Model(Users{}).Where(" is_client = ?", 1).Where("name=?", kw).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
-	}
-	db.Model(Users{}).Where(" is_client = ?", 1).Offset(cp - 1).Limit(mp).Preload("Role").Find(&users)
-
+	MGetAll(searchKeys, orderBy, "Role", offset, limit).Find(&users)
 	return
 }
 
 /**
- * 获取所有的客户联系人
- * @method GetAllClients
+ * 创建
+ * @method MCreateUser
  * @param  {[type]} kw string [description]
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
@@ -137,12 +143,12 @@ func MCreateUser(aul *AdminUserLogin) (user *Users) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
-	user = &Users{
-		Username: aul.Username,
-		Password: string(hash),
-		Name:     aul.Name,
-		Phone:    aul.Phone,
-	}
+	user = new(Users)
+	user.Username = aul.Username
+	user.Password = string(hash)
+	user.Name = aul.Name
+	user.Phone = aul.Phone
+	user.RoleId = aul.RoleId
 
 	db.Create(user)
 
@@ -150,8 +156,31 @@ func MCreateUser(aul *AdminUserLogin) (user *Users) {
 }
 
 /**
+ * 获取所有的客户联系人
+ * @method MCreateUser
+ * @param  {[type]} kw string [description]
+ * @param  {[type]} cp int    [description]
+ * @param  {[type]} mp int    [description]
+ */
+func MUpdateUser(aul *AdminUserLogin) (user *Users) {
+	salt, _ := bcrypt.Salt(10)
+	hash, _ := bcrypt.Hash(aul.Password, salt)
+
+	user = new(Users)
+	user.Username = aul.Username
+	user.Password = string(hash)
+	user.Name = aul.Name
+	user.Phone = aul.Phone
+	user.RoleId = aul.RoleId
+
+	db.Update(user)
+
+	return
+}
+
+/**
  * 获取所有的用户联系人数量
- * @method GetClientCounts
+ * @method MGetClientCounts
  * @return  {[type]} count int    [description]
  */
 func MGetClientCounts() (count int) {

@@ -17,11 +17,11 @@ import (
 * @apiPermission null
  */
 func CGetAllOrders(ctx iris.Context) {
-
-	cp := t.ParseInt(ctx.FormValue("cp"), 1)
-	mp := t.ParseInt(ctx.FormValue("mp"), 20)
-	kw := ctx.FormValue("kw")
-	orders := MGetAllOrders(kw, cp, mp)
+	offset := t.ParseInt(ctx.FormValue("offset"), 1)
+	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	name := ctx.FormValue("name")
+	orderBy := ctx.FormValue("orderBy")
+	orders := MGetAllOrders(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(apiResource(true, orders, "操作成功"))

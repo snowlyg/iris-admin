@@ -68,45 +68,21 @@ func CCreateUser(ctx iris.Context) {
 		ctx.JSON(errorData(err))
 	} else {
 		err := validate.Struct(aul)
-
 		if err != nil {
-			if _, ok := err.(*validator.InvalidValidationError); ok {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				ctx.WriteString(err.Error())
-				return
-			}
-
 			ctx.StatusCode(iris.StatusBadRequest)
 			for _, err := range err.(validator.ValidationErrors) {
 				fmt.Println()
 				fmt.Println(err.Namespace())
 				fmt.Println(err.Field())
-				fmt.Println(err.StructNamespace()) // Can differ when a custom TagNameFunc is registered or.
-				fmt.Println(err.StructField())     // By passing alt name to ReportError like below.
-				fmt.Println(err.Tag())
-				fmt.Println(err.ActualTag())
-				fmt.Println(err.Kind())
 				fmt.Println(err.Type())
-				fmt.Println(err.Value())
 				fmt.Println(err.Param())
 				fmt.Println()
 			}
 		} else {
+			u := MCreateUser(aul)
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(MCreateUser(aul))
+			ctx.JSON(apiResource(true, u, "操作成功"))
 		}
-
-		//err_username := validate.Var(aul.Username, "required,min=4,max=20")
-		//err_password := validate.Var(aul.Password, "required,min=5,max=20")
-		//err_name := validate.Var(aul.Name, "required,min=5,max=20")
-		//err_phone := validate.Var(aul.Phone, "required,min=5,max=20")
-		//err_role_id := validate.Var(aul.RoleId, "required,min=5,max=20")
-
-		//if err_username != nil || err_password != nil || err_name != nil || err_phone != nil || err_role_id != nil {
-		//	ctx.StatusCode(iris.StatusUnauthorized)
-		//	ctx.JSON(errorData(err1, err2))
-		//}
-
 	}
 }
 
@@ -131,14 +107,21 @@ func CUpdateUser(ctx iris.Context) {
 		ctx.StatusCode(iris.StatusUnauthorized)
 		ctx.JSON(errorData(err))
 	} else {
-		err = validate.Var(aul.Username, "required,min=4,max=20")
-		err = validate.Var(aul.Password, "required,min=5,max=20")
+		err := validate.Struct(aul)
 		if err != nil {
-			ctx.StatusCode(iris.StatusUnauthorized)
-			ctx.JSON(err.Error())
+			ctx.StatusCode(iris.StatusBadRequest)
+			for _, err := range err.(validator.ValidationErrors) {
+				fmt.Println()
+				fmt.Println(err.Namespace())
+				fmt.Println(err.Field())
+				fmt.Println(err.Type())
+				fmt.Println(err.Param())
+				fmt.Println()
+			}
 		} else {
+			u := MUpdateUser(aul)
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(true)
+			ctx.JSON(apiResource(true, u, "操作成功"))
 		}
 	}
 }
@@ -261,10 +244,12 @@ func CDeleteUser(ctx iris.Context) {
 * @apiPermission null
  */
 func CGetAllUsers(ctx iris.Context) {
-	cp := t.ParseInt(ctx.FormValue("cp"), 1)
-	mp := t.ParseInt(ctx.FormValue("mp"), 20)
-	kw := ctx.FormValue("kw")
-	users := MGetAllUsers(kw, cp, mp)
+	offset := t.ParseInt(ctx.FormValue("offset"), 1)
+	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	name := ctx.FormValue("name")
+	username := ctx.FormValue("username")
+	orderBy := ctx.FormValue("orderBy")
+	users := MGetAllUsers(name, username, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(apiResource(true, users, "操作成功"))
@@ -283,10 +268,12 @@ func CGetAllUsers(ctx iris.Context) {
 * @apiPermission null
  */
 func CGetAllClients(ctx iris.Context) {
-	cp := t.ParseInt(ctx.FormValue("cp"), 1)
-	mp := t.ParseInt(ctx.FormValue("mp"), 20)
-	kw := ctx.FormValue("kw")
-	users := MGetAllClients(kw, cp, mp)
+	offset := t.ParseInt(ctx.FormValue("offset"), 1)
+	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	name := ctx.FormValue("name")
+	username := ctx.FormValue("username")
+	orderBy := ctx.FormValue("orderBy")
+	users := MGetAllClients(name, username, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(apiResource(true, users, "操作成功"))

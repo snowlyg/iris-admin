@@ -3,9 +3,6 @@
   ignore = []
 
 [app]
-
-  #app 环境 test local
-  env = "testing"
   #app 名称
   name = "IrisYouQiKang"
   #app url
@@ -13,6 +10,8 @@
   #app 文档地址
   doc = "./apidoc"
   addr = ":80"
+  #单元测试调试信息
+  debug = false
 
   [app.logger]
     level = "INFO"

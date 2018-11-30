@@ -1,41 +1,35 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"os"
+	"testing"
+
 	"IrisYouQiKangApi/config"
 	"IrisYouQiKangApi/database"
 	Redis "IrisYouQiKangApi/redis"
-	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/iris-contrib/httpexpect"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/httptest"
-	"testing"
 )
 
-type BaseCase struct {
-	Url        string      //测试路由
-	Object     interface{} //发送的json 对象
-	StatusCode int         //返回的 http 状态码
-	Status     bool        //返回的状态
-	Msg        string      //返回提示信息
-	Data       interface{} //返回数据
-}
-
 var (
-	app           *iris.Application //iris.Applications
-	rd            *redis.Client     //iris.Applications
+	app           *iris.Application // iris.Applications
+	rd            *redis.Client     // iris.Applications
 	testAdminUser *Users
 )
 
 func TestMain(m *testing.M) {
-	//初始化配置
+	// 初始化配置
 	conf = config.New()
-	//初始化redis
+	// 初始化redis
 	rd = Redis.New()
-	//初始化测试数据库
+	// 初始化测试数据库
 	db = database.New(conf, "testing")
 
-	//获取测试的数据表
+	// 获取测试的数据表
 	value, err := rd.Get("test_table_name").Result()
 	if err == redis.Nil {
 		fmt.Println("env_t does not exist")
@@ -43,58 +37,101 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
+	// 初始化app
 	app = NewApp()
-
+	// 创建用户
 	testAdminUser = CreaterSystemAdmin()
 
-	m.Run()
+	flag.Parse()
+	exitCode := m.Run()
 
-	//删除测试数据表，保持测试环境
+	// 删除测试数据表，保持测试环境
 	db.DropTable(value)
+
+	os.Exit(exitCode)
 }
 
-//单元测试 post 方法
-func (bc *BaseCase) login(t *testing.T) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: false})
-	if bc.Data != nil {
-		e.POST(bc.Url).WithJSON(bc.Object).
-			Expect().Status(bc.StatusCode).JSON().Object().Values().Contains(bc.Status, bc.Msg, bc.Data)
+// 单元测试 post 方法
+func login(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
+	e = httptest.New(t, app, httptest.Configuration{Debug: conf.Get("app.debug").(bool)})
+	if Data != nil {
+		e.POST(url).WithJSON(Object).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg, Data)
 	} else {
-		e.POST(bc.Url).WithJSON(bc.Object).
-			Expect().Status(bc.StatusCode).JSON().Object().Values().Contains(bc.Status, bc.Msg)
+		e.POST(url).WithJSON(Object).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg)
 	}
 
 	return
 }
 
-//单元测试 post 方法
-func (bc *BaseCase) post(t *testing.T) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+// 单元测试 post 方法
+func create(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
+	e = httptest.New(t, app, httptest.Configuration{Debug: conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
 
-	fmt.Println(at)
-	if bc.Data != nil {
-		e.POST(bc.Url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(bc.Object).
-			Expect().Status(bc.StatusCode).JSON().Object().Values().Contains(bc.Status, bc.Msg, bc.Data)
-	} else {
-		e.POST(bc.Url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(bc.Object).
-			Expect().Status(bc.StatusCode).JSON().Object().Values().Contains(bc.Status, bc.Msg)
+	ob := e.POST(url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(Object).
+		Expect().Status(StatusCode).JSON().Object()
+
+	ob.Value("status").Equal(Status)
+	ob.Value("msg").Equal(Msg)
+
+	for k, v := range Data {
+		ob.Value("data").Object().Value(k).Equal(v)
 	}
 
 	return
 }
 
-//单元测试 get 方法
-func (bc *BaseCase) get(t *testing.T) (e *httpexpect.Expect) {
-	e = httptest.New(t, app)
+// 单元测试 post 方法
+func update(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
+	e = httptest.New(t, app, httptest.Configuration{Debug: conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
-	if bc.Data != nil {
-		e.GET(bc.Url).WithHeader("Authorization", "Bearer "+at.Token).
-			Expect().Status(bc.StatusCode).JSON().Object().Values().Contains(bc.Status, bc.Msg, bc.Data)
+
+	ob := e.POST(url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(Object).
+		Expect().Status(StatusCode).JSON().Object()
+
+	ob.Value("status").Equal(Status)
+	ob.Value("msg").Equal(Msg)
+
+	for k, v := range Data {
+		ob.Value("data").Object().Value(k).Equal(v)
+	}
+
+	return
+}
+
+// 单元测试 get 方法
+func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
+	e = httptest.New(t, app, httptest.Configuration{Debug: conf.Get("app.debug").(bool)})
+	at := GetLoginToken()
+	if Data != nil {
+		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg, Data)
 	} else {
-		e.GET(bc.Url).WithHeader("Authorization", "Bearer "+at.Token).
-			Expect().Status(bc.StatusCode).JSON().Object().Values().
-			Contains(bc.Status, bc.Msg)
+		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg)
+	}
+
+	return
+}
+
+// 单元测试 get 方法
+func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
+	e = httptest.New(t, app, httptest.Configuration{Debug: conf.Get("app.debug").(bool)})
+	at := GetLoginToken()
+	if Data != nil {
+		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg, Data)
+	} else {
+		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg)
 	}
 
 	return
@@ -136,7 +173,7 @@ func GetLoginToken() Token {
 		conf.Get("test.LoginPwd").(string),
 	)
 
-	//打印错误信息
+	// 打印错误信息
 	if !status {
 		fmt.Println(msg)
 	}

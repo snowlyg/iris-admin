@@ -13,32 +13,34 @@ type Plans struct {
 
 /**
  * 获取所有的诊断方案
- * @method GetAllPlans
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
+ * @method MGetAllPlans
+ * @param  {[type]} name string [description]
+ * @param  {[type]} orderBy string [description]
+ * @param  {[type]} offset int    [description]
+ * @param  {[type]} limit int    [description]
  */
-func MGetAllPlans(kw string, cp int, mp int) (plans []*Plans) {
-	if len(kw) > 0 {
-		db.Model(Plans{}).Where("is_parent=?", 0).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&plans)
-	}
-	db.Model(Plans{}).Where("is_parent=?", 0).Offset(cp - 1).Limit(mp).Find(&plans)
+func MGetAllPlans(name, orderBy string, offset, limit int) (plans []*Plans) {
+	searchKeys := make(map[string]interface{})
+	searchKeys["name"] = name
+	searchKeys["is_parent"] = false
 
+	MGetAll(searchKeys, orderBy, "", offset, limit).Find(&plans)
 	return
 }
 
 /**
  * 获取所有的诊断方案
- * @method GetAllPlans
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
+ * @method MGetAllParentPlans
+ * @param  {[type]} name string [description]
+ * @param  {[type]} orderBy string [description]
+ * @param  {[type]} offset int    [description]
+ * @param  {[type]} limit int    [description]
  */
-func MGetAllParentPlans(kw string, cp int, mp int) (plans []*Plans) {
-	if len(kw) > 0 {
-		db.Model(Plans{}).Where("is_parent=?", 1).Where("name=?", kw).Offset(cp - 1).Limit(mp).First(&plans)
-	}
-	db.Model(Plans{}).Where("is_parent=?", 1).Offset(cp - 1).Limit(mp).Find(&plans)
+func MGetAllParentPlans(name, orderBy string, offset, limit int) (plans []*Plans) {
+	searchKeys := make(map[string]interface{})
+	searchKeys["name"] = name
+	searchKeys["is_parent"] = true
 
+	MGetAll(searchKeys, orderBy, "", offset, limit).Find(&plans)
 	return
 }

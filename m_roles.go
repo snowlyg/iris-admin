@@ -15,16 +15,17 @@ type Roles struct {
 
 /**
  * 获取所有的账号
- * @method GetAllRoles
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
+ * @method MGetAllRoles
+ * @param  {[type]} name string [description]
+ * @param  {[type]} orderBy string [description]
+ * @param  {[type]} offset int    [description]
+ * @param  {[type]} limit int    [description]
  */
-func MGetAllRoles(kw string, cp int, mp int) (roles []*Roles) {
-	if len(kw) > 0 {
-		db.Model(Roles{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&roles)
-	}
-	db.Model(Roles{}).Offset(cp - 1).Limit(mp).Find(&roles)
+func MGetAllRoles(name, orderBy string, offset, limit int) (roles []*Roles) {
+	searchKeys := make(map[string]interface{})
+	searchKeys["name"] = name
+	searchKeys["is_client"] = false
 
+	MGetAll(searchKeys, orderBy, "", offset, limit).Find(&roles)
 	return
 }

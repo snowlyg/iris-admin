@@ -17,11 +17,12 @@ import (
 * @apiPermission null
  */
 func CGetAllPerms(ctx iris.Context) {
+	offset := t.ParseInt(ctx.FormValue("offset"), 1)
+	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	name := ctx.FormValue("name")
+	orderBy := ctx.FormValue("orderBy")
 
-	cp := t.ParseInt(ctx.FormValue("cp"), 1)
-	mp := t.ParseInt(ctx.FormValue("mp"), 20)
-	kw := ctx.FormValue("kw")
-	perms := MGetAllPerms(kw, cp, mp)
+	perms := MGetAllPerms(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(apiResource(true, perms, "操作成功"))

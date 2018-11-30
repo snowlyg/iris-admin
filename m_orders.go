@@ -17,28 +17,25 @@ type Orders struct {
 
 /**
  * 获取所有的订单
- * @method GetAllOrders
+ * @method MGetAllOrders
  * @param  {[type]} kw string [description]
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func MGetAllOrders(kw string, cp int, mp int) (orders []*Orders) {
+func MGetAllOrders(name, orderBy string, offset, limit int) (orders []*Orders) {
+	searchKeys := make(map[string]interface{})
+	searchKeys["name"] = name
 
-	if len(kw) > 0 {
-		db.Model(Orders{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&orders)
-	}
-	db.Model(Orders{}).Offset(cp - 1).Limit(mp).Find(&orders)
-
+	MGetAll(searchKeys, orderBy, "", offset, limit).Find(&orders)
 	return
 }
 
 /**
  * 获取所有的订单数量
- * @method GetOrderCounts
+ * @method MGetOrderCounts
  * @return  {[type]} counts int    [description]
  */
 func MGetOrderCounts() (counts int) {
 	db.Model(&Orders{}).Count(&counts)
-
 	return
 }

@@ -17,12 +17,12 @@ import (
 * @apiPermission null
  */
 func CGetAllCompanies(ctx iris.Context) {
-
-	cp := t.ParseInt(ctx.FormValue("cp"), 1)
-	mp := t.ParseInt(ctx.FormValue("mp"), 20)
-	kw := ctx.FormValue("kw")
+	offset := t.ParseInt(ctx.FormValue("offset"), 1)
+	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	name := ctx.FormValue("name")
+	orderBy := ctx.FormValue("orderBy")
 
 	ctx.StatusCode(iris.StatusOK)
-	companies := MGetAllCompanies(kw, cp, mp)
+	companies := MGetAllCompanies(name, orderBy, offset, limit)
 	ctx.JSON(apiResource(true, companies, "操作成功"))
 }

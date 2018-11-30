@@ -9,6 +9,7 @@ import (
 	"github.com/kataras/iris/core/router"
 	"github.com/kataras/iris/middleware/logger"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -68,10 +69,12 @@ func NewApp() (api *iris.Application) {
 		AllowCredentials: true,
 	})
 
+	appName := conf.Get("app.name").(string)
+	appDoc := conf.Get("app.doc").(string)
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
-		DocTitle: conf.Get("app.name").(string),
-		DocPath:  conf.Get("app.doc").(string) + "/index.html",
+		DocTitle: appName,
+		DocPath:  os.Getenv("GOPATH") + "/src/" + appName + appDoc + "/index.html", //设置绝对路径
 		BaseUrls: map[string]string{
 			"Production": conf.Get("app.url").(string),
 			"Staging":    "",

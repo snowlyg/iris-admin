@@ -14,17 +14,16 @@ type Permissions struct {
 
 /**
  * 获取所有的账号
- * @method GetAllPerms
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
+ * @method MGetAllPerms
+ * @param  {[type]} name string [description]
+ * @param  {[type]} orderBy string [description]
+ * @param  {[type]} offset int    [description]
+ * @param  {[type]} limit int    [description]
  */
-func MGetAllPerms(kw string, cp int, mp int) (perms []*Permissions) {
+func MGetAllPerms(name, orderBy string, offset, limit int) (perms []*Permissions) {
+	searchKeys := make(map[string]interface{})
+	searchKeys["name"] = name
 
-	if len(kw) > 0 {
-		db.Model(Permissions{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&perms)
-	}
-	db.Model(Permissions{}).Offset(cp - 1).Limit(mp).Find(&perms)
-
+	MGetAll(searchKeys, orderBy, "", offset, limit).Find(&perms)
 	return
 }

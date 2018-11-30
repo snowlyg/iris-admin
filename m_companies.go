@@ -19,12 +19,11 @@ type Companies struct {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func MGetAllCompanies(kw string, cp int, mp int) (companies []*Companies) {
-	if len(kw) > 0 {
-		db.Model(Companies{}).Where("name=?", kw).Offset(cp - 1).Limit(mp).Find(&companies)
-	}
-	db.Model(Companies{}).Offset(cp - 1).Limit(mp).Find(&companies)
+func MGetAllCompanies(name, orderBy string, offset, limit int) (companies []*Companies) {
+	searchKeys := make(map[string]interface{})
+	searchKeys["name"] = name
 
+	MGetAll(searchKeys, orderBy, "", offset, limit).Find(&companies)
 	return
 }
 
@@ -33,7 +32,7 @@ func MGetAllCompanies(kw string, cp int, mp int) (companies []*Companies) {
  * @method GetCompanyCounts
  * @return  {[type]} count int    [description]
  */
-func MGetCompanyCounts() (count int) {
-	db.Model(&Companies{}).Count(&count)
+func MGetCompanyCounts() (counts int) {
+	db.Model(&Companies{}).Count(&counts)
 	return
 }

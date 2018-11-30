@@ -44,8 +44,8 @@ func MGetOauthTokenByToken(token string) (ot *OauthToken) {
  * @method UpdateOauthTokenByUserId
  *@param  {[type]}       user  *OauthToken [description]
  */
-func MUpdateOauthTokenByUserId(user_id uint) (ot *OauthToken) {
-	db.Model(ot).Where("revoked = ?", false).Where("user_id = ?", user_id).Updates(map[string]interface{}{"revoked": true})
+func MUpdateOauthTokenByUserId(userId uint) (ot *OauthToken) {
+	db.Model(ot).Where("revoked = ?", false).Where("user_id = ?", userId).Updates(map[string]interface{}{"revoked": true})
 
 	return
 }

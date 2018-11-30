@@ -15,7 +15,7 @@
 
 >拉取项目 
 ```
-git clone https://git.dev.tencent.com/Dreamfish/IrisYouQiKangApi.git
+git clone git@github.com:569616226/IrisApiProject.git
 ```
 
 >加载依赖管理包

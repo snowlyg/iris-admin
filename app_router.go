@@ -1,7 +1,7 @@
 package main
 
 import (
-	"IrisYouQiKangApi/middleware"
+	"IrisApiProject/middleware"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/iris-contrib/middleware/cors"

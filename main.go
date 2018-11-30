@@ -1,8 +1,8 @@
 package main
 
 import (
-	"IrisYouQiKangApi/config"
-	"IrisYouQiKangApi/database"
+	"IrisApiProject/config"
+	"IrisApiProject/database"
 	"github.com/jinzhu/gorm"
 	"github.com/kataras/iris"
 	"github.com/pelletier/go-toml"

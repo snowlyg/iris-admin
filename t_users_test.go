@@ -83,3 +83,20 @@ func TestUserUpdate(t *testing.T) {
 
 	update(t, fmt.Sprintf("/v1/admin/users/%d/update", testAdminUser.ID), oj, iris.StatusOK, true, "操作成功", data)
 }
+
+// 创建用户
+func TestUserDelete(t *testing.T) {
+	// 设置测试数据表
+	// 测试前后会自动创建和删除表
+	SetTestTableName("users")
+
+	oj := map[string]interface{}{
+		"username": "update_user",
+		"password": "update_name",
+		"name":     "update_name",
+		"phone":    "13412334567",
+		"role_id":  2,
+	}
+
+	delete(t, fmt.Sprintf("/v1/admin/users/%d/delete", testAdminUser.ID), iris.StatusOK, true, "操作成功", nil)
+}

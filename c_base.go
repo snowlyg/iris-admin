@@ -1,7 +1,7 @@
 package main
 
 import (
-	"IrisYouQiKangApi/tools"
+	"IrisApiProject/tools"
 	"github.com/kataras/iris"
 )
 

@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"IrisYouQiKangApi/config"
-	"IrisYouQiKangApi/database"
-	Redis "IrisYouQiKangApi/redis"
+	"IrisApiProject/config"
+	"IrisApiProject/database"
+	Redis "IrisApiProject/redis"
 	"github.com/go-redis/redis"
 	"github.com/iris-contrib/httpexpect"
 	"github.com/kataras/iris"
@@ -126,6 +126,23 @@ func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, 
 	at := GetLoginToken()
 	if Data != nil {
 		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg, Data)
+	} else {
+		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg)
+	}
+
+	return
+}
+
+// 单元测试 get 方法
+func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
+	e = httptest.New(t, app, httptest.Configuration{Debug: conf.Get("app.debug").(bool)})
+	at := GetLoginToken()
+	if Data != nil {
+		e.DELETE(url).WithHeader("Authorization", "Bearer "+at.Token).
 			Expect().Status(StatusCode).
 			JSON().Object().Values().Contains(Status, Msg, Data)
 	} else {

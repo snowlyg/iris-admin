@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"IrisYouQiKangApi/config"
+	"IrisApiProject/config"
 	"github.com/go-redis/redis"
 	"github.com/pelletier/go-toml"
 )

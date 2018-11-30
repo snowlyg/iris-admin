@@ -7,7 +7,7 @@
 - 最开始想用 mvc 将 controller router model 分离开，还是受到 laravel 影响比较大。
   不过在测试的时候不好切换数据库，使用了配置文件去标记运行环境。还是每次都要手动切换，十分麻烦。
   如果不小心忘记改了，还会清空正常数据库的数据。
-  最后把 router model controller 都放在了 main 包下，用 c_ m_ l_ 的前缀方式去区分。 
+  最后把 router model controller 都放在了 main 包下，用 c_(controllers)  m_(models)  l_ (logics)  t_(tests) 的前缀方式去区分。 
 
 ---
 
@@ -46,7 +46,6 @@ go run main.go // go 命令
  
  go test -run TestUserCreate -v //单个测试
  
-
 ```
 
 
@@ -62,7 +61,7 @@ go run main.go // go 命令
 https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 
 
-为国内的 cdn
+国内的 cdn
 
 
 https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js

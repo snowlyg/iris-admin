@@ -30,74 +30,24 @@ git clone https://git.dev.tencent.com/Dreamfish/IrisYouQiKangApi.git
 cp config.toml.example config.toml
 ```
 
+>运行项目 
+
+```
+gowatch //安装了 gowatch 热加载工具可以直接运行
+
+go run main.go // go 命令
+```
 ---
 ##### 单元测试 
->单元测试我做了简单的封装，可以使用下面的方法写 get 请求的测试
-
->将测试文件放在项目目录下，执行  `godep save` 命令。会出现没有使用的依赖库，却报错依赖库不存在的问题。
+>http test
 
 ```
-godep: Package (github.com/sergi/go-diff/diffmatchpatch) not found
-```
-
->将单元测试的代码 移动到 `tests` 文件夹下， 可以解决执行  `godep save` 命令出现没有使用的依赖库没有加载的报错。
-
-```
-    //设置测试数据表
-    //测试前后会自动创建和删除表
-	SetTestTableName("users")
-
-	
-	users := []*Users{testAdminUser}
-
-	//发起 http 请求
-	//Url        string      //测试路由
-	//Object     interface{} //发送的json 对象
-	//StatusCode int         //返回的 http 状态码
-	//Status     bool        //返回的状态
-	//Msg        string      //返回提示信息
-	//Data       interface{} //返回数据
-	bc := BaseCase{"/v1/admin/users", nil, iris.StatusOK, true, "操作成功", users}
-	bc.get(t)
-```
-
-> post 请求
+ go test -v  //所有测试
+ 
+ go test -run TestUserCreate -v //单个测试
+ 
 
 ```
-//输入错误的登陆密码
-func TestUserLoginWithErrorPwd(t *testing.T) {
-
-    //设置测试数据表
-    //测试前后会自动创建和删除表
-	SetTestTableName("users")
-
-	oj := map[string]interface{}{
-		"username": system.Config.Get("test.LoginUserName").(string),
-		"password": "admin",
-	}
-	bc := BaseCase{"/v1/admin/login", oj, iris.StatusOK, false, "用户名或密码错误", nil}
-	bc.post(t)
-}
-```
-
-> login 请求
-
-```
-//输入错误的登陆密码
-func TestUserLoginWithErrorPwd(t *testing.T) {
-    //设置测试数据表
-    //测试前后会自动创建和删除表
-	SetTestTableName("users")
-
-	oj := map[string]interface{}{
-		"username": system.Config.Get("test.LoginUserName").(string),
-		"password": "admin",
-	}
-	bc := BaseCase{"/v1/admin/login", oj, iris.StatusOK, false, "用户名或密码错误", nil}
-	bc.login(t)
-}
-```
-
 
 
 ---

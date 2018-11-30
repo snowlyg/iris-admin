@@ -4,7 +4,7 @@
 
 [app]
   #app 名称
-  name = "IrisYouQiKang"
+  name = "you_project_name"
   #app url
   url  = "http://localhost"
   #app 文档地址

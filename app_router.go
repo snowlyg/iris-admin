@@ -9,7 +9,6 @@ import (
 	"github.com/kataras/iris/core/router"
 	"github.com/kataras/iris/middleware/logger"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -54,7 +53,7 @@ func NewApp() (api *iris.Application) {
 	api.OnErrorCode(iris.StatusNotFound, NotFound)
 	api.OnErrorCode(iris.StatusInternalServerError, InternalServerError)
 
-	db.AutoMigrate(new(Users), new(Settings))
+	db.AutoMigrate(new(Users), new(Settings), new(OauthToken), new(Orders), new(Companies), new(Roles))
 
 	iris.RegisterOnInterrupt(func() {
 		db.Close()
@@ -74,7 +73,7 @@ func NewApp() (api *iris.Application) {
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
 		DocTitle: appName,
-		DocPath:  os.Getenv("GOPATH") + "/src/" + appName + appDoc + "/index.html", //设置绝对路径
+		DocPath:  appDoc + "/index.html", //设置绝对路径
 		BaseUrls: map[string]string{
 			"Production": conf.Get("app.url").(string),
 			"Staging":    "",

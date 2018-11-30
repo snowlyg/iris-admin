@@ -15,7 +15,7 @@
 
 >拉取项目 
 ```
-git clone git@github.com:569616226/IrisApiProject.git
+git clone https://github.com/569616226/IrisApiProject.gits
 ```
 
 >加载依赖管理包

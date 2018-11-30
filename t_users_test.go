@@ -84,7 +84,7 @@ func TestUserUpdate(t *testing.T) {
 	update(t, fmt.Sprintf("/v1/admin/users/%d/update", testAdminUser.ID), oj, iris.StatusOK, true, "操作成功", data)
 }
 
-// 创建用户
+// 删除用户
 func TestUserDelete(t *testing.T) {
 	// 设置测试数据表
 	// 测试前后会自动创建和删除表

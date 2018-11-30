@@ -86,9 +86,8 @@ func (user *Users) SetAuditUserById() bool {
 }
 
 /**
- * 通过 id 设置负责人
- * @method SetAuditUserById
- * @param  {[type]}   user  *Users [description]
+ * 通过 id 删除用户
+ * @method DeleteUserById
  */
 func (user *Users) DeleteUserById() {
 	db.Delete(&user)

@@ -1,6 +1,6 @@
 package main
 
-type AdminUserLogin struct {
+type UserJson struct {
 	Username string `json:"username" validate:"required,gte=4,lte=50"`
 	Password string `json:"password" validate:"required"`
 	Name     string `json:"name" validate:"required,gte=4,lte=50"`

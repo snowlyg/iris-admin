@@ -141,15 +141,10 @@ func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, 
 func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
-	if Data != nil {
-		e.DELETE(url).WithHeader("Authorization", "Bearer "+at.Token).
-			Expect().Status(StatusCode).
-			JSON().Object().Values().Contains(Status, Msg, Data)
-	} else {
-		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
-			Expect().Status(StatusCode).
-			JSON().Object().Values().Contains(Status, Msg)
-	}
+
+	e.DELETE(url).WithHeader("Authorization", "Bearer "+at.Token).
+		Expect().Status(StatusCode).
+		JSON().Object().Values().Contains(Status, Msg)
 
 	return
 }
@@ -170,7 +165,7 @@ func SetTestTableName(tn string) {
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
 func CreaterSystemAdmin() *Users {
-	aul := new(AdminUserLogin)
+	aul := new(UserJson)
 	aul.Username = conf.Get("test.LoginUserName").(string)
 	aul.Password = conf.Get("test.LoginPwd").(string)
 	aul.Phone = "12345678"

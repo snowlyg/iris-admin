@@ -139,7 +139,7 @@ func MGetAllClients(name, username, orderBy string, offset, limit int) (users []
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func MCreateUser(aul *AdminUserLogin) (user *Users) {
+func MCreateUser(aul *UserJson) (user *Users) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
@@ -162,7 +162,7 @@ func MCreateUser(aul *AdminUserLogin) (user *Users) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func MUpdateUser(aul *AdminUserLogin) (user *Users) {
+func MUpdateUser(aul *UserJson) (user *Users) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 

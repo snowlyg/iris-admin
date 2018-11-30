@@ -61,7 +61,7 @@ func CGetUser(ctx iris.Context) {
 * @apiPermission null
  */
 func CCreateUser(ctx iris.Context) {
-	aul := new(AdminUserLogin)
+	aul := new(UserJson)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -101,7 +101,7 @@ func CCreateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func CUpdateUser(ctx iris.Context) {
-	aul := new(AdminUserLogin)
+	aul := new(UserJson)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)

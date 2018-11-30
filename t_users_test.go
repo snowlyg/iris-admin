@@ -90,13 +90,14 @@ func TestUserDelete(t *testing.T) {
 	// 测试前后会自动创建和删除表
 	SetTestTableName("users")
 
-	oj := map[string]interface{}{
-		"username": "update_user",
-		"password": "update_name",
-		"name":     "update_name",
-		"phone":    "13412334567",
-		"role_id":  2,
-	}
+	aul := new(UserJson)
+	aul.Username = conf.Get("test.LoginUserName").(string)
+	aul.Password = conf.Get("test.LoginPwd").(string)
+	aul.Phone = "12345678"
+	aul.Name = conf.Get("test.LoginName").(string)
+	aul.RoleId = 1
 
-	delete(t, fmt.Sprintf("/v1/admin/users/%d/delete", testAdminUser.ID), iris.StatusOK, true, "操作成功", nil)
+	delUser := MCreateUser(aul)
+
+	delete(t, fmt.Sprintf("/v1/admin/users/%d", delUser.ID), iris.StatusOK, true, "删除成功", nil)
 }

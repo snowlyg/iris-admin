@@ -4,10 +4,7 @@
 - 采用 iris 框架目后台 api （来自公司内部项目重构）
 - 采用了 gorm 数据库模块 和 jwt 的单点登陆认证方式
 - 测试默认使用了 sqlite3 数据库
-- 最开始想用 mvc 将 controller router model 分离开，还是受到 laravel 影响比较大。
-  不过在测试的时候不好切换数据库，使用了配置文件去标记运行环境。还是每次都要手动切换，十分麻烦。
-  如果不小心忘记改了，还会清空正常数据库的数据。
-  最后把 router model controller 都放在了 main 包下，用 c_(controllers)  m_(models)  l_ (logics)  t_(tests) 的前缀方式去区分。 
+- 修改了项目文件结构，重新采用了 models , controllers 的结构（上次用的那个方法的那个实在是看不下去了）。
 
 ---
 
@@ -68,7 +65,6 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ```
 
 >访问文档，从浏览器直接打开 apidoc/index.html 文件
-
 
 ---
 

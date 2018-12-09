@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import (
 	"gopkg.in/go-playground/validator.v9"

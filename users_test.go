@@ -1,6 +1,8 @@
 package main
 
 import (
+	"IrisApiProject/config"
+	"IrisApiProject/models"
 	"fmt"
 	"testing"
 
@@ -90,14 +92,14 @@ func TestUserDelete(t *testing.T) {
 	// 测试前后会自动创建和删除表
 	SetTestTableName("users")
 
-	aul := new(UserJson)
-	aul.Username = conf.Get("test.LoginUserName").(string)
-	aul.Password = conf.Get("test.LoginPwd").(string)
+	aul := new(models.UserJson)
+	aul.Username = config.Conf.Get("test.LoginUserName").(string)
+	aul.Password = config.Conf.Get("test.LoginPwd").(string)
 	aul.Phone = "12345678"
-	aul.Name = conf.Get("test.LoginName").(string)
+	aul.Name = config.Conf.Get("test.LoginName").(string)
 	aul.RoleId = 1
 
-	delUser := MCreateUser(aul)
+	delUser := models.MCreateUser(aul)
 
 	delete(t, fmt.Sprintf("/v1/admin/users/%d", delUser.ID), iris.StatusOK, true, "删除成功", nil)
 }

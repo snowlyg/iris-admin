@@ -1,6 +1,7 @@
-package main
+package controllers
 
 import (
+	"IrisApiProject/models"
 	"fmt"
 	"github.com/kataras/iris"
 	"gopkg.in/go-playground/validator.v9"
@@ -38,7 +39,7 @@ func CGetProfile(ctx iris.Context) {
  */
 func CGetUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	u := new(Users)
+	u := new(models.Users)
 	u.ID = id
 	user := u.GetUserById()
 
@@ -61,7 +62,7 @@ func CGetUser(ctx iris.Context) {
 * @apiPermission null
  */
 func CCreateUser(ctx iris.Context) {
-	aul := new(UserJson)
+	aul := new(models.UserJson)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -79,7 +80,7 @@ func CCreateUser(ctx iris.Context) {
 				fmt.Println()
 			}
 		} else {
-			u := MCreateUser(aul)
+			u := models.MCreateUser(aul)
 			ctx.StatusCode(iris.StatusOK)
 			ctx.JSON(apiResource(true, u, "操作成功"))
 		}
@@ -101,7 +102,7 @@ func CCreateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func CUpdateUser(ctx iris.Context) {
-	aul := new(UserJson)
+	aul := new(models.UserJson)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -119,7 +120,7 @@ func CUpdateUser(ctx iris.Context) {
 				fmt.Println()
 			}
 		} else {
-			u := MUpdateUser(aul)
+			u := models.MUpdateUser(aul)
 			ctx.StatusCode(iris.StatusOK)
 			ctx.JSON(apiResource(true, u, "操作成功"))
 		}
@@ -141,7 +142,7 @@ func CUpdateUser(ctx iris.Context) {
 func CFrozenUser(ctx iris.Context) {
 
 	id, _ := ctx.Params().GetUint("id")
-	u := Users{}
+	u := new(models.Users)
 	u.ID = id
 
 	is_frozen, msg := false, "冻结失败"
@@ -167,7 +168,7 @@ func CFrozenUser(ctx iris.Context) {
  */
 func CRefrozenUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	u := Users{}
+	u := new(models.Users)
 	u.ID = id
 
 	is_frozen, msg := false, "解冻失败"
@@ -193,7 +194,7 @@ func CRefrozenUser(ctx iris.Context) {
  */
 func CSetUserAudit(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	u := Users{}
+	u := new(models.Users)
 	u.ID = id
 	u.SetAuditUserById()
 
@@ -222,7 +223,7 @@ func CSetUserAudit(ctx iris.Context) {
 func CDeleteUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 
-	u := Users{}
+	u := new(models.Users)
 	u.ID = id
 	u.DeleteUserById()
 
@@ -249,7 +250,7 @@ func CGetAllUsers(ctx iris.Context) {
 	name := ctx.FormValue("name")
 	username := ctx.FormValue("username")
 	orderBy := ctx.FormValue("orderBy")
-	users := MGetAllUsers(name, username, orderBy, offset, limit)
+	users := models.MGetAllUsers(name, username, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(apiResource(true, users, "操作成功"))
@@ -273,7 +274,7 @@ func CGetAllClients(ctx iris.Context) {
 	name := ctx.FormValue("name")
 	username := ctx.FormValue("username")
 	orderBy := ctx.FormValue("orderBy")
-	users := MGetAllClients(name, username, orderBy, offset, limit)
+	users := models.MGetAllClients(name, username, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(apiResource(true, users, "操作成功"))

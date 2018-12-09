@@ -1,9 +1,13 @@
-package redis
+package caches
 
 import (
 	"IrisApiProject/config"
 	"github.com/go-redis/redis"
 	"github.com/pelletier/go-toml"
+)
+
+var (
+	Cache = New()
 )
 
 func New() *redis.Client {

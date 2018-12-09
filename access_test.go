@@ -1,6 +1,7 @@
 package main
 
 import (
+	"IrisApiProject/config"
 	"testing"
 
 	"github.com/kataras/iris"
@@ -12,8 +13,8 @@ func TestAdminLoginSuccess(t *testing.T) {
 	SetTestTableName("users")
 
 	oj := map[string]string{
-		"username": conf.Get("test.LoginUserName").(string),
-		"password": conf.Get("test.LoginPwd").(string),
+		"username": config.Conf.Get("test.LoginUserName").(string),
+		"password": config.Conf.Get("test.LoginPwd").(string),
 	}
 
 	login(t, "/v1/admin/login", oj, iris.StatusOK, true, "登陆成功", nil)
@@ -26,7 +27,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 
 	oj := map[string]string{
 		"username": "err_user",
-		"password": conf.Get("test.LoginPwd").(string),
+		"password": config.Conf.Get("test.LoginPwd").(string),
 	}
 
 	login(t, "/v1/admin/login", oj, iris.StatusOK, false, "用户不存在", nil)
@@ -38,7 +39,7 @@ func TestUserLoginWithErrorPwd(t *testing.T) {
 	SetTestTableName("users")
 
 	oj := map[string]string{
-		"username": conf.Get("test.LoginUserName").(string),
+		"username": config.Conf.Get("test.LoginUserName").(string),
 		"password": "admin",
 	}
 	login(t, "/v1/admin/login", oj, iris.StatusOK, false, "用户名或密码错误", nil)
@@ -51,7 +52,7 @@ func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 	SetTestTableName("users")
 
 	oj := map[string]string{
-		"username": conf.Get("test.LoginUserName").(string),
+		"username": config.Conf.Get("test.LoginUserName").(string),
 		"password": "123",
 	}
 

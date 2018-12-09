@@ -1,6 +1,7 @@
-package main
+package models
 
 import (
+	"IrisApiProject/database"
 	"github.com/jinzhu/gorm"
 	"reflect"
 )
@@ -20,28 +21,28 @@ func MGetAll(searchKeys map[string]interface{}, orderBy, relation string, offset
 		for k, v := range searchKeys {
 			tf := reflect.TypeOf(v).Name()
 			if tf == "string" && v != "" {
-				db.Where(k+"=?", v)
+				database.DB.Where(k+"=?", v)
 			}
 		}
 	}
 
 	if len(orderBy) > 0 {
-		db.Order(orderBy + " desc")
+		database.DB.Order(orderBy + " desc")
 	} else {
-		db.Order("created_at desc")
+		database.DB.Order("created_at desc")
 	}
 
 	if len(relation) > 0 {
-		db.Preload(relation)
+		database.DB.Preload(relation)
 	}
 
 	if offset > 0 {
-		db.Offset(offset - 1)
+		database.DB.Offset(offset - 1)
 	}
 
 	if limit > 0 {
-		db.Limit(limit)
+		database.DB.Limit(limit)
 	}
 
-	return db
+	return database.DB
 }

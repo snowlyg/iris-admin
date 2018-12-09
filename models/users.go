@@ -1,6 +1,7 @@
-package main
+package models
 
 import (
+	"IrisApiProject/database"
 	"time"
 
 	"github.com/jameskeane/bcrypt"
@@ -24,10 +25,16 @@ type Users struct {
 	Email            string `gorm:"unique VARCHAR(191)"`
 	OpenId           string `gorm:"unique VARCHAR(191)"`
 	Phone            string `gorm:"unique VARCHAR(191)"`
-	Role             Roles
-	RoleId           uint
 	RememberToken    string
 	WechatVerfiyTime time.Time
+}
+
+type UserJson struct {
+	Username string `json:"username" validate:"required,gte=4,lte=50"`
+	Password string `json:"password" validate:"required"`
+	Name     string `json:"name" validate:"required,gte=4,lte=50"`
+	Phone    string `json:"phone" validate:"required"`
+	RoleId   uint   `json:"role_id" validate:"required"`
 }
 
 /**
@@ -37,7 +44,7 @@ type Users struct {
  */
 func MUserAdminCheckLogin(username string) Users {
 	var u Users
-	db.Where("username =  ?", username).First(&u)
+	database.DB.Where("username =  ?", username).First(&u)
 	return u
 }
 
@@ -47,7 +54,7 @@ func MUserAdminCheckLogin(username string) Users {
  * @param  {[type]}       user  *Users [description]
  */
 func (user *Users) GetUserById() *Users {
-	db.First(user)
+	database.DB.First(user)
 	return user
 }
 
@@ -57,7 +64,7 @@ func (user *Users) GetUserById() *Users {
  * @param  {[type]}       user  *Users [description]
  */
 func (user *Users) FrozenUserById() bool {
-	db.Model(&user).Update("is_frozen", true)
+	database.DB.Model(&user).Update("is_frozen", true)
 	return user.IsFrozen
 }
 
@@ -67,7 +74,7 @@ func (user *Users) FrozenUserById() bool {
  * @param  {[type]}       user  *Users [description]
  */
 func (user *Users) RefrozenUserById() bool {
-	db.Model(&user).Update("is_frozen", false)
+	database.DB.Model(&user).Update("is_frozen", false)
 
 	return !user.IsFrozen
 }
@@ -78,9 +85,8 @@ func (user *Users) RefrozenUserById() bool {
  * @param  {[type]}   user  *Users [description]
  */
 func (user *Users) SetAuditUserById() bool {
-
-	db.Model(Users{}).Where("is_audit=?", true).Updates(map[string]interface{}{"is_audit": false})
-	db.Model(&user).Update("is_audit", true)
+	database.DB.Model(Users{}).Where("is_audit=?", true).Updates(map[string]interface{}{"is_audit": false})
+	database.DB.Model(&user).Update("is_audit", true)
 
 	return user.IsAudit
 }
@@ -90,7 +96,7 @@ func (user *Users) SetAuditUserById() bool {
  * @method DeleteUserById
  */
 func (user *Users) DeleteUserById() {
-	db.Delete(&user)
+	database.DB.Delete(&user)
 }
 
 /**
@@ -147,9 +153,8 @@ func MCreateUser(aul *UserJson) (user *Users) {
 	user.Password = string(hash)
 	user.Name = aul.Name
 	user.Phone = aul.Phone
-	user.RoleId = aul.RoleId
 
-	db.Create(user)
+	database.DB.Create(user)
 
 	return
 }
@@ -170,9 +175,8 @@ func MUpdateUser(aul *UserJson) (user *Users) {
 	user.Password = string(hash)
 	user.Name = aul.Name
 	user.Phone = aul.Phone
-	user.RoleId = aul.RoleId
 
-	db.Update(user)
+	database.DB.Update(user)
 
 	return
 }
@@ -183,6 +187,6 @@ func MUpdateUser(aul *UserJson) (user *Users) {
  * @return  {[type]} count int    [description]
  */
 func MGetClientCounts() (count int) {
-	db.Model(&Users{}).Where("is_client = ?", 1).Count(&count)
+	database.DB.Model(&Users{}).Where("is_client = ?", 1).Count(&count)
 	return
 }

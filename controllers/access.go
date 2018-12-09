@@ -1,6 +1,7 @@
-package main
+package controllers
 
 import (
+	"IrisApiProject/models"
 	"github.com/kataras/iris"
 	"net/http"
 )
@@ -20,7 +21,7 @@ import (
 * @apiPermission null
  */
 func CUserLogin(ctx iris.Context) {
-	aul := new(UserJson)
+	aul := new(models.UserJson)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
@@ -34,7 +35,7 @@ func CUserLogin(ctx iris.Context) {
 			ctx.JSON(apiResource(false, nil, "密码格式错误"))
 		} else {
 			ctx.StatusCode(iris.StatusOK)
-			response, status, msg := LUserAdminCheckLogin(aul.Username, aul.Password)
+			response, status, msg := models.LUserAdminCheckLogin(aul.Username, aul.Password)
 			ctx.JSON(apiResource(status, response, msg))
 		}
 	}
@@ -56,7 +57,7 @@ func CUserLogout(ctx iris.Context) {
 
 	aui := ctx.Values().GetString("auth_user_id")
 	uid := uint(t.ParseInt(aui, 0))
-	LUserAdminLogout(uid)
+	models.LUserAdminLogout(uid)
 
 	ctx.StatusCode(http.StatusOK)
 	ctx.JSON(apiResource(true, nil, "退出登陆"))

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"IrisApiProject/models"
+	"IrisApiProject/tools"
 	"fmt"
 	"github.com/kataras/iris"
 	"gopkg.in/go-playground/validator.v9"
@@ -245,8 +246,8 @@ func CDeleteUser(ctx iris.Context) {
 * @apiPermission null
  */
 func CGetAllUsers(ctx iris.Context) {
-	offset := t.ParseInt(ctx.FormValue("offset"), 1)
-	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
+	limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
 	name := ctx.FormValue("name")
 	username := ctx.FormValue("username")
 	orderBy := ctx.FormValue("orderBy")
@@ -269,8 +270,8 @@ func CGetAllUsers(ctx iris.Context) {
 * @apiPermission null
  */
 func CGetAllClients(ctx iris.Context) {
-	offset := t.ParseInt(ctx.FormValue("offset"), 1)
-	limit := t.ParseInt(ctx.FormValue("limit"), 20)
+	offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
+	limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
 	name := ctx.FormValue("name")
 	username := ctx.FormValue("username")
 	orderBy := ctx.FormValue("orderBy")

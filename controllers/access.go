@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"IrisApiProject/models"
+	"IrisApiProject/tools"
 	"github.com/kataras/iris"
 	"net/http"
 )
@@ -54,9 +55,8 @@ func CUserLogin(ctx iris.Context) {
 * @apiPermission null
  */
 func CUserLogout(ctx iris.Context) {
-
 	aui := ctx.Values().GetString("auth_user_id")
-	uid := uint(t.ParseInt(aui, 0))
+	uid := uint(tools.Tool.ParseInt(aui, 0))
 	models.LUserAdminLogout(uid)
 
 	ctx.StatusCode(http.StatusOK)

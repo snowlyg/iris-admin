@@ -19,7 +19,6 @@ import (
  * @return  {[type]}  api      *iris.Application  [iris app]
  */
 func newApp() (api *iris.Application) {
-
 	api = iris.New()
 	api.Use(logger.New())
 
@@ -27,7 +26,7 @@ func newApp() (api *iris.Application) {
 	api.OnErrorCode(iris.StatusInternalServerError, controllers.InternalServerError)
 
 	//同步模型数据表
-	database.DB.AutoMigrate(new(models.Users))
+	database.DB.AutoMigrate(new(models.Users), new(models.OauthToken))
 
 	iris.RegisterOnInterrupt(func() {
 		database.DB.Close()
@@ -45,7 +44,7 @@ func newApp() (api *iris.Application) {
 	appName := config.Conf.Get("app.name").(string)
 	appDoc := config.Conf.Get("app.doc").(string)
 	appUrl := config.Conf.Get("app.url").(string)
-
+	//api 文档配置
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
 		DocTitle: appName,
@@ -82,7 +81,6 @@ func newApp() (api *iris.Application) {
 }
 
 func main() {
-
 	app := newApp()
 
 	addr := config.Conf.Get("app.addr").(string)

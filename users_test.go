@@ -16,8 +16,6 @@ func TestUsersList(t *testing.T) {
 	// 测试前后会自动创建和删除表
 	SetTestTableName("users")
 
-	// users := []*Users{testAdminUser}
-
 	// 发起 http 请求
 	// Url        string      //测试路由
 	// Object     interface{} //发送的json 对象
@@ -26,7 +24,6 @@ func TestUsersList(t *testing.T) {
 	// Msg        string      //返回提示信息
 	// Data       interface{} //返回数据
 	getMore(t, "/v1/admin/users", iris.StatusOK, true, "操作成功", nil)
-
 }
 
 // 登陆用户信息
@@ -97,7 +94,6 @@ func TestUserDelete(t *testing.T) {
 	aul.Password = config.Conf.Get("test.LoginPwd").(string)
 	aul.Phone = "12345678"
 	aul.Name = config.Conf.Get("test.LoginName").(string)
-	aul.RoleId = 1
 
 	delUser := models.MCreateUser(aul)
 

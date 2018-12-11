@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"IrisApiProject/tools"
 	"github.com/kataras/iris"
 )
 
@@ -9,14 +8,6 @@ type ApiJson struct {
 	Status bool        `json:"status"`
 	Msg    interface{} `json:"msg"`
 	Data   interface{} `json:"data"`
-}
-
-var (
-	t *tools.Tools
-)
-
-func init() {
-	t = tools.New()
 }
 
 func NotFound(ctx iris.Context) {

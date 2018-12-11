@@ -15,7 +15,7 @@ type Tools struct {
 }
 
 var (
-	t    *Tools
+	Tool = New()
 	once sync.Once
 )
 
@@ -23,7 +23,7 @@ var (
  * 返回单例实例
  * @method New
  */
-func New() *Tools {
+func New() (t *Tools) {
 	once.Do(func() { //只执行一次
 		t = &Tools{}
 	})

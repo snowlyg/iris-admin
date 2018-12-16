@@ -42,7 +42,7 @@ type UserJson struct {
  * @method UserAdminCheckLogin
  * @param  {[type]}       username string [description]
  */
-func MUserAdminCheckLogin(username string) Users {
+func UserAdminCheckLogin(username string) Users {
 	var u Users
 	database.DB.Where("username =  ?", username).First(&u)
 	return u
@@ -53,8 +53,12 @@ func MUserAdminCheckLogin(username string) Users {
  * @method GetUserById
  * @param  {[type]}       user  *Users [description]
  */
-func (user *Users) GetUserById() *Users {
+func GetUserById(id uint) *Users {
+	user := new(Users)
+	user.ID = id
+
 	database.DB.First(user)
+
 	return user
 }
 
@@ -63,9 +67,13 @@ func (user *Users) GetUserById() *Users {
  * @method FrozenUserById
  * @param  {[type]}       user  *Users [description]
  */
-func (user *Users) FrozenUserById() bool {
-	database.DB.Model(&user).Update("is_frozen", true)
-	return user.IsFrozen
+func FrozenUserById(id uint) bool {
+	u := new(Users)
+	u.ID = id
+
+	database.DB.Model(u).Update("is_frozen", true)
+
+	return u.IsFrozen
 }
 
 /**
@@ -73,10 +81,13 @@ func (user *Users) FrozenUserById() bool {
  * @method RefrozenUserById
  * @param  {[type]}       user  *Users [description]
  */
-func (user *Users) RefrozenUserById() bool {
-	database.DB.Model(&user).Update("is_frozen", false)
+func RefrozenUserById(id uint) bool {
+	u := new(Users)
+	u.ID = id
 
-	return !user.IsFrozen
+	database.DB.Model(u).Update("is_frozen", false)
+
+	return !u.IsFrozen
 }
 
 /**
@@ -84,67 +95,54 @@ func (user *Users) RefrozenUserById() bool {
  * @method SetAuditUserById
  * @param  {[type]}   user  *Users [description]
  */
-func (user *Users) SetAuditUserById() bool {
-	database.DB.Model(Users{}).Where("is_audit=?", true).Updates(map[string]interface{}{"is_audit": false})
-	database.DB.Model(&user).Update("is_audit", true)
+func SetAuditUserById(id uint) bool {
+	u := new(Users)
+	u.ID = id
 
-	return user.IsAudit
+	database.DB.Model(Users{}).Where("is_audit=?", true).Updates(map[string]interface{}{"is_audit": false})
+	database.DB.Model(u).Update("is_audit", true)
+
+	return u.IsAudit
 }
 
 /**
  * 通过 id 删除用户
  * @method DeleteUserById
  */
-func (user *Users) DeleteUserById() {
-	database.DB.Delete(&user)
+func DeleteUserById(id uint) {
+	u := new(Users)
+	u.ID = id
+
+	database.DB.Delete(u)
 }
 
 /**
  * 获取所有的账号
- * @method MGetAllUsers
+ * @method GetAllUsers
  * @param  {[type]} name string [description]
  * @param  {[type]} username string [description]
  * @param  {[type]} orderBy string [description]
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func MGetAllUsers(name, username, orderBy string, offset, limit int) (users []*Users) {
+func GetAllUsers(name, username, orderBy string, offset, limit int) (users []*Users) {
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 	searchKeys["username"] = username
 	searchKeys["is_client"] = false
 
-	MGetAll(searchKeys, orderBy, "Role", offset, limit).Find(&users)
-	return
-}
-
-/**
- * 获取所有的客户联系人
- * @method MGetAllClients
- * @param  {[type]} name string [description]
- * @param  {[type]} username string [description]
- * @param  {[type]} orderBy string [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func MGetAllClients(name, username, orderBy string, offset, limit int) (users []*Users) {
-	searchKeys := make(map[string]interface{})
-	searchKeys["name"] = name
-	searchKeys["username"] = username
-	searchKeys["is_client"] = false
-
-	MGetAll(searchKeys, orderBy, "Role", offset, limit).Find(&users)
+	database.GetAll(searchKeys, orderBy, "Role", offset, limit).Find(&users)
 	return
 }
 
 /**
  * 创建
- * @method MCreateUser
+ * @method CreateUser
  * @param  {[type]} kw string [description]
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func MCreateUser(aul *UserJson) (user *Users) {
+func CreateUser(aul *UserJson) (user *Users) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
@@ -160,13 +158,13 @@ func MCreateUser(aul *UserJson) (user *Users) {
 }
 
 /**
- * 获取所有的客户联系人
- * @method MCreateUser
+ * 更新
+ * @method UpdateUser
  * @param  {[type]} kw string [description]
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func MUpdateUser(aul *UserJson) (user *Users) {
+func UpdateUser(aul *UserJson) (user *Users) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
@@ -182,23 +180,13 @@ func MUpdateUser(aul *UserJson) (user *Users) {
 }
 
 /**
- * 获取所有的用户联系人数量
- * @method MGetClientCounts
- * @return  {[type]} count int    [description]
- */
-func MGetClientCounts() (count int) {
-	database.DB.Model(&Users{}).Where("is_client = ?", 1).Count(&count)
-	return
-}
-
-/**
  * 判断用户是否登录
- * @method UserAdminLogin
+ * @method CheckLogin
  * @param  {[type]}  id       int    [description]
  * @param  {[type]}  password string [description]
  */
-func LUserAdminCheckLogin(username, password string) (response Token, status bool, msg string) {
-	user := MUserAdminCheckLogin(username)
+func CheckLogin(username, password string) (response Token, status bool, msg string) {
+	user := UserAdminCheckLogin(username)
 	if user.ID == 0 {
 		msg = "用户不存在"
 		return
@@ -242,7 +230,7 @@ func LUserAdminCheckLogin(username, password string) (response Token, status boo
 * @method UserAdminLogout
 * @param  {[type]} ids string [description]
  */
-func LUserAdminLogout(user_id uint) bool {
+func UserAdminLogout(user_id uint) bool {
 	ot := UpdateOauthTokenByUserId(user_id)
 
 	return ot.Revoked

@@ -21,15 +21,8 @@ var (
 	testAdminUser *models.Users
 )
 
+//单元测试基境
 func TestMain(m *testing.M) {
-
-	// 获取测试的数据表
-	value, err := caches.Cache.Get("test_table_name").Result()
-	if err == redis.Nil {
-		fmt.Println("env_t does not exist")
-	} else if err != nil {
-		panic(err)
-	}
 
 	// 初始化app
 	app = newApp()
@@ -38,6 +31,14 @@ func TestMain(m *testing.M) {
 
 	flag.Parse()
 	exitCode := m.Run()
+
+	// 获取测试的数据表
+	value, err := caches.Cache.Get("test_table_name").Result()
+	if err == redis.Nil {
+		fmt.Println("env_t does not exist")
+	} else if err != nil {
+		panic(err)
+	}
 
 	// 删除测试数据表，保持测试环境
 	database.DB.DropTable(value)
@@ -164,9 +165,8 @@ func CreaterSystemAdmin() *models.Users {
 	aul.Password = config.Conf.Get("test.LoginPwd").(string)
 	aul.Phone = "12345678"
 	aul.Name = config.Conf.Get("test.LoginName").(string)
-	aul.RoleId = 1
 
-	return models.MCreateUser(aul)
+	return models.CreateUser(aul)
 }
 
 /**
@@ -174,7 +174,7 @@ func CreaterSystemAdmin() *models.Users {
 *@return   Token 返回登陆后的token
  */
 func GetLoginToken() models.Token {
-	response, status, msg := models.LUserAdminCheckLogin(
+	response, status, msg := models.CheckLogin(
 		config.Conf.Get("test.LoginUserName").(string),
 		config.Conf.Get("test.LoginPwd").(string),
 	)

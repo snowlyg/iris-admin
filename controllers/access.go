@@ -21,23 +21,23 @@ import (
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CUserLogin(ctx iris.Context) {
+func UserLogin(ctx iris.Context) {
 	aul := new(models.UserJson)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		ctx.JSON(apiResource(false, nil, "请求参数错误"))
+		ctx.JSON(ApiResource(false, nil, "请求参数错误"))
 	} else {
 		if UserNameErr := validate.Var(aul.Username, "required,min=4,max=20"); UserNameErr != nil {
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(apiResource(false, nil, "用户名格式错误"))
+			ctx.JSON(ApiResource(false, nil, "用户名格式错误"))
 		} else if PwdErr := validate.Var(aul.Password, "required,min=5,max=20"); PwdErr != nil {
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(apiResource(false, nil, "密码格式错误"))
+			ctx.JSON(ApiResource(false, nil, "密码格式错误"))
 		} else {
 			ctx.StatusCode(iris.StatusOK)
-			response, status, msg := models.LUserAdminCheckLogin(aul.Username, aul.Password)
-			ctx.JSON(apiResource(status, response, msg))
+			response, status, msg := models.CheckLogin(aul.Username, aul.Password)
+			ctx.JSON(ApiResource(status, response, msg))
 		}
 	}
 }
@@ -54,11 +54,11 @@ func CUserLogin(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CUserLogout(ctx iris.Context) {
+func UserLogout(ctx iris.Context) {
 	aui := ctx.Values().GetString("auth_user_id")
 	uid := uint(tools.Tool.ParseInt(aui, 0))
-	models.LUserAdminLogout(uid)
+	models.UserAdminLogout(uid)
 
 	ctx.StatusCode(http.StatusOK)
-	ctx.JSON(apiResource(true, nil, "退出登陆"))
+	ctx.JSON(ApiResource(true, nil, "退出登陆"))
 }

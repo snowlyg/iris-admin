@@ -22,10 +22,16 @@ func newApp() (api *iris.Application) {
 	api = iris.New()
 	api.Use(logger.New())
 
-	api.OnErrorCode(iris.StatusNotFound, controllers.NotFound)
-	api.OnErrorCode(iris.StatusInternalServerError, controllers.InternalServerError)
+	api.OnErrorCode(iris.StatusNotFound, func(ctx iris.Context) {
+		ctx.JSON(controllers.ApiResource(false, nil, "404 Not Found"))
+	})
+	api.OnErrorCode(iris.StatusInternalServerError, func(ctx iris.Context) {
+		ctx.WriteString("Oups something went wrong, try again")
+	})
 
 	//同步模型数据表
+	//如果模型表这里没有添加模型，单元测试会报错数据表不存在。
+	//因为单元测试结束，会删除数据表
 	database.DB.AutoMigrate(new(models.Users), new(models.OauthToken))
 
 	iris.RegisterOnInterrupt(func() {
@@ -58,21 +64,21 @@ func newApp() (api *iris.Application) {
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{
 		v1.Use(middleware.NewYaag()) // <- IMPORTANT, register the middleware.
-		v1.Post("/admin/login", controllers.CUserLogin)
+		v1.Post("/admin/login", controllers.UserLogin)
 		v1.PartyFunc("/admin", func(admin router.Party) {
 			admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken)
-			admin.Get("/logout", controllers.CUserLogout)
+			admin.Get("/logout", controllers.UserLogout)
 
 			admin.PartyFunc("/users", func(users router.Party) {
-				users.Get("/", controllers.CGetAllUsers)
-				users.Get("/{id:uint}", controllers.CGetUser)
-				users.Post("/", controllers.CCreateUser)
-				users.Post("/{id:uint}/update", controllers.CUpdateUser)
-				users.Get("/{id:uint}/frozen", controllers.CFrozenUser)
-				users.Get("/{id:uint}/audit", controllers.CSetUserAudit)
-				users.Get("/{id:uint}/refrozen", controllers.CRefrozenUser)
-				users.Delete("/{id:uint}", controllers.CDeleteUser)
-				users.Get("/profile", controllers.CGetProfile)
+				users.Get("/", controllers.GetAllUsers)
+				users.Get("/{id:uint}", controllers.GetUser)
+				users.Post("/", controllers.CreateUser)
+				users.Post("/{id:uint}/update", controllers.UpdateUser)
+				users.Get("/{id:uint}/frozen", controllers.FrozenUser)
+				users.Get("/{id:uint}/audit", controllers.SetUserAudit)
+				users.Get("/{id:uint}/refrozen", controllers.RefrozenUser)
+				users.Delete("/{id:uint}", controllers.DeleteUser)
+				users.Get("/profile", controllers.GetProfile)
 			})
 		})
 	}

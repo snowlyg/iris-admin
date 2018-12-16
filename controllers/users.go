@@ -20,10 +20,12 @@ import (
 * @apiSuccess {String} data 返回数据
 * @apiPermission 登陆用户
  */
-func CGetProfile(ctx iris.Context) {
-	aun := ctx.Values().Get("auth_user_name")
+func GetProfile(ctx iris.Context) {
+	user_id := ctx.Values().Get("auth_user_id").(uint)
+	user := models.GetUserById(user_id)
+
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(apiResource(true, aun, "操作成功"))
+	ctx.JSON(ApiResource(true, user, "操作成功"))
 }
 
 /**
@@ -38,14 +40,12 @@ func CGetProfile(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission 登陆用户
  */
-func CGetUser(ctx iris.Context) {
+func GetUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	u := new(models.Users)
-	u.ID = id
-	user := u.GetUserById()
+	user := models.GetUserById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(apiResource(true, user, "操作成功"))
+	ctx.JSON(ApiResource(true, user, "操作成功"))
 }
 
 /**
@@ -62,7 +62,8 @@ func CGetUser(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CCreateUser(ctx iris.Context) {
+func CreateUser(ctx iris.Context) {
+
 	aul := new(models.UserJson)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
@@ -81,9 +82,10 @@ func CCreateUser(ctx iris.Context) {
 				fmt.Println()
 			}
 		} else {
-			u := models.MCreateUser(aul)
+			u := models.CreateUser(aul)
+
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(apiResource(true, u, "操作成功"))
+			ctx.JSON(ApiResource(true, u, "操作成功"))
 		}
 	}
 }
@@ -102,7 +104,7 @@ func CCreateUser(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CUpdateUser(ctx iris.Context) {
+func UpdateUser(ctx iris.Context) {
 	aul := new(models.UserJson)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
@@ -121,9 +123,10 @@ func CUpdateUser(ctx iris.Context) {
 				fmt.Println()
 			}
 		} else {
-			u := models.MUpdateUser(aul)
+			u := models.UpdateUser(aul)
+
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(apiResource(true, u, "操作成功"))
+			ctx.JSON(ApiResource(true, u, "操作成功"))
 		}
 	}
 }
@@ -140,19 +143,16 @@ func CUpdateUser(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CFrozenUser(ctx iris.Context) {
-
+func FrozenUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	u := new(models.Users)
-	u.ID = id
 
 	is_frozen, msg := false, "冻结失败"
-	if is_frozen = u.FrozenUserById(); is_frozen {
+	if is_frozen = models.FrozenUserById(id); is_frozen {
 		msg = "冻结成功"
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(apiResource(is_frozen, nil, msg))
+	ctx.JSON(ApiResource(is_frozen, nil, msg))
 }
 
 /**
@@ -167,18 +167,16 @@ func CFrozenUser(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CRefrozenUser(ctx iris.Context) {
+func RefrozenUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	u := new(models.Users)
-	u.ID = id
 
-	is_frozen, msg := false, "解冻失败"
-	if is_frozen = u.FrozenUserById(); is_frozen {
+	is_refrozen, msg := false, "解冻失败"
+	if is_refrozen = models.RefrozenUserById(id); is_refrozen {
 		msg = "解冻成功"
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(apiResource(is_frozen, nil, msg))
+	ctx.JSON(ApiResource(is_refrozen, nil, msg))
 }
 
 /**
@@ -193,20 +191,16 @@ func CRefrozenUser(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CSetUserAudit(ctx iris.Context) {
+func SetUserAudit(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	u := new(models.Users)
-	u.ID = id
-	u.SetAuditUserById()
 
 	is_audit, msg := false, "设置失败"
-	if is_audit = u.SetAuditUserById(); is_audit {
+	if is_audit = models.SetAuditUserById(id); is_audit {
 		msg = "设置成功"
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(apiResource(is_audit, nil, msg))
-
+	ctx.JSON(ApiResource(is_audit, nil, msg))
 }
 
 /**
@@ -221,16 +215,12 @@ func CSetUserAudit(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CDeleteUser(ctx iris.Context) {
+func DeleteUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-
-	u := new(models.Users)
-	u.ID = id
-	u.DeleteUserById()
+	models.DeleteUserById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(apiResource(true, nil, "删除成功"))
-
+	ctx.JSON(ApiResource(true, nil, "删除成功"))
 }
 
 /**
@@ -245,38 +235,15 @@ func CDeleteUser(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CGetAllUsers(ctx iris.Context) {
+func GetAllUsers(ctx iris.Context) {
 	offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
 	limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
 	name := ctx.FormValue("name")
 	username := ctx.FormValue("username")
 	orderBy := ctx.FormValue("orderBy")
-	users := models.MGetAllUsers(name, username, orderBy, offset, limit)
+
+	users := models.GetAllUsers(name, username, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(apiResource(true, users, "操作成功"))
-}
-
-/**
-* @api {get} /clients 获取所有的客户联系人
-* @apiName 获取所有的客户联系人
-* @apiGroup Clients
-* @apiVersion 1.0.0
-* @apiDescription 获取所有的客户联系人
-* @apiSampleRequest /clients
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission null
- */
-func CGetAllClients(ctx iris.Context) {
-	offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
-	limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
-	name := ctx.FormValue("name")
-	username := ctx.FormValue("username")
-	orderBy := ctx.FormValue("orderBy")
-	users := models.MGetAllClients(name, username, orderBy, offset, limit)
-
-	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(apiResource(true, users, "操作成功"))
+	ctx.JSON(ApiResource(true, users, "操作成功"))
 }

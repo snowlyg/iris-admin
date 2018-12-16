@@ -8,7 +8,7 @@ import (
 )
 
 // 登陆成功
-func TestAdminLoginSuccess(t *testing.T) {
+func TestUserLoginSuccess(t *testing.T) {
 	// 设置测试数据表
 	SetTestTableName("users")
 

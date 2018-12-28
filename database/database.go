@@ -39,6 +39,8 @@ func New() *gorm.DB {
 		databaseName := configTree.Get("databaseName").(string)
 		connect := userName + ":" + password + "@/" + databaseName + "?charset=utf8&parseTime=True&loc=Local"
 
+		fmt.Println(connect)
+
 		DB, err := gorm.Open(driver, connect)
 
 		if err != nil {

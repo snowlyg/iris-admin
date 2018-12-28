@@ -17,8 +17,7 @@ import (
 )
 
 var (
-	app           *iris.Application // iris.Applications
-	testAdminUser *models.Users
+	app *iris.Application // iris.Applications
 )
 
 //单元测试基境
@@ -26,8 +25,6 @@ func TestMain(m *testing.M) {
 
 	// 初始化app
 	app = newApp()
-	// 创建用户
-	testAdminUser = CreaterSystemAdmin()
 
 	flag.Parse()
 	exitCode := m.Run()
@@ -153,20 +150,6 @@ func SetTestTableName(tn string) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-/**
-*创建系统管理员
-*@return   *models.AdminUserTranform api格式化后的数据格式
- */
-func CreaterSystemAdmin() *models.Users {
-	aul := new(models.UserJson)
-	aul.Username = config.Conf.Get("test.LoginUserName").(string)
-	aul.Password = config.Conf.Get("test.LoginPwd").(string)
-	aul.Phone = "12345678"
-	aul.Name = config.Conf.Get("test.LoginName").(string)
-
-	return models.CreateUser(aul)
 }
 
 /**

@@ -59,6 +59,8 @@ func TestUserCreate(t *testing.T) {
 
 // 更新用户
 func TestUserUpdate(t *testing.T) {
+
+	testAdminUser := models.CreaterSystemAdmin()
 	// 设置测试数据表
 	// 测试前后会自动创建和删除表
 	SetTestTableName("users")
@@ -88,7 +90,6 @@ func TestUserDelete(t *testing.T) {
 	aul := new(models.UserJson)
 	aul.Username = config.Conf.Get("test.LoginUserName").(string)
 	aul.Password = config.Conf.Get("test.LoginPwd").(string)
-	aul.Phone = "12345678"
 	aul.Name = config.Conf.Get("test.LoginName").(string)
 
 	delUser := models.CreateUser(aul)

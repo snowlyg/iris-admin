@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisApiProject/config"
 	"IrisApiProject/database"
 	"github.com/dgrijalva/jwt-go"
 	"time"
@@ -12,29 +13,15 @@ import (
 type Users struct {
 	gorm.Model
 
-	Name             string `gorm:"not null VARCHAR(191)"`
-	Username         string `gorm:"VARCHAR(191)"`
-	Password         string `gorm:"not null VARCHAR(191)"`
-	Confirmed        bool
-	IsClient         bool
-	IsFrozen         bool
-	IsAudit          bool
-	IsClientAdmin    bool
-	IsWechatVerfiy   bool
-	WechatName       string `gorm:"VARCHAR(191)"`
-	WechatAvatar     string `gorm:"VARCHAR(191)"`
-	Email            string `gorm:"unique VARCHAR(191)"`
-	OpenId           string `gorm:"unique VARCHAR(191)"`
-	Phone            string `gorm:"unique VARCHAR(191)"`
-	RememberToken    string
-	WechatVerfiyTime time.Time
+	Name     string `gorm:"not null VARCHAR(191)"`
+	Username string `gorm:"VARCHAR(191)"`
+	Password string `gorm:"not null VARCHAR(191)"`
 }
 
 type UserJson struct {
 	Username string `json:"username" validate:"required,gte=4,lte=50"`
 	Password string `json:"password" validate:"required"`
 	Name     string `json:"name" validate:"required,gte=4,lte=50"`
-	Phone    string `json:"phone" validate:"required"`
 }
 
 /**
@@ -60,49 +47,6 @@ func GetUserById(id uint) *Users {
 	database.DB.First(user)
 
 	return user
-}
-
-/**
- * 通过 id 冻结 user
- * @method FrozenUserById
- * @param  {[type]}       user  *Users [description]
- */
-func FrozenUserById(id uint) bool {
-	u := new(Users)
-	u.ID = id
-
-	database.DB.Model(u).Update("is_frozen", true)
-
-	return u.IsFrozen
-}
-
-/**
- * 通过 id 解冻 user
- * @method RefrozenUserById
- * @param  {[type]}       user  *Users [description]
- */
-func RefrozenUserById(id uint) bool {
-	u := new(Users)
-	u.ID = id
-
-	database.DB.Model(u).Update("is_frozen", false)
-
-	return !u.IsFrozen
-}
-
-/**
- * 通过 id 设置负责人
- * @method SetAuditUserById
- * @param  {[type]}   user  *Users [description]
- */
-func SetAuditUserById(id uint) bool {
-	u := new(Users)
-	u.ID = id
-
-	database.DB.Model(Users{}).Where("is_audit=?", true).Updates(map[string]interface{}{"is_audit": false})
-	database.DB.Model(u).Update("is_audit", true)
-
-	return u.IsAudit
 }
 
 /**
@@ -150,7 +94,6 @@ func CreateUser(aul *UserJson) (user *Users) {
 	user.Username = aul.Username
 	user.Password = string(hash)
 	user.Name = aul.Name
-	user.Phone = aul.Phone
 
 	database.DB.Create(user)
 
@@ -172,7 +115,6 @@ func UpdateUser(aul *UserJson) (user *Users) {
 	user.Username = aul.Username
 	user.Password = string(hash)
 	user.Name = aul.Name
-	user.Phone = aul.Phone
 
 	database.DB.Update(user)
 
@@ -232,6 +174,18 @@ func CheckLogin(username, password string) (response Token, status bool, msg str
  */
 func UserAdminLogout(user_id uint) bool {
 	ot := UpdateOauthTokenByUserId(user_id)
-
 	return ot.Revoked
+}
+
+/**
+*创建系统管理员
+*@return   *models.AdminUserTranform api格式化后的数据格式
+ */
+func CreaterSystemAdmin() *Users {
+	aul := new(UserJson)
+	aul.Username = config.Conf.Get("test.LoginUserName").(string)
+	aul.Password = config.Conf.Get("test.LoginPwd").(string)
+	aul.Name = config.Conf.Get("test.LoginName").(string)
+
+	return CreateUser(aul)
 }

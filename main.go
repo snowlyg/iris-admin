@@ -61,6 +61,9 @@ func newApp() (api *iris.Application) {
 		},
 	})
 
+	//初始化管理员
+	models.CreaterSystemAdmin()
+
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{
 		v1.Use(middleware.NewYaag()) // <- IMPORTANT, register the middleware.
@@ -74,9 +77,6 @@ func newApp() (api *iris.Application) {
 				users.Get("/{id:uint}", controllers.GetUser)
 				users.Post("/", controllers.CreateUser)
 				users.Post("/{id:uint}/update", controllers.UpdateUser)
-				users.Get("/{id:uint}/frozen", controllers.FrozenUser)
-				users.Get("/{id:uint}/audit", controllers.SetUserAudit)
-				users.Get("/{id:uint}/refrozen", controllers.RefrozenUser)
 				users.Delete("/{id:uint}", controllers.DeleteUser)
 				users.Get("/profile", controllers.GetProfile)
 			})

@@ -2,6 +2,7 @@ package models
 
 import (
 	"IrisApiProject/database"
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -72,7 +73,7 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 
-	database.GetAll(searchKeys, orderBy, "Permission", offset, limit).Find(&permissions)
+	database.GetAll(searchKeys, orderBy, "", offset, limit).Find(&permissions)
 	return
 }
 
@@ -119,18 +120,20 @@ func UpdatePermission(aul *PermissionJson) (permission *Permissions) {
 *创建系统管理员
 *@return   *models.AdminPermissionTranform api格式化后的数据格式
  */
-func CreaterSystemAdminPermission() *Permissions {
+func CreateSystemAdminPermission() *Permissions {
 	aul := new(PermissionJson)
-	aul.Name = "admin"
-	aul.DisplayName = "超级管理员"
-	aul.Description = "超级管理员"
+	aul.Name = "update_user"
+	aul.DisplayName = "创建账号权限"
+	aul.Description = "创建账号权限"
 	aul.Level = 999
 
 	permission := GetPermissionByName(aul.Name)
 
-	if permission == nil {
+	if permission.ID == 0 {
+		fmt.Println("创建账号权限")
 		return CreatePermission(aul)
 	} else {
+		fmt.Println("重复初始化权限")
 		return nil
 	}
 }

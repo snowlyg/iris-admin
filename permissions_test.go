@@ -8,12 +8,12 @@ import (
 	"github.com/kataras/iris"
 )
 
-// 后台账号列表
-func TestRoles(t *testing.T) {
+// 后台权限列表
+func TestPermissions(t *testing.T) {
 
 	// 设置测试数据表
 	// 测试前后会自动创建和删除表
-	SetTestTableName("roles")
+	SetTestTableName("permissions")
 
 	// 发起 http 请求
 	// Url        string      //测试路由
@@ -22,18 +22,18 @@ func TestRoles(t *testing.T) {
 	// Status     bool        //返回的状态
 	// Msg        string      //返回提示信息
 	// Data       interface{} //返回数据
-	url := "/v1/admin/roles"
+	url := "/v1/admin/permissions"
 	getMore(t, url, iris.StatusOK, true, "操作成功", nil)
 }
 
-// 创建角色
-func TestRoleCreate(t *testing.T) {
+// 创建权限
+func TestPermissionCreate(t *testing.T) {
 	// 设置测试数据表
 	// 测试前后会自动创建和删除表
-	SetTestTableName("roles")
+	SetTestTableName("permissions")
 
 	oj := map[string]interface{}{
-		"name":         "create_role",
+		"name":         "create_permission",
 		"display_name": "create_display_name",
 		"description":  "create_description",
 		"level":        888,
@@ -46,19 +46,28 @@ func TestRoleCreate(t *testing.T) {
 		"Level":       oj["level"],
 	}
 
-	url := "/v1/admin/roles"
+	url := "/v1/admin/permissions"
 	create(t, url, oj, iris.StatusOK, true, "操作成功", data)
 }
 
-// 更新角色
-func TestRoleUpdate(t *testing.T) {
+// 更新权限
+func TestPermissionUpdate(t *testing.T) {
 
 	// 设置测试数据表
 	// 测试前后会自动创建和删除表
-	SetTestTableName("roles")
+	SetTestTableName("permissions")
+
+	aul := &models.PermissionJson{
+		Name:        "create_permission",
+		Description: "create_description",
+		DisplayName: "create_display_name",
+		Level:       888,
+	}
+
+	testAdminPermission := models.CreatePermission(aul)
 
 	oj := map[string]interface{}{
-		"name":         "update_role",
+		"name":         "update_permission",
 		"display_name": "update_display_name",
 		"description":  "update_description",
 		"level":        888,
@@ -71,34 +80,25 @@ func TestRoleUpdate(t *testing.T) {
 		"Level":       oj["level"],
 	}
 
-	aul := &models.RoleJson{
-		Name:        "guest",
-		Description: "访客",
-		DisplayName: "访客",
-		Level:       888,
-	}
-
-	testAdminRole := models.CreateRole(aul)
-
-	url := "/v1/admin/roles/%d/update"
-	update(t, fmt.Sprintf(url, testAdminRole.ID), oj, iris.StatusOK, true, "操作成功", data)
+	url := "/v1/admin/permissions/%d/update"
+	update(t, fmt.Sprintf(url, testAdminPermission.ID), oj, iris.StatusOK, true, "操作成功", data)
 }
 
-// 删除角色
-func TestRoleDelete(t *testing.T) {
+// 删除权限
+func TestPermissionDelete(t *testing.T) {
 	// 设置测试数据表
 	// 测试前后会自动创建和删除表
-	SetTestTableName("roles")
+	SetTestTableName("permissions")
 
-	aul := new(models.RoleJson)
+	aul := new(models.PermissionJson)
 
 	aul.Name = "guest"
 	aul.DisplayName = "访客"
 	aul.Description = "访客"
 	aul.Level = 999
 
-	delRole := models.CreateRole(aul)
+	delPermission := models.CreatePermission(aul)
 
-	url := "/v1/admin/roles/%d"
-	delete(t, fmt.Sprintf(url, delRole.ID), iris.StatusOK, true, "删除成功", nil)
+	url := "/v1/admin/permissions/%d"
+	delete(t, fmt.Sprintf(url, delPermission.ID), iris.StatusOK, true, "删除成功", nil)
 }

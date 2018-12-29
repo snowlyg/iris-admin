@@ -32,7 +32,8 @@ func TestUserProfile(t *testing.T) {
 	// 测试前后会自动创建和删除表
 	SetTestTableName("users")
 
-	getMore(t, "/v1/admin/users/profile", iris.StatusOK, true, "操作成功", nil)
+	url := "/v1/admin/users/profile"
+	getMore(t, url, iris.StatusOK, true, "操作成功", nil)
 }
 
 // 创建用户
@@ -52,13 +53,13 @@ func TestUserCreate(t *testing.T) {
 		"Name":     "name",
 	}
 
-	create(t, "/v1/admin/users", oj, iris.StatusOK, true, "操作成功", data)
+	url := "/v1/admin/users"
+	create(t, url, oj, iris.StatusOK, true, "操作成功", data)
 }
 
 // 更新用户
 func TestUserUpdate(t *testing.T) {
 
-	testAdminUser := models.CreaterSystemAdmin()
 	// 设置测试数据表
 	// 测试前后会自动创建和删除表
 	SetTestTableName("users")
@@ -74,7 +75,16 @@ func TestUserUpdate(t *testing.T) {
 		"Name":     oj["name"],
 	}
 
-	update(t, fmt.Sprintf("/v1/admin/users/%d/update", testAdminUser.ID), oj, iris.StatusOK, true, "操作成功", data)
+	aul := &models.UserJson{
+		Username: "guest",
+		Name:     "访客",
+		Password: "访客",
+	}
+
+	testAdminUser := models.CreateUser(aul)
+
+	url := "/v1/admin/users/%d/update"
+	update(t, fmt.Sprintf(url, testAdminUser.ID), oj, iris.StatusOK, true, "操作成功", data)
 }
 
 // 删除用户
@@ -90,5 +100,6 @@ func TestUserDelete(t *testing.T) {
 
 	delUser := models.CreateUser(aul)
 
-	delete(t, fmt.Sprintf("/v1/admin/users/%d", delUser.ID), iris.StatusOK, true, "删除成功", nil)
+	url := "/v1/admin/users/%d"
+	delete(t, fmt.Sprintf(url, delUser.ID), iris.StatusOK, true, "删除成功", nil)
 }

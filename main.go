@@ -32,7 +32,12 @@ func newApp() (api *iris.Application) {
 	//同步模型数据表
 	//如果模型表这里没有添加模型，单元测试会报错数据表不存在。
 	//因为单元测试结束，会删除数据表
-	database.DB.AutoMigrate(new(models.Users), new(models.OauthToken), new(models.Roles))
+	database.DB.AutoMigrate(
+		new(models.Users),
+		new(models.OauthToken),
+		new(models.Roles),
+		new(models.Permissions),
+	)
 
 	iris.RegisterOnInterrupt(func() {
 		database.DB.Close()
@@ -62,7 +67,7 @@ func newApp() (api *iris.Application) {
 	})
 
 	//初始化系统 账号 权限 角色
-	models.CreaterSystemData()
+	models.CreateSystemData()
 
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{

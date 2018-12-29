@@ -2,6 +2,7 @@ package models
 
 import (
 	"IrisApiProject/database"
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -72,7 +73,7 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Roles) {
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 
-	database.GetAll(searchKeys, orderBy, "Role", offset, limit).Find(&roles)
+	database.GetAll(searchKeys, orderBy, "Permission", offset, limit).Find(&roles)
 	return
 }
 
@@ -119,7 +120,7 @@ func UpdateRole(aul *RoleJson) (role *Roles) {
 *创建系统管理员
 *@return   *models.AdminRoleTranform api格式化后的数据格式
  */
-func CreaterSystemAdminRole() *Roles {
+func CreateSystemAdminRole() *Roles {
 	aul := new(RoleJson)
 	aul.Name = "admin"
 	aul.DisplayName = "超级管理员"
@@ -128,9 +129,11 @@ func CreaterSystemAdminRole() *Roles {
 
 	role := GetRoleByName(aul.Name)
 
-	if role == nil {
+	if role.ID == 0 {
+		fmt.Println("创建角色")
 		return CreateRole(aul)
 	} else {
+		fmt.Println("重复初始化角色")
 		return nil
 	}
 }

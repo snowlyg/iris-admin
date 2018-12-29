@@ -3,6 +3,7 @@ package models
 import (
 	"IrisApiProject/config"
 	"IrisApiProject/database"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 
@@ -194,7 +195,7 @@ func UserAdminLogout(user_id uint) bool {
 *创建系统管理员
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
-func CreaterSystemAdmin() *Users {
+func CreateSystemAdmin() *Users {
 
 	aul := new(UserJson)
 	aul.Username = config.Conf.Get("test.LoginUserName").(string)
@@ -203,9 +204,11 @@ func CreaterSystemAdmin() *Users {
 
 	user := GetUserByUserName(aul.Username)
 
-	if user == nil {
+	if user.ID == 0 {
+		fmt.Println("创建账号")
 		return CreateUser(aul)
 	} else {
+		fmt.Println("重复初始化账号")
 		return nil
 	}
 }

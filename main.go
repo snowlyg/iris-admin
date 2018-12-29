@@ -32,7 +32,7 @@ func newApp() (api *iris.Application) {
 	//同步模型数据表
 	//如果模型表这里没有添加模型，单元测试会报错数据表不存在。
 	//因为单元测试结束，会删除数据表
-	database.DB.AutoMigrate(new(models.Users), new(models.OauthToken))
+	database.DB.AutoMigrate(new(models.Users), new(models.OauthToken), new(models.Roles))
 
 	iris.RegisterOnInterrupt(func() {
 		database.DB.Close()
@@ -61,8 +61,8 @@ func newApp() (api *iris.Application) {
 		},
 	})
 
-	//初始化管理员
-	models.CreaterSystemAdmin()
+	//初始化系统 账号 权限 角色
+	models.CreaterSystemData()
 
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{
@@ -79,6 +79,20 @@ func newApp() (api *iris.Application) {
 				users.Post("/{id:uint}/update", controllers.UpdateUser)
 				users.Delete("/{id:uint}", controllers.DeleteUser)
 				users.Get("/profile", controllers.GetProfile)
+			})
+			admin.PartyFunc("/roles", func(roles router.Party) {
+				roles.Get("/", controllers.GetAllRoles)
+				roles.Get("/{id:uint}", controllers.GetRole)
+				roles.Post("/", controllers.CreateRole)
+				roles.Post("/{id:uint}/update", controllers.UpdateRole)
+				roles.Delete("/{id:uint}", controllers.DeleteRole)
+			})
+			admin.PartyFunc("/permissions", func(permissions router.Party) {
+				permissions.Get("/", controllers.GetAllPermissions)
+				permissions.Get("/{id:uint}", controllers.GetPermission)
+				permissions.Post("/", controllers.CreatePermission)
+				permissions.Post("/{id:uint}/update", controllers.UpdatePermission)
+				permissions.Delete("/{id:uint}", controllers.DeletePermission)
 			})
 		})
 	}

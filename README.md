@@ -23,12 +23,14 @@
 
 #### api项目初始化
 
->拉取项目 
+>拉取项目
+
 ```
 git clone https://github.com/snowlyg/IrisApiProject.git
 ```
 
 >加载依赖管理包
+
 ```
 本来是用 godep 管理的，使用后发现还是是有问题。暂时不使用依赖管理包，依赖要自行下载。
 ```
@@ -85,16 +87,19 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 #### 前端初始化
 
 >拉取项目
+
 ```
 git clone https://github.com/snowlyg/IrisApiVueAdmin.git
 ```
 
 >安装依赖
+
 ```
 npm install
 ```
 
 >启动项目
+
 ```
 npm run dev
 ```

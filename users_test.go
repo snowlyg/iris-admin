@@ -10,7 +10,7 @@ import (
 )
 
 // 后台账号列表
-func TestUserList(t *testing.T) {
+func TestUsers(t *testing.T) {
 
 	// 设置测试数据表
 	// 测试前后会自动创建和删除表
@@ -45,13 +45,11 @@ func TestUserCreate(t *testing.T) {
 		"username": "test_user",
 		"password": "password",
 		"name":     "name",
-		"phone":    "13412334567",
 	}
 
 	data := map[string]interface{}{
 		"Username": "test_user",
 		"Name":     "name",
-		"Phone":    "13412334567",
 	}
 
 	create(t, "/v1/admin/users", oj, iris.StatusOK, true, "操作成功", data)
@@ -69,13 +67,11 @@ func TestUserUpdate(t *testing.T) {
 		"username": "update_user",
 		"password": "update_name",
 		"name":     "update_name",
-		"phone":    "13412334567",
 	}
 
 	data := map[string]interface{}{
 		"Username": oj["username"],
 		"Name":     oj["name"],
-		"Phone":    oj["phone"],
 	}
 
 	update(t, fmt.Sprintf("/v1/admin/users/%d/update", testAdminUser.ID), oj, iris.StatusOK, true, "操作成功", data)

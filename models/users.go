@@ -14,7 +14,7 @@ type Users struct {
 	gorm.Model
 
 	Name     string `gorm:"not null VARCHAR(191)"`
-	Username string `gorm:"VARCHAR(191)"`
+	Username string `gorm:"unique;VARCHAR(191)"`
 	Password string `gorm:"not null VARCHAR(191)"`
 }
 
@@ -43,6 +43,19 @@ func UserAdminCheckLogin(username string) Users {
 func GetUserById(id uint) *Users {
 	user := new(Users)
 	user.ID = id
+
+	database.DB.First(user)
+
+	return user
+}
+
+/**
+ * 通过 username 获取 user 记录
+ * @method GetUserByUserName
+ * @param  {[type]}       user  *Users [description]
+ */
+func GetUserByUserName(username string) *Users {
+	user := &Users{Username: username}
 
 	database.DB.First(user)
 
@@ -182,10 +195,17 @@ func UserAdminLogout(user_id uint) bool {
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
 func CreaterSystemAdmin() *Users {
+
 	aul := new(UserJson)
 	aul.Username = config.Conf.Get("test.LoginUserName").(string)
 	aul.Password = config.Conf.Get("test.LoginPwd").(string)
 	aul.Name = config.Conf.Get("test.LoginName").(string)
 
-	return CreateUser(aul)
+	user := GetUserByUserName(aul.Username)
+
+	if user == nil {
+		return CreateUser(aul)
+	} else {
+		return nil
+	}
 }

@@ -39,9 +39,9 @@ func newApp() (api *iris.Application) {
 		&models.Permission{},
 	)
 
-	//iris.RegisterOnInterrupt(func() {
-	//	database.DB.Close()
-	//})
+	iris.RegisterOnInterrupt(func() {
+		database.DB.Close()
+	})
 
 	//"github.com/iris-contrib/middleware/cors"
 	crs := cors.New(cors.Options{

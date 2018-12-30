@@ -18,7 +18,7 @@ type User struct {
 	Username string `gorm:"unique;VARCHAR(191)"`
 	Password string `gorm:"not null VARCHAR(191)"`
 	RoleID   uint
-	Role     Role `gorm:"auto_preload"`
+	Role     Role
 }
 
 type UserJson struct {
@@ -90,8 +90,7 @@ func GetAllUsers(name, username, orderBy string, offset, limit int) (users []*Us
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 	searchKeys["username"] = username
-	//database.DB.Preload("Role").Find(&users)
-	database.GetAll(searchKeys, orderBy, "Role", offset, limit).Find(&users)
+	database.GetAll(searchKeys, orderBy, offset, limit).Preload("Role").Find(&users)
 	return
 }
 

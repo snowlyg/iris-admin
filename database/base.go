@@ -14,12 +14,7 @@ import (
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAll(searchKeys map[string]interface{}, orderBy, relation string, offset, limit int) *gorm.DB {
-
-	if len(relation) > 0 {
-		DB = DB.Preload(relation)
-	}
-
+func GetAll(searchKeys map[string]interface{}, orderBy string, offset, limit int) *gorm.DB {
 	if len(searchKeys) > 0 {
 		for k, v := range searchKeys {
 			tf := reflect.TypeOf(v).Name()

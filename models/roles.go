@@ -74,7 +74,7 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 
-	database.GetAll(searchKeys, orderBy, "Permission", offset, limit).Find(&roles)
+	database.GetAll(searchKeys, orderBy, offset, limit).Find(&roles)
 	return
 }
 

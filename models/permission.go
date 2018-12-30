@@ -72,7 +72,7 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 
-	database.GetAll(searchKeys, orderBy, "", offset, limit).Find(&permissions)
+	database.GetAll(searchKeys, orderBy, offset, limit).Find(&permissions)
 	return
 }
 

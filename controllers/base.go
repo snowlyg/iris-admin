@@ -12,7 +12,6 @@ type ApiJson struct {
 }
 
 func ApiResource(status bool, objects interface{}, msg string) (apijson *ApiJson) {
-	//datas := transformer(objects)
 	apijson = &ApiJson{Status: status, Data: objects, Msg: msg}
 	return
 }

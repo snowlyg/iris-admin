@@ -105,14 +105,11 @@ func CreateRole(aul *RoleJson) (role *Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateRole(aul *RoleJson) (role *Role) {
+func UpdateRole(aul *RoleJson, id uint) (role *Role) {
 	role = new(Role)
-	role.Name = aul.Name
-	role.DisplayName = aul.DisplayName
-	role.Description = aul.Description
-	role.Level = aul.Level
+	role.ID = id
 
-	database.DB.Update(role)
+	database.DB.Model(role).Updates(aul)
 
 	return
 }

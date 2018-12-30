@@ -22,7 +22,7 @@ type User struct {
 }
 
 type UserJson struct {
-	Username string `json:"username" validate:"required,gte=4,lte=50"`
+	Username string `json:"username" validate:"required,gte=2,lte=50"`
 	Password string `json:"password" validate:"required"`
 	Name     string `json:"name" validate:"required,gte=4,lte=50"`
 	RoleID   uint   `json:"role_id" validate:"required"`
@@ -123,16 +123,14 @@ func CreateUser(aul *UserJson) (user *User) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateUser(aul *UserJson) (user *User) {
+func UpdateUser(aul *UserJson, id uint) (user *User) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
 	user = new(User)
-	user.Username = aul.Username
-	user.Password = string(hash)
-	user.Name = aul.Name
+	user.ID = id
 
-	database.DB.Update(user)
+	database.DB.Model(user).Updates(User{Username: aul.Username, Password: string(hash), Name: aul.Name, RoleID: aul.RoleID})
 
 	return
 }

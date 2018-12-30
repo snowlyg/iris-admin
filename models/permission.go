@@ -103,14 +103,12 @@ func CreatePermission(aul *PermissionJson) (permission *Permission) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdatePermission(aul *PermissionJson) (permission *Permission) {
-	permission = new(Permission)
-	permission.Name = aul.Name
-	permission.DisplayName = aul.DisplayName
-	permission.Description = aul.Description
-	permission.Level = aul.Level
+func UpdatePermission(aul *PermissionJson, id uint) (permission *Permission) {
 
-	database.DB.Update(permission)
+	permission = new(Permission)
+	permission.ID = id
+
+	database.DB.Model(permission).Updates(aul)
 
 	return
 }

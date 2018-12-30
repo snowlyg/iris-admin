@@ -65,9 +65,12 @@ func CreateRole(ctx iris.Context) {
 			}
 		} else {
 			u := models.CreateRole(aul)
-
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(ApiResource(true, u, "操作成功"))
+			if u.ID == 0 {
+				ctx.JSON(ApiResource(false, u, "操作失败"))
+			} else {
+				ctx.JSON(ApiResource(true, u, "操作成功"))
+			}
 		}
 	}
 }
@@ -107,10 +110,16 @@ func UpdateRole(ctx iris.Context) {
 				fmt.Println()
 			}
 		} else {
-			u := models.UpdateRole(aul)
+			id, _ := ctx.Params().GetInt("id")
+			uid := uint(id)
 
+			u := models.UpdateRole(aul, uid)
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(ApiResource(true, u, "操作成功"))
+			if u.ID == 0 {
+				ctx.JSON(ApiResource(false, u, "操作失败"))
+			} else {
+				ctx.JSON(ApiResource(true, u, "操作成功"))
+			}
 		}
 	}
 }

@@ -33,15 +33,15 @@ func newApp() (api *iris.Application) {
 	//如果模型表这里没有添加模型，单元测试会报错数据表不存在。
 	//因为单元测试结束，会删除数据表
 	database.DB.AutoMigrate(
-		new(models.Users),
-		new(models.OauthToken),
-		new(models.Roles),
-		new(models.Permissions),
+		&models.User{},
+		&models.OauthToken{},
+		&models.Role{},
+		&models.Permission{},
 	)
 
-	iris.RegisterOnInterrupt(func() {
-		database.DB.Close()
-	})
+	//iris.RegisterOnInterrupt(func() {
+	//	database.DB.Close()
+	//})
 
 	//"github.com/iris-contrib/middleware/cors"
 	crs := cors.New(cors.Options{
@@ -81,7 +81,7 @@ func newApp() (api *iris.Application) {
 				users.Get("/", controllers.GetAllUsers)
 				users.Get("/{id:uint}", controllers.GetUser)
 				users.Post("/", controllers.CreateUser)
-				users.Post("/{id:uint}/update", controllers.UpdateUser)
+				users.Put("/{id:uint}", controllers.UpdateUser)
 				users.Delete("/{id:uint}", controllers.DeleteUser)
 				users.Get("/profile", controllers.GetProfile)
 			})
@@ -89,14 +89,14 @@ func newApp() (api *iris.Application) {
 				roles.Get("/", controllers.GetAllRoles)
 				roles.Get("/{id:uint}", controllers.GetRole)
 				roles.Post("/", controllers.CreateRole)
-				roles.Post("/{id:uint}/update", controllers.UpdateRole)
+				roles.Put("/{id:uint}", controllers.UpdateRole)
 				roles.Delete("/{id:uint}", controllers.DeleteRole)
 			})
 			admin.PartyFunc("/permissions", func(permissions router.Party) {
 				permissions.Get("/", controllers.GetAllPermissions)
 				permissions.Get("/{id:uint}", controllers.GetPermission)
 				permissions.Post("/", controllers.CreatePermission)
-				permissions.Post("/{id:uint}/update", controllers.UpdatePermission)
+				permissions.Put("/{id:uint}", controllers.UpdatePermission)
 				permissions.Delete("/{id:uint}", controllers.DeletePermission)
 			})
 		})

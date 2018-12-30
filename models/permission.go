@@ -6,9 +6,8 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Permissions struct {
+type Permission struct {
 	gorm.Model
-
 	Name        string `gorm:"unique;not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
@@ -25,10 +24,10 @@ type PermissionJson struct {
 /**
  * 通过 id 获取 permission 记录
  * @method GetPermissionById
- * @param  {[type]}       permission  *Permissions [description]
+ * @param  {[type]}       permission  *Permission [description]
  */
-func GetPermissionById(id uint) *Permissions {
-	permission := new(Permissions)
+func GetPermissionById(id uint) *Permission {
+	permission := new(Permission)
 	permission.ID = id
 
 	database.DB.First(permission)
@@ -39,10 +38,10 @@ func GetPermissionById(id uint) *Permissions {
 /**
  * 通过 name 获取 permission 记录
  * @method GetPermissionByName
- * @param  {[type]}       permission  *Permissions [description]
+ * @param  {[type]}       permission  *Permission [description]
  */
-func GetPermissionByName(name string) *Permissions {
-	permission := new(Permissions)
+func GetPermissionByName(name string) *Permission {
+	permission := new(Permission)
 	permission.Name = name
 
 	database.DB.First(permission)
@@ -55,7 +54,7 @@ func GetPermissionByName(name string) *Permissions {
  * @method DeletePermissionById
  */
 func DeletePermissionById(id uint) {
-	u := new(Permissions)
+	u := new(Permission)
 	u.ID = id
 
 	database.DB.Delete(u)
@@ -69,7 +68,7 @@ func DeletePermissionById(id uint) {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*Permissions) {
+func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*Permission) {
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 
@@ -84,9 +83,9 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreatePermission(aul *PermissionJson) (permission *Permissions) {
+func CreatePermission(aul *PermissionJson) (permission *Permission) {
 
-	permission = new(Permissions)
+	permission = new(Permission)
 	permission.Name = aul.Name
 	permission.DisplayName = aul.DisplayName
 	permission.Description = aul.Description
@@ -104,8 +103,8 @@ func CreatePermission(aul *PermissionJson) (permission *Permissions) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdatePermission(aul *PermissionJson) (permission *Permissions) {
-	permission = new(Permissions)
+func UpdatePermission(aul *PermissionJson) (permission *Permission) {
+	permission = new(Permission)
 	permission.Name = aul.Name
 	permission.DisplayName = aul.DisplayName
 	permission.Description = aul.Description
@@ -120,7 +119,7 @@ func UpdatePermission(aul *PermissionJson) (permission *Permissions) {
 *创建系统管理员
 *@return   *models.AdminPermissionTranform api格式化后的数据格式
  */
-func CreateSystemAdminPermission() *Permissions {
+func CreateSystemAdminPermission() *Permission {
 	aul := new(PermissionJson)
 	aul.Name = "update_user"
 	aul.DisplayName = "创建账号权限"
@@ -134,6 +133,6 @@ func CreateSystemAdminPermission() *Permissions {
 		return CreatePermission(aul)
 	} else {
 		fmt.Println("重复初始化权限")
-		return nil
+		return permission
 	}
 }

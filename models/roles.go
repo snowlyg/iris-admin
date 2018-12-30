@@ -6,13 +6,14 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Roles struct {
+type Role struct {
 	gorm.Model
 
 	Name        string `gorm:"unique;not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
 	Level       int    `gorm:"not null default 0 INT(10)"`
+	Perms       []*Permission
 }
 
 type RoleJson struct {
@@ -25,10 +26,10 @@ type RoleJson struct {
 /**
  * 通过 id 获取 role 记录
  * @method GetRoleById
- * @param  {[type]}       role  *Roles [description]
+ * @param  {[type]}       role  *Role [description]
  */
-func GetRoleById(id uint) *Roles {
-	role := new(Roles)
+func GetRoleById(id uint) *Role {
+	role := new(Role)
 	role.ID = id
 
 	database.DB.First(role)
@@ -39,10 +40,10 @@ func GetRoleById(id uint) *Roles {
 /**
  * 通过 name 获取 role 记录
  * @method GetRoleByName
- * @param  {[type]}       role  *Roles [description]
+ * @param  {[type]}       role  *Role [description]
  */
-func GetRoleByName(name string) *Roles {
-	role := new(Roles)
+func GetRoleByName(name string) *Role {
+	role := new(Role)
 	role.Name = name
 
 	database.DB.First(role)
@@ -55,7 +56,7 @@ func GetRoleByName(name string) *Roles {
  * @method DeleteRoleById
  */
 func DeleteRoleById(id uint) {
-	u := new(Roles)
+	u := new(Role)
 	u.ID = id
 
 	database.DB.Delete(u)
@@ -63,13 +64,13 @@ func DeleteRoleById(id uint) {
 
 /**
  * 获取所有的角色
- * @method GetAllRoles
+ * @method GetAllRole
  * @param  {[type]} name string [description]
  * @param  {[type]} orderBy string [description]
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Roles) {
+func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 
@@ -84,9 +85,9 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Roles) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateRole(aul *RoleJson) (role *Roles) {
+func CreateRole(aul *RoleJson) (role *Role) {
 
-	role = new(Roles)
+	role = new(Role)
 	role.Name = aul.Name
 	role.DisplayName = aul.DisplayName
 	role.Description = aul.Description
@@ -104,8 +105,8 @@ func CreateRole(aul *RoleJson) (role *Roles) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateRole(aul *RoleJson) (role *Roles) {
-	role = new(Roles)
+func UpdateRole(aul *RoleJson) (role *Role) {
+	role = new(Role)
 	role.Name = aul.Name
 	role.DisplayName = aul.DisplayName
 	role.Description = aul.Description
@@ -120,7 +121,7 @@ func UpdateRole(aul *RoleJson) (role *Roles) {
 *创建系统管理员
 *@return   *models.AdminRoleTranform api格式化后的数据格式
  */
-func CreateSystemAdminRole() *Roles {
+func CreateSystemAdminRole() *Role {
 	aul := new(RoleJson)
 	aul.Name = "admin"
 	aul.DisplayName = "超级管理员"
@@ -134,6 +135,6 @@ func CreateSystemAdminRole() *Roles {
 		return CreateRole(aul)
 	} else {
 		fmt.Println("重复初始化角色")
-		return nil
+		return role
 	}
 }

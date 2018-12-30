@@ -42,15 +42,26 @@ func TestUserCreate(t *testing.T) {
 	// 测试前后会自动创建和删除表
 	SetTestTableName("users")
 
+	aul := &models.RoleJson{
+		Name:        "guest",
+		Description: "访客",
+		DisplayName: "访客",
+		Level:       888,
+	}
+
+	testAdminRole := models.CreateRole(aul)
+
 	oj := map[string]interface{}{
 		"username": "test_user",
 		"password": "password",
 		"name":     "name",
+		"role_id":  testAdminRole.ID,
 	}
 
 	data := map[string]interface{}{
 		"Username": "test_user",
 		"Name":     "name",
+		"role_id":  testAdminRole.ID,
 	}
 
 	url := "/v1/admin/users"

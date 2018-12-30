@@ -11,18 +11,21 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type Users struct {
+type User struct {
 	gorm.Model
 
 	Name     string `gorm:"not null VARCHAR(191)"`
 	Username string `gorm:"unique;VARCHAR(191)"`
 	Password string `gorm:"not null VARCHAR(191)"`
+	RoleID   uint
+	Role     Role `gorm:"auto_preload"`
 }
 
 type UserJson struct {
 	Username string `json:"username" validate:"required,gte=4,lte=50"`
 	Password string `json:"password" validate:"required"`
 	Name     string `json:"name" validate:"required,gte=4,lte=50"`
+	RoleID   uint   `json:"role_id" validate:"required"`
 }
 
 /**
@@ -30,8 +33,8 @@ type UserJson struct {
  * @method UserAdminCheckLogin
  * @param  {[type]}       username string [description]
  */
-func UserAdminCheckLogin(username string) Users {
-	var u Users
+func UserAdminCheckLogin(username string) User {
+	var u User
 	database.DB.Where("username =  ?", username).First(&u)
 	return u
 }
@@ -39,13 +42,13 @@ func UserAdminCheckLogin(username string) Users {
 /**
  * 通过 id 获取 user 记录
  * @method GetUserById
- * @param  {[type]}       user  *Users [description]
+ * @param  {[type]}       user  *User [description]
  */
-func GetUserById(id uint) *Users {
-	user := new(Users)
+func GetUserById(id uint) *User {
+	user := new(User)
 	user.ID = id
 
-	database.DB.First(user)
+	database.DB.Preload("Role").First(user)
 
 	return user
 }
@@ -53,12 +56,12 @@ func GetUserById(id uint) *Users {
 /**
  * 通过 username 获取 user 记录
  * @method GetUserByUserName
- * @param  {[type]}       user  *Users [description]
+ * @param  {[type]}       user  *User [description]
  */
-func GetUserByUserName(username string) *Users {
-	user := &Users{Username: username}
+func GetUserByUserName(username string) *User {
+	user := &User{Username: username}
 
-	database.DB.First(user)
+	database.DB.Preload("Role").First(user)
 
 	return user
 }
@@ -68,7 +71,7 @@ func GetUserByUserName(username string) *Users {
  * @method DeleteUserById
  */
 func DeleteUserById(id uint) {
-	u := new(Users)
+	u := new(User)
 	u.ID = id
 
 	database.DB.Delete(u)
@@ -76,19 +79,18 @@ func DeleteUserById(id uint) {
 
 /**
  * 获取所有的账号
- * @method GetAllUsers
+ * @method GetAllUser
  * @param  {[type]} name string [description]
  * @param  {[type]} username string [description]
  * @param  {[type]} orderBy string [description]
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllUsers(name, username, orderBy string, offset, limit int) (users []*Users) {
+func GetAllUsers(name, username, orderBy string, offset, limit int) (users []*User) {
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 	searchKeys["username"] = username
-	searchKeys["is_client"] = false
-
+	//database.DB.Preload("Role").Find(&users)
 	database.GetAll(searchKeys, orderBy, "Role", offset, limit).Find(&users)
 	return
 }
@@ -100,14 +102,15 @@ func GetAllUsers(name, username, orderBy string, offset, limit int) (users []*Us
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateUser(aul *UserJson) (user *Users) {
+func CreateUser(aul *UserJson) (user *User) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
-	user = new(Users)
+	user = new(User)
 	user.Username = aul.Username
 	user.Password = string(hash)
 	user.Name = aul.Name
+	user.RoleID = aul.RoleID
 
 	database.DB.Create(user)
 
@@ -121,11 +124,11 @@ func CreateUser(aul *UserJson) (user *Users) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateUser(aul *UserJson) (user *Users) {
+func UpdateUser(aul *UserJson) (user *User) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
-	user = new(Users)
+	user = new(User)
 	user.Username = aul.Username
 	user.Password = string(hash)
 	user.Name = aul.Name
@@ -193,14 +196,16 @@ func UserAdminLogout(user_id uint) bool {
 
 /**
 *创建系统管理员
+*@param role_id uint
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
-func CreateSystemAdmin() *Users {
+func CreateSystemAdmin(role_id uint) *User {
 
 	aul := new(UserJson)
 	aul.Username = config.Conf.Get("test.LoginUserName").(string)
 	aul.Password = config.Conf.Get("test.LoginPwd").(string)
 	aul.Name = config.Conf.Get("test.LoginName").(string)
+	aul.RoleID = role_id
 
 	user := GetUserByUserName(aul.Username)
 
@@ -209,6 +214,6 @@ func CreateSystemAdmin() *Users {
 		return CreateUser(aul)
 	} else {
 		fmt.Println("重复初始化账号")
-		return nil
+		return user
 	}
 }

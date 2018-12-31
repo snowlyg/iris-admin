@@ -12,7 +12,7 @@ type Permission struct {
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
 
-	Roles []*Role `gorm:"many2many:role_perms;"`
+	//Roles []*Role `gorm:"many2many:role_perms;"`
 }
 
 type PermissionJson struct {

@@ -32,11 +32,16 @@ func newApp() (api *iris.Application) {
 	//同步模型数据表
 	//如果模型表这里没有添加模型，单元测试会报错数据表不存在。
 	//因为单元测试结束，会删除数据表
-	database.DB.AutoMigrate(&models.User{}, &models.OauthToken{}, &models.Role{}, &models.Permission{})
+	database.DB.AutoMigrate(
+		&models.User{},
+		&models.OauthToken{},
+		&models.Role{},
+		&models.Permission{},
+	)
 
-	//iris.RegisterOnInterrupt(func() {
-	//	database.DB.Close()
-	//})
+	iris.RegisterOnInterrupt(func() {
+		database.DB.Close()
+	})
 
 	//"github.com/iris-contrib/middleware/cors"
 	crs := cors.New(cors.Options{

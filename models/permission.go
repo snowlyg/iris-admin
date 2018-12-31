@@ -11,6 +11,8 @@ type Permission struct {
 	Name        string `gorm:"unique;not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
+
+	Roles []*Role `gorm:"many2many:role_perms;"`
 }
 
 type PermissionJson struct {

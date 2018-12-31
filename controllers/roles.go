@@ -64,7 +64,8 @@ func CreateRole(ctx iris.Context) {
 				fmt.Println()
 			}
 		} else {
-			u := models.CreateRole(aul)
+			perms := []models.Permission{}
+			u := models.CreateRole(aul, perms)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
 				ctx.JSON(ApiResource(false, u, "操作失败"))

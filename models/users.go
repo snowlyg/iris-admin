@@ -35,7 +35,7 @@ type UserJson struct {
  */
 func UserAdminCheckLogin(username string) User {
 	var u User
-	database.DB.Where("username =  ?", username).First(&u)
+	database.DB.Where("username = ?", username).First(&u)
 	return u
 }
 
@@ -127,16 +127,22 @@ func UpdateUser(aul *UserJson, id uint) *User {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
-	var user User
-	database.DB.First(&user, id)
+	user := new(User)
+	database.DB.First(user, id)
 
-	data := map[string]interface{}{"username": aul.Username, "password": string(hash), "name": aul.Name, "role_id": aul.RoleID}
+	data := map[string]interface{}{
+		"username": aul.Username,
+		"password": string(hash),
+		"name":     aul.Name,
+		"role_id":  aul.RoleID,
+	}
 
-	fmt.Println(aul)
+	if err := database.DB.Model(user).Updates(data).Error; err != nil {
+		fmt.Println("update_user:____")
+		fmt.Println(err)
+	}
 
-	database.DB.Model(&user).Updates(data)
-
-	return &user
+	return user
 }
 
 /**

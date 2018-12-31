@@ -19,23 +19,23 @@ func GetAll(searchKeys map[string]interface{}, orderBy string, offset, limit int
 		for k, v := range searchKeys {
 			tf := reflect.TypeOf(v).Name()
 			if tf == "string" && v != "" {
-				DB = DB.Where(k+"=?", v)
+				DB.Where(k+"=?", v)
 			}
 		}
 	}
 
 	if len(orderBy) > 0 {
-		DB = DB.Order(orderBy + " desc")
+		DB.Order(orderBy + " desc")
 	} else {
-		DB = DB.Order("created_at desc")
+		DB.Order("created_at desc")
 	}
 
 	if offset > 0 {
-		DB = DB.Offset(offset - 1)
+		DB.Offset(offset - 1)
 	}
 
 	if limit > 0 {
-		DB = DB.Limit(limit)
+		DB.Limit(limit)
 	}
 
 	return DB

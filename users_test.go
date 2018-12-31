@@ -1,7 +1,6 @@
 package main
 
 import (
-	"IrisApiProject/config"
 	"IrisApiProject/models"
 	"fmt"
 	"testing"
@@ -36,7 +35,7 @@ func TestUserProfile(t *testing.T) {
 func TestUserCreate(t *testing.T) {
 
 	aul := &models.RoleJson{
-		Name:        "test_guest",
+		Name:        "test_create_user",
 		Description: "访客",
 		DisplayName: "访客",
 	}
@@ -64,7 +63,7 @@ func TestUserCreate(t *testing.T) {
 func TestUserUpdate(t *testing.T) {
 
 	role_json := &models.RoleJson{
-		Name:        "test_guest",
+		Name:        "test_update_user",
 		Description: "访客",
 		DisplayName: "访客",
 	}
@@ -100,9 +99,9 @@ func TestUserUpdate(t *testing.T) {
 func TestUserDelete(t *testing.T) {
 
 	aul := new(models.UserJson)
-	aul.Username = config.Conf.Get("test.LoginUserName").(string)
-	aul.Password = config.Conf.Get("test.LoginPwd").(string)
-	aul.Name = config.Conf.Get("test.LoginName").(string)
+	aul.Username = "test_delete_user"
+	aul.Password = "test_delete_user"
+	aul.Name = "test_delete_user"
 
 	delUser := models.CreateUser(aul)
 

@@ -31,7 +31,9 @@ func GetRoleById(id uint) *Role {
 	role := new(Role)
 	role.ID = id
 
-	database.DB.First(role)
+	if err := database.DB.First(role).Error; err != nil {
+		fmt.Println("GetRoleByIdErr:%s", err)
+	}
 
 	return role
 }
@@ -45,7 +47,9 @@ func GetRoleByName(name string) *Role {
 	role := new(Role)
 	role.Name = name
 
-	database.DB.First(role)
+	if err := database.DB.First(role).Error; err != nil {
+		fmt.Println("GetRoleByNameErr:%s", err)
+	}
 
 	return role
 }
@@ -58,7 +62,9 @@ func DeleteRoleById(id uint) {
 	u := new(Role)
 	u.ID = id
 
-	database.DB.Delete(u)
+	if err := database.DB.Delete(u).Error; err != nil {
+		fmt.Println("DeleteRoleErr:%s", err)
+	}
 }
 
 /**
@@ -73,7 +79,9 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 
-	database.GetAll(searchKeys, orderBy, offset, limit).Find(&roles)
+	if err := database.GetAll(searchKeys, orderBy, offset, limit).Find(&roles).Error; err != nil {
+		fmt.Println("GetAllRoleErr:%s", err)
+	}
 	return
 }
 
@@ -91,7 +99,9 @@ func CreateRole(aul *RoleJson) (role *Role) {
 	role.DisplayName = aul.DisplayName
 	role.Description = aul.Description
 
-	database.DB.Create(role)
+	if err := database.DB.Create(role).Error; err != nil {
+		fmt.Println("CreateRoleErr:%s", err)
+	}
 
 	return
 }
@@ -103,17 +113,13 @@ func CreateRole(aul *RoleJson) (role *Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateRole(aul *RoleJson, id uint) (role *Role) {
+func UpdateRole(rj *RoleJson, id uint) (role *Role) {
 	role = new(Role)
 	role.ID = id
 
-	data := map[string]interface{}{
-		"name":         aul.Name,
-		"description":  aul.Description,
-		"display_name": aul.DisplayName,
+	if err := database.DB.Model(&role).Updates(rj).Error; err != nil {
+		fmt.Println("UpdatRoleErr:%s", err)
 	}
-
-	database.DB.Model(&role).Updates(data)
 
 	return
 }

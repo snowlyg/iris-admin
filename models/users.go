@@ -34,8 +34,10 @@ type UserJson struct {
  * @param  {[type]}       username string [description]
  */
 func UserAdminCheckLogin(username string) User {
-	var u User
-	database.DB.Where("username = ?", username).First(&u)
+	u := User{}
+	if err := database.DB.Where("username = ?", username).First(&u).Error; err != nil {
+		fmt.Println("UserAdminCheckLoginErr:%s", err)
+	}
 	return u
 }
 
@@ -48,7 +50,9 @@ func GetUserById(id uint) *User {
 	user := new(User)
 	user.ID = id
 
-	database.DB.Preload("Role").First(user)
+	if err := database.DB.Preload("Role").First(user).Error; err != nil {
+		fmt.Println("GetUserByIdErr:%s", err)
+	}
 
 	return user
 }
@@ -61,7 +65,9 @@ func GetUserById(id uint) *User {
 func GetUserByUserName(username string) *User {
 	user := &User{Username: username}
 
-	database.DB.Preload("Role").First(user)
+	if err := database.DB.Preload("Role").First(user).Error; err != nil {
+		fmt.Println("GetUserByUserNameErr:%s", err)
+	}
 
 	return user
 }
@@ -74,7 +80,9 @@ func DeleteUserById(id uint) {
 	u := new(User)
 	u.ID = id
 
-	database.DB.Delete(u)
+	if err := database.DB.Delete(u).Error; err != nil {
+		fmt.Println("DeleteUserByIdErr:%s", err)
+	}
 }
 
 /**
@@ -90,7 +98,9 @@ func GetAllUsers(name, username, orderBy string, offset, limit int) (users []*Us
 	searchKeys := make(map[string]interface{})
 	searchKeys["name"] = name
 	searchKeys["username"] = username
-	database.GetAll(searchKeys, orderBy, offset, limit).Preload("Role").Find(&users)
+	if err := database.GetAll(searchKeys, orderBy, offset, limit).Preload("Role").Find(&users).Error; err != nil {
+		fmt.Println("GetAllUserErr:%s", err)
+	}
 	return
 }
 
@@ -111,7 +121,9 @@ func CreateUser(aul *UserJson) (user *User) {
 	user.Name = aul.Name
 	user.RoleID = aul.RoleID
 
-	database.DB.Create(user)
+	if err := database.DB.Create(user).Error; err != nil {
+		fmt.Println("CreateUserErr:%s", err)
+	}
 
 	return
 }
@@ -123,23 +135,16 @@ func CreateUser(aul *UserJson) (user *User) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateUser(aul *UserJson, id uint) *User {
+func UpdateUser(uj *UserJson, id uint) *User {
 	salt, _ := bcrypt.Salt(10)
-	hash, _ := bcrypt.Hash(aul.Password, salt)
+	hash, _ := bcrypt.Hash(uj.Password, salt)
 
 	user := new(User)
-	database.DB.First(user, id)
+	user.ID = id
+	uj.Password = string(hash)
 
-	data := map[string]interface{}{
-		"username": aul.Username,
-		"password": string(hash),
-		"name":     aul.Name,
-		"role_id":  aul.RoleID,
-	}
-
-	if err := database.DB.Model(user).Updates(data).Error; err != nil {
-		fmt.Println("update_user:____")
-		fmt.Println(err)
+	if err := database.DB.Model(user).Updates(uj).Error; err != nil {
+		fmt.Println("UpdateUserErr:%s", err)
 	}
 
 	return user

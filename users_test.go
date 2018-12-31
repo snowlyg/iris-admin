@@ -50,9 +50,9 @@ func TestUserCreate(t *testing.T) {
 	}
 
 	data := map[string]interface{}{
-		"Username": "test_user",
-		"Name":     "name",
-		"role_id":  testAdminRole.ID,
+		"Username": oj["username"],
+		"Name":     oj["name"],
+		"RoleID":   oj["role_id"],
 	}
 
 	url := "/v1/admin/users"
@@ -70,6 +70,15 @@ func TestUserUpdate(t *testing.T) {
 
 	testAdminRole := models.CreateRole(role_json)
 
+	aul := &models.UserJson{
+		Username: "guest",
+		Name:     "访客",
+		Password: "guest111",
+		RoleID:   testAdminRole.ID,
+	}
+
+	testAdminUser := models.CreateUser(aul)
+
 	oj := map[string]interface{}{
 		"username": "test_update_user",
 		"password": "update_name",
@@ -81,15 +90,6 @@ func TestUserUpdate(t *testing.T) {
 		"Username": oj["username"],
 		"Name":     oj["name"],
 	}
-
-	aul := &models.UserJson{
-		Username: "guest",
-		Name:     "访客",
-		Password: "guest111",
-		RoleID:   testAdminRole.ID,
-	}
-
-	testAdminUser := models.CreateUser(aul)
 
 	url := "/v1/admin/users/%d"
 	update(t, fmt.Sprintf(url, testAdminUser.ID), oj, iris.StatusOK, true, "操作成功", data)

@@ -130,12 +130,9 @@ func UpdateUser(aul *UserJson, id uint) *User {
 	var user User
 	database.DB.First(&user, id)
 
-	data := map[string]interface{}{
-		"username": aul.Username,
-		"password": string(hash),
-		"name":     aul.Name,
-		"role_id":  aul.RoleID,
-	}
+	data := map[string]interface{}{"username": aul.Username, "password": string(hash), "name": aul.Name, "role_id": aul.RoleID}
+
+	fmt.Println(aul)
 
 	database.DB.Model(&user).Updates(data)
 

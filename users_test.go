@@ -39,7 +39,6 @@ func TestUserCreate(t *testing.T) {
 		Name:        "test_guest",
 		Description: "访客",
 		DisplayName: "访客",
-		Level:       888,
 	}
 
 	testAdminRole := models.CreateRole(aul)
@@ -64,10 +63,19 @@ func TestUserCreate(t *testing.T) {
 // 更新用户
 func TestUserUpdate(t *testing.T) {
 
+	role_json := &models.RoleJson{
+		Name:        "test_guest",
+		Description: "访客",
+		DisplayName: "访客",
+	}
+
+	testAdminRole := models.CreateRole(role_json)
+
 	oj := map[string]interface{}{
 		"username": "test_update_user",
 		"password": "update_name",
 		"name":     "update_name",
+		"role_id":  testAdminRole.ID,
 	}
 
 	data := map[string]interface{}{
@@ -78,7 +86,8 @@ func TestUserUpdate(t *testing.T) {
 	aul := &models.UserJson{
 		Username: "guest",
 		Name:     "访客",
-		Password: "访客",
+		Password: "guest111",
+		RoleID:   testAdminRole.ID,
 	}
 
 	testAdminUser := models.CreateUser(aul)

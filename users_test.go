@@ -12,10 +12,6 @@ import (
 // 后台账号列表
 func TestUsers(t *testing.T) {
 
-	// 设置测试数据表
-	// 测试前后会自动创建和删除表
-	SetTestTableName("users")
-
 	// 发起 http 请求
 	// Url        string      //测试路由
 	// Object     interface{} //发送的json 对象
@@ -38,12 +34,9 @@ func TestUserProfile(t *testing.T) {
 
 // 创建用户
 func TestUserCreate(t *testing.T) {
-	// 设置测试数据表
-	// 测试前后会自动创建和删除表
-	SetTestTableName("users")
 
 	aul := &models.RoleJson{
-		Name:        "guest",
+		Name:        "test_guest",
 		Description: "访客",
 		DisplayName: "访客",
 		Level:       888,
@@ -71,12 +64,8 @@ func TestUserCreate(t *testing.T) {
 // 更新用户
 func TestUserUpdate(t *testing.T) {
 
-	// 设置测试数据表
-	// 测试前后会自动创建和删除表
-	SetTestTableName("users")
-
 	oj := map[string]interface{}{
-		"username": "update_user",
+		"username": "test_update_user",
 		"password": "update_name",
 		"name":     "update_name",
 	}
@@ -94,15 +83,12 @@ func TestUserUpdate(t *testing.T) {
 
 	testAdminUser := models.CreateUser(aul)
 
-	url := "/v1/admin/users/%d/update"
+	url := "/v1/admin/users/%d"
 	update(t, fmt.Sprintf(url, testAdminUser.ID), oj, iris.StatusOK, true, "操作成功", data)
 }
 
 // 删除用户
 func TestUserDelete(t *testing.T) {
-	// 设置测试数据表
-	// 测试前后会自动创建和删除表
-	SetTestTableName("users")
 
 	aul := new(models.UserJson)
 	aul.Username = config.Conf.Get("test.LoginUserName").(string)

@@ -10,7 +10,6 @@ import (
 
 	"IrisApiProject/config"
 	"IrisApiProject/database"
-	"github.com/go-redis/redis"
 	"github.com/iris-contrib/httpexpect"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/httptest"
@@ -29,16 +28,13 @@ func TestMain(m *testing.M) {
 	flag.Parse()
 	exitCode := m.Run()
 
-	// 获取测试的数据表
-	value, err := caches.Cache.Get("test_table_name").Result()
-	if err == redis.Nil {
-		fmt.Println("env_t does not exist")
-	} else if err != nil {
-		panic(err)
-	}
-
 	// 删除测试数据表，保持测试环境
-	database.DB.DropTable(value)
+	database.DB.DropTable(
+		&models.User{},
+		&models.OauthToken{},
+		&models.Role{},
+		&models.Permission{},
+	)
 
 	os.Exit(exitCode)
 }
@@ -82,7 +78,7 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Status
 	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
 
-	ob := e.POST(url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(Object).
+	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 
 	ob.Value("status").Equal(Status)

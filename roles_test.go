@@ -36,14 +36,12 @@ func TestRoleCreate(t *testing.T) {
 		"name":         "create_role",
 		"display_name": "create_display_name",
 		"description":  "create_description",
-		"level":        888,
 	}
 
 	data := map[string]interface{}{
 		"Name":        oj["name"],
 		"DisplayName": oj["display_name"],
 		"Description": oj["description"],
-		"Level":       oj["level"],
 	}
 
 	url := "/v1/admin/roles"
@@ -58,29 +56,26 @@ func TestRoleUpdate(t *testing.T) {
 	SetTestTableName("roles")
 
 	oj := map[string]interface{}{
-		"name":         "update_role",
+		"name":         "test_update_role",
 		"display_name": "update_display_name",
 		"description":  "update_description",
-		"level":        888,
 	}
 
 	data := map[string]interface{}{
 		"Name":        oj["name"],
 		"DisplayName": oj["display_name"],
 		"Description": oj["description"],
-		"Level":       oj["level"],
 	}
 
 	aul := &models.RoleJson{
-		Name:        "guest",
+		Name:        "test_guest",
 		Description: "访客",
 		DisplayName: "访客",
-		Level:       888,
 	}
 
 	testAdminRole := models.CreateRole(aul)
 
-	url := "/v1/admin/roles/%d/update"
+	url := "/v1/admin/roles/%d"
 	update(t, fmt.Sprintf(url, testAdminRole.ID), oj, iris.StatusOK, true, "操作成功", data)
 }
 
@@ -95,7 +90,6 @@ func TestRoleDelete(t *testing.T) {
 	aul.Name = "guest"
 	aul.DisplayName = "访客"
 	aul.Description = "访客"
-	aul.Level = 999
 
 	delRole := models.CreateRole(aul)
 

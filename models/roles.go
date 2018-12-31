@@ -12,15 +12,14 @@ type Role struct {
 	Name        string `gorm:"unique;not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
-	Level       int    `gorm:"not null default 0 INT(10)"`
-	Perms       []*Permission
+
+	Perms []*Permission
 }
 
 type RoleJson struct {
 	Name        string `json:"name" validate:"required,gte=4,lte=50"`
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
-	Level       int    `json:"level"`
 }
 
 /**
@@ -91,7 +90,6 @@ func CreateRole(aul *RoleJson) (role *Role) {
 	role.Name = aul.Name
 	role.DisplayName = aul.DisplayName
 	role.Description = aul.Description
-	role.Level = aul.Level
 
 	database.DB.Create(role)
 
@@ -109,7 +107,13 @@ func UpdateRole(aul *RoleJson, id uint) (role *Role) {
 	role = new(Role)
 	role.ID = id
 
-	database.DB.Model(role).Updates(aul)
+	data := map[string]interface{}{
+		"name":         aul.Name,
+		"description":  aul.Description,
+		"display_name": aul.DisplayName,
+	}
+
+	database.DB.Model(&role).Updates(data)
 
 	return
 }
@@ -123,7 +127,6 @@ func CreateSystemAdminRole() *Role {
 	aul.Name = "admin"
 	aul.DisplayName = "超级管理员"
 	aul.Description = "超级管理员"
-	aul.Level = 999
 
 	role := GetRoleByName(aul.Name)
 

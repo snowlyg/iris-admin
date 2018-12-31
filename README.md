@@ -97,6 +97,16 @@ git clone https://github.com/snowlyg/IrisApiVueAdmin.git
 npm install
 ```
 
+> 在src/utils/ 下面新建文件 apiUrl.js
+
+> 复制内容到文件内
+
+```
+const api_url = 'http://localhost:80'
+export default api_url
+
+```
+
 >启动项目
 
 ```

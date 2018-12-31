@@ -24,7 +24,7 @@ type User struct {
 type UserJson struct {
 	Username string `json:"username" validate:"required,gte=2,lte=50"`
 	Password string `json:"password" validate:"required"`
-	Name     string `json:"name" validate:"required,gte=4,lte=50"`
+	Name     string `json:"name" validate:"required,gte=2,lte=50"`
 	RoleID   uint   `json:"role_id" validate:"required"`
 }
 
@@ -123,16 +123,23 @@ func CreateUser(aul *UserJson) (user *User) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateUser(aul *UserJson, id uint) (user *User) {
+func UpdateUser(aul *UserJson, id uint) *User {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
-	user = new(User)
-	user.ID = id
+	var user User
+	database.DB.First(&user, id)
 
-	database.DB.Model(user).Updates(User{Username: aul.Username, Password: string(hash), Name: aul.Name, RoleID: aul.RoleID})
+	data := map[string]interface{}{
+		"username": aul.Username,
+		"password": string(hash),
+		"name":     aul.Name,
+		"role_id":  aul.RoleID,
+	}
 
-	return
+	database.DB.Model(&user).Updates(data)
+
+	return &user
 }
 
 /**

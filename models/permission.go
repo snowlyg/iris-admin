@@ -11,14 +11,12 @@ type Permission struct {
 	Name        string `gorm:"unique;not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
-	Level       int    `gorm:"not null default 0 INT(10)"`
 }
 
 type PermissionJson struct {
 	Name        string `json:"name" validate:"required,gte=4,lte=50"`
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
-	Level       int    `json:"level"`
 }
 
 /**
@@ -86,10 +84,10 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
 func CreatePermission(aul *PermissionJson) (permission *Permission) {
 
 	permission = new(Permission)
+
 	permission.Name = aul.Name
 	permission.DisplayName = aul.DisplayName
 	permission.Description = aul.Description
-	permission.Level = aul.Level
 
 	database.DB.Create(permission)
 
@@ -108,7 +106,13 @@ func UpdatePermission(aul *PermissionJson, id uint) (permission *Permission) {
 	permission = new(Permission)
 	permission.ID = id
 
-	database.DB.Model(permission).Updates(aul)
+	data := map[string]interface{}{
+		"name":         aul.Name,
+		"description":  aul.Description,
+		"display_name": aul.DisplayName,
+	}
+
+	database.DB.Model(&permission).Updates(data)
 
 	return
 }
@@ -122,7 +126,6 @@ func CreateSystemAdminPermission() *Permission {
 	aul.Name = "update_user"
 	aul.DisplayName = "创建账号权限"
 	aul.Description = "创建账号权限"
-	aul.Level = 999
 
 	permission := GetPermissionByName(aul.Name)
 

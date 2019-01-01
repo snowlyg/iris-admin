@@ -11,8 +11,6 @@ type Permission struct {
 	Name        string `gorm:"unique;not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
-
-	//Roles []*Role `gorm:"many2many:role_perms;"`
 }
 
 type PermissionJson struct {
@@ -31,7 +29,7 @@ func GetPermissionById(id uint) *Permission {
 	permission.ID = id
 
 	if err := database.DB.First(permission).Error; err != nil {
-		fmt.Println("GetPermissionByIdError:%s", err)
+		fmt.Printf("GetPermissionByIdError:%s", err)
 	}
 
 	return permission
@@ -47,7 +45,7 @@ func GetPermissionByName(name string) *Permission {
 	permission.Name = name
 
 	if err := database.DB.First(permission).Error; err != nil {
-		fmt.Println("GetPermissionByNameError:%s", err)
+		fmt.Printf("GetPermissionByNameError:%s", err)
 	}
 
 	return permission
@@ -62,7 +60,7 @@ func DeletePermissionById(id uint) {
 	u.ID = id
 
 	if err := database.DB.Delete(u).Error; err != nil {
-		fmt.Println("DeletePermissionByIdError:%s", err)
+		fmt.Printf("DeletePermissionByIdError:%s", err)
 	}
 }
 
@@ -79,7 +77,7 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
 	searchKeys["name"] = name
 
 	if err := database.GetAll(searchKeys, orderBy, offset, limit).Find(&permissions).Error; err != nil {
-		fmt.Println("GetAllPermissionsError:%s", err)
+		fmt.Printf("GetAllPermissionsError:%s", err)
 	}
 
 	return
@@ -101,7 +99,7 @@ func CreatePermission(aul *PermissionJson) (permission *Permission) {
 	permission.Description = aul.Description
 
 	if err := database.DB.Create(permission).Error; err != nil {
-		fmt.Println("CreatePermissionError:%s", err)
+		fmt.Printf("CreatePermissionError:%s", err)
 	}
 
 	return
@@ -119,7 +117,7 @@ func UpdatePermission(pj *PermissionJson, id uint) (permission *Permission) {
 	permission.ID = id
 
 	if err := database.DB.Model(&permission).Updates(pj).Error; err != nil {
-		fmt.Println("UpdatePermissionError:%s", err)
+		fmt.Printf("UpdatePermissionError:%s", err)
 	}
 
 	return

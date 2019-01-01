@@ -36,7 +36,7 @@ type UserJson struct {
 func UserAdminCheckLogin(username string) User {
 	u := User{}
 	if err := database.DB.Where("username = ?", username).First(&u).Error; err != nil {
-		fmt.Println("UserAdminCheckLoginErr:%s", err)
+		fmt.Printf("UserAdminCheckLoginErr:%s", err)
 	}
 	return u
 }
@@ -51,7 +51,7 @@ func GetUserById(id uint) *User {
 	user.ID = id
 
 	if err := database.DB.Preload("Role").First(user).Error; err != nil {
-		fmt.Println("GetUserByIdErr:%s", err)
+		fmt.Printf("GetUserByIdErr:%s", err)
 	}
 
 	return user
@@ -66,7 +66,7 @@ func GetUserByUserName(username string) *User {
 	user := &User{Username: username}
 
 	if err := database.DB.Preload("Role").First(user).Error; err != nil {
-		fmt.Println("GetUserByUserNameErr:%s", err)
+		fmt.Printf("GetUserByUserNameErr:%s", err)
 	}
 
 	return user
@@ -81,7 +81,7 @@ func DeleteUserById(id uint) {
 	u.ID = id
 
 	if err := database.DB.Delete(u).Error; err != nil {
-		fmt.Println("DeleteUserByIdErr:%s", err)
+		fmt.Printf("DeleteUserByIdErr:%s", err)
 	}
 }
 
@@ -99,7 +99,7 @@ func GetAllUsers(name, username, orderBy string, offset, limit int) (users []*Us
 	searchKeys["name"] = name
 	searchKeys["username"] = username
 	if err := database.GetAll(searchKeys, orderBy, offset, limit).Preload("Role").Find(&users).Error; err != nil {
-		fmt.Println("GetAllUserErr:%s", err)
+		fmt.Printf("GetAllUserErr:%s", err)
 	}
 	return
 }
@@ -122,7 +122,7 @@ func CreateUser(aul *UserJson) (user *User) {
 	user.RoleID = aul.RoleID
 
 	if err := database.DB.Create(user).Error; err != nil {
-		fmt.Println("CreateUserErr:%s", err)
+		fmt.Printf("CreateUserErr:%s", err)
 	}
 
 	return
@@ -144,7 +144,7 @@ func UpdateUser(uj *UserJson, id uint) *User {
 	uj.Password = string(hash)
 
 	if err := database.DB.Model(user).Updates(uj).Error; err != nil {
-		fmt.Println("UpdateUserErr:%s", err)
+		fmt.Printf("UpdateUserErr:%s", err)
 	}
 
 	return user

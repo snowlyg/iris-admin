@@ -1,7 +1,7 @@
 package main
 
 import (
-	"IrisApiProject/caches"
+	"IrisApiProject/database"
 	"IrisApiProject/models"
 	"flag"
 	"fmt"
@@ -9,14 +9,17 @@ import (
 	"testing"
 
 	"IrisApiProject/config"
-	"IrisApiProject/database"
 	"github.com/iris-contrib/httpexpect"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/httptest"
 )
 
 var (
-	app *iris.Application // iris.Applications
+	app       *iris.Application // iris.Applications
+	testRole  *models.Role
+	testPerm  *models.Permission
+	testPerms []models.Permission
+	testUser  *models.User
 )
 
 //单元测试基境
@@ -25,21 +28,19 @@ func TestMain(m *testing.M) {
 	// 初始化app
 	app = newApp()
 
+	baseCase()
+
 	flag.Parse()
 	exitCode := m.Run()
 
 	// 删除测试数据表，保持测试环境
-	database.DB.DropTable(
-		&models.User{},
-		&models.OauthToken{},
-		&models.Role{},
-		&models.Permission{},
-	)
+	database.DB.DropTable("users", "roles", "permissions", &models.OauthToken{})
 
 	os.Exit(exitCode)
+
 }
 
-// 单元测试 post 方法
+// 单元测试 login 方法
 func login(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
 	if Data != nil {
@@ -55,7 +56,7 @@ func login(t *testing.T, url string, Object interface{}, StatusCode int, Status 
 	return
 }
 
-// 单元测试 post 方法
+// 单元测试 create 方法
 func create(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
@@ -73,7 +74,7 @@ func create(t *testing.T, url string, Object interface{}, StatusCode int, Status
 	return
 }
 
-// 单元测试 post 方法
+// 单元测试 update 方法
 func update(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
@@ -91,7 +92,7 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Status
 	return
 }
 
-// 单元测试 get 方法
+// 单元测试 getOne 方法
 func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
@@ -108,7 +109,7 @@ func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string, D
 	return
 }
 
-// 单元测试 get 方法
+// 单元测试 getMore 方法
 func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
@@ -125,7 +126,7 @@ func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, 
 	return
 }
 
-// 单元测试 get 方法
+// 单元测试 delete 方法
 func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
 	at := GetLoginToken()
@@ -135,17 +136,6 @@ func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, D
 		JSON().Object().Values().Contains(Status, Msg)
 
 	return
-}
-
-/**
-*设置测试数据表
-*@param tn stirng 数据表名称
- */
-func SetTestTableName(tn string) {
-	err := caches.Cache.Set("test_table_name", tn, 0).Err()
-	if err != nil {
-		panic(err)
-	}
 }
 
 /**
@@ -164,4 +154,32 @@ func GetLoginToken() models.Token {
 	}
 
 	return response
+}
+
+func baseCase() {
+	perm_json := &models.PermissionJson{
+		Name:        "test_update_user",
+		Description: "访客",
+		DisplayName: "访客",
+	}
+
+	testPerm = models.CreatePermission(perm_json)
+	testPerms = []models.Permission{*testPerm}
+
+	role_json := &models.RoleJson{
+		Name:        "test_update_user",
+		Description: "访客",
+		DisplayName: "访客",
+	}
+
+	testRole = models.CreateRole(role_json, testPerms)
+
+	aul := &models.UserJson{
+		Username: "guest",
+		Name:     "访客",
+		Password: "guest111",
+		RoleID:   testRole.ID,
+	}
+
+	testUser = models.CreateUser(aul)
 }

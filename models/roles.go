@@ -32,7 +32,7 @@ func GetRoleById(id uint) *Role {
 	role.ID = id
 
 	if err := database.DB.Preload("Perms").First(role).Error; err != nil {
-		fmt.Println("GetRoleByIdErr:%s", err)
+		fmt.Printf("GetRoleByIdErr:%s", err)
 	}
 
 	return role
@@ -48,7 +48,7 @@ func GetRoleByName(name string) *Role {
 	role.Name = name
 
 	if err := database.DB.Preload("Perms").First(role).Error; err != nil {
-		fmt.Println("GetRoleByNameErr:%s", err)
+		fmt.Printf("GetRoleByNameErr:%s", err)
 	}
 
 	return role
@@ -63,7 +63,7 @@ func DeleteRoleById(id uint) {
 	u.ID = id
 
 	if err := database.DB.Delete(u).Error; err != nil {
-		fmt.Println("DeleteRoleErr:%s", err)
+		fmt.Printf("DeleteRoleErr:%s", err)
 	}
 }
 
@@ -80,7 +80,7 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
 	searchKeys["name"] = name
 
 	if err := database.GetAll(searchKeys, orderBy, offset, limit).Preload("Perms").Find(&roles).Error; err != nil {
-		fmt.Println("GetAllRoleErr:%s", err)
+		fmt.Printf("GetAllRoleErr:%s", err)
 	}
 	return
 }
@@ -100,11 +100,11 @@ func CreateRole(aul *RoleJson, perms []Permission) (role *Role) {
 	role.Description = aul.Description
 
 	if err := database.DB.Create(role).Error; err != nil {
-		fmt.Println("CreateRoleErr:%s", err)
+		fmt.Printf("CreateRoleErr:%s", err)
 	}
 
 	if err := database.DB.Model(&role).Association("Perms").Append(perms).Error; err != nil {
-		fmt.Println("AppendPermsErr:%s", err)
+		fmt.Printf("AppendPermsErr:%s", err)
 	}
 
 	return
@@ -122,7 +122,7 @@ func UpdateRole(rj *RoleJson, id uint) (role *Role) {
 	role.ID = id
 
 	if err := database.DB.Model(&role).Updates(rj).Error; err != nil {
-		fmt.Println("UpdatRoleErr:%s", err)
+		fmt.Printf("UpdatRoleErr:%s", err)
 	}
 
 	return

@@ -6,9 +6,9 @@ package models
 func CreateSystemData() {
 	perm := CreateSystemAdminPermission() //初始化权限
 
-	perms := []Permission{*perm}
+	permIds := []uint{perm.ID}
 
-	role := CreateSystemAdminRole(perms) //初始化角色
+	role := CreateSystemAdminRole(permIds) //初始化角色
 
 	if role.ID != 0 {
 		CreateSystemAdmin(role.ID) //初始化管理员

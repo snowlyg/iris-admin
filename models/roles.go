@@ -17,9 +17,16 @@ type Role struct {
 }
 
 type RoleJson struct {
-	Name        string `json:"name" validate:"required,gte=4,lte=50"`
+	Name        string `json:"name"`
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
+}
+
+type RoleFormJson struct {
+	Name           string `json:"name" validate:"required,gte=4,lte=50"`
+	DisplayName    string `json:"display_name"`
+	Description    string `json:"description"`
+	PermissionsIds []uint `json:"permissions_ids"`
 }
 
 /**
@@ -92,7 +99,7 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateRole(aul *RoleJson, perms []Permission) (role *Role) {
+func CreateRole(aul *RoleJson, permIds []uint) (role *Role) {
 
 	role = new(Role)
 	role.Name = aul.Name
@@ -103,6 +110,9 @@ func CreateRole(aul *RoleJson, perms []Permission) (role *Role) {
 		fmt.Printf("CreateRoleErr:%s", err)
 	}
 
+	perms := []Permission{}
+	database.DB.Where("id in (?)", permIds).Find(&perms)
+	fmt.Println(perms)
 	if err := database.DB.Model(&role).Association("Perms").Append(perms).Error; err != nil {
 		fmt.Printf("AppendPermsErr:%s", err)
 	}
@@ -117,12 +127,18 @@ func CreateRole(aul *RoleJson, perms []Permission) (role *Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateRole(rj *RoleJson, id uint) (role *Role) {
+func UpdateRole(rj *RoleJson, id uint, permIds []uint) (role *Role) {
 	role = new(Role)
 	role.ID = id
 
 	if err := database.DB.Model(&role).Updates(rj).Error; err != nil {
 		fmt.Printf("UpdatRoleErr:%s", err)
+	}
+
+	perms := []Permission{}
+	database.DB.Where("id in (?)", permIds).Find(&perms)
+	if err := database.DB.Model(&role).Association("Perms").Replace(perms).Error; err != nil {
+		fmt.Printf("AppendPermsErr:%s", err)
 	}
 
 	return
@@ -132,7 +148,7 @@ func UpdateRole(rj *RoleJson, id uint) (role *Role) {
 *创建系统管理员
 *@return   *models.AdminRoleTranform api格式化后的数据格式
  */
-func CreateSystemAdminRole(perms []Permission) *Role {
+func CreateSystemAdminRole(permIds []uint) *Role {
 	aul := new(RoleJson)
 	aul.Name = "admin"
 	aul.DisplayName = "超级管理员"
@@ -142,7 +158,7 @@ func CreateSystemAdminRole(perms []Permission) *Role {
 
 	if role.ID == 0 {
 		fmt.Println("创建角色")
-		return CreateRole(aul, perms)
+		return CreateRole(aul, permIds)
 	} else {
 		fmt.Println("重复初始化角色")
 		return role

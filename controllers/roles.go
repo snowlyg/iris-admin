@@ -45,14 +45,13 @@ func GetRole(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateRole(ctx iris.Context) {
+	roleForm := new(models.RoleFormJson)
 
-	aul := new(models.RoleJson)
-
-	if err := ctx.ReadJSON(&aul); err != nil {
+	if err := ctx.ReadJSON(&roleForm); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
 		ctx.JSON(errorData(err))
 	} else {
-		err := validate.Struct(aul)
+		err := validate.Struct(roleForm)
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			for _, err := range err.(validator.ValidationErrors) {
@@ -64,8 +63,12 @@ func CreateRole(ctx iris.Context) {
 				fmt.Println()
 			}
 		} else {
-			perms := []models.Permission{}
-			u := models.CreateRole(aul, perms)
+			roleJson := new(models.RoleJson)
+			roleJson.Name = roleForm.Name
+			roleJson.Description = roleForm.Description
+			roleJson.DisplayName = roleForm.DisplayName
+
+			u := models.CreateRole(roleJson, roleForm.PermissionsIds)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
 				ctx.JSON(ApiResource(false, u, "操作失败"))
@@ -93,13 +96,14 @@ func CreateRole(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateRole(ctx iris.Context) {
-	aul := new(models.RoleJson)
 
-	if err := ctx.ReadJSON(&aul); err != nil {
+	roleForm := new(models.RoleFormJson)
+
+	if err := ctx.ReadJSON(&roleForm); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
 		ctx.JSON(errorData(err))
 	} else {
-		err := validate.Struct(aul)
+		err := validate.Struct(roleForm)
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
 			for _, err := range err.(validator.ValidationErrors) {
@@ -114,7 +118,12 @@ func UpdateRole(ctx iris.Context) {
 			id, _ := ctx.Params().GetInt("id")
 			uid := uint(id)
 
-			u := models.UpdateRole(aul, uid)
+			roleJson := new(models.RoleJson)
+			roleJson.Name = roleForm.Name
+			roleJson.Description = roleForm.Description
+			roleJson.DisplayName = roleForm.DisplayName
+
+			u := models.UpdateRole(roleJson, uid, roleForm.PermissionsIds)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
 				ctx.JSON(ApiResource(false, u, "操作失败"))

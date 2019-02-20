@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"IrisApiProject/models"
-	"IrisApiProject/tools"
 	"fmt"
 	"github.com/kataras/iris"
 	"gopkg.in/go-playground/validator.v9"
@@ -174,11 +173,16 @@ func DeleteUser(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllUsers(ctx iris.Context) {
-	offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
-	limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
-	name := ctx.FormValue("name")
-	username := ctx.FormValue("username")
-	orderBy := ctx.FormValue("orderBy")
+	//offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
+	//limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
+	//name := ctx.FormValue("name")
+	//username := ctx.FormValue("username")
+	//orderBy := ctx.FormValue("orderBy")
+	offset := ctx.URLParamIntDefault("offset", 1)
+	limit := ctx.URLParamIntDefault("limit", 15)
+	name := ctx.URLParam("name")
+	username := ctx.URLParam("username")
+	orderBy := ctx.URLParam("orderBy")
 
 	users := models.GetAllUsers(name, username, orderBy, offset, limit)
 

@@ -157,8 +157,8 @@ func DeletePermission(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllPermissions(ctx iris.Context) {
-	offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
-	limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
+	offset := tools.Tool.ParseInt(ctx.URLParam("offset"), 1)
+	limit := tools.Tool.ParseInt(ctx.URLParam("limit"), 20)
 	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
 

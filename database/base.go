@@ -2,8 +2,9 @@ package database
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"reflect"
+
+	"github.com/jinzhu/gorm"
 )
 
 /**
@@ -35,7 +36,7 @@ func GetAll(searchKeys map[string]interface{}, orderBy string, offset, limit int
 	if offset > 0 {
 		fmt.Println("offset:")
 		fmt.Println(offset)
-		TDB = TDB.Offset(offset - 1*limit)
+		TDB = TDB.Offset((offset - 1) * limit)
 	}
 
 	if limit > 0 {

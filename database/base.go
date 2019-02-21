@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"reflect"
 )
@@ -15,28 +16,33 @@ import (
  * @param  {[type]} limit int    [description]
  */
 func GetAll(searchKeys map[string]interface{}, orderBy string, offset, limit int) *gorm.DB {
+	TDB := DB
+	if len(orderBy) > 0 {
+		TDB = TDB.Order(orderBy + "desc")
+	} else {
+		TDB = TDB.Order("created_at desc")
+	}
+
 	if len(searchKeys) > 0 {
 		for k, v := range searchKeys {
 			tf := reflect.TypeOf(v).Name()
 			if tf == "string" && v != "" {
-				DB.Where(k+"=?", v)
+				TDB = TDB.Where(k+"=?", v)
 			}
 		}
 	}
 
-	if len(orderBy) > 0 {
-		DB.Order(orderBy + " desc")
-	} else {
-		DB.Order("created_at desc")
-	}
-
 	if offset > 0 {
-		DB.Offset(offset - 1)
+		fmt.Println("offset:")
+		fmt.Println(offset)
+		TDB = TDB.Offset(offset - 1*limit)
 	}
 
 	if limit > 0 {
-		DB.Limit(limit)
+		fmt.Println("limit:")
+		fmt.Println(limit)
+		TDB = TDB.Limit(limit)
 	}
 
-	return DB
+	return TDB
 }

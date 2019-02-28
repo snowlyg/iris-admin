@@ -73,10 +73,7 @@ func DeletePermissionById(id uint) {
  * @param  {[type]} limit int    [description]
  */
 func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*Permission) {
-	searchKeys := make(map[string]interface{})
-	searchKeys["name"] = name
-
-	if err := database.GetAll(searchKeys, orderBy, offset, limit).Find(&permissions).Error; err != nil {
+	if err := database.GetAll(name, orderBy, offset, limit).Find(&permissions).Error; err != nil {
 		fmt.Printf("GetAllPermissionsError:%s", err)
 	}
 

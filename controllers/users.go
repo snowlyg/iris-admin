@@ -181,10 +181,9 @@ func GetAllUsers(ctx iris.Context) {
 	offset := ctx.URLParamIntDefault("offset", 1)
 	limit := ctx.URLParamIntDefault("limit", 15)
 	name := ctx.URLParam("name")
-	username := ctx.URLParam("username")
 	orderBy := ctx.URLParam("orderBy")
 
-	users := models.GetAllUsers(name, username, orderBy, offset, limit)
+	users := models.GetAllUsers(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	ctx.JSON(ApiResource(true, users, "操作成功"))

@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/jinzhu/gorm"
 )
@@ -10,13 +9,13 @@ import (
 /**
  * 获取列表
  * @method MGetAll
- * @param  {[type]} searchKeys map[string]string [description]
+ * @param  {[type]} string string    [description]
  * @param  {[type]} orderBy string    [description]
  * @param  {[type]} relation string    [description]
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAll(searchKeys map[string]interface{}, orderBy string, offset, limit int) *gorm.DB {
+func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 	TDB := DB
 	if len(orderBy) > 0 {
 		TDB = TDB.Order(orderBy + "desc")
@@ -24,13 +23,8 @@ func GetAll(searchKeys map[string]interface{}, orderBy string, offset, limit int
 		TDB = TDB.Order("created_at desc")
 	}
 
-	if len(searchKeys) > 0 {
-		for k, v := range searchKeys {
-			tf := reflect.TypeOf(v).Name()
-			if tf == "string" && v != "" {
-				TDB = TDB.Where(k+"=?", v)
-			}
-		}
+	if len(string) > 0 {
+		TDB = TDB.Where("name LIKE  ?", "%"+string+"%")
 	}
 
 	if offset > 0 {

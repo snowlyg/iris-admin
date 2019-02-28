@@ -83,10 +83,8 @@ func DeleteRoleById(id uint) {
  * @param  {[type]} limit int    [description]
  */
 func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
-	searchKeys := make(map[string]interface{})
-	searchKeys["name"] = name
 
-	if err := database.GetAll(searchKeys, orderBy, offset, limit).Preload("Perms").Find(&roles).Error; err != nil {
+	if err := database.GetAll(name, orderBy, offset, limit).Preload("Perms").Find(&roles).Error; err != nil {
 		fmt.Printf("GetAllRoleErr:%s", err)
 	}
 	return

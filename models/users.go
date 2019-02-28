@@ -94,11 +94,8 @@ func DeleteUserById(id uint) {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllUsers(name, username, orderBy string, offset, limit int) (users []*User) {
-	searchKeys := make(map[string]interface{})
-	searchKeys["name"] = name
-	searchKeys["username"] = username
-	if err := database.GetAll(searchKeys, orderBy, offset, limit).Preload("Role").Find(&users).Error; err != nil {
+func GetAllUsers(name, orderBy string, offset, limit int) (users []*User) {
+	if err := database.GetAll(name, orderBy, offset, limit).Preload("Role").Find(&users).Error; err != nil {
 		fmt.Printf("GetAllUserErr:%s", err)
 	}
 	return

@@ -15,11 +15,11 @@ import (
 )
 
 var (
-	app       *iris.Application // iris.Applications
-	testRole  *models.Role
-	testPerm  *models.Permission
-	testPerms []models.Permission
-	testUser  *models.User
+	app         *iris.Application // iris.Applications
+	testRole    *models.Role
+	testPerm    *models.Permission
+	testPermIds []uint
+	testUser    *models.User
 )
 
 //单元测试基境
@@ -164,7 +164,7 @@ func baseCase() {
 	}
 
 	testPerm = models.CreatePermission(perm_json)
-	testPerms = []models.Permission{*testPerm}
+	testPermIds = []uint{testPerm.ID}
 
 	role_json := &models.RoleJson{
 		Name:        "test_update_user",
@@ -172,7 +172,7 @@ func baseCase() {
 		DisplayName: "访客",
 	}
 
-	testRole = models.CreateRole(role_json, testPerms)
+	testRole = models.CreateRole(role_json, testPermIds)
 
 	aul := &models.UserJson{
 		Username: "guest",

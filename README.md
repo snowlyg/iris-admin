@@ -82,37 +82,6 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 
 ---
 
-
-#### 前端初始化
-
->拉取项目
-
-```
-git clone https://github.com/snowlyg/IrisApiVueAdmin.git
-```
-
->安装依赖
-
-```
-npm install
-```
-
-> 在src/utils/ 下面新建文件 apiUrl.js
-
-> 复制内容到文件内
-
-```
-const api_url = 'http://localhost:80'
-export default api_url
-
-```
-
->启动项目
-
-```
-npm run dev
-```
-
 #### 登录项目
 输入地址 http://localhost:8080
 

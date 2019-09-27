@@ -6,7 +6,6 @@
 - 采用 iris 框架目后台api [IrisApiProject](https://github.com/snowlyg/IrisApiProject.gits)
 - 采用了 gorm 数据库模块 和 jwt 的单点登陆认证方式
 - 测试默认使用了 sqlite3 数据库
-- 用 vue 写了一个前端 [IrisApiVueAdmin](https://github.com/snowlyg/IrisApiVueAdmin)
 ---
 
 #### 项目目录结构

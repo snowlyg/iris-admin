@@ -1,5 +1,6 @@
 # IrisApi
-###### 本来写的一个api接口项目，现在抽空改成一个后台权限管理项目
+
+> 国内下载太慢的同学移步码云 [IrisApiProject](https://gitee.com/dtouyu/IrisApiProject.git)
 
 #### 项目介绍
 - 采用 iris 框架目后台api [IrisApiProject](https://github.com/snowlyg/IrisApiProject.gits)

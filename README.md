@@ -1,5 +1,5 @@
 # IrisApi
-###### Iris + Vue + mysql + redis + jwt
+###### 国内下载太慢的同学移步码云 [IrisApiProject](https://gitee.com/dtouyu/IrisApiProject.git)
 
 #### 项目介绍
 - 采用 iris 框架目后台api [IrisApiProject](https://github.com/snowlyg/IrisApiProject.gits)

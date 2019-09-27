@@ -1,11 +1,12 @@
 package models
 
 import (
+	"fmt"
+	"time"
+
 	"IrisApiProject/config"
 	"IrisApiProject/database"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"time"
 
 	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
@@ -114,7 +115,7 @@ func CreateUser(aul *UserJson) (user *User) {
 
 	user = new(User)
 	user.Username = aul.Username
-	user.Password = string(hash)
+	user.Password = hash
 	user.Name = aul.Name
 	user.RoleID = aul.RoleID
 
@@ -138,7 +139,7 @@ func UpdateUser(uj *UserJson, id uint) *User {
 
 	user := new(User)
 	user.ID = id
-	uj.Password = string(hash)
+	uj.Password = hash
 
 	if err := database.DB.Model(user).Updates(uj).Error; err != nil {
 		fmt.Printf("UpdateUserErr:%s", err)
@@ -172,15 +173,15 @@ func CheckLogin(username, password string) (response Token, status bool, msg str
 				return
 			}
 
-			oauth_token := new(OauthToken)
-			oauth_token.Token = tokenString
-			oauth_token.UserId = user.ID
-			oauth_token.Secret = "secret"
-			oauth_token.Revoked = false
-			oauth_token.ExpressIn = time.Now().Add(time.Hour * time.Duration(1)).Unix()
-			oauth_token.CreatedAt = time.Now()
+			oauthToken := new(OauthToken)
+			oauthToken.Token = tokenString
+			oauthToken.UserId = user.ID
+			oauthToken.Secret = "secret"
+			oauthToken.Revoked = false
+			oauthToken.ExpressIn = time.Now().Add(time.Hour * time.Duration(1)).Unix()
+			oauthToken.CreatedAt = time.Now()
 
-			response = oauth_token.OauthTokenCreate()
+			response = oauthToken.OauthTokenCreate()
 			status = true
 			msg = "登陆成功"
 
@@ -198,8 +199,8 @@ func CheckLogin(username, password string) (response Token, status bool, msg str
 * @method UserAdminLogout
 * @param  {[type]} ids string [description]
  */
-func UserAdminLogout(user_id uint) bool {
-	ot := UpdateOauthTokenByUserId(user_id)
+func UserAdminLogout(userId uint) bool {
+	ot := UpdateOauthTokenByUserId(userId)
 	return ot.Revoked
 }
 
@@ -208,13 +209,13 @@ func UserAdminLogout(user_id uint) bool {
 *@param role_id uint
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
-func CreateSystemAdmin(role_id uint) *User {
+func CreateSystemAdmin(roleId uint) *User {
 
 	aul := new(UserJson)
 	aul.Username = config.Conf.Get("test.LoginUserName").(string)
 	aul.Password = config.Conf.Get("test.LoginPwd").(string)
 	aul.Name = config.Conf.Get("test.LoginName").(string)
-	aul.RoleID = role_id
+	aul.RoleID = roleId
 
 	user := GetUserByUserName(aul.Username)
 

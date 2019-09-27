@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"IrisApiProject/models"
 	"fmt"
+
+	"IrisApiProject/models"
 	"github.com/kataras/iris"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -24,7 +25,7 @@ func GetProfile(ctx iris.Context) {
 	user := models.GetUserById(user_id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, user, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, user, "操作成功"))
 }
 
 /**
@@ -44,7 +45,7 @@ func GetUser(ctx iris.Context) {
 	user := models.GetUserById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, user, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, user, "操作成功"))
 }
 
 /**
@@ -67,7 +68,7 @@ func CreateUser(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON(errorData(err))
+		_, _ = ctx.JSON(errorData(err))
 	} else {
 		err := validate.Struct(aul)
 		if err != nil {
@@ -85,9 +86,9 @@ func CreateUser(ctx iris.Context) {
 
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
-				ctx.JSON(ApiResource(false, u, "操作失败"))
+				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
 			} else {
-				ctx.JSON(ApiResource(true, u, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
 			}
 		}
 	}
@@ -112,7 +113,7 @@ func UpdateUser(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON(errorData(err))
+		_, _ = ctx.JSON(errorData(err))
 	} else {
 		err := validate.Struct(aul)
 		if err != nil {
@@ -132,9 +133,9 @@ func UpdateUser(ctx iris.Context) {
 			u := models.UpdateUser(aul, uid)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
-				ctx.JSON(ApiResource(false, u, "操作失败"))
+				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
 			} else {
-				ctx.JSON(ApiResource(true, u, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
 			}
 		}
 	}
@@ -157,7 +158,7 @@ func DeleteUser(ctx iris.Context) {
 	models.DeleteUserById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, nil, "删除成功"))
+	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))
 }
 
 /**
@@ -186,5 +187,5 @@ func GetAllUsers(ctx iris.Context) {
 	users := models.GetAllUsers(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, users, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, users, "操作成功"))
 }

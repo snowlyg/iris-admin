@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/pelletier/go-toml"
 )
 

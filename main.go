@@ -2,15 +2,11 @@ package main
 
 import (
 	"IrisApiProject/config"
-	"IrisApiProject/controllers"
 	"IrisApiProject/database"
-	"IrisApiProject/middleware"
 	"IrisApiProject/models"
+	"IrisApiProject/routes"
 	"github.com/betacraft/yaag/yaag"
-	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris"
-	"github.com/kataras/iris/core/router"
-	"github.com/kataras/iris/middleware/logger"
 )
 
 /**
@@ -20,14 +16,6 @@ import (
  */
 func newApp() (api *iris.Application) {
 	api = iris.New()
-	api.Use(logger.New())
-
-	api.OnErrorCode(iris.StatusNotFound, func(ctx iris.Context) {
-		ctx.JSON(controllers.ApiResource(false, nil, "404 Not Found"))
-	})
-	api.OnErrorCode(iris.StatusInternalServerError, func(ctx iris.Context) {
-		ctx.WriteString("Oups something went wrong, try again")
-	})
 
 	//同步模型数据表
 	//如果模型表这里没有添加模型，单元测试会报错数据表不存在。
@@ -40,17 +28,10 @@ func newApp() (api *iris.Application) {
 	)
 
 	iris.RegisterOnInterrupt(func() {
-		database.DB.Close()
+		_ = database.DB.Close()
 	})
 
-	//"github.com/iris-contrib/middleware/cors"
-	crs := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
-		AllowedMethods:   []string{"PUT", "PATCH", "GET", "POST", "OPTIONS", "DELETE"},
-		AllowedHeaders:   []string{"*"},
-		ExposedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
-		AllowCredentials: true,
-	})
+	routes.Register(api)
 
 	appName := config.Conf.Get("app.name").(string)
 	appDoc := config.Conf.Get("app.doc").(string)
@@ -69,45 +50,14 @@ func newApp() (api *iris.Application) {
 	//初始化系统 账号 权限 角色
 	models.CreateSystemData()
 
-	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
-	{
-		v1.Use(middleware.NewYaag()) // <- IMPORTANT, register the middleware.
-		v1.Post("/admin/login", controllers.UserLogin)
-		v1.PartyFunc("/admin", func(admin router.Party) {
-			admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken)
-			admin.Get("/logout", controllers.UserLogout)
-
-			admin.PartyFunc("/users", func(users router.Party) {
-				users.Get("/", controllers.GetAllUsers)
-				users.Get("/{id:uint}", controllers.GetUser)
-				users.Post("/", controllers.CreateUser)
-				users.Put("/{id:uint}", controllers.UpdateUser)
-				users.Delete("/{id:uint}", controllers.DeleteUser)
-				users.Get("/profile", controllers.GetProfile)
-			})
-			admin.PartyFunc("/roles", func(roles router.Party) {
-				roles.Get("/", controllers.GetAllRoles)
-				roles.Get("/{id:uint}", controllers.GetRole)
-				roles.Post("/", controllers.CreateRole)
-				roles.Put("/{id:uint}", controllers.UpdateRole)
-				roles.Delete("/{id:uint}", controllers.DeleteRole)
-			})
-			admin.PartyFunc("/permissions", func(permissions router.Party) {
-				permissions.Get("/", controllers.GetAllPermissions)
-				permissions.Get("/{id:uint}", controllers.GetPermission)
-				permissions.Post("/", controllers.CreatePermission)
-				permissions.Put("/{id:uint}", controllers.UpdatePermission)
-				permissions.Delete("/{id:uint}", controllers.DeletePermission)
-			})
-		})
-	}
-
 	return
 }
 
 func main() {
 	app := newApp()
+	app.RegisterView(iris.HTML("resources", ".html"))
+	app.HandleDir("/static", "resources/static") // 设置静态资源
 
 	addr := config.Conf.Get("app.addr").(string)
-	app.Run(iris.Addr(addr))
+	_ = app.Run(iris.Addr(addr), iris.WithoutServerError(iris.ErrServerClosed))
 }

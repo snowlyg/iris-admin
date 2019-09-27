@@ -1,8 +1,6 @@
 package database
 
 import (
-	"fmt"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -28,14 +26,10 @@ func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 	}
 
 	if offset > 0 {
-		fmt.Println("offset:")
-		fmt.Println(offset)
 		TDB = TDB.Offset((offset - 1) * limit)
 	}
 
 	if limit > 0 {
-		fmt.Println("limit:")
-		fmt.Println(limit)
 		TDB = TDB.Limit(limit)
 	}
 

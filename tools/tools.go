@@ -117,26 +117,26 @@ func (t *Tools) SubString(str string, start, length int) string {
 	if length == 0 {
 		return ""
 	}
-	rune_str := []rune(str)
-	len_str := len(rune_str)
+	runeStr := []rune(str)
+	lenStr := len(runeStr)
 
 	if start < 0 {
-		start = len_str + start
+		start = lenStr + start
 	}
-	if start > len_str {
-		start = len_str
+	if start > lenStr {
+		start = lenStr
 	}
 	end := start + length
-	if end > len_str {
-		end = len_str
+	if end > lenStr {
+		end = lenStr
 	}
 	if length < 0 {
-		end = len_str + length
+		end = lenStr + length
 	}
 	if start > end {
 		start, end = end, start
 	}
-	return string(rune_str[start:end])
+	return string(runeStr[start:end])
 }
 
 /**

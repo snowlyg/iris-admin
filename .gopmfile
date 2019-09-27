@@ -1,0 +1,10 @@
+[deps]
+github.com/betacraft/yaag = 
+github.com/dgrijalva/jwt-go = 
+github.com/iris-contrib/middleware = 
+github.com/jameskeane/bcrypt = 
+github.com/jinzhu/gorm = 
+github.com/kataras/iris = 
+github.com/pelletier/go-toml = 
+gopkg.in/go-playground/validator.v9 = 
+

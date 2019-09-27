@@ -51,4 +51,4 @@
     #测试数据库驱动
     DataBaseDriver = "sqlite3"
     #测试数据库
-    DataBaseConnect = "/tmp/gorm.db"
+    DataBaseConnect = "tmp/gorm.db"

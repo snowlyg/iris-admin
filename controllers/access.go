@@ -1,10 +1,11 @@
 package controllers
 
 import (
+	"net/http"
+
 	"IrisApiProject/models"
 	"IrisApiProject/tools"
 	"github.com/kataras/iris"
-	"net/http"
 )
 
 /**
@@ -26,18 +27,18 @@ func UserLogin(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		ctx.JSON(ApiResource(false, nil, "请求参数错误"))
+		_, _ = ctx.JSON(ApiResource(false, nil, "请求参数错误"))
 	} else {
 		if UserNameErr := validate.Var(aul.Username, "required,min=4,max=20"); UserNameErr != nil {
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(ApiResource(false, nil, "用户名格式错误"))
+			_, _ = ctx.JSON(ApiResource(false, nil, "用户名格式错误"))
 		} else if PwdErr := validate.Var(aul.Password, "required,min=5,max=20"); PwdErr != nil {
 			ctx.StatusCode(iris.StatusOK)
-			ctx.JSON(ApiResource(false, nil, "密码格式错误"))
+			_, _ = ctx.JSON(ApiResource(false, nil, "密码格式错误"))
 		} else {
 			ctx.StatusCode(iris.StatusOK)
 			response, status, msg := models.CheckLogin(aul.Username, aul.Password)
-			ctx.JSON(ApiResource(status, response, msg))
+			_, _ = ctx.JSON(ApiResource(status, response, msg))
 		}
 	}
 }
@@ -60,5 +61,5 @@ func UserLogout(ctx iris.Context) {
 	models.UserAdminLogout(uid)
 
 	ctx.StatusCode(http.StatusOK)
-	ctx.JSON(ApiResource(true, nil, "退出登陆"))
+	_, _ = ctx.JSON(ApiResource(true, nil, "退出登陆"))
 }

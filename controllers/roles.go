@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"fmt"
+
 	"IrisApiProject/models"
 	"IrisApiProject/tools"
-	"fmt"
 	"github.com/kataras/iris"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -25,7 +26,7 @@ func GetRole(ctx iris.Context) {
 	role := models.GetRoleById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, role, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, role, "操作成功"))
 }
 
 /**
@@ -49,7 +50,7 @@ func CreateRole(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(&roleForm); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON(errorData(err))
+		_, _ = ctx.JSON(errorData(err))
 	} else {
 		err := validate.Struct(roleForm)
 		if err != nil {
@@ -71,9 +72,9 @@ func CreateRole(ctx iris.Context) {
 			u := models.CreateRole(roleJson, roleForm.PermissionsIds)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
-				ctx.JSON(ApiResource(false, u, "操作失败"))
+				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
 			} else {
-				ctx.JSON(ApiResource(true, u, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
 			}
 		}
 	}
@@ -101,7 +102,7 @@ func UpdateRole(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(&roleForm); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON(errorData(err))
+		_, _ = ctx.JSON(errorData(err))
 	} else {
 		err := validate.Struct(roleForm)
 		if err != nil {
@@ -126,9 +127,9 @@ func UpdateRole(ctx iris.Context) {
 			u := models.UpdateRole(roleJson, uid, roleForm.PermissionsIds)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
-				ctx.JSON(ApiResource(false, u, "操作失败"))
+				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
 			} else {
-				ctx.JSON(ApiResource(true, u, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
 			}
 		}
 	}
@@ -151,7 +152,7 @@ func DeleteRole(ctx iris.Context) {
 	models.DeleteRoleById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, nil, "删除成功"))
+	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))
 }
 
 /**
@@ -175,5 +176,5 @@ func GetAllRoles(ctx iris.Context) {
 	roles := models.GetAllRoles(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, roles, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, roles, "操作成功"))
 }

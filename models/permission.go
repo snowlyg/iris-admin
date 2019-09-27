@@ -1,8 +1,9 @@
 package models
 
 import (
-	"IrisApiProject/database"
 	"fmt"
+
+	"IrisApiProject/database"
 	"github.com/jinzhu/gorm"
 )
 

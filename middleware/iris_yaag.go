@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+
 	"github.com/betacraft/yaag/middleware"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/betacraft/yaag/yaag/models"
@@ -14,7 +15,7 @@ func NewYaag() context.Handler {
 
 		/*
 		*过滤 OPTIONS 请求，无需生成文档
-		*/
+		 */
 		if !yaag.IsOn() || ctx.Method() == "OPTIONS" {
 			// execute the main handler and exit if yaag is off.
 			ctx.Next()

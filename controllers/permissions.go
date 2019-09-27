@@ -1,9 +1,10 @@
 package controllers
 
 import (
+	"fmt"
+
 	"IrisApiProject/models"
 	"IrisApiProject/tools"
-	"fmt"
 	"github.com/kataras/iris"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -25,7 +26,7 @@ func GetPermission(ctx iris.Context) {
 	permission := models.GetPermissionById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, permission, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, permission, "操作成功"))
 }
 
 /**
@@ -50,7 +51,7 @@ func CreatePermission(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON(errorData(err))
+		_, _ = ctx.JSON(errorData(err))
 	} else {
 		err := validate.Struct(aul)
 		if err != nil {
@@ -67,9 +68,9 @@ func CreatePermission(ctx iris.Context) {
 			u := models.CreatePermission(aul)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
-				ctx.JSON(ApiResource(false, u, "操作失败"))
+				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
 			} else {
-				ctx.JSON(ApiResource(true, u, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
 			}
 		}
 	}
@@ -96,7 +97,7 @@ func UpdatePermission(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
-		ctx.JSON(errorData(err))
+		_, _ = ctx.JSON(errorData(err))
 	} else {
 		err := validate.Struct(aul)
 		if err != nil {
@@ -116,9 +117,9 @@ func UpdatePermission(ctx iris.Context) {
 			u := models.UpdatePermission(aul, uid)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
-				ctx.JSON(ApiResource(false, u, "操作失败"))
+				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
 			} else {
-				ctx.JSON(ApiResource(true, u, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
 			}
 		}
 	}
@@ -141,7 +142,7 @@ func DeletePermission(ctx iris.Context) {
 	models.DeletePermissionById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, nil, "删除成功"))
+	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))
 }
 
 /**
@@ -165,5 +166,5 @@ func GetAllPermissions(ctx iris.Context) {
 	permissions := models.GetAllPermissions(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	ctx.JSON(ApiResource(true, permissions, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, permissions, "操作成功"))
 }

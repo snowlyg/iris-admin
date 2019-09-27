@@ -1,8 +1,9 @@
 package main
 
 import (
-	"IrisApiProject/config"
 	"testing"
+
+	"IrisApiProject/config"
 
 	"github.com/kataras/iris"
 )

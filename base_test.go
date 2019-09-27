@@ -1,15 +1,16 @@
 package main
 
 import (
-	"IrisApiProject/database"
-	"IrisApiProject/models"
 	"flag"
 	"fmt"
 	"os"
 	"testing"
 
+	"IrisApiProject/database"
+	"IrisApiProject/models"
+
 	"IrisApiProject/config"
-	"github.com/iris-contrib/httpexpect"
+	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/httptest"
 )

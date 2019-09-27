@@ -1,6 +1,5 @@
 # IrisApi
-
-> 国内下载太慢的同学移步码云 [IrisApiProject](https://gitee.com/dtouyu/IrisApiProject.git)
+###### Iris + Vue + mysql + redis + jwt
 
 #### 项目介绍
 - 采用 iris 框架目后台api [IrisApiProject](https://github.com/snowlyg/IrisApiProject.gits)
@@ -16,6 +15,8 @@
 - database 数据库文件目录
 - middleware 中间件文件目录
 - models 模型文件目录
+- routes 路由文件
+- resources 前端文件
 - tmp 测试数据库 sqlite3 文件目录
 - tools 其他公用方法目录
 ---
@@ -25,25 +26,59 @@
 >拉取项目
 
 ```
-git clone https://github.com/snowlyg/IrisApiProject.git
+git clone https://gitee.com/dtouyu/IrisApiProject.git
 ```
 
 >加载依赖管理包
 
+使用 [gopm](https://gopm.io/) 管理包
 ```
-本来是用 godep 管理的，使用后发现还是是有问题。暂时不使用依赖管理包，依赖要自行下载。
+
+go get -v -u github.com/gpmgo/gopm
+
+# 查看当前工程依赖
+gopm list
+# 显示依赖详细信息
+gopm list -v
+# 列出文件依赖
+gopm list -t [file]
+# 拉取依赖到缓存目录
+gopm get -r xxx
+# 仅下载当前指定的包
+gopm get -d xxx
+# 拉取依赖到$GOPATH
+gopm get -g xxx
+# 检查更新所有包
+gopm get -u xxx
+# 拉取到当前所在目录
+gopm get -l xxx
+# 运行当前目录程序
+gopm run
+# 生成当前工程的 gopmfile 文件用于包管理
+gopm gen -v
+# 根据当前项目 gopmfile 链接依赖并执行 go install
+gopm install -v
+# 更新当前依赖
+gopm update -v
+# 清理临时文件
+gopm clean
+# 编译到当前目录
+gopm bin
+
 ```
 
 >项目配置文件 /config/config.toml
 
 ```
-
 cp config.toml.example config.toml
 ```
 
 >运行项目 
 
+[gowatch](https://gitee.com/silenceper/gowatch)
 ```
+go get github.com/silenceper/gowatch
+
 gowatch //安装 gowatch 后才可以使用这个命令，不然只能使用
 
 go run main.go // go 命令
@@ -67,7 +102,7 @@ go run main.go // go 命令
 自动生成文档 (访问过接口就会自动成功)
 因为原生的 jquery.min.js 里面的 cdn 是使用国外的，访问很慢。
 有条件的可以开个 vpn ,如果没有可以根据下面的方法修改一下，访问就很快了
->打开 apidoc/index.html 修改里面的
+>打开 /resource/apiDoc/index.html 修改里面的
 
 ```
 https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -78,17 +113,21 @@ https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ```
 
->访问文档，从浏览器直接打开 apidoc/index.html 文件
+>访问文档，从浏览器直接打开 http://localhost/apiDoc
 
 ---
 
 #### 登录项目
-输入地址 http://localhost:8080
+输入地址 http://localhost:80
 
 //在 conig/config.toml 内配置 `LoginUserName` 和 `LoginPwd`
 
 项目管理员账号 ： username
 项目管理员密码 ： password
+
+##### 问题总结
+
+[问题总结](https://gitee.com/dtouyu/IrisApiProject/blob/master/ERRORS.MD)
 
 
 ##### 参考资料

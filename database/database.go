@@ -1,14 +1,15 @@
 package database
 
 import (
-	"IrisApiProject/config"
 	"fmt"
+	"os"
+	"strings"
+
+	"IrisApiProject/config"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/pelletier/go-toml"
-	"os"
-	"strings"
 )
 
 var (
@@ -21,7 +22,7 @@ var (
  */
 func New() *gorm.DB {
 
-	if getAppEnv() == "test" {
+	if isTestEnv() {
 		configTree := config.Conf.Get("test").(*toml.Tree)
 		DB, err := gorm.Open(configTree.Get("DataBaseDriver").(string), configTree.Get("DataBaseConnect").(string))
 		if err != nil {
@@ -39,8 +40,6 @@ func New() *gorm.DB {
 		databaseName := configTree.Get("databaseName").(string)
 		connect := userName + ":" + password + "@/" + databaseName + "?charset=utf8&parseTime=True&loc=Local"
 
-		fmt.Println(connect)
-
 		DB, err := gorm.Open(driver, connect)
 
 		if err != nil {
@@ -54,8 +53,13 @@ func New() *gorm.DB {
 //获取程序运行环境
 // 根据程序运行路径后缀判断
 //如果是 test 就是测试环境
-func getAppEnv() string {
-	file := os.Args[0]
-	s := strings.Split(file, ".")
-	return s[len(s)-1]
+func isTestEnv() bool {
+	files := os.Args
+	for _, v := range files {
+		if strings.Contains(v, "test") {
+			return true
+		}
+	}
+
+	return false
 }

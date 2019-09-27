@@ -2,15 +2,15 @@ package middleware
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	jwtmiddleware "github.com/iris-contrib/middleware/jwt"
+	jailer "github.com/iris-contrib/middleware/jwt"
 )
 
 /**
  * 验证 jwt
  * @method JwtHandler
  */
-func JwtHandler() *jwtmiddleware.Middleware {
-	return jwtmiddleware.New(jwtmiddleware.Config{
+func JwtHandler() *jailer.Middleware {
+	return jailer.New(jailer.Config{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return []byte("secret"), nil
 		},

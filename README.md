@@ -26,7 +26,7 @@
 >拉取项目
 
 ```
-git clone https://gitee.com/dtouyu/IrisApiProject.git
+git clone git@github.com:snowlyg/IrisApiProject.git
 ```
 
 >加载依赖管理包

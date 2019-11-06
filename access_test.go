@@ -5,7 +5,7 @@ import (
 
 	"IrisApiProject/config"
 
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 )
 
 // 登陆成功

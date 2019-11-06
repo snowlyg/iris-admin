@@ -5,7 +5,7 @@ import (
 
 	"IrisApiProject/models"
 	"IrisApiProject/tools"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 	"gopkg.in/go-playground/validator.v9"
 )
 

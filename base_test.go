@@ -11,8 +11,8 @@ import (
 
 	"IrisApiProject/config"
 	"github.com/gavv/httpexpect"
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/httptest"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/httptest"
 )
 
 var (

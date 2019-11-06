@@ -6,7 +6,7 @@ import (
 
 	"IrisApiProject/models"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 )
 
 /**

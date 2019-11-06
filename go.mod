@@ -14,6 +14,8 @@ require (
 	github.com/jameskeane/bcrypt v0.0.0-20120420032655-c3cd44c1e20f
 	github.com/jinzhu/gorm v1.9.11
 	github.com/kataras/iris/v12 v12.0.1
+	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/pelletier/go-toml v1.2.0
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.30.0
 )

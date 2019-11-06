@@ -6,6 +6,7 @@ import (
 
 	"IrisApiProject/config"
 	"IrisApiProject/database"
+
 	"github.com/dgrijalva/jwt-go"
 
 	"github.com/jameskeane/bcrypt"

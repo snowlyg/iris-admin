@@ -6,7 +6,7 @@ import (
 	"github.com/betacraft/yaag/middleware"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/betacraft/yaag/yaag/models"
-	"github.com/kataras/iris/context"
+	"github.com/kataras/iris/v12/context"
 )
 
 // New returns a new yaag iris-compatible handler which is responsible to generate the rest API.

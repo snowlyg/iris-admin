@@ -4,9 +4,10 @@ import (
 	"fmt"
 
 	"IrisApiProject/models"
-	"github.com/kataras/iris"
+
+	"github.com/kataras/iris/v12"
 	"gopkg.in/go-playground/validator.v9"
-)
+) 
 
 /**
 * @api {get} /admin/users/profile 获取登陆用户信息

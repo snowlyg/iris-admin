@@ -3,9 +3,9 @@ package routes
 import (
 	"IrisApiProject/controllers"
 	"IrisApiProject/middleware"
+
 	"github.com/iris-contrib/middleware/cors"
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/core/router"
+	"github.com/kataras/iris/v12"
 )
 
 func Register(api *iris.Application) {
@@ -34,11 +34,11 @@ func Register(api *iris.Application) {
 	{
 		v1.Use(middleware.NewYaag()) // <- IMPORTANT, register the middleware.
 		v1.Post("/admin/login", controllers.UserLogin)
-		v1.PartyFunc("/admin", func(admin router.Party) {
+		v1.PartyFunc("/admin", func(admin iris.Party) {
 			admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken)
 			admin.Get("/logout", controllers.UserLogout)
 
-			admin.PartyFunc("/users", func(users router.Party) {
+			admin.PartyFunc("/users", func(users iris.Party) {
 				users.Get("/", controllers.GetAllUsers)
 				users.Get("/{id:uint}", controllers.GetUser)
 				users.Post("/", controllers.CreateUser)
@@ -46,14 +46,14 @@ func Register(api *iris.Application) {
 				users.Delete("/{id:uint}", controllers.DeleteUser)
 				users.Get("/profile", controllers.GetProfile)
 			})
-			admin.PartyFunc("/roles", func(roles router.Party) {
+			admin.PartyFunc("/roles", func(roles iris.Party) {
 				roles.Get("/", controllers.GetAllRoles)
 				roles.Get("/{id:uint}", controllers.GetRole)
 				roles.Post("/", controllers.CreateRole)
 				roles.Put("/{id:uint}", controllers.UpdateRole)
 				roles.Delete("/{id:uint}", controllers.DeleteRole)
 			})
-			admin.PartyFunc("/permissions", func(permissions router.Party) {
+			admin.PartyFunc("/permissions", func(permissions iris.Party) {
 				permissions.Get("/", controllers.GetAllPermissions)
 				permissions.Get("/{id:uint}", controllers.GetPermission)
 				permissions.Post("/", controllers.CreatePermission)

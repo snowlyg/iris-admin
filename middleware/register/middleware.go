@@ -2,8 +2,9 @@ package register
 
 import (
 	"IrisApiProject/controllers"
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/middleware/logger"
+
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/middleware/logger"
 )
 
 func Register(api *iris.Application) {

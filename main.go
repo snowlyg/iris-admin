@@ -6,7 +6,7 @@ import (
 	"IrisApiProject/models"
 	"IrisApiProject/routes"
 	"github.com/betacraft/yaag/yaag"
-	"github.com/kataras/iris"
+	"github.com/kataras/iris/v12"
 )
 
 /**

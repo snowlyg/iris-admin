@@ -1,5 +1,5 @@
 # IrisApi
-###### 国内下载太慢的同学移步码云 [IrisApiProject](https://gitee.com/dtouyu/IrisApiProject.git)
+###### Iris + Vue + mysql + redis + jwt
 
 #### 项目介绍
 - 采用 iris 框架目后台api [IrisApiProject](https://github.com/snowlyg/IrisApiProject.gits)
@@ -26,7 +26,7 @@
 >拉取项目
 
 ```
-git clone https://github.com/snowlyg/IrisApiProject.git
+git clone https://gitee.com/dtouyu/IrisApiProject.git
 ```
 
 >加载依赖管理包
@@ -127,7 +127,7 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 
 ##### 问题总结
 
-[问题总结](https://gitee.com/dtouyu/IrisApiProject/blob/master/ERRORS.MD)
+[问题总结](ERRORS.MD)
 
 
 ##### 参考资料

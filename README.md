@@ -7,6 +7,13 @@
 - 测试默认使用了 sqlite3 数据库
 ---
 
+```
+项目更新到了 iris v12,对应的也要 iris 升级 
+ go get -u github.com/kataras/iris
+
+如果要用旧版本的 iris ,需要克隆本项目 1.0 版本
+```
+
 #### 项目目录结构
 - apidoc 接口文档目录
 - caches redis缓存目录

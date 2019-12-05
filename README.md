@@ -33,6 +33,10 @@
 >拉取项目
 
 ```
+git clone https://github.com/snowlyg/IrisApiProject.git
+```
+//github 太慢可以用 gitee
+```
 git clone https://gitee.com/dtouyu/IrisApiProject.git
 ```
 

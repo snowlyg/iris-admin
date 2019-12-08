@@ -2,7 +2,7 @@
 ###### Iris + Vue + mysql + redis + jwt
 
 #### 项目介绍
-- 采用 iris 框架目后台api [IrisApiProject](https://github.com/snowlyg/IrisApiProject.gits)
+- 采用 iris 框架目后台api [IrisApiProject](https://github.com/snowlyg/IrisApiProject)
 - 采用了 gorm 数据库模块 和 jwt 的单点登陆认证方式
 - 测试默认使用了 sqlite3 数据库
 ---
@@ -40,7 +40,7 @@ git clone https://github.com/snowlyg/IrisApiProject.git
 git clone https://gitee.com/dtouyu/IrisApiProject.git
 ```
 
->加载依赖管理包
+>加载依赖管理包 (解决国内下载依赖太慢问题)
 
 使用 [gopm](https://gopm.io/) 管理包
 ```
@@ -94,6 +94,21 @@ gowatch //安装 gowatch 后才可以使用这个命令，不然只能使用
 
 go run main.go // go 命令
 ```
+
+如果在 `win7` 环境下使用 `Goland` 开发 go 项目。 用 gowatch 或者 bee run 作为热加载服务，出现文件被其他进程占用而无法热加载的问题：
+`The system cannot find the file specified.`,`The process cannot access the file because it is being used by another process.`
+
+可以尝试使用我修改的 gowatch 包。
+```
+go clone https://github.com/snowlyg/gowatch.git
+
+替换有包文件到 github.com/silenceper/gowatch 替换原文件
+
+cd github.com/silenceper/gowatch
+go install 
+
+```
+
 
 
 ---

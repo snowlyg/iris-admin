@@ -1,4 +1,15 @@
-# IrisApi
+<p align="center"><img width="650" src="./excelize.svg" alt="Excelize logo"></p>
+
+<p align="center">
+    <a href="https://travis-ci.org/snowlyg/IrisApiProject"><img src="https://travis-ci.org/snowlyg/IrisApiProject.svg?branch=master" alt="Build Status"></a>
+    <a href="https://codecov.io/gh/snowlyg/IrisApiProject"><img src="https://codecov.io/gh/snowlyg/IrisApiProject/branch/master/graph/badge.svg" alt="Code Coverage"></a>
+    <a href="https://goreportcard.com/report/github.com/snowlyg/IrisApiProject"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisApiProject" alt="Go Report Card"></a>
+    <a href="https://godoc.org/github.com/snowlyg/IrisApiProject"><img src="https://godoc.org/github.com/snowlyg/IrisApiProject?status.svg" alt="GoDoc"></a>
+    <a href="https://img.shields.io/github/license/snowlyg/IrisApiProject"><img src="https://img.shields.io/github/license/snowlyg/IrisApiProject" alt="Licenses"></a>
+</p>
+
+
+# IrisADminApi
 ###### Iris + Vue + mysql + redis + jwt
 
 #### 项目介绍

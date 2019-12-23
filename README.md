@@ -1,4 +1,4 @@
-<p align="center"><img width="650" src="./excelize.svg" alt="Excelize logo"></p>
+<p align="center">IrisAdminApi</p>
 
 <p align="center">
     <a href="https://travis-ci.org/snowlyg/IrisApiProject"><img src="https://travis-ci.org/snowlyg/IrisApiProject.svg?branch=master" alt="Build Status"></a>
@@ -8,8 +8,6 @@
     <a href="https://github.com/snowlyg/IrisApiProject/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisApiProject" alt="Licenses"></a>
 </p>
 
-
-# IrisADminApi
 ###### Iris + Vue + mysql + redis + jwt
 
 #### 项目介绍

@@ -1,4 +1,4 @@
-<p align="center"><h1>IrisAdminApi</h1></p>
+<h1 align="center">IrisAdminApi</h1>
 
 <p align="center">
     <a href="https://travis-ci.org/snowlyg/IrisApiProject"><img src="https://travis-ci.org/snowlyg/IrisApiProject.svg?branch=master" alt="Build Status"></a>

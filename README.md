@@ -22,6 +22,15 @@
 
 如果要用旧版本的 iris ,需要克隆本项目 1.0 版本
 ```
+#### api数据格式方案
+[snowlyg/gotransformer](https://github.com/snowlyg/gotransformer)
+
+##### 支持格式化方式
+- 简单格式化
+- 自定义方法格式化
+- 关联数据格式化
+- 时间数据格式化
+- excel 导入数据格式化
 
 #### 项目目录结构
 - apidoc 接口文档目录

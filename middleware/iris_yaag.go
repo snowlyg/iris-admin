@@ -38,7 +38,7 @@ func NewYaag() context.Handler {
 		r.Status = ctx.Recorder().StatusCode()
 
 		//iris recorder writes the recorded data to its original response recorder. So pass the testrecorder
-		// as responsewriter to after call.
+		// as response writer to after call.
 		middleware.After(apiCall, r, ctx.Request())
 	}
 }

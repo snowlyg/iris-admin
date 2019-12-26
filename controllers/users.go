@@ -22,8 +22,8 @@ import (
 * @apiPermission 登陆用户
  */
 func GetProfile(ctx iris.Context) {
-	user_id := ctx.Values().Get("auth_user_id").(uint)
-	user := models.GetUserById(user_id)
+	userId := ctx.Values().Get("auth_user_id").(uint)
+	user := models.GetUserById(userId)
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, user, "操作成功"))

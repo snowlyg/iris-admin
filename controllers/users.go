@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"fmt"
+	"time"
 
 	"IrisApiProject/models"
 
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/gotransform"
 	"gopkg.in/go-playground/validator.v9"
-) 
+)
 
 /**
 * @api {get} /admin/users/profile 获取登陆用户信息
@@ -74,14 +76,14 @@ func CreateUser(ctx iris.Context) {
 		err := validate.Struct(aul)
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
-			for _, err := range err.(validator.ValidationErrors) {
-				fmt.Println()
-				fmt.Println(err.Namespace())
-				fmt.Println(err.Field())
-				fmt.Println(err.Type())
-				fmt.Println(err.Param())
-				fmt.Println()
-			}
+			//for _, err := range err.(validator.ValidationErrors) {
+			//	fmt.Println()
+			//	fmt.Println(err.Namespace())
+			//	fmt.Println(err.Field())
+			//	fmt.Println(err.Type())
+			//	fmt.Println(err.Param())
+			//	fmt.Println()
+			//}
 		} else {
 			u := models.CreateUser(aul)
 
@@ -185,7 +187,7 @@ func GetAllUsers(ctx iris.Context) {
 	name := ctx.URLParam("name")
 	orderBy := ctx.URLParam("orderBy")
 
-	users := models.GetAllUsers(name, orderBy, offset, limit)
+	users, _ := models.GetAllUsers(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, users, "操作成功"))

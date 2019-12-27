@@ -24,7 +24,7 @@
 [mysql]
    databaseName ="goyouqikang"
    databaseUserName ="root"
-   databasePassword ="LINximeng990623.."
+   databasePassword =".."
 
 [mongodb]
   connect = "mongodb://root:123456@127.0.0.1:27017/admin"

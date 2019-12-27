@@ -171,10 +171,3 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ##### 问题总结
 
 [问题总结](ERRORS.MD)
-
-
-##### 参考资料
-- [zuoyanart/pizzaCmsApi](https://github.com/zuoyanart/pizzaCmsApi) 
-- [beego应用做纯API后端如何使用jwt实现无状态权限验证](https://www.cnblogs.com/lrj567/p/6209872.html)
-- [Go实现jwt](https://blog.csdn.net/zxy_666/article/details/80021331)
-- [Go实战--golang中使用JWT(JSON Web Token)](https://blog.csdn.net/wangshubo1989/article/details/74529333)

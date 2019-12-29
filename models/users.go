@@ -96,16 +96,15 @@ func DeleteUserById(id uint) {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllUsers(name, orderBy string, offset, limit int) ([]*User, int) {
+func GetAllUsers(name, orderBy string, offset, limit int) []*User {
 	var users []*User
-	count := 0
+
 	q := database.GetAll(name, orderBy, offset, limit).Preload("Role")
-	q.Count(&count)
 	if err := q.Find(&users).Error; err != nil {
 		fmt.Printf("GetAllUserErr:%s", err)
-		return nil, 0
+		return nil
 	}
-	return users, count
+	return users
 }
 
 /**

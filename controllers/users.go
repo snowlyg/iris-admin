@@ -175,18 +175,13 @@ func DeleteUser(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllUsers(ctx iris.Context) {
-	//offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
-	//limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
-	//name := ctx.FormValue("name")
-	//username := ctx.FormValue("username")
-	//orderBy := ctx.FormValue("orderBy")
 	offset := ctx.URLParamIntDefault("offset", 1)
 	limit := ctx.URLParamIntDefault("limit", 15)
 	name := ctx.URLParam("name")
 	orderBy := ctx.URLParam("orderBy")
 
-	users, Total := models.GetAllUsers(name, orderBy, offset, limit)
+	users := models.GetAllUsers(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, Lists{users, Total}, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, users, "操作成功"))
 }

@@ -6,7 +6,7 @@ import (
 
 var (
 	validate *validator.Validate
-) 
+)
 
 func init() {
 	validate = validator.New()

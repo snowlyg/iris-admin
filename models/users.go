@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"IrisApiProject/config"
-	"IrisApiProject/database"
+	"github.com/snowlyg/IrisApiProject/config"
+	"github.com/snowlyg/IrisApiProject/database"
 
 	"github.com/dgrijalva/jwt-go"
 

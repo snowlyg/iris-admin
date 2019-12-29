@@ -2,12 +2,10 @@ package controllers
 
 import (
 	"fmt"
-	"time"
 
-	"IrisApiProject/models"
+	"github.com/snowlyg/IrisApiProject/models"
 
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/gotransform"
 	"gopkg.in/go-playground/validator.v9"
 )
 
@@ -187,8 +185,8 @@ func GetAllUsers(ctx iris.Context) {
 	name := ctx.URLParam("name")
 	orderBy := ctx.URLParam("orderBy")
 
-	users, _ := models.GetAllUsers(name, orderBy, offset, limit)
+	users, Total := models.GetAllUsers(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, users, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, Lists{users, Total}, "操作成功"))
 }

@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 
-	"IrisApiProject/models"
-	"IrisApiProject/tools"
+	"github.com/snowlyg/IrisApiProject/models"
+	"github.com/snowlyg/IrisApiProject/tools"
 
 	"github.com/kataras/iris/v12"
 )

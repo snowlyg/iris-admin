@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"IrisApiProject/config"
+	"github.com/snowlyg/IrisApiProject/config"
 
 	"github.com/kataras/iris/v12"
 )

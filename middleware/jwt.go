@@ -4,7 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	jailer "github.com/iris-contrib/middleware/jwt"
 )
- 
+
 /**
  * 验证 jwt
  * @method JwtHandler

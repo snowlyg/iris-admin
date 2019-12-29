@@ -6,10 +6,10 @@ import (
 	"os"
 	"testing"
 
-	"IrisApiProject/database"
-	"IrisApiProject/models"
+	"github.com/snowlyg/IrisApiProject/database"
+	"github.com/snowlyg/IrisApiProject/models"
 
-	"IrisApiProject/config"
+	"github.com/snowlyg/IrisApiProject/config"
 
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"

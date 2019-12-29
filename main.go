@@ -1,12 +1,12 @@
 package main
 
 import (
-	"IrisApiProject/config"
-	"IrisApiProject/database"
-	"IrisApiProject/models"
-	"IrisApiProject/routes"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/IrisApiProject/config"
+	"github.com/snowlyg/IrisApiProject/database"
+	"github.com/snowlyg/IrisApiProject/models"
+	"github.com/snowlyg/IrisApiProject/routes"
 )
 
 /**

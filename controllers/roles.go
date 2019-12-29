@@ -3,13 +3,13 @@ package controllers
 import (
 	"fmt"
 
-	"IrisApiProject/models"
-	"IrisApiProject/tools"
+	"github.com/snowlyg/IrisApiProject/models"
+	"github.com/snowlyg/IrisApiProject/tools"
 
 	"github.com/kataras/iris/v12"
 	"gopkg.in/go-playground/validator.v9"
 )
- 
+
 /**
 * @api {get} /admin/roles/:id 根据id获取角色信息
 * @apiName 根据id获取角色信息

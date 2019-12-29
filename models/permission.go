@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 
-	"IrisApiProject/database"
+	"github.com/snowlyg/IrisApiProject/database"
 
 	"github.com/jinzhu/gorm"
 )

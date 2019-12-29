@@ -1,7 +1,7 @@
 package models
 
 import (
-	"IrisApiProject/database"
+	"github.com/snowlyg/IrisApiProject/database"
 
 	"github.com/jinzhu/gorm"
 )

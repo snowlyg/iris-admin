@@ -11,7 +11,7 @@ type Lists struct {
 	Total int         `json:"total"`
 }
 
-func ApiResource(status bool, objects interface{}, msg string) (apijson *Response) {
-	apijson = &Response{Status: status, Data: objects, Msg: msg}
+func ApiResource(status bool, objects interface{}, msg string) (r *Response) {
+	r = &Response{Status: status, Data: objects, Msg: msg}
 	return
 }

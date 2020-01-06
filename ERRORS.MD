@@ -1,16 +1,4 @@
 # 问题总结
-###### 使用 gopm 或者 gowatch  命令，出现 command not found 错误。
-> 确认已经安装相应包
-```
-    go get github.com/silenceper/gowatch
-
-    go get -v -u github.com/gpmgo/gopm
-```
-
-> 确认 GOPATH/bin 已经添加到系统环境,或者将执行文件复制到 GOROOT/bin 路径
-```
-    go env //查看 GOPATH 路径
-```
 
 > 运行测试 go test ,报错 exec: "gcc": executable file not found in %PATH%
 - 系统没有安装 gcc ,或者 gcc 没有配置到系统环境变量
@@ -37,10 +25,6 @@
 - 数据库字符格式不对，无法识别中文
 - 将数据库字符设置 utf8 字符集
 
-
-
-> 启动报错如下内容：
+> 登录显示前端报错 405 Not Allowed：
  ```
-[ERRO] 2019/09/27 12:08 listen tcp :80: bind: permission denied 
-```
-- 80端口被占用，修改 config.toml 中的  addr 为 ":8080" 
+默认端口为 8081，如果修改了端口。需要下载 [IrisApiVueAdmin](https://github.com/snowlyg/IrisApiVueAdmin) 项目修改端口后覆盖前端代码

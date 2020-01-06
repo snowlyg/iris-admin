@@ -1,13 +1,10 @@
 package controllers
 
 import (
-	"fmt"
-
 	"IrisApiProject/models"
 	"IrisApiProject/tools"
 
 	"github.com/kataras/iris/v12"
-	"gopkg.in/go-playground/validator.v9"
 )
 
 /**
@@ -56,14 +53,14 @@ func CreateRole(ctx iris.Context) {
 		err := validate.Struct(roleForm)
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
-			for _, err := range err.(validator.ValidationErrors) {
-				fmt.Println()
-				fmt.Println(err.Namespace())
-				fmt.Println(err.Field())
-				fmt.Println(err.Type())
-				fmt.Println(err.Param())
-				fmt.Println()
-			}
+			//for _, err := range err.(validator.ValidationErrors) {
+			//	fmt.Println()
+			//	fmt.Println(err.Namespace())
+			//	fmt.Println(err.Field())
+			//	fmt.Println(err.Type())
+			//	fmt.Println(err.Param())
+			//	fmt.Println()
+			//}
 		} else {
 			roleJson := new(models.RoleJson)
 			roleJson.Name = roleForm.Name
@@ -108,14 +105,14 @@ func UpdateRole(ctx iris.Context) {
 		err := validate.Struct(roleForm)
 		if err != nil {
 			ctx.StatusCode(iris.StatusBadRequest)
-			for _, err := range err.(validator.ValidationErrors) {
-				fmt.Println()
-				fmt.Println(err.Namespace())
-				fmt.Println(err.Field())
-				fmt.Println(err.Type())
-				fmt.Println(err.Param())
-				fmt.Println()
-			}
+			//for _, err := range err.(validator.ValidationErrors) {
+			//	fmt.Println()
+			//	fmt.Println(err.Namespace())
+			//	fmt.Println(err.Field())
+			//	fmt.Println(err.Type())
+			//	fmt.Println(err.Param())
+			//	fmt.Println()
+			//}
 		} else {
 			id, _ := ctx.Params().GetInt("id")
 			uid := uint(id)

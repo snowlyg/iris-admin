@@ -9,7 +9,7 @@ Charset = "UTF-8"
     [Other.App]
         Name = "IrisAdminApi"
         URl = "http://localhost"
-        Port = ":80"
+        Port = ":8081"
     [Other.Database]
         DirverName = "mysql"
         Name ="goyouqikang"

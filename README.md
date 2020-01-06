@@ -6,43 +6,19 @@
     <a href="https://goreportcard.com/report/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
     <a href="https://godoc.org/github.com/snowlyg/IrisAdminApi"><img src="https://godoc.org/github.com/snowlyg/IrisAdminApi?status.svg" alt="GoDoc"></a>
     <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
-    <h5 align="center">Iris + Vue + mysql + redis + jwt</h5>
+    <h5 align="center">Iris后台接口项目</h5>
 </p>
 
 #### 项目介绍
-- iris 框架后台api
+- iris 框架后台接口项目
 - 采用了 gorm 数据库模块 和 jwt 的单点登陆认证方式
 - 测试默认使用了 sqlite3 数据库
 ---
 
-```
-项目更新到了 iris v12,对应的也要 iris 升级 
- go get -u github.com/kataras/iris
-
-如果要用旧版本的 iris ,需要克隆本项目 1.0 版本
-```
-#### api数据格式方案
-[snowlyg/gotransformer](https://github.com/snowlyg/gotransformer)
-
-##### 支持格式化方式
-- 简单格式化
-- 自定义方法格式化
-- 关联数据格式化
-- 时间数据格式化
-- excel 导入数据格式化
-
-#### 项目目录结构
-- apidoc 接口文档目录
-- caches redis缓存目录
-- config 项目配置文件目录
-- controllers 控制器文件目录
-- database 数据库文件目录
-- middleware 中间件文件目录
-- models 模型文件目录
-- routes 路由文件
-- resources 前端文件
-- tmp 测试数据库 sqlite3 文件目录
-- tools 其他公用方法目录
+#### 项目更新
+- 修改项目配置加载方式
+- 简化 tools、database 使用
+- 增加数据格式化返回 [snowlyg/gotransformer](https://github.com/snowlyg/gotransformer)
 ---
 
 #### api项目初始化
@@ -64,7 +40,10 @@ git clone https://gitee.com/dtouyu/IrisAdminApi.git
 ```
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
+
+// 注意 goland 会覆盖 GOPROXY 配置，建议更新依赖包的时候关闭 `goland` 的`module`配置，更新完再打开。
 ```
+
 
 >项目配置文件 /config/config.toml
 
@@ -78,19 +57,10 @@ cp config.toml.example config.toml
 ```
 go get github.com/silenceper/gowatch
 
-gowatch //安装 gowatch 后才可以使用这个命令，不然只能使用
+gowatch //安装 gowatch 后才可以使用
 
 go run main.go // go 命令
 ```
-
-如果在 `win7` 环境下使用 `Goland` 开发 go 项目。 用 gowatch 或者 bee run 作为热加载服务，出现文件被其他进程占用而无法热加载的问题：
-`The system cannot find the file specified.`,`The process cannot access the file because it is being used by another process.`
-
-可以尝试使用我修改的 gowatch 包。
-```
-go clone https://github.com/snowlyg/gowatch.git
-
-替换有包文件到 github.com/silenceper/gowatch 替换原文件
 
 cd github.com/silenceper/gowatch
 go install 

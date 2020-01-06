@@ -1,6 +1,8 @@
 language: go
 
 install:
+  - go env -w GO111MODULE=on
+  - go env -w GOPROXY=https://goproxy.cn,direct
   - go get -d -t -v ./... && go build -v ./...
 
 go:

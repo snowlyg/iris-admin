@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"time"
+
 	"IrisApiProject/models"
 	"IrisApiProject/tools"
-
+	"IrisApiProject/transformer"
 	"github.com/kataras/iris/v12"
+	gf "github.com/snowlyg/gotransformer"
 )
 
 /**
@@ -44,7 +47,7 @@ func GetRole(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateRole(ctx iris.Context) {
-	roleForm := new(models.RoleFormJson)
+	roleForm := new(models.RoleFormRequest)
 
 	if err := ctx.ReadJSON(&roleForm); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -62,7 +65,7 @@ func CreateRole(ctx iris.Context) {
 			//	fmt.Println()
 			//}
 		} else {
-			roleJson := new(models.RoleJson)
+			roleJson := new(models.RoleRequest)
 			roleJson.Name = roleForm.Name
 			roleJson.Description = roleForm.Description
 			roleJson.DisplayName = roleForm.DisplayName
@@ -96,7 +99,7 @@ func CreateRole(ctx iris.Context) {
  */
 func UpdateRole(ctx iris.Context) {
 
-	roleForm := new(models.RoleFormJson)
+	roleForm := new(models.RoleFormRequest)
 
 	if err := ctx.ReadJSON(&roleForm); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -117,7 +120,7 @@ func UpdateRole(ctx iris.Context) {
 			id, _ := ctx.Params().GetInt("id")
 			uid := uint(id)
 
-			roleJson := new(models.RoleJson)
+			roleJson := new(models.RoleRequest)
 			roleJson.Name = roleForm.Name
 			roleJson.Description = roleForm.Description
 			roleJson.DisplayName = roleForm.DisplayName
@@ -174,5 +177,16 @@ func GetAllRoles(ctx iris.Context) {
 	roles := models.GetAllRoles(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, roles, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, roleTransform(roles), "操作成功"))
+}
+
+func roleTransform(roles []*models.Role) []*transformer.Role {
+	var rs []*transformer.Role
+	for _, role := range roles {
+		r := transformer.Role{}
+		g := gf.NewTransform(&r, role, time.RFC3339)
+		_ = g.Transformer()
+		rs = append(rs, &r)
+	}
+	return rs
 }

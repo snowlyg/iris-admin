@@ -16,13 +16,13 @@ type Role struct {
 	Perms []*Permission `gorm:"many2many:role_perms;"`
 }
 
-type RoleJson struct {
+type RoleRequest struct {
 	Name        string `json:"name"`
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
 }
 
-type RoleFormJson struct {
+type RoleFormRequest struct {
 	Name           string `json:"name" validate:"required,gte=4,lte=50"`
 	DisplayName    string `json:"display_name"`
 	Description    string `json:"description"`
@@ -97,7 +97,7 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateRole(aul *RoleJson, permIds []uint) (role *Role) {
+func CreateRole(aul *RoleRequest, permIds []uint) (role *Role) {
 
 	role = new(Role)
 	role.Name = aul.Name
@@ -125,7 +125,7 @@ func CreateRole(aul *RoleJson, permIds []uint) (role *Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateRole(rj *RoleJson, id uint, permIds []uint) (role *Role) {
+func UpdateRole(rj *RoleRequest, id uint, permIds []uint) (role *Role) {
 	role = new(Role)
 	role.ID = id
 
@@ -147,7 +147,7 @@ func UpdateRole(rj *RoleJson, id uint, permIds []uint) (role *Role) {
 *@return   *models.AdminRoleTranform api格式化后的数据格式
  */
 func CreateSystemAdminRole(permIds []uint) *Role {
-	aul := new(RoleJson)
+	aul := new(RoleRequest)
 	aul.Name = "admin"
 	aul.DisplayName = "超级管理员"
 	aul.Description = "超级管理员"

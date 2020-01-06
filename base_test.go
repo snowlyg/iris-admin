@@ -155,7 +155,7 @@ func GetLoginToken() models.Token {
 }
 
 func baseCase() {
-	perm_json := &models.PermissionJson{
+	perm_json := &models.PermissionRequest{
 		Name:        "test_update_user",
 		Description: "访客",
 		DisplayName: "访客",
@@ -164,7 +164,7 @@ func baseCase() {
 	testPerm = models.CreatePermission(perm_json)
 	testPermIds = []uint{testPerm.ID}
 
-	role_json := &models.RoleJson{
+	role_json := &models.RoleRequest{
 		Name:        "test_update_user",
 		Description: "访客",
 		DisplayName: "访客",
@@ -172,7 +172,7 @@ func baseCase() {
 
 	testRole = models.CreateRole(role_json, testPermIds)
 
-	aul := &models.UserJson{
+	aul := &models.UserRequest{
 		Username: "guest",
 		Name:     "访客",
 		Password: "guest111",

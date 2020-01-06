@@ -20,7 +20,7 @@ type User struct {
 	Role     Role
 }
 
-type UserJson struct {
+type UserRequest struct {
 	Username string `json:"username" validate:"required,gte=2,lte=50"`
 	Password string `json:"password" validate:"required"`
 	Name     string `json:"name" validate:"required,gte=2,lte=50"`
@@ -111,7 +111,7 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateUser(aul *UserJson) (user *User) {
+func CreateUser(aul *UserRequest) (user *User) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
@@ -135,7 +135,7 @@ func CreateUser(aul *UserJson) (user *User) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateUser(uj *UserJson, id uint) *User {
+func UpdateUser(uj *UserRequest, id uint) *User {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(uj.Password, salt)
 
@@ -213,7 +213,7 @@ func UserAdminLogout(userId uint) bool {
  */
 func CreateSystemAdmin(roleId uint) *User {
 
-	aul := new(UserJson)
+	aul := new(UserRequest)
 	aul.Username = "username"
 	aul.Password = "password"
 	aul.Name = "name"

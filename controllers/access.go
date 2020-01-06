@@ -24,7 +24,7 @@ import (
 * @apiPermission null
  */
 func UserLogin(ctx iris.Context) {
-	aul := new(models.UserJson)
+	aul := new(models.UserRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)

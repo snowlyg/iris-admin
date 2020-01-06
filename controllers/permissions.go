@@ -1,9 +1,13 @@
 package controllers
 
 import (
+	"time"
+
 	"IrisApiProject/models"
 	"IrisApiProject/tools"
+	"IrisApiProject/transformer"
 	"github.com/kataras/iris/v12"
+	gf "github.com/snowlyg/gotransformer"
 )
 
 /**
@@ -44,7 +48,7 @@ func GetPermission(ctx iris.Context) {
  */
 func CreatePermission(ctx iris.Context) {
 
-	aul := new(models.PermissionJson)
+	aul := new(models.PermissionRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -90,7 +94,7 @@ func CreatePermission(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdatePermission(ctx iris.Context) {
-	aul := new(models.PermissionJson)
+	aul := new(models.PermissionRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -163,5 +167,16 @@ func GetAllPermissions(ctx iris.Context) {
 	permissions := models.GetAllPermissions(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, permissions, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, permTransform(permissions), "操作成功"))
+}
+
+func permTransform(perms []*models.Permission) []*transformer.Perm {
+	var rs []*transformer.Perm
+	for _, perm := range perms {
+		r := transformer.Perm{}
+		g := gf.NewTransform(&r, perm, time.RFC3339)
+		_ = g.Transformer()
+		rs = append(rs, &r)
+	}
+	return rs
 }

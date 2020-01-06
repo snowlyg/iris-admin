@@ -18,7 +18,7 @@ var Sc iris.Configuration
 
 func main() {
 	api := iris.New()
-	api.Logger().SetLevel("error")
+	api.Logger().SetLevel("debug")
 	api.Use(recover.New())
 	api.Use(logger.New())
 	api.RegisterView(iris.HTML("resources", ".html"))

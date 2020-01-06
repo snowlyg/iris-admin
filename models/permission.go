@@ -13,7 +13,7 @@ type Permission struct {
 	Description string `gorm:"VARCHAR(191)"`
 }
 
-type PermissionJson struct {
+type PermissionRequest struct {
 	Name        string `json:"name" validate:"required,gte=4,lte=50"`
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
@@ -87,7 +87,7 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreatePermission(aul *PermissionJson) (permission *Permission) {
+func CreatePermission(aul *PermissionRequest) (permission *Permission) {
 
 	permission = new(Permission)
 
@@ -109,7 +109,7 @@ func CreatePermission(aul *PermissionJson) (permission *Permission) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdatePermission(pj *PermissionJson, id uint) (permission *Permission) {
+func UpdatePermission(pj *PermissionRequest, id uint) (permission *Permission) {
 	permission = new(Permission)
 	permission.ID = id
 
@@ -125,7 +125,7 @@ func UpdatePermission(pj *PermissionJson, id uint) (permission *Permission) {
 *@return   *models.AdminPermissionTranform api格式化后的数据格式
  */
 func CreateSystemAdminPermission() *Permission {
-	aul := new(PermissionJson)
+	aul := new(PermissionRequest)
 	aul.Name = "update_user"
 	aul.DisplayName = "创建账号权限"
 	aul.Description = "创建账号权限"

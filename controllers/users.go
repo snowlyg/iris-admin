@@ -1,7 +1,11 @@
 package controllers
 
 import (
+	"time"
+
 	"IrisApiProject/models"
+	"IrisApiProject/transformer"
+	gf "github.com/snowlyg/gotransformer"
 
 	"github.com/kataras/iris/v12"
 )
@@ -62,7 +66,7 @@ func GetUser(ctx iris.Context) {
  */
 func CreateUser(ctx iris.Context) {
 
-	aul := new(models.UserJson)
+	aul := new(models.UserRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -107,7 +111,7 @@ func CreateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateUser(ctx iris.Context) {
-	aul := new(models.UserJson)
+	aul := new(models.UserRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
 		ctx.StatusCode(iris.StatusUnauthorized)
@@ -180,5 +184,16 @@ func GetAllUsers(ctx iris.Context) {
 	users := models.GetAllUsers(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, users, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, userTransform(users), "操作成功"))
+}
+
+func userTransform(users []*models.User) []*transformer.User {
+	var us []*transformer.User
+	for _, user := range users {
+		u := transformer.User{}
+		g := gf.NewTransform(&u, user, time.RFC3339)
+		_ = g.Transformer()
+		us = append(us, &u)
+	}
+	return us
 }

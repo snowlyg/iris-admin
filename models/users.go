@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/snowlyg/IrisApiProject/config"
-	"github.com/snowlyg/IrisApiProject/database"
-
 	"github.com/dgrijalva/jwt-go"
 
 	"github.com/jameskeane/bcrypt"
@@ -37,8 +34,8 @@ type UserJson struct {
  */
 func UserAdminCheckLogin(username string) User {
 	u := User{}
-	if err := database.DB.Where("username = ?", username).First(&u).Error; err != nil {
-		fmt.Printf("UserAdminCheckLoginErr:%s", err)
+	if err := Db.Where("username = ?", username).First(&u).Error; err != nil {
+		fmt.Printf("UserAdminCheckLoginErr:%s \n ", err)
 	}
 	return u
 }
@@ -52,8 +49,8 @@ func GetUserById(id uint) *User {
 	user := new(User)
 	user.ID = id
 
-	if err := database.DB.Preload("Role").First(user).Error; err != nil {
-		fmt.Printf("GetUserByIdErr:%s", err)
+	if err := Db.Preload("Role").First(user).Error; err != nil {
+		fmt.Printf("GetUserByIdErr:%s \n ", err)
 	}
 
 	return user
@@ -67,8 +64,8 @@ func GetUserById(id uint) *User {
 func GetUserByUserName(username string) *User {
 	user := &User{Username: username}
 
-	if err := database.DB.Preload("Role").First(user).Error; err != nil {
-		fmt.Printf("GetUserByUserNameErr:%s", err)
+	if err := Db.Preload("Role").First(user).Error; err != nil {
+		fmt.Printf("GetUserByUserNameErr:%s \n ", err)
 	}
 
 	return user
@@ -82,8 +79,8 @@ func DeleteUserById(id uint) {
 	u := new(User)
 	u.ID = id
 
-	if err := database.DB.Delete(u).Error; err != nil {
-		fmt.Printf("DeleteUserByIdErr:%s", err)
+	if err := Db.Delete(u).Error; err != nil {
+		fmt.Printf("DeleteUserByIdErr:%s \n ", err)
 	}
 }
 
@@ -99,9 +96,9 @@ func DeleteUserById(id uint) {
 func GetAllUsers(name, orderBy string, offset, limit int) []*User {
 	var users []*User
 
-	q := database.GetAll(name, orderBy, offset, limit).Preload("Role")
+	q := GetAll(name, orderBy, offset, limit).Preload("Role")
 	if err := q.Find(&users).Error; err != nil {
-		fmt.Printf("GetAllUserErr:%s", err)
+		fmt.Printf("GetAllUserErr:%s \n ", err)
 		return nil
 	}
 	return users
@@ -124,8 +121,8 @@ func CreateUser(aul *UserJson) (user *User) {
 	user.Name = aul.Name
 	user.RoleID = aul.RoleID
 
-	if err := database.DB.Create(user).Error; err != nil {
-		fmt.Printf("CreateUserErr:%s", err)
+	if err := Db.Create(user).Error; err != nil {
+		fmt.Printf("CreateUserErr:%s \n ", err)
 	}
 
 	return
@@ -146,8 +143,8 @@ func UpdateUser(uj *UserJson, id uint) *User {
 	user.ID = id
 	uj.Password = hash
 
-	if err := database.DB.Model(user).Updates(uj).Error; err != nil {
-		fmt.Printf("UpdateUserErr:%s", err)
+	if err := Db.Model(user).Updates(uj).Error; err != nil {
+		fmt.Printf("UpdateUserErr:%s \n ", err)
 	}
 
 	return user
@@ -217,9 +214,9 @@ func UserAdminLogout(userId uint) bool {
 func CreateSystemAdmin(roleId uint) *User {
 
 	aul := new(UserJson)
-	aul.Username = config.Conf.Get("test.LoginUserName").(string)
-	aul.Password = config.Conf.Get("test.LoginPwd").(string)
-	aul.Name = config.Conf.Get("test.LoginName").(string)
+	aul.Username = "username"
+	aul.Password = "password"
+	aul.Name = "name"
 	aul.RoleID = roleId
 
 	user := GetUserByUserName(aul.Username)

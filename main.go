@@ -1,63 +1,107 @@
 package main
 
 import (
+	"fmt"
+	"time"
+
+	"IrisApiProject/models"
+	"IrisApiProject/routes"
+	"IrisApiProject/transformer"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisApiProject/config"
-	"github.com/snowlyg/IrisApiProject/database"
-	"github.com/snowlyg/IrisApiProject/models"
-	"github.com/snowlyg/IrisApiProject/routes"
+	"github.com/kataras/iris/v12/middleware/logger"
+	"github.com/kataras/iris/v12/middleware/recover"
+	gotransform "github.com/snowlyg/gotransformer"
 )
 
-/**
- * 初始化 iris app
- * @method NewApp
- * @return  {[type]}  api      *iris.Application  [iris app]
- */
-func newApp() (api *iris.Application) {
-	api = iris.New()
+var Sc iris.Configuration
 
+func main() {
+	api := iris.New()
+	api.Logger().SetLevel("error")
+	api.Use(recover.New())
+	api.Use(logger.New())
+	api.RegisterView(iris.HTML("resources", ".html"))
+	api.HandleDir("/static", "resources/static") // 设置静态资源
+
+	Sc = iris.TOML("./config/conf.tml")
+	rc := getSysConf()
+
+	models.Register(rc)
 	//同步模型数据表
 	//如果模型表这里没有添加模型，单元测试会报错数据表不存在。
 	//因为单元测试结束，会删除数据表
-	database.DB.AutoMigrate(
+	models.Db.AutoMigrate(
 		&models.User{},
 		&models.OauthToken{},
 		&models.Role{},
 		&models.Permission{},
 	)
-
 	iris.RegisterOnInterrupt(func() {
-		_ = database.DB.Close()
+		_ = models.Db.Close()
 	})
 
-	routes.Register(api)
-
-	appName := config.Conf.Get("app.name").(string)
-	appDoc := config.Conf.Get("app.doc").(string)
-	appUrl := config.Conf.Get("app.url").(string)
 	//api 文档配置
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
-		DocTitle: appName,
-		DocPath:  appDoc + "/index.html", //设置绝对路径
+		DocTitle: "IrisAdminApi",
+		DocPath:  "./apidoc/index.html", //设置绝对路径
 		BaseUrls: map[string]string{
-			"Production": appUrl,
+			"Production": "http://localhost",
 			"Staging":    "",
 		},
 	})
 
+	//注册路由
+	routes.Register(api)
 	//初始化系统 账号 权限 角色
 	models.CreateSystemData()
 
-	return
+	err := api.Run(iris.Addr(rc.App.Port), iris.WithConfiguration(Sc))
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
-func main() {
-	app := newApp()
-	app.RegisterView(iris.HTML("resources", ".html"))
-	app.HandleDir("/static", "resources/static") // 设置静态资源
+// 获取配置信息
+func getSysConf() *transformer.Conf {
 
-	addr := config.Conf.Get("app.addr").(string)
-	_ = app.Run(iris.Addr(addr), iris.WithoutServerError(iris.ErrServerClosed))
+	app := transformer.App{}
+	g := gotransform.NewTransform(&app, Sc.Other["App"], time.RFC3339)
+	_ = g.Transformer()
+
+	db := transformer.Database{}
+	g.OutputObj = &db
+	g.InsertObj = Sc.Other["Database"]
+	_ = g.Transformer()
+
+	mongodb := transformer.Mongodb{}
+	g.OutputObj = &mongodb
+	g.InsertObj = Sc.Other["Mongodb"]
+	_ = g.Transformer()
+
+	redis := transformer.Redis{}
+	g.OutputObj = &redis
+	g.InsertObj = Sc.Other["Redis"]
+	_ = g.Transformer()
+
+	sqlite := transformer.Sqlite{}
+	g.OutputObj = &sqlite
+	g.InsertObj = Sc.Other["Sqlite"]
+	_ = g.Transformer()
+
+	testData := transformer.TestData{}
+	g.OutputObj = &testData
+	g.InsertObj = Sc.Other["TestData"]
+	_ = g.Transformer()
+
+	cf := &transformer.Conf{}
+	cf.App = app
+	cf.Database = db
+	cf.Mongodb = mongodb
+	cf.Redis = redis
+	cf.Sqlite = sqlite
+	cf.TestData = testData
+
+	return cf
 }

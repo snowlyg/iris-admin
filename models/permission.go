@@ -3,8 +3,6 @@ package models
 import (
 	"fmt"
 
-	"github.com/snowlyg/IrisApiProject/database"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -30,8 +28,8 @@ func GetPermissionById(id uint) *Permission {
 	permission := new(Permission)
 	permission.ID = id
 
-	if err := database.DB.First(permission).Error; err != nil {
-		fmt.Printf("GetPermissionByIdError:%s", err)
+	if err := Db.First(permission).Error; err != nil {
+		fmt.Printf("GetPermissionByIdError:%s \n", err)
 	}
 
 	return permission
@@ -46,8 +44,8 @@ func GetPermissionByName(name string) *Permission {
 	permission := new(Permission)
 	permission.Name = name
 
-	if err := database.DB.First(permission).Error; err != nil {
-		fmt.Printf("GetPermissionByNameError:%s", err)
+	if err := Db.First(permission).Error; err != nil {
+		fmt.Printf("GetPermissionByNameError:%s \n", err)
 	}
 
 	return permission
@@ -61,8 +59,8 @@ func DeletePermissionById(id uint) {
 	u := new(Permission)
 	u.ID = id
 
-	if err := database.DB.Delete(u).Error; err != nil {
-		fmt.Printf("DeletePermissionByIdError:%s", err)
+	if err := Db.Delete(u).Error; err != nil {
+		fmt.Printf("DeletePermissionByIdError:%s \n", err)
 	}
 }
 
@@ -75,8 +73,8 @@ func DeletePermissionById(id uint) {
  * @param  {[type]} limit int    [description]
  */
 func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*Permission) {
-	if err := database.GetAll(name, orderBy, offset, limit).Find(&permissions).Error; err != nil {
-		fmt.Printf("GetAllPermissionsError:%s", err)
+	if err := GetAll(name, orderBy, offset, limit).Find(&permissions).Error; err != nil {
+		fmt.Printf("GetAllPermissionsError:%s \n", err)
 	}
 
 	return
@@ -97,8 +95,8 @@ func CreatePermission(aul *PermissionJson) (permission *Permission) {
 	permission.DisplayName = aul.DisplayName
 	permission.Description = aul.Description
 
-	if err := database.DB.Create(permission).Error; err != nil {
-		fmt.Printf("CreatePermissionError:%s", err)
+	if err := Db.Create(permission).Error; err != nil {
+		fmt.Printf("CreatePermissionError:%s \n", err)
 	}
 
 	return
@@ -115,8 +113,8 @@ func UpdatePermission(pj *PermissionJson, id uint) (permission *Permission) {
 	permission = new(Permission)
 	permission.ID = id
 
-	if err := database.DB.Model(&permission).Updates(pj).Error; err != nil {
-		fmt.Printf("UpdatePermissionError:%s", err)
+	if err := Db.Model(&permission).Updates(pj).Error; err != nil {
+		fmt.Printf("UpdatePermissionError:%s \n", err)
 	}
 
 	return

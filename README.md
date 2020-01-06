@@ -58,41 +58,12 @@ git clone https://gitee.com/dtouyu/IrisApiProject.git
 ```
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)
-
-使用 [gopm](https://gopm.io/) 管理包
+>使用国内七牛云的 go module 镜像。
+ 参考 https://github.com/goproxy/goproxy.cn。
+>golang 1.13 可以直接执行：
 ```
-
-go get -v -u github.com/gpmgo/gopm
-
-# 查看当前工程依赖
-gopm list
-# 显示依赖详细信息
-gopm list -v
-# 列出文件依赖
-gopm list -t [file]
-# 拉取依赖到缓存目录
-gopm get -r xxx
-# 仅下载当前指定的包
-gopm get -d xxx
-# 拉取依赖到$GOPATH
-gopm get -g xxx
-# 检查更新所有包
-gopm get -u xxx
-# 拉取到当前所在目录
-gopm get -l xxx
-# 运行当前目录程序
-gopm run
-# 生成当前工程的 gopmfile 文件用于包管理
-gopm gen -v
-# 根据当前项目 gopmfile 链接依赖并执行 go install
-gopm install -v
-# 更新当前依赖
-gopm update -v
-# 清理临时文件
-gopm clean
-# 编译到当前目录
-gopm bin
-
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
 ```
 
 >项目配置文件 /config/config.toml

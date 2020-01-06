@@ -3,8 +3,6 @@ package main
 import (
 	"testing"
 
-	"github.com/snowlyg/IrisApiProject/config"
-
 	"github.com/kataras/iris/v12"
 )
 
@@ -12,8 +10,8 @@ import (
 func TestUserLoginSuccess(t *testing.T) {
 
 	oj := map[string]string{
-		"username": config.Conf.Get("test.LoginUserName").(string),
-		"password": config.Conf.Get("test.LoginPwd").(string),
+		"username": "username",
+		"password": "password",
 	}
 
 	login(t, "/v1/admin/login", oj, iris.StatusOK, true, "登陆成功", nil)
@@ -24,7 +22,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 
 	oj := map[string]string{
 		"username": "err_user",
-		"password": config.Conf.Get("test.LoginPwd").(string),
+		"password": "password",
 	}
 
 	login(t, "/v1/admin/login", oj, iris.StatusOK, false, "用户不存在", nil)
@@ -34,7 +32,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 func TestUserLoginWithErrorPwd(t *testing.T) {
 
 	oj := map[string]string{
-		"username": config.Conf.Get("test.LoginUserName").(string),
+		"username": "username",
 		"password": "admin",
 	}
 	login(t, "/v1/admin/login", oj, iris.StatusOK, false, "用户名或密码错误", nil)
@@ -43,7 +41,7 @@ func TestUserLoginWithErrorPwd(t *testing.T) {
 // 输入登陆密码格式错误
 func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 	oj := map[string]string{
-		"username": config.Conf.Get("test.LoginUserName").(string),
+		"username": "username",
 		"password": "123",
 	}
 

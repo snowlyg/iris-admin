@@ -1,15 +1,14 @@
 package routes
 
 import (
-	"github.com/snowlyg/IrisApiProject/controllers"
-	"github.com/snowlyg/IrisApiProject/middleware"
+	"IrisApiProject/controllers"
+	"IrisApiProject/middleware"
 
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 )
 
 func Register(api *iris.Application) {
-	//"github.com/iris-contrib/middleware/cors"
 	crs := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.
 		AllowedMethods:   []string{"PUT", "PATCH", "GET", "POST", "OPTIONS", "DELETE"},

@@ -3,8 +3,6 @@ package models
 import (
 	"fmt"
 
-	"github.com/snowlyg/IrisApiProject/database"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -40,8 +38,8 @@ func GetRoleById(id uint) *Role {
 	role := new(Role)
 	role.ID = id
 
-	if err := database.DB.Preload("Perms").First(role).Error; err != nil {
-		fmt.Printf("GetRoleByIdErr:%s", err)
+	if err := Db.Preload("Perms").First(role).Error; err != nil {
+		fmt.Printf("GetRoleByIdErr:%s \n", err)
 	}
 
 	return role
@@ -56,8 +54,8 @@ func GetRoleByName(name string) *Role {
 	role := new(Role)
 	role.Name = name
 
-	if err := database.DB.Preload("Perms").First(role).Error; err != nil {
-		fmt.Printf("GetRoleByNameErr:%s", err)
+	if err := Db.Preload("Perms").First(role).Error; err != nil {
+		fmt.Printf("GetRoleByNameErr:%s \n", err)
 	}
 
 	return role
@@ -71,8 +69,8 @@ func DeleteRoleById(id uint) {
 	u := new(Role)
 	u.ID = id
 
-	if err := database.DB.Delete(u).Error; err != nil {
-		fmt.Printf("DeleteRoleErr:%s", err)
+	if err := Db.Delete(u).Error; err != nil {
+		fmt.Printf("DeleteRoleErr:%s \n", err)
 	}
 }
 
@@ -86,8 +84,8 @@ func DeleteRoleById(id uint) {
  */
 func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
 
-	if err := database.GetAll(name, orderBy, offset, limit).Preload("Perms").Find(&roles).Error; err != nil {
-		fmt.Printf("GetAllRoleErr:%s", err)
+	if err := GetAll(name, orderBy, offset, limit).Preload("Perms").Find(&roles).Error; err != nil {
+		fmt.Printf("GetAllRoleErr:%s \n", err)
 	}
 	return
 }
@@ -106,15 +104,15 @@ func CreateRole(aul *RoleJson, permIds []uint) (role *Role) {
 	role.DisplayName = aul.DisplayName
 	role.Description = aul.Description
 
-	if err := database.DB.Create(role).Error; err != nil {
-		fmt.Printf("CreateRoleErr:%s", err)
+	if err := Db.Create(role).Error; err != nil {
+		fmt.Printf("CreateRoleErr:%s \n", err)
 	}
 
-	perms := []Permission{}
-	database.DB.Where("id in (?)", permIds).Find(&perms)
+	var perms []Permission
+	Db.Where("id in (?)", permIds).Find(&perms)
 	fmt.Println(perms)
-	if err := database.DB.Model(&role).Association("Perms").Append(perms).Error; err != nil {
-		fmt.Printf("AppendPermsErr:%s", err)
+	if err := Db.Model(&role).Association("Perms").Append(perms).Error; err != nil {
+		fmt.Printf("AppendPermsErr:%s \n", err)
 	}
 
 	return
@@ -131,14 +129,14 @@ func UpdateRole(rj *RoleJson, id uint, permIds []uint) (role *Role) {
 	role = new(Role)
 	role.ID = id
 
-	if err := database.DB.Model(&role).Updates(rj).Error; err != nil {
-		fmt.Printf("UpdatRoleErr:%s", err)
+	if err := Db.Model(&role).Updates(rj).Error; err != nil {
+		fmt.Printf("UpdatRoleErr:%s \n", err)
 	}
 
-	perms := []Permission{}
-	database.DB.Where("id in (?)", permIds).Find(&perms)
-	if err := database.DB.Model(&role).Association("Perms").Replace(perms).Error; err != nil {
-		fmt.Printf("AppendPermsErr:%s", err)
+	var perms []Permission
+	Db.Where("id in (?)", permIds).Find(&perms)
+	if err := Db.Model(&role).Association("Perms").Replace(perms).Error; err != nil {
+		fmt.Printf("AppendPermsErr:%s \n", err)
 	}
 
 	return

@@ -1,7 +1,7 @@
 package register
 
 import (
-	"github.com/snowlyg/IrisApiProject/controllers"
+	"IrisApiProject/controllers"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/logger"

@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/snowlyg/IrisApiProject/models"
-	"github.com/snowlyg/IrisApiProject/tools"
+	"IrisApiProject/models"
+	"IrisApiProject/tools"
 
 	"github.com/kataras/iris/v12"
 )
@@ -58,7 +58,7 @@ func UserLogin(ctx iris.Context) {
  */
 func UserLogout(ctx iris.Context) {
 	aui := ctx.Values().GetString("auth_user_id")
-	uid := uint(tools.Tool.ParseInt(aui, 0))
+	uid := uint(tools.ParseInt(aui, 0))
 	models.UserAdminLogout(uid)
 
 	ctx.StatusCode(http.StatusOK)

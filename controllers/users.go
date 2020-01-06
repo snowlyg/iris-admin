@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 
-	"github.com/snowlyg/IrisApiProject/models"
+	"IrisApiProject/models"
 
 	"github.com/kataras/iris/v12"
 	"gopkg.in/go-playground/validator.v9"

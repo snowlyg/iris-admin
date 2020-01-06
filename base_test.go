@@ -6,11 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/snowlyg/IrisApiProject/database"
-	"github.com/snowlyg/IrisApiProject/models"
-
-	"github.com/snowlyg/IrisApiProject/config"
-
+	"IrisApiProject/models"
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
@@ -36,7 +32,7 @@ func TestMain(m *testing.M) {
 	exitCode := m.Run()
 
 	// 删除测试数据表，保持测试环境
-	database.DB.DropTable("users", "roles", "permissions", &models.OauthToken{})
+	models.Db.DropTable("users", "roles", "permissions", &models.OauthToken{})
 
 	os.Exit(exitCode)
 
@@ -44,7 +40,7 @@ func TestMain(m *testing.M) {
 
 // 单元测试 login 方法
 func login(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
+	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	if Data != nil {
 		e.POST(url).WithJSON(Object).
 			Expect().Status(StatusCode).
@@ -60,7 +56,7 @@ func login(t *testing.T, url string, Object interface{}, StatusCode int, Status 
 
 // 单元测试 create 方法
 func create(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
+	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	at := GetLoginToken()
 
 	ob := e.POST(url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(Object).
@@ -78,7 +74,7 @@ func create(t *testing.T, url string, Object interface{}, StatusCode int, Status
 
 // 单元测试 update 方法
 func update(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
+	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	at := GetLoginToken()
 
 	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(Object).
@@ -96,7 +92,7 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Status
 
 // 单元测试 getOne 方法
 func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
+	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	at := GetLoginToken()
 	if Data != nil {
 		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
@@ -113,7 +109,7 @@ func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string, D
 
 // 单元测试 getMore 方法
 func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
+	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	at := GetLoginToken()
 	if Data != nil {
 		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
@@ -130,7 +126,7 @@ func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, 
 
 // 单元测试 delete 方法
 func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: config.Conf.Get("app.debug").(bool)})
+	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	at := GetLoginToken()
 
 	e.DELETE(url).WithHeader("Authorization", "Bearer "+at.Token).
@@ -146,8 +142,8 @@ func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, D
  */
 func GetLoginToken() models.Token {
 	response, status, msg := models.CheckLogin(
-		config.Conf.Get("test.LoginUserName").(string),
-		config.Conf.Get("test.LoginPwd").(string),
+		"username",
+		"password",
 	)
 
 	// 打印错误信息

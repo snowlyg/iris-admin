@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/snowlyg/IrisApiProject/models"
+	"IrisApiProject/models"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/kataras/iris/v12"

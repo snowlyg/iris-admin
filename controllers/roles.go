@@ -3,8 +3,8 @@ package controllers
 import (
 	"fmt"
 
-	"github.com/snowlyg/IrisApiProject/models"
-	"github.com/snowlyg/IrisApiProject/tools"
+	"IrisApiProject/models"
+	"IrisApiProject/tools"
 
 	"github.com/kataras/iris/v12"
 	"gopkg.in/go-playground/validator.v9"
@@ -169,8 +169,8 @@ func DeleteRole(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllRoles(ctx iris.Context) {
-	offset := tools.Tool.ParseInt(ctx.FormValue("offset"), 1)
-	limit := tools.Tool.ParseInt(ctx.FormValue("limit"), 20)
+	offset := tools.ParseInt(ctx.FormValue("offset"), 1)
+	limit := tools.ParseInt(ctx.FormValue("limit"), 20)
 	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
 

@@ -7,28 +7,27 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 )
 
 type Tools struct {
 }
 
-var (
-	Tool = New()
-	once sync.Once
-)
+//var (
+//Tool = New()
+//once sync.Once
+//)
 
-/**
- * 返回单例实例
- * @method New
- */
-func New() (t *Tools) {
-	once.Do(func() { //只执行一次
-		t = &Tools{}
-	})
-	return t
-}
+///**
+// * 返回单例实例
+// * @method New
+// */
+//func New() {
+//	once.Do(func() { //只执行一次
+//		t = &Tools{}
+//	})
+//	return t
+//}
 
 /**
  * string转换int
@@ -36,7 +35,7 @@ func New() (t *Tools) {
  * @param  {[type]} b string        [description]
  * @return {[type]}   [description]
  */
-func (t *Tools) ParseInt(b string, defInt int) int {
+func ParseInt(b string, defInt int) int {
 	id, err := strconv.Atoi(b)
 	if err != nil {
 		return defInt
@@ -51,7 +50,7 @@ func (t *Tools) ParseInt(b string, defInt int) int {
  * @param  {[type]} b string        [description]
  * @return {[type]}   [description]
  */
-func (t *Tools) ParseString(b int) string {
+func ParseString(b int) string {
 	id := strconv.Itoa(b)
 	return id
 }
@@ -62,7 +61,7 @@ func (t *Tools) ParseString(b int) string {
  * @param  {[type]} t *             Tools [description]
  * @return {[type]}   [description]
  */
-func (t *Tools) ParseFlostToString(f float64) string {
+func ParseFlostToString(f float64) string {
 	return strconv.FormatFloat(f, 'f', 5, 64)
 }
 
@@ -71,7 +70,7 @@ func (t *Tools) ParseFlostToString(f float64) string {
  * @method StruckToString
  * @param  {[type]}       data interface{} [description]
  */
-func (t *Tools) StructToString(data interface{}) string {
+func StructToString(data interface{}) string {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return err.Error()
@@ -86,7 +85,7 @@ func (t *Tools) StructToString(data interface{}) string {
  * @param  {[type]} t *Tools        [description]
  * @return {[type]}   [description]
  */
-func (t *Tools) StructToMap(obj interface{}) map[string]interface{} {
+func StructToMap(obj interface{}) map[string]interface{} {
 	k := reflect.TypeOf(obj)
 	v := reflect.ValueOf(obj)
 
@@ -98,7 +97,7 @@ func (t *Tools) StructToMap(obj interface{}) map[string]interface{} {
 }
 
 //生成随机字符串
-func (t *Tools) GetRandomString(n int) string {
+func GetRandomString(n int) string {
 	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*()+[]{}/<>;:=.,?"
 	b := make([]byte, n)
 	for i := range b {
@@ -113,7 +112,7 @@ func (t *Tools) GetRandomString(n int) string {
  * @param  {[type]} t *Tools        [description]
  * @return {[type]}   [description]
  */
-func (t *Tools) SubString(str string, start, length int) string {
+func SubString(str string, start, length int) string {
 	if length == 0 {
 		return ""
 	}
@@ -145,7 +144,7 @@ func (t *Tools) SubString(str string, start, length int) string {
  * @param  {[type]} t *Tools        [description]
  * @return {[type]}   [description]
  */
-func (t *Tools) Base64Decode(str string) string {
+func Base64Decode(str string) string {
 	s, err := base64.StdEncoding.DecodeString(str)
 	if err != nil {
 		return ""
@@ -159,6 +158,6 @@ func (t *Tools) Base64Decode(str string) string {
  * @param  {[type]} t *Tools        [description]
  * @return {[type]}   [description]
  */
-func (t *Tools) TimeFormat(time *time.Time) string {
+func TimeFormat(time *time.Time) string {
 	return time.Format("2006-01-02 15:04:05")
 }

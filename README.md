@@ -1,16 +1,16 @@
 <h1 align="center">IrisAdminApi</h1>
 
 <p align="center">
-    <a href="https://travis-ci.org/snowlyg/IrisApiProject"><img src="https://travis-ci.org/snowlyg/IrisApiProject.svg?branch=master" alt="Build Status"></a>
-    <a href="https://codecov.io/gh/snowlyg/IrisApiProject"><img src="https://codecov.io/gh/snowlyg/IrisApiProject/branch/master/graph/badge.svg" alt="Code Coverage"></a>
-    <a href="https://goreportcard.com/report/github.com/snowlyg/IrisApiProject"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisApiProject" alt="Go Report Card"></a>
-    <a href="https://godoc.org/github.com/snowlyg/IrisApiProject"><img src="https://godoc.org/github.com/snowlyg/IrisApiProject?status.svg" alt="GoDoc"></a>
-    <a href="https://github.com/snowlyg/IrisApiProject/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisApiProject" alt="Licenses"></a>
+    <a href="https://travis-ci.org/snowlyg/IrisAdminApi"><img src="https://travis-ci.org/snowlyg/IrisAdminApi.svg?branch=master" alt="Build Status"></a>
+    <a href="https://codecov.io/gh/snowlyg/IrisAdminApi"><img src="https://codecov.io/gh/snowlyg/IrisAdminApi/branch/master/graph/badge.svg" alt="Code Coverage"></a>
+    <a href="https://goreportcard.com/report/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
+    <a href="https://godoc.org/github.com/snowlyg/IrisAdminApi"><img src="https://godoc.org/github.com/snowlyg/IrisAdminApi?status.svg" alt="GoDoc"></a>
+    <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
     <h5 align="center">Iris + Vue + mysql + redis + jwt</h5>
 </p>
 
 #### 项目介绍
-- 采用 iris 框架目后台api [IrisApiProject](https://github.com/snowlyg/IrisApiProject)
+- iris 框架后台api
 - 采用了 gorm 数据库模块 和 jwt 的单点登陆认证方式
 - 测试默认使用了 sqlite3 数据库
 ---
@@ -50,11 +50,11 @@
 >拉取项目
 
 ```
-git clone https://github.com/snowlyg/IrisApiProject.git
+git clone https://github.com/snowlyg/IrisAdminApi.git
 ```
 //github 太慢可以用 gitee
 ```
-git clone https://gitee.com/dtouyu/IrisApiProject.git
+git clone https://gitee.com/dtouyu/IrisAdminApi.git
 ```
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)

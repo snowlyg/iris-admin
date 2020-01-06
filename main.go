@@ -11,7 +11,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/logger"
 	"github.com/kataras/iris/v12/middleware/recover"
-	gotransform "github.com/snowlyg/gotransformer"
+	gf "github.com/snowlyg/gotransformer"
 )
 
 var Sc iris.Configuration
@@ -52,10 +52,8 @@ func main() {
 		},
 	})
 
-	//注册路由
-	routes.Register(api)
-	//初始化系统 账号 权限 角色
-	models.CreateSystemData()
+	routes.Register(api)      //注册路由
+	models.CreateSystemData() //初始化系统 账号 权限 角色
 
 	err := api.Run(iris.Addr(rc.App.Port), iris.WithConfiguration(Sc))
 	if err != nil {
@@ -67,7 +65,7 @@ func main() {
 func getSysConf() *transformer.Conf {
 
 	app := transformer.App{}
-	g := gotransform.NewTransform(&app, Sc.Other["App"], time.RFC3339)
+	g := gf.NewTransform(&app, Sc.Other["App"], time.RFC3339)
 	_ = g.Transformer()
 
 	db := transformer.Database{}

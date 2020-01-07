@@ -10,8 +10,8 @@ import (
 func TestUserLoginSuccess(t *testing.T) {
 
 	oj := map[string]string{
-		"username": "username",
-		"password": "password",
+		"username": rc.TestData.UserName,
+		"password": rc.TestData.Pwd,
 	}
 
 	login(t, "/v1/admin/login", oj, iris.StatusOK, true, "登陆成功", nil)
@@ -22,7 +22,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 
 	oj := map[string]string{
 		"username": "err_user",
-		"password": "password",
+		"password": rc.TestData.Pwd,
 	}
 
 	login(t, "/v1/admin/login", oj, iris.StatusOK, false, "用户不存在", nil)
@@ -32,7 +32,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 func TestUserLoginWithErrorPwd(t *testing.T) {
 
 	oj := map[string]string{
-		"username": "username",
+		"username": rc.TestData.UserName,
 		"password": "admin",
 	}
 	login(t, "/v1/admin/login", oj, iris.StatusOK, false, "用户名或密码错误", nil)
@@ -41,7 +41,7 @@ func TestUserLoginWithErrorPwd(t *testing.T) {
 // 输入登陆密码格式错误
 func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 	oj := map[string]string{
-		"username": "username",
+		"username": rc.TestData.UserName,
 		"password": "123",
 	}
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"IrisAdminApi/transformer"
 	"github.com/dgrijalva/jwt-go"
 
 	"github.com/jameskeane/bcrypt"
@@ -211,16 +212,14 @@ func UserAdminLogout(userId uint) bool {
 *@param role_id uint
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
-func CreateSystemAdmin(roleId uint) *User {
+func CreateSystemAdmin(roleId uint, rc *transformer.Conf) *User {
 
 	aul := new(UserRequest)
-	aul.Username = "username"
-	aul.Password = "password"
-	aul.Name = "name"
+	aul.Username = rc.TestData.UserName
+	aul.Password = rc.TestData.Pwd
+	aul.Name = rc.TestData.UserName
 	aul.RoleID = roleId
-
 	user := GetUserByUserName(aul.Username)
-
 	if user.ID == 0 {
 		fmt.Println("创建账号")
 		return CreateUser(aul)

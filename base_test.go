@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"IrisAdminApi/models"
+	"IrisAdminApi/transformer"
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
@@ -18,6 +19,7 @@ var (
 	testPerm    *models.Permission
 	testPermIds []uint
 	testUser    *models.User
+	rc          *transformer.Conf
 )
 
 //单元测试基境
@@ -25,12 +27,12 @@ func TestMain(m *testing.M) {
 
 	// 设置静态资源
 	Sc = iris.TOML("./config/conf.tml")
-	rc := getSysConf()
+	rc = getSysConf()
 
 	// 初始化app
 	app = NewApp(rc)
 
-	baseCase()
+	baseCase() //创建测试数据
 
 	flag.Parse()
 	exitCode := m.Run()
@@ -146,8 +148,8 @@ func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, D
  */
 func GetLoginToken() models.Token {
 	response, status, msg := models.CheckLogin(
-		"username",
-		"password",
+		rc.TestData.UserName,
+		rc.TestData.Pwd,
 	)
 
 	// 打印错误信息

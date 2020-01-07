@@ -63,7 +63,7 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 	})
 	routes.Register(api)
 	//注册路由
-	models.CreateSystemData()
+	models.CreateSystemData(rc)
 	//初始化系统 账号 权限 角色
 	return api
 }

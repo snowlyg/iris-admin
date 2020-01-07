@@ -2,36 +2,34 @@ DisablePathCorrection = false
 EnablePathEscape = false
 FireMethodNotAllowed = true
 DisableBodyConsumptionOnUnmarshal = false
-TimeFormat = "Mon, 01 Jan 2006 15:04:05 GMT"
+TimeFormat = "2006-01-02T15:04:05Z07:00"
 Charset = "UTF-8"
 
-[App]
-    Name = "IrisAdminApi"
-    URl = "http://localhost"
+[Other]
+    [Other.App]
+        Name = "IrisAdminApi"
+        URl = "http://localhost"
+        Port = ":8081"
+    [Other.Database]
+        DirverName = "mysql"
+        Name ="iris"
+        UserName =""
+        Password =""
+    [Other.Mongodb]
+        Connect = "mongodb://root:123456@127.0.0.1:27017/admin"
 
-[Database]
-    Dirver = "mysql"
+    [Other.Sqlite]
+        DirverName = "sqlite3"
+        Connect = "./tmp/gorm.db"
 
-[Mysql]
-    Name =""
-    UserName =""
-    Password =""
+    [Other.Redis]
+      Addr = "127.0.0.1:6379"
+      Password = ""
+      DB = "0"
 
-
-[Mongodb]
-    Connect = "mongodb://root:123456@127.0.0.1:27017/admin"
-
-[Sqlite]
-    Connect = "/tmp/gorm.db"
-
-[Redis]
-  Addr = "127.0.0.1:6379"
-  Password = ""
-  DB = 0
-
-[TestData]
-      UserName = "username"
-      Name = "name"
-      Pwd = "password"
-      DataBaseDriver = "sqlite3"
-      DataBaseConnect = "tmp/gorm.db"
+    [Other.TestData]
+          UserName = "username"
+          Name = "name"
+          Pwd = "password"
+          DataBaseDriver = "sqlite3"
+          DataBaseConnect = "tmp/gorm.db"

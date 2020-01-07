@@ -22,7 +22,7 @@ func Register(rc *transformer.Conf) {
 	if isTestEnv() {
 		Db, err = gorm.Open(rc.Sqlite.DirverName, rc.Sqlite.Connect)
 		if err != nil {
-			panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
+			panic(fmt.Sprintf("gorm open 错误: %v", err))
 		}
 
 	} else {
@@ -33,7 +33,7 @@ func Register(rc *transformer.Conf) {
 
 		Db, err = gorm.Open(rc.Database.DirverName, connect)
 		if err != nil {
-			panic(fmt.Sprintf("No error should happen when connecting to  database, but got err=%+v", err))
+			panic(fmt.Sprintf("gorm open 错误: %v", err))
 		}
 	}
 }
@@ -42,7 +42,6 @@ func Register(rc *transformer.Conf) {
 // 根据程序运行路径后缀判断
 //如果是 test 就是测试环境
 func isTestEnv() bool {
-	fmt.Println(fmt.Sprintf("os.Getenv %v", os.Getenv("ENV")))
 
 	files := os.Args
 	for _, v := range files {

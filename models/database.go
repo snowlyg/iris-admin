@@ -5,9 +5,10 @@ import (
 	"os"
 	"strings"
 
-	"IrisApiProject/transformer"
+	"IrisAdminApi/transformer"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var Db *gorm.DB

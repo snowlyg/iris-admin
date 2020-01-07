@@ -16,10 +16,10 @@
    GetPermissionByNameError:record not found创建账号权限
    CreatePermissionError:Error 1366: Incorrect string value: '\xE5\x88\x9B\xE5\xBB\xBA...' for column 'display_name' at row 1GetRoleByNameErr:record not found创建角色
    
-   (/home/coding/go/src/IrisApiProject/models/roles.go:108) 
+   (/home/coding/go/src/IrisAdminApi/models/roles.go:108) 
    [2019-09-27 12:02:22]  Error 1366: Incorrect string value: '\xE8\xB6\x85\xE7\xBA\xA7...' for column 'display_name' at row 1 
    CreateRoleErr:Error 1366: Incorrect string value: '\xE8\xB6\x85\xE7\xBA\xA7...' for column 'display_name' at row 1
-   (/home/coding/go/src/IrisApiProject/models/permission.go:99) 
+   (/home/coding/go/src/IrisAdminApi/models/permission.go:99) 
    [2019-09-27 12:02:22]  Error 1366: Incorrect string value: '\xE5\x88\x9B\xE5\xBB\xBA...' for column 'display_name' at row 1 
 ```
 - 数据库字符格式不对，无法识别中文

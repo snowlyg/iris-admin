@@ -1,4 +1,4 @@
-module IrisApiProject
+module IrisAdminApi
 
 go 1.13
 
@@ -14,9 +14,8 @@ require (
 	github.com/jinzhu/gorm v1.9.11
 	github.com/kataras/iris/v12 v12.1.4
 	github.com/leodido/go-urn v1.2.0 // indirect
-	github.com/pelletier/go-toml v1.6.0 // indirect
-	github.com/snowlyg/IrisApiProject v0.0.0-20200104064448-a53843977db4 // indirect
-	github.com/snowlyg/gotransformer v0.0.0-20200102145705-776a675cb1dc
+	github.com/mattn/go-sqlite3 v2.0.2+incompatible
+	github.com/snowlyg/gotransformer v0.0.0-20200107031743-38a7dfd0c373
 	github.com/valyala/fasthttp v1.7.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
 )

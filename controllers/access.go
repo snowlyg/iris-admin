@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 
-	"IrisApiProject/models"
-	"IrisApiProject/tools"
+	"IrisAdminApi/models"
+	"IrisAdminApi/tools"
 
 	"github.com/kataras/iris/v12"
 )

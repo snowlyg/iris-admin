@@ -3,8 +3,8 @@ package controllers
 import (
 	"time"
 
-	"IrisApiProject/models"
-	"IrisApiProject/transformer"
+	"IrisAdminApi/models"
+	"IrisAdminApi/transformer"
 	gf "github.com/snowlyg/gotransformer"
 
 	"github.com/kataras/iris/v12"

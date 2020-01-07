@@ -3,9 +3,9 @@ package controllers
 import (
 	"time"
 
-	"IrisApiProject/models"
-	"IrisApiProject/tools"
-	"IrisApiProject/transformer"
+	"IrisAdminApi/models"
+	"IrisAdminApi/tools"
+	"IrisAdminApi/transformer"
 	"github.com/kataras/iris/v12"
 	gf "github.com/snowlyg/gotransformer"
 )

@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"IrisApiProject/models"
+	"IrisAdminApi/models"
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
@@ -23,8 +23,12 @@ var (
 //单元测试基境
 func TestMain(m *testing.M) {
 
+	// 设置静态资源
+	Sc = iris.TOML("./config/conf.tml")
+	rc := getSysConf()
+
 	// 初始化app
-	app = newApp()
+	app = NewApp(rc)
 
 	baseCase()
 
@@ -155,22 +159,22 @@ func GetLoginToken() models.Token {
 }
 
 func baseCase() {
-	perm_json := &models.PermissionRequest{
+	permJson := &models.PermissionRequest{
 		Name:        "test_update_user",
 		Description: "访客",
 		DisplayName: "访客",
 	}
 
-	testPerm = models.CreatePermission(perm_json)
+	testPerm = models.CreatePermission(permJson)
 	testPermIds = []uint{testPerm.ID}
 
-	role_json := &models.RoleRequest{
+	roleJson := &models.RoleRequest{
 		Name:        "test_update_user",
 		Description: "访客",
 		DisplayName: "访客",
 	}
 
-	testRole = models.CreateRole(role_json, testPermIds)
+	testRole = models.CreateRole(roleJson, testPermIds)
 
 	aul := &models.UserRequest{
 		Username: "guest",

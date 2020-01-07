@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"IrisApiProject/controllers"
-	"IrisApiProject/middleware"
+	"IrisAdminApi/controllers"
+	"IrisAdminApi/middleware"
 
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"

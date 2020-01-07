@@ -1,7 +1,7 @@
 package register
 
 import (
-	"IrisApiProject/controllers"
+	"IrisAdminApi/controllers"
 	"github.com/kataras/iris/v12/middleware/logger"
 
 	"github.com/kataras/iris/v12"

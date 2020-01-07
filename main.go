@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"IrisApiProject/models"
-	"IrisApiProject/routes"
-	"IrisApiProject/transformer"
+	"IrisAdminApi/models"
+	"IrisAdminApi/routes"
+	"IrisAdminApi/transformer"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/logger"
@@ -17,15 +17,26 @@ import (
 var Sc iris.Configuration
 
 func main() {
+
+	// 设置静态资源
+	Sc = iris.TOML("./config/conf.tml")
+	rc := getSysConf()
+
+	api := NewApp(rc)
+
+	err := api.Run(iris.Addr(rc.App.Port), iris.WithConfiguration(Sc))
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func NewApp(rc *transformer.Conf) *iris.Application {
 	api := iris.New()
 	api.Logger().SetLevel("debug")
 	api.Use(recover.New())
 	api.Use(logger.New())
 	api.RegisterView(iris.HTML("resources", ".html"))
-	api.HandleDir("/static", "resources/static") // 设置静态资源
-
-	Sc = iris.TOML("./config/conf.tml")
-	rc := getSysConf()
+	api.HandleDir("/static", "resources/static")
 
 	models.Register(rc)
 	//同步模型数据表
@@ -40,7 +51,6 @@ func main() {
 	iris.RegisterOnInterrupt(func() {
 		_ = models.Db.Close()
 	})
-
 	//api 文档配置
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
@@ -51,14 +61,11 @@ func main() {
 			"Staging":    "",
 		},
 	})
-
-	routes.Register(api)      //注册路由
-	models.CreateSystemData() //初始化系统 账号 权限 角色
-
-	err := api.Run(iris.Addr(rc.App.Port), iris.WithConfiguration(Sc))
-	if err != nil {
-		fmt.Println(err)
-	}
+	routes.Register(api)
+	//注册路由
+	models.CreateSystemData()
+	//初始化系统 账号 权限 角色
+	return api
 }
 
 // 获取配置信息

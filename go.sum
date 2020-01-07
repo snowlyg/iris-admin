@@ -234,6 +234,7 @@ github.com/snowlyg/IrisApiProject v0.0.0-20200104064448-a53843977db4 h1:31b2z9cA
 github.com/snowlyg/IrisApiProject v0.0.0-20200104064448-a53843977db4/go.mod h1:fcofinFt9LTeD4TKC4YRgCPpZbPAnQCd2uyZDtGvXdM=
 github.com/snowlyg/gotransformer v0.0.0-20200102145705-776a675cb1dc h1:T+/5w4TJVskv3jPJziU6/QKhmpB2QDeE1VclWIhvA3g=
 github.com/snowlyg/gotransformer v0.0.0-20200102145705-776a675cb1dc/go.mod h1:XQTsi1E7BSdtkFtsDNh0bLb7cooz/MfqoJws4FFIwYE=
+github.com/snowlyg/gotransformer v0.0.0-20200106141324-e09f868cfda2 h1:egLI7AWAZb/GQnTtYVEewhgLMnpfHjhq0Qk7ZLWf1x0=
 github.com/spf13/afero v1.1.2/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B0CQ=
 github.com/spf13/cast v1.3.0/go.mod h1:Qx5cxh0v+4UWYiBimWS+eyWzqEqokIECu5etghLkUJE=
 github.com/spf13/cobra v0.0.5/go.mod h1:3K3wKZymM7VvHMDS9+Akkh4K60UwM26emMESw8tLCHU=

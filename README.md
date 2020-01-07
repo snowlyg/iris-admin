@@ -15,10 +15,8 @@
 - 测试默认使用了 sqlite3 数据库
 ---
 
-#### 项目更新
-- 修改项目配置加载方式
-- 简化 tools、database 使用
-- 增加数据格式化返回 [snowlyg/gotransformer](https://github.com/snowlyg/gotransformer)
+#### 更新日志
+[更新日志](UPDATE.MD)
 ---
 
 #### api项目初始化

@@ -33,7 +33,17 @@ git clone https://gitee.com/dtouyu/IrisAdminApi.git
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)
 >使用国内七牛云的 go module 镜像。
- 参考 https://github.com/goproxy/goproxy.cn。
+>
+>参考 https://github.com/goproxy/goproxy.cn。
+>
+>阿里： https://mirrors.aliyun.com/goproxy/
+>
+>官方： https://goproxy.io/
+>
+>中国：https://goproxy.cn
+>
+>其他：https://gocenter.io
+>
 >golang 1.13 可以直接执行：
 ```
 go env -w GO111MODULE=on

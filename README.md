@@ -19,7 +19,7 @@
 [更新日志](UPDATE.MD)
 ---
 
-#### api项目初始化
+#### 项目初始化
 
 >拉取项目
 
@@ -69,11 +69,6 @@ gowatch //安装 gowatch 后才可以使用
 go run main.go // go 命令
 ```
 
-cd github.com/silenceper/gowatch
-go install 
-
-```
-
 ---
 ##### 单元测试 
 >http test
@@ -117,3 +112,8 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ##### 问题总结
 
 [问题总结](ERRORS.MD)
+
+
+###### Iris-go 学习交流QQ群 ：676717248
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
+

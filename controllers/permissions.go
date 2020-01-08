@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"io"
+	"os"
 	"time"
 
 	"IrisAdminApi/models"
@@ -141,6 +143,42 @@ func UpdatePermission(ctx iris.Context) {
 func DeletePermission(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	models.DeletePermissionById(id)
+
+	ctx.StatusCode(iris.StatusOK)
+	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))
+}
+
+/**
+* @api {post} /admin/permissions/import 导入权限
+* @apiName 导入权限
+* @apiGroup ImportPermission
+* @apiVersion 1.0.0
+* @apiDescription 导入权限
+* @apiSampleRequest /admin/permissions/import
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
+func ImportPermission(ctx iris.Context) {
+
+	file, info, err := ctx.FormFile("file")
+	if err != nil {
+		ctx.StatusCode(iris.StatusInternalServerError)
+		_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
+	}
+	defer file.Close()
+
+	fname := info.Filename
+	out, err := os.OpenFile("./uploads/"+fname, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		ctx.StatusCode(iris.StatusInternalServerError)
+		_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
+		return
+	}
+	defer out.Close()
+
+	_, _ = io.Copy(out, file)
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))

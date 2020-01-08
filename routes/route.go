@@ -56,6 +56,7 @@ func Register(api *iris.Application) {
 				permissions.Get("/", controllers.GetAllPermissions)
 				permissions.Get("/{id:uint}", controllers.GetPermission)
 				permissions.Post("/", controllers.CreatePermission)
+				permissions.Post("/import", controllers.ImportPermission)
 				permissions.Put("/{id:uint}", controllers.UpdatePermission)
 				permissions.Delete("/{id:uint}", controllers.DeletePermission)
 			})

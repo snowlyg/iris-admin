@@ -26,7 +26,7 @@ var (
 func TestMain(m *testing.M) {
 
 	// 设置静态资源
-	Sc = iris.TOML("./config/conf.tml")
+	Sc = iris.TOML("./config/test.tml")
 	rc = getSysConf()
 
 	// 初始化app

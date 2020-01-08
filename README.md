@@ -39,7 +39,6 @@ git clone https://gitee.com/dtouyu/IrisAdminApi.git
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
 
-// 注意 goland 会覆盖 GOPROXY 配置，建议更新依赖包的时候关闭 `goland` 的`module`配置，更新完再打开。
 ```
 
 

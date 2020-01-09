@@ -24,13 +24,12 @@ func Register(api *iris.Application) {
 		_ = ctx.View("index.html")
 	})
 
+	api.Get("/apiDoc", func(ctx iris.Context) { // 首页模块
+		_ = ctx.View("apiDoc/index.html")
+	})
+
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{
-		v1.PartyFunc("/apiDoc", func(apiDoc iris.Party) {
-			apiDoc.Get("/", func(ctx iris.Context) { // 首页模块
-				_ = ctx.View("/apiDoc/index.html")
-			})
-		})
 
 		v1.PartyFunc("/admin", func(admin iris.Party) {
 			admin.Post("/login", controllers.UserLogin)

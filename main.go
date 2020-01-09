@@ -52,7 +52,7 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
 		DocTitle: "IrisAdminApi",
-		DocPath:  "./apidoc/index.html", //设置绝对路径
+		DocPath:  "./resources/apiDoc/index.html", //设置绝对路径
 		BaseUrls: map[string]string{
 			"Production": "http://localhost",
 			"Staging":    "",

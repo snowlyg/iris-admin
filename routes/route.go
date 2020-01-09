@@ -3,7 +3,7 @@ package routes
 import (
 	"IrisAdminApi/controllers"
 	"IrisAdminApi/middleware"
-
+	"github.com/betacraft/yaag/irisyaag"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
 )
@@ -24,16 +24,17 @@ func Register(api *iris.Application) {
 		_ = ctx.View("index.html")
 	})
 
-	mainDoc := api.Party("/apiDoc", crs).AllowMethods(iris.MethodOptions)
-	mainDoc.Get("/", func(ctx iris.Context) { // 首页模块
-		_ = ctx.View("/apiDoc/index.html")
-	})
-
 	v1 := api.Party("/v1", crs).AllowMethods(iris.MethodOptions)
 	{
-		v1.Use(middleware.NewYaag()) // <- IMPORTANT, register the middleware.
-		v1.Post("/admin/login", controllers.UserLogin)
+		v1.PartyFunc("/apiDoc", func(apiDoc iris.Party) {
+			apiDoc.Get("/", func(ctx iris.Context) { // 首页模块
+				_ = ctx.View("/apiDoc/index.html")
+			})
+		})
+
 		v1.PartyFunc("/admin", func(admin iris.Party) {
+			admin.Post("/login", controllers.UserLogin)
+			admin.Use(irisyaag.New()) // <- IMPORTANT, register the middleware.
 			admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken)
 			admin.Get("/logout", controllers.UserLogout)
 

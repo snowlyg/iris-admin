@@ -9,8 +9,6 @@ import (
 	"IrisAdminApi/transformer"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/middleware/logger"
-	"github.com/kataras/iris/v12/middleware/recover"
 	gf "github.com/snowlyg/gotransformer"
 )
 
@@ -33,8 +31,7 @@ func main() {
 func NewApp(rc *transformer.Conf) *iris.Application {
 	api := iris.New()
 	api.Logger().SetLevel("debug")
-	api.Use(recover.New())
-	api.Use(logger.New())
+
 	api.RegisterView(iris.HTML("resources", ".html"))
 	api.HandleDir("/static", "resources/static")
 
@@ -61,6 +58,7 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 			"Staging":    "",
 		},
 	})
+
 	routes.Register(api)
 	//注册路由
 	models.CreateSystemData(rc)

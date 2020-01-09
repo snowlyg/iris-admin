@@ -5,9 +5,11 @@ import (
 	"os"
 	"time"
 
+	"IrisAdminApi/files"
 	"IrisAdminApi/models"
 	"IrisAdminApi/tools"
 	"IrisAdminApi/transformer"
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/kataras/iris/v12"
 	gf "github.com/snowlyg/gotransformer"
 )
@@ -163,22 +165,41 @@ func DeletePermission(ctx iris.Context) {
 func ImportPermission(ctx iris.Context) {
 
 	file, info, err := ctx.FormFile("file")
+	fullPath, err := files.GetUploadFileUPath(file, info, "excel")
+	out, err := os.OpenFile(fullPath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
 	}
-	defer file.Close()
 
-	fname := info.Filename
-	out, err := os.OpenFile("./uploads/"+fname, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
-		return
-	}
 	defer out.Close()
 
 	_, _ = io.Copy(out, file)
+
+	f, err := excelize.OpenFile(fullPath)
+	if err != nil {
+		ctx.StatusCode(iris.StatusInternalServerError)
+		_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
+	}
+
+	// Excel 导入行数据转换
+	// 获取 Sheet1 上所有单元格
+	rows := f.GetRows("Sheet1")
+	titles := map[string]string{"0": "Name", "1": "DisplayName", "2": "Description"}
+	for roI, row := range rows {
+		if roI > 0 {
+			// 将数组  转成对应的 map
+			m := models.PermissionRequest{}
+			x := gf.NewXlxsTransform(&m, titles, row, "", time.RFC3339, nil)
+			err := x.XlxsTransformer()
+			if err != nil {
+				ctx.StatusCode(iris.StatusInternalServerError)
+				_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
+			}
+
+			models.CreatePermission(&m)
+		}
+	}
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))

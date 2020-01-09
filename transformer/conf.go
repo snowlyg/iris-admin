@@ -1,5 +1,9 @@
 package transformer
 
+/*
+加载系统配置
+*/
+
 type Conf struct {
 	App      App
 	Database Database

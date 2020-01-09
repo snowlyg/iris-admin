@@ -13,7 +13,7 @@ Charset = "UTF-8"
     [Other.Database]
         DirverName = "mysql"
         Name ="iris"
-        UserName =""
+        UserName ="root"
         Password =""
     [Other.Mongodb]
         Connect = "mongodb://root:123456@127.0.0.1:27017/admin"

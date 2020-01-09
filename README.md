@@ -10,9 +10,15 @@
 </div>
 
 #### 项目介绍
-- iris 框架后台接口项目
-- 采用了 gorm 数据库模块 和 jwt 的单点登陆认证方式
-- 测试默认使用了 sqlite3 数据库
+- iris golang框架后台接口项目
+- gorm 数据库模块 
+- jwt 的单点登陆认证方式
+- cors 跨域认证
+- 测试使用了 sqlite3 数据库 (需要 gcc 环境，如果不需要单元测试可以直接注释 sqlite3 依赖，或者采用 mysql 测试)
+- 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
+- 增加了 excel 文件接口导入实例 (数据导入效率比 PHP 高很多，本人只尝试了 php 和 go 之间的对比)
+- 前端采用了 element-ui 框架，如果需要修改前端代码请移步 [https://github.com/snowlyg/IrisApiVueAdmin](https://github.com/snowlyg/IrisApiVueAdmin)
+
 ---
 
 #### 更新日志
@@ -51,7 +57,6 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ```
 
-
 >项目配置文件 /config/config.toml
 
 ```
@@ -82,7 +87,7 @@ go run main.go // go 命令
 
 ---
 
-##### api 文档使用
+##### 接口文档
 自动生成文档 (访问过接口就会自动成功)
 因为原生的 jquery.min.js 里面的 cdn 是使用国外的，访问很慢。
 有条件的可以开个 vpn ,如果没有可以根据下面的方法修改一下，访问就很快了
@@ -97,7 +102,7 @@ https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ```
 
->访问文档，从浏览器直接打开 http://localhost/apiDoc
+>访问文档，从浏览器直接打开 http://localhost：8081/apiDoc
 
 ---
 

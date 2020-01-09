@@ -28,7 +28,7 @@ func Register(api *iris.Application) {
 		v1 := main.Party("/v1")
 		{
 			v1.PartyFunc("/admin", func(admin iris.Party) {
-				admin.Use(irisyaag.New()) // <- IMPORTANT, register the middleware.
+				v1.Use(irisyaag.New()) // <- IMPORTANT, register the middleware.
 				admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken)
 				admin.Get("/logout", controllers.UserLogout)
 

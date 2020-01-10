@@ -185,7 +185,7 @@ func ImportPermission(ctx iris.Context) {
 	// Excel 导入行数据转换
 	// 获取 Sheet1 上所有单元格
 	rows := f.GetRows("Sheet1")
-	titles := map[string]string{"0": "Name", "1": "DisplayName", "2": "Description"}
+	titles := map[string]string{"0": "Name", "1": "DisplayName", "2": "Description", "3": "Act"}
 	for roI, row := range rows {
 		if roI > 0 {
 			// 将数组  转成对应的 map

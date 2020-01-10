@@ -18,7 +18,7 @@ type PermissionRequest struct {
 	Name        string `json:"name" validate:"required,gte=4,lte=50"`
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
-	Act         string `json:"description"`
+	Act         string `json:"act"`
 }
 
 /**

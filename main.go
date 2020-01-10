@@ -15,13 +15,10 @@ import (
 var Sc iris.Configuration
 
 func main() {
-
 	// 设置静态资源
 	Sc = iris.TOML("./config/conf.tml")
 	rc := getSysConf()
-
 	api := NewApp(rc)
-
 	err := api.Run(iris.Addr(rc.App.Port), iris.WithConfiguration(Sc))
 	if err != nil {
 		fmt.Println(err)
@@ -30,7 +27,7 @@ func main() {
 
 func NewApp(rc *transformer.Conf) *iris.Application {
 	api := iris.New()
-	api.Logger().SetLevel("debug")
+	api.Logger().SetLevel("disable")
 
 	api.RegisterView(iris.HTML("resources", ".html"))
 	api.HandleDir("/static", "resources/static")
@@ -58,7 +55,6 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 			"Staging":    "",
 		},
 	})
-
 	routes.Register(api)
 	//注册路由
 	models.CreateSystemData(rc)

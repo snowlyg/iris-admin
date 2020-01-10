@@ -9,6 +9,7 @@ require (
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 // indirect
 	github.com/gavv/httpexpect v2.0.0+incompatible
 	github.com/go-playground/universal-translator v0.17.0 // indirect
+	github.com/iris-contrib/middleware/casbin v0.0.0-20191219204441-78279b78a367
 	github.com/iris-contrib/middleware/cors v0.0.0-20191219204441-78279b78a367
 	github.com/iris-contrib/middleware/jwt v0.0.0-20191219204441-78279b78a367
 	github.com/jameskeane/bcrypt v0.0.0-20120420032655-c3cd44c1e20f

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"IrisAdminApi/transformer"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/iris-contrib/middleware/jwt"
 
 	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
@@ -164,17 +164,12 @@ func CheckLogin(username, password string) (response Token, status bool, msg str
 		return
 	} else {
 		if ok := bcrypt.Match(password, user.Password); ok {
-			token := jwt.New(jwt.SigningMethodHS256)
-			claims := make(jwt.MapClaims)
-			claims["exp"] = time.Now().Add(time.Hour * time.Duration(1)).Unix()
-			claims["iat"] = time.Now().Unix()
-			token.Claims = claims
-			tokenString, err := token.SignedString([]byte("secret"))
 
-			if err != nil {
-				msg = err.Error()
-				return
-			}
+			token := jwt.NewTokenWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+				"exp": time.Now().Add(time.Hour * time.Duration(1)).Unix(),
+				"iat": time.Now().Unix(),
+			})
+			tokenString, _ := token.SignedString([]byte("HS2JDFKhu7Y1av7b"))
 
 			oauthToken := new(OauthToken)
 			oauthToken.Token = tokenString

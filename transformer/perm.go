@@ -1,6 +1,6 @@
 package transformer
 
-type Perm struct {
+type Permission struct {
 	Id          int
 	Name        string
 	DisplayName string

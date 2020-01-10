@@ -17,7 +17,6 @@ func Register(api *iris.Application) {
 		AllowCredentials: true,
 	})
 
-	api.Post("/v1/admin/login", controllers.UserLogin)
 	main := api.Party("/", crs).AllowMethods(iris.MethodOptions)
 	{
 		home := main.Party("/")
@@ -27,9 +26,12 @@ func Register(api *iris.Application) {
 
 		v1 := main.Party("/v1")
 		{
+			v1.Post("/admin/login", controllers.UserLogin)
 			v1.PartyFunc("/admin", func(admin iris.Party) {
-				v1.Use(irisyaag.New()) // <- IMPORTANT, register the middleware.
-				admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken)
+				v1.Use(irisyaag.New())                                         // <- IMPORTANT, register the middleware.
+				admin.Use(middleware.JwtHandler().Serve, middleware.AuthToken) //登录验证
+				//casbinMiddleware := cm.New(Enforcer)
+				//admin.Use(casbinMiddleware.ServeHTTP)
 				admin.Get("/logout", controllers.UserLogout)
 
 				admin.PartyFunc("/users", func(users iris.Party) {

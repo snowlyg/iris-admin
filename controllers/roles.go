@@ -27,7 +27,10 @@ func GetRole(ctx iris.Context) {
 	role := models.GetRoleById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, role, "操作成功"))
+
+	rr := roleTransform(role)
+	rr.Perms = permsTransform(role.Perms)
+	_, _ = ctx.JSON(ApiResource(true, rr, "操作成功"))
 }
 
 /**
@@ -177,16 +180,22 @@ func GetAllRoles(ctx iris.Context) {
 	roles := models.GetAllRoles(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, roleTransform(roles), "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, rolesTransform(roles), "操作成功"))
 }
 
-func roleTransform(roles []*models.Role) []*transformer.Role {
+func rolesTransform(roles []*models.Role) []*transformer.Role {
 	var rs []*transformer.Role
 	for _, role := range roles {
-		r := transformer.Role{}
-		g := gf.NewTransform(&r, role, time.RFC3339)
-		_ = g.Transformer()
-		rs = append(rs, &r)
+		r := roleTransform(role)
+		rs = append(rs, r)
 	}
 	return rs
+}
+
+func roleTransform(role *models.Role) *transformer.Role {
+	r := &transformer.Role{}
+	g := gf.NewTransform(r, role, time.RFC3339)
+	_ = g.Transformer()
+
+	return r
 }

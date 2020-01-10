@@ -5,5 +5,6 @@ type Role struct {
 	Name        string
 	DisplayName string
 	Description string
+	Perms       []*Permission
 	CreatedAt   string
 }

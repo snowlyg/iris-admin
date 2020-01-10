@@ -25,9 +25,8 @@ import (
 func GetProfile(ctx iris.Context) {
 	userId := ctx.Values().Get("auth_user_id").(uint)
 	user := models.GetUserById(userId)
-
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, user, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, userTransform(user), "操作成功"))
 }
 
 /**
@@ -47,7 +46,7 @@ func GetUser(ctx iris.Context) {
 	user := models.GetUserById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, user, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, userTransform(user), "操作成功"))
 }
 
 /**
@@ -184,16 +183,22 @@ func GetAllUsers(ctx iris.Context) {
 	users := models.GetAllUsers(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, userTransform(users), "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, usersTransform(users), "操作成功"))
 }
 
-func userTransform(users []*models.User) []*transformer.User {
+func usersTransform(users []*models.User) []*transformer.User {
 	var us []*transformer.User
 	for _, user := range users {
-		u := transformer.User{}
-		g := gf.NewTransform(&u, user, time.RFC3339)
-		_ = g.Transformer()
-		us = append(us, &u)
+		u := userTransform(user)
+		us = append(us, u)
 	}
 	return us
+}
+
+func userTransform(user *models.User) *transformer.User {
+	u := &transformer.User{}
+	g := gf.NewTransform(u, user, time.RFC3339)
+	_ = g.Transformer()
+
+	return u
 }

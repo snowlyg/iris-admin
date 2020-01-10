@@ -31,7 +31,7 @@ func GetPermission(ctx iris.Context) {
 	permission := models.GetPermissionById(id)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, permission, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, permTransform(permission), "操作成功"))
 }
 
 /**
@@ -226,16 +226,22 @@ func GetAllPermissions(ctx iris.Context) {
 	permissions := models.GetAllPermissions(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, permTransform(permissions), "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, permsTransform(permissions), "操作成功"))
 }
 
-func permTransform(perms []*models.Permission) []*transformer.Perm {
-	var rs []*transformer.Perm
+func permsTransform(perms []*models.Permission) []*transformer.Permission {
+	var rs []*transformer.Permission
 	for _, perm := range perms {
-		r := transformer.Perm{}
-		g := gf.NewTransform(&r, perm, time.RFC3339)
-		_ = g.Transformer()
-		rs = append(rs, &r)
+		r := permTransform(perm)
+		rs = append(rs, r)
 	}
 	return rs
+}
+
+func permTransform(perm *models.Permission) *transformer.Permission {
+	r := &transformer.Permission{}
+	g := gf.NewTransform(r, perm, time.RFC3339)
+	_ = g.Transformer()
+
+	return r
 }

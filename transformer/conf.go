@@ -14,9 +14,10 @@ type Conf struct {
 }
 
 type App struct {
-	Name string
-	URl  string
-	Port string
+	Name        string
+	URl         string
+	Port        string
+	LoggerLevel string
 }
 
 type Database struct {
@@ -24,6 +25,7 @@ type Database struct {
 	Name       string
 	UserName   string
 	Password   string
+	Addr       string
 }
 
 type Mongodb struct {

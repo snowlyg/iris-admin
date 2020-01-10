@@ -5,15 +5,15 @@ go 1.13
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/betacraft/yaag v1.0.1-0.20191027021412-565f65e36090
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/casbin/casbin/v2 v2.1.0
+	github.com/casbin/gorm-adapter/v2 v2.0.3
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 // indirect
 	github.com/gavv/httpexpect v2.0.0+incompatible
 	github.com/go-playground/universal-translator v0.17.0 // indirect
-	github.com/iris-contrib/middleware/casbin v0.0.0-20191219204441-78279b78a367
 	github.com/iris-contrib/middleware/cors v0.0.0-20191219204441-78279b78a367
 	github.com/iris-contrib/middleware/jwt v0.0.0-20191219204441-78279b78a367
 	github.com/jameskeane/bcrypt v0.0.0-20120420032655-c3cd44c1e20f
-	github.com/jinzhu/gorm v1.9.11
+	github.com/jinzhu/gorm v1.9.12
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kataras/iris/v12 v12.1.4
 	github.com/leodido/go-urn v1.2.0 // indirect

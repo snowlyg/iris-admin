@@ -5,5 +5,6 @@ type User struct {
 	Name      string
 	Username  string
 	RoleName  string `gtf:"Role.DisplayName"`
+	RoleIds   []int
 	CreatedAt string
 }

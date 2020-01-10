@@ -8,15 +8,17 @@ import (
 
 type Permission struct {
 	gorm.Model
-	Name        string `gorm:"unique;not null VARCHAR(191)"`
+	Name        string `gorm:"not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
+	Act         string `gorm:"VARCHAR(191)"`
 }
 
 type PermissionRequest struct {
 	Name        string `json:"name" validate:"required,gte=4,lte=50"`
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
+	Act         string `json:"description"`
 }
 
 /**
@@ -26,11 +28,7 @@ type PermissionRequest struct {
  */
 func GetPermissionById(id uint) *Permission {
 	permission := new(Permission)
-	permission.ID = id
-
-	if err := Db.First(permission).Error; err != nil {
-		fmt.Printf("GetPermissionByIdError:%s \n", err)
-	}
+	Db.Where("id = ?", id).First(permission)
 
 	return permission
 }
@@ -40,14 +38,9 @@ func GetPermissionById(id uint) *Permission {
  * @method GetPermissionByName
  * @param  {[type]}       permission  *Permission [description]
  */
-func GetPermissionByName(name string) *Permission {
+func GetPermissionByNameAct(name, act string) *Permission {
 	permission := new(Permission)
-	permission.Name = name
-
-	if err := Db.First(permission).Error; err != nil {
-		fmt.Printf("GetPermissionByNameError:%s \n", err)
-	}
-
+	Db.Where("name = ?", name).Where("act = ?", act).First(permission)
 	return permission
 }
 
@@ -88,17 +81,14 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
  * @param  {[type]} mp int    [description]
  */
 func CreatePermission(aul *PermissionRequest) (permission *Permission) {
-
 	permission = new(Permission)
-
 	permission.Name = aul.Name
 	permission.DisplayName = aul.DisplayName
 	permission.Description = aul.Description
-
+	permission.Act = aul.Act
 	if err := Db.Create(permission).Error; err != nil {
 		fmt.Printf("CreatePermissionError:%s \n", err)
 	}
-
 	return
 }
 
@@ -121,22 +111,18 @@ func UpdatePermission(pj *PermissionRequest, id uint) (permission *Permission) {
 }
 
 /**
-*创建系统管理员
-*@return   *models.AdminPermissionTranform api格式化后的数据格式
+ * 创建系统权限
+ * @return
  */
-func CreateSystemAdminPermission() *Permission {
-	aul := new(PermissionRequest)
-	aul.Name = "update_user"
-	aul.DisplayName = "创建账号权限"
-	aul.Description = "创建账号权限"
-
-	permission := GetPermissionByName(aul.Name)
-
-	if permission.ID == 0 {
-		fmt.Println("创建账号权限")
-		return CreatePermission(aul)
-	} else {
-		fmt.Println("重复初始化权限")
-		return permission
+func CreateSystemAdminPermission(perms []*PermissionRequest) []uint {
+	var permIds []uint
+	for _, perm := range perms {
+		p := GetPermissionByNameAct(perm.Name, perm.Act)
+		if p.ID != 0 {
+			continue
+		}
+		pp := CreatePermission(perm)
+		permIds = append(permIds, pp.ID)
 	}
+	return permIds
 }

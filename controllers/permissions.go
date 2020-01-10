@@ -242,6 +242,5 @@ func permTransform(perm *models.Permission) *transformer.Permission {
 	r := &transformer.Permission{}
 	g := gf.NewTransform(r, perm, time.RFC3339)
 	_ = g.Transformer()
-
 	return r
 }

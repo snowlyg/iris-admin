@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"strconv"
 	"time"
 
 	"IrisAdminApi/models"
@@ -200,5 +201,12 @@ func userTransform(user *models.User) *transformer.User {
 	g := gf.NewTransform(u, user, time.RFC3339)
 	_ = g.Transformer()
 
+	roleIds, _ := models.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(user.ID), 10))
+	var ris []int
+	for _, roleId := range roleIds {
+		ri, _ := strconv.Atoi(roleId)
+		ris = append(ris, ri)
+	}
+	u.RoleIds = ris
 	return u
 }

@@ -1,5 +1,4 @@
 # 运行测试使用
-
 DisablePathCorrection = false
 EnablePathEscape = false
 FireMethodNotAllowed = true
@@ -12,23 +11,10 @@ Charset = "UTF-8"
         Name = "IrisAdminApi"
         URl = "http://localhost"
         Port = ":8081"
-    [Other.Database]
-        DirverName = ""
-        Name =""
-        UserName =""
-        Password =""
-    [Other.Mongodb]
-        Connect = "mongodb://root:123456@127.0.0.1:27017/admin"
-
+         LoggerLevel = "debug" # "disable" "fatal" "error" "warn""info" "debug"
     [Other.Sqlite]
         DirverName = "sqlite3"
         Connect = "./tmp/gorm.db"
-
-    [Other.Redis]
-      Addr = "127.0.0.1:6379"
-      Password = ""
-      DB = "0"
-
     [Other.TestData]
           UserName = "username"
           Name = "name"

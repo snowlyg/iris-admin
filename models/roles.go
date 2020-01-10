@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 )
@@ -12,8 +13,6 @@ type Role struct {
 	Name        string `gorm:"unique;not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
-
-	Perms []*Permission `gorm:"many2many:role_perms;"`
 }
 
 type RoleRequest struct {
@@ -36,12 +35,7 @@ type RoleFormRequest struct {
  */
 func GetRoleById(id uint) *Role {
 	role := new(Role)
-	role.ID = id
-
-	if err := Db.Preload("Perms").First(role).Error; err != nil {
-		fmt.Printf("GetRoleByIdErr:%s \n", err)
-	}
-
+	Db.Where("id = ?", id).First(role)
 	return role
 }
 
@@ -52,12 +46,7 @@ func GetRoleById(id uint) *Role {
  */
 func GetRoleByName(name string) *Role {
 	role := new(Role)
-	role.Name = name
-
-	if err := Db.Preload("Perms").First(role).Error; err != nil {
-		fmt.Printf("GetRoleByNameErr:%s \n", err)
-	}
-
+	Db.Where("name = ?", name).First(role)
 	return role
 }
 
@@ -68,7 +57,6 @@ func GetRoleByName(name string) *Role {
 func DeleteRoleById(id uint) {
 	u := new(Role)
 	u.ID = id
-
 	if err := Db.Delete(u).Error; err != nil {
 		fmt.Printf("DeleteRoleErr:%s \n", err)
 	}
@@ -84,7 +72,7 @@ func DeleteRoleById(id uint) {
  */
 func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
 
-	if err := GetAll(name, orderBy, offset, limit).Preload("Perms").Find(&roles).Error; err != nil {
+	if err := GetAll(name, orderBy, offset, limit).Find(&roles).Error; err != nil {
 		fmt.Printf("GetAllRoleErr:%s \n", err)
 	}
 	return
@@ -108,14 +96,25 @@ func CreateRole(aul *RoleRequest, permIds []uint) (role *Role) {
 		fmt.Printf("CreateRoleErr:%s \n", err)
 	}
 
-	var perms []Permission
-	Db.Where("id in (?)", permIds).Find(&perms)
-	fmt.Println(perms)
-	if err := Db.Model(&role).Association("Perms").Append(perms).Error; err != nil {
-		fmt.Printf("AppendPermsErr:%s \n", err)
-	}
+	addPerms(permIds, role)
 
 	return
+}
+
+func addPerms(permIds []uint, role *Role) {
+	if len(permIds) > 0 {
+		roleId := strconv.FormatUint(uint64(role.ID), 10)
+		if _, err := Enforcer.DeletePermissionsForUser(roleId); err != nil {
+			fmt.Printf("AppendPermsErr:%s \n", err)
+		}
+		var perms []Permission
+		Db.Where("id in (?)", permIds).Find(&perms)
+		for _, perm := range perms {
+			if _, err := Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
+				fmt.Printf("AddPolicy:%s \n", err)
+			}
+		}
+	}
 }
 
 /**
@@ -133,13 +132,24 @@ func UpdateRole(rj *RoleRequest, id uint, permIds []uint) (role *Role) {
 		fmt.Printf("UpdatRoleErr:%s \n", err)
 	}
 
-	var perms []Permission
-	Db.Where("id in (?)", permIds).Find(&perms)
-	if err := Db.Model(&role).Association("Perms").Replace(perms).Error; err != nil {
-		fmt.Printf("AppendPermsErr:%s \n", err)
-	}
+	addPerms(permIds, role)
 
 	return
+}
+
+// 角色权限
+func RolePermisions(id uint) []*Permission {
+	perms := Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(id), 10))
+	var ps []*Permission
+	for _, perm := range perms {
+		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {
+			p := GetPermissionByNameAct(perm[1], perm[2])
+			if p.ID > 0 {
+				ps = append(ps, p)
+			}
+		}
+	}
+	return ps
 }
 
 /**
@@ -153,12 +163,9 @@ func CreateSystemAdminRole(permIds []uint) *Role {
 	aul.Description = "超级管理员"
 
 	role := GetRoleByName(aul.Name)
-
 	if role.ID == 0 {
-		fmt.Println("创建角色")
 		return CreateRole(aul, permIds)
 	} else {
-		fmt.Println("重复初始化角色")
 		return role
 	}
 }

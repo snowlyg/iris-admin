@@ -4,11 +4,8 @@
 - 系统没有安装 gcc ,或者 gcc 没有配置到系统环境变量
 - 安装 gcc 并设置相应系统变量
 
-> 安装依赖包，出现无法安装或者安装太慢（国内访问都会有限制）
- ```
-   有条件的可以使用 vpn , 或者到 github 去下载对应的依赖包文件，放到对应的加载路径。
-   github 如果下载或者 clone 还是很慢，可以用 [gopm.io](https://gopm.io/download) 加速下载
-```
+- gcc 下载地址
+[http://mingw-w64.org/doku.php/download](http://mingw-w64.org/doku.php/download)
 
 
 > 启动报错如下内容：

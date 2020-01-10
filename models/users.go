@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"IrisAdminApi/transformer"
@@ -17,15 +18,13 @@ type User struct {
 	Name     string `gorm:"not null VARCHAR(191)"`
 	Username string `gorm:"unique;VARCHAR(191)"`
 	Password string `gorm:"not null VARCHAR(191)"`
-	RoleID   uint
-	Role     Role
 }
 
 type UserRequest struct {
 	Username string `json:"username" validate:"required,gte=2,lte=50"`
 	Password string `json:"password" validate:"required"`
 	Name     string `json:"name" validate:"required,gte=2,lte=50"`
-	RoleID   uint   `json:"role_id" validate:"required"`
+	RoleIds  []uint `json:"role_ids" validate:"required"`
 }
 
 /**
@@ -33,12 +32,12 @@ type UserRequest struct {
  * @method UserAdminCheckLogin
  * @param  {[type]}       username string [description]
  */
-func UserAdminCheckLogin(username string) User {
-	u := User{}
-	if err := Db.Where("username = ?", username).First(&u).Error; err != nil {
+func UserAdminCheckLogin(username string) *User {
+	user := new(User)
+	if err := Db.Where("username = ?", username).First(user).Error; err != nil {
 		fmt.Printf("UserAdminCheckLoginErr:%s \n ", err)
 	}
-	return u
+	return user
 }
 
 /**
@@ -48,12 +47,7 @@ func UserAdminCheckLogin(username string) User {
  */
 func GetUserById(id uint) *User {
 	user := new(User)
-	user.ID = id
-
-	if err := Db.Preload("Role").First(user).Error; err != nil {
-		fmt.Printf("GetUserByIdErr:%s \n ", err)
-	}
-
+	Db.Where("id= ?", id).First(user)
 	return user
 }
 
@@ -63,12 +57,8 @@ func GetUserById(id uint) *User {
  * @param  {[type]}       user  *User [description]
  */
 func GetUserByUserName(username string) *User {
-	user := &User{Username: username}
-
-	if err := Db.Preload("Role").First(user).Error; err != nil {
-		fmt.Printf("GetUserByUserNameErr:%s \n ", err)
-	}
-
+	user := new(User)
+	Db.Where("username= ?", username).First(user)
 	return user
 }
 
@@ -96,8 +86,7 @@ func DeleteUserById(id uint) {
  */
 func GetAllUsers(name, orderBy string, offset, limit int) []*User {
 	var users []*User
-
-	q := GetAll(name, orderBy, offset, limit).Preload("Role")
+	q := GetAll(name, orderBy, offset, limit)
 	if err := q.Find(&users).Error; err != nil {
 		fmt.Printf("GetAllUserErr:%s \n ", err)
 		return nil
@@ -120,10 +109,23 @@ func CreateUser(aul *UserRequest) (user *User) {
 	user.Username = aul.Username
 	user.Password = hash
 	user.Name = aul.Name
-	user.RoleID = aul.RoleID
 
 	if err := Db.Create(user).Error; err != nil {
 		fmt.Printf("CreateUserErr:%s \n ", err)
+	}
+
+	if len(aul.RoleIds) > 0 {
+		userId := strconv.FormatUint(uint64(user.ID), 10)
+		if _, err = Enforcer.DeleteRolesForUser(userId); err != nil {
+			fmt.Printf("CreateUserErr:%s \n ", err)
+		}
+
+		for _, roleId := range aul.RoleIds {
+			roleId := strconv.FormatUint(uint64(roleId), 10)
+			if _, err = Enforcer.AddRoleForUser(userId, roleId); err != nil {
+				fmt.Printf("CreateUserErr:%s \n ", err)
+			}
+		}
 	}
 
 	return
@@ -208,18 +210,15 @@ func UserAdminLogout(userId uint) bool {
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
 func CreateSystemAdmin(roleId uint, rc *transformer.Conf) *User {
-
 	aul := new(UserRequest)
 	aul.Username = rc.TestData.UserName
 	aul.Password = rc.TestData.Pwd
 	aul.Name = rc.TestData.UserName
-	aul.RoleID = roleId
+	aul.RoleIds = []uint{roleId}
 	user := GetUserByUserName(aul.Username)
 	if user.ID == 0 {
-		fmt.Println("创建账号")
 		return CreateUser(aul)
 	} else {
-		fmt.Println("重复初始化账号")
 		return user
 	}
 }

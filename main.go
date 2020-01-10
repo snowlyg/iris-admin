@@ -2,13 +2,16 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
+	"IrisAdminApi/middleware"
 	"IrisAdminApi/models"
 	"IrisAdminApi/routes"
 	"IrisAdminApi/transformer"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/core/router"
 	gf "github.com/snowlyg/gotransformer"
 )
 
@@ -27,7 +30,7 @@ func main() {
 
 func NewApp(rc *transformer.Conf) *iris.Application {
 	api := iris.New()
-	api.Logger().SetLevel("disable")
+	api.Logger().SetLevel(rc.App.LoggerLevel)
 
 	api.RegisterView(iris.HTML("resources", ".html"))
 	api.HandleDir("/static", "resources/static")
@@ -48,18 +51,43 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 	//api 文档配置
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
-		DocTitle: "IrisAdminApi",
+		DocTitle: rc.App.Name,
 		DocPath:  "./resources/apiDoc/index.html", //设置绝对路径
 		BaseUrls: map[string]string{
-			"Production": "http://localhost",
+			"Production": rc.App.URl + rc.App.Port,
 			"Staging":    "",
 		},
 	})
-	routes.Register(api)
-	//注册路由
-	models.CreateSystemData(rc)
-	//初始化系统 账号 权限 角色
+	routes.Register(api) //注册路由
+	middleware.Register(api)
+	apiRoutes := getRoutes(api)
+	models.CreateSystemData(rc, apiRoutes) //初始化系统 账号 权限 角色
 	return api
+}
+
+// 获取路由信息
+func getRoutes(api *iris.Application) []*models.PermissionRequest {
+	rs := api.APIBuilder.GetRoutes()
+	var rrs []*models.PermissionRequest
+	for _, s := range rs {
+		if !isPermRoute(s) {
+			path := strings.Replace(s.Path, ":id", "*", 1)
+			rr := &models.PermissionRequest{Name: path, DisplayName: s.Name, Description: s.Name, Act: s.Method}
+			rrs = append(rrs, rr)
+		}
+	}
+	return rrs
+}
+
+// 过滤非必要权限
+func isPermRoute(s *router.Route) bool {
+	exceptRouteName := []string{"OPTIONS", "GET", "POST", "HEAD", "PUT", "PATCH"}
+	for _, er := range exceptRouteName {
+		if strings.Contains(s.Name, er) {
+			return true
+		}
+	}
+	return false
 }
 
 // 获取配置信息

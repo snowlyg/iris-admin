@@ -18,6 +18,8 @@
 - 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
 - 增加了 excel 文件接口导入实例 (数据导入效率比 PHP 高很多，本人只尝试了 php 和 go 之间的对比)
 - 前端采用了 element-ui 框架，如果需要修改前端代码请移步 [https://github.com/snowlyg/IrisApiVueAdmin](https://github.com/snowlyg/IrisApiVueAdmin)
+- 使用 casbin 做权限控制, config/rbac_model.conf 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
+- **注意：更新代码后，需要手动删所有数据表，数据结构有调整。**
 
 ---
 

@@ -29,7 +29,7 @@ func GetRole(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 
 	rr := roleTransform(role)
-	rr.Perms = permsTransform(role.Perms)
+	rr.Perms = permsTransform(models.RolePermisions(role.ID))
 	_, _ = ctx.JSON(ApiResource(true, rr, "操作成功"))
 }
 
@@ -196,6 +196,5 @@ func roleTransform(role *models.Role) *transformer.Role {
 	r := &transformer.Role{}
 	g := gf.NewTransform(r, role, time.RFC3339)
 	_ = g.Transformer()
-
 	return r
 }

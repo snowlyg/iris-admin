@@ -1,11 +1,9 @@
-package register
+package middleware
 
 import (
 	"net/http"
 
 	"github.com/kataras/iris/v12"
-	//"github.com/casbin/casbin/v2"
-	//cm "github.com/iris-contrib/middleware/casbin"
 )
 
 func Register(api *iris.Application) {

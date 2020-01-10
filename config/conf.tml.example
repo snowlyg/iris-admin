@@ -10,11 +10,13 @@ Charset = "UTF-8"
         Name = "IrisAdminApi"
         URl = "http://localhost"
         Port = ":8081"
+        LoggerLevel = "debug" # "disable" "fatal" "error" "warn""info" "debug"
     [Other.Database]
         DirverName = "mysql"
         Name ="iris"
         UserName ="root"
         Password =""
+        Addr ="127.0.0.1:3306"
     [Other.Mongodb]
         Connect = "mongodb://root:123456@127.0.0.1:27017/admin"
 
@@ -22,10 +24,10 @@ Charset = "UTF-8"
         DirverName = "sqlite3"
         Connect = "./tmp/gorm.db"
 
-    [Other.Redis]
-      Addr = "127.0.0.1:6379"
-      Password = ""
-      DB = "0"
+#    [Other.Redis]
+#      Addr = "127.0.0.1:6379"
+#      Password = ""
+#      DB = "0"
 
     [Other.TestData]
           UserName = "username"

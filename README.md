@@ -87,7 +87,8 @@ go run main.go // go 命令
 ```
  go test -v  //所有测试
  
- go test -run TestUserCreate -v //单个测试
+ go test -run access_test.go -v //单个文件
+ go test -run TestUserCreate -v //单个方法
  
 ```
 

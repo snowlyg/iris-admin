@@ -22,25 +22,25 @@ var err error
 *@param diver string
  */
 func Register(rc *transformer.Conf) {
+	var c *gormadapter.Adapter
+
 	if isTestEnv() {
+		c, err = gormadapter.NewAdapter(rc.Sqlite.DirverName, rc.Sqlite.Connect) // Your driver and data source.
+		if err != nil {
+			panic(fmt.Sprintf("NewAdapter 错误: %v", err))
+		}
+
 		Db, err = gorm.Open(rc.Sqlite.DirverName, rc.Sqlite.Connect)
 		if err != nil {
 			panic(fmt.Sprintf("gorm open 错误: %v", err))
 		}
 	} else {
-
 		baseConn := rc.Database.UserName + ":" + rc.Database.Password + "@tcp(" + rc.Database.Addr + ")/"
-		var c *gormadapter.Adapter
+
 		c, err = gormadapter.NewAdapter(rc.Database.DirverName, baseConn) // Your driver and data source.
 		if err != nil {
 			panic(fmt.Sprintf("NewAdapter 错误: %v", err))
 		}
-
-		Enforcer, err = casbin.NewEnforcer("./config/rbac_model.conf", c)
-		if err != nil {
-			panic(fmt.Sprintf("NewEnforcer 错误: %v", err))
-		}
-		_ = Enforcer.LoadPolicy()
 
 		connect := baseConn + rc.Database.Name + "?charset=utf8&parseTime=True&loc=Local"
 		Db, err = gorm.Open(rc.Database.DirverName, connect)
@@ -48,6 +48,13 @@ func Register(rc *transformer.Conf) {
 			panic(fmt.Sprintf("gorm open 错误: %v", err))
 		}
 	}
+
+	Enforcer, err = casbin.NewEnforcer("./config/rbac_model.conf", c)
+	if err != nil {
+		panic(fmt.Sprintf("NewEnforcer 错误: %v", err))
+	}
+	_ = Enforcer.LoadPolicy()
+
 }
 
 //获取程序运行环境

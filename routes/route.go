@@ -46,10 +46,10 @@ func Register(api *iris.Application) {
 				admin.PartyFunc("/permissions", func(permissions iris.Party) {
 					permissions.Get("/", controllers.GetAllPermissions).Name = "权限列表"
 					permissions.Get("/{id:uint}", controllers.GetPermission).Name = "权限详情"
-					permissions.Post("/", controllers.CreatePermission).Name = "创建权限"
+					//permissions.Post("/", controllers.CreatePermission).Name = "创建权限"
 					permissions.Post("/import", controllers.ImportPermission).Name = "导入权限"
-					permissions.Put("/{id:uint}", controllers.UpdatePermission).Name = "编辑权限"
-					permissions.Delete("/{id:uint}", controllers.DeletePermission).Name = "删除权限"
+					//permissions.Put("/{id:uint}", controllers.UpdatePermission).Name = "编辑权限"
+					//permissions.Delete("/{id:uint}", controllers.DeletePermission).Name = "删除权限"
 				})
 			})
 		}

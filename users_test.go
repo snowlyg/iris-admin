@@ -22,13 +22,13 @@ func TestUserCreate(t *testing.T) {
 		"username": "test_user",
 		"password": "password",
 		"name":     "name",
-		"role_id":  testRole.ID,
+		"role_ids": []uint{testRole.ID},
 	}
 
 	data := map[string]interface{}{
 		"Username": oj["username"],
 		"Name":     oj["name"],
-		"RoleID":   oj["role_id"],
+		"RoleIds":  oj["role_ids"],
 	}
 
 	url := "/v1/admin/users"
@@ -41,7 +41,7 @@ func TestUserUpdate(t *testing.T) {
 		"username": "test_update_user",
 		"password": "update_name",
 		"name":     "update_name",
-		"role_id":  testRole.ID,
+		"role_ids": []uint{testRole.ID},
 	}
 
 	data := map[string]interface{}{

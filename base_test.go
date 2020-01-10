@@ -14,12 +14,12 @@ import (
 )
 
 var (
-	app         *iris.Application // iris.Applications
-	testRole    *models.Role
-	testPerm    *models.Permission
-	testPermIds []uint
-	testUser    *models.User
-	rc          *transformer.Conf
+	app      *iris.Application // iris.Applications
+	testRole *models.Role
+	testPerm *models.Permission
+	//testPermIds []uint
+	testUser *models.User
+	rc       *transformer.Conf
 )
 
 //单元测试基境
@@ -32,7 +32,7 @@ func TestMain(m *testing.M) {
 	// 初始化app
 	app = NewApp(rc)
 
-	baseCase() //创建测试数据
+	//baseCase() //创建测试数据
 
 	flag.Parse()
 	exitCode := m.Run()
@@ -160,30 +160,23 @@ func GetLoginToken() models.Token {
 	return response
 }
 
-func baseCase() {
-	permJson := &models.PermissionRequest{
-		Name:        "test_update_user",
-		Description: "访客",
-		DisplayName: "访客",
-	}
-
-	testPerm = models.CreatePermission(permJson)
-	testPermIds = []uint{testPerm.ID}
-
-	roleJson := &models.RoleRequest{
-		Name:        "test_update_user",
-		Description: "访客",
-		DisplayName: "访客",
-	}
-
-	testRole = models.CreateRole(roleJson, testPermIds)
-
-	aul := &models.UserRequest{
-		Username: "guest",
-		Name:     "访客",
-		Password: "guest111",
-		RoleID:   testRole.ID,
-	}
-
-	testUser = models.CreateUser(aul)
-}
+//func baseCase() {
+//
+//	testPermIds := models.CreateSystemAdminPermission(perms)
+//	roleJson := &models.RoleRequest{
+//		Name:        "test_update_user",
+//		Description: "访客",
+//		DisplayName: "访客",
+//	}
+//
+//	testRole = models.CreateRole(roleJson, testPermIds)
+//
+//	aul := &models.UserRequest{
+//		Username: "guest",
+//		Name:     "访客",
+//		Password: "guest111",
+//		RoleIds:  []uint{testRole.ID},
+//	}
+//
+//	testUser = models.CreateUser(aul)
+//}

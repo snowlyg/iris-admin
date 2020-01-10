@@ -27,6 +27,10 @@
 [更新日志](UPDATE.MD)
 ---
 
+#### 问题总结
+[问题记录](ERRORS.MD)
+
+
 #### 项目初始化
 
 >拉取项目
@@ -116,9 +120,6 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 项目管理员账号 ： username
 项目管理员密码 ： password
 
-##### 问题总结
-
-[问题总结](ERRORS.MD)
 
 
 ###### Iris-go 学习交流QQ群 ：676717248

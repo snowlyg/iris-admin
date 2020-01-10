@@ -54,7 +54,6 @@ func TestRoleUpdate(t *testing.T) {
 
 // 删除角色
 func TestRoleDelete(t *testing.T) {
-
 	url := "/v1/admin/roles/%d"
 	delete(t, fmt.Sprintf(url, testRole.ID), iris.StatusOK, true, "删除成功", nil)
 }

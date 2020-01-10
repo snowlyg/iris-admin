@@ -14,12 +14,8 @@ import (
 )
 
 var (
-	app      *iris.Application // iris.Applications
-	testRole *models.Role
-	testPerm *models.Permission
-	//testPermIds []uint
-	testUser *models.User
-	rc       *transformer.Conf
+	app *iris.Application // iris.Applications
+	rc  *transformer.Conf
 )
 
 //单元测试基境
@@ -159,24 +155,3 @@ func GetLoginToken() models.Token {
 
 	return response
 }
-
-//func baseCase() {
-//
-//	testPermIds := models.CreateSystemAdminPermission(perms)
-//	roleJson := &models.RoleRequest{
-//		Name:        "test_update_user",
-//		Description: "访客",
-//		DisplayName: "访客",
-//	}
-//
-//	testRole = models.CreateRole(roleJson, testPermIds)
-//
-//	aul := &models.UserRequest{
-//		Username: "guest",
-//		Name:     "访客",
-//		Password: "guest111",
-//		RoleIds:  []uint{testRole.ID},
-//	}
-//
-//	testUser = models.CreateUser(aul)
-//}

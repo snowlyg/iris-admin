@@ -17,7 +17,6 @@ func TestUserProfile(t *testing.T) {
 }
 
 func TestUserCreate(t *testing.T) {
-
 	oj := map[string]interface{}{
 		"username": "test_user",
 		"password": "password",

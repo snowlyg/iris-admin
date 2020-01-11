@@ -6,7 +6,7 @@ package transformer
 
 type Conf struct {
 	App      App
-	Database Database
+	Mysql    Mysql
 	Mongodb  Mongodb
 	Sqlite   Sqlite
 	Redis    Redis
@@ -20,12 +20,10 @@ type App struct {
 	LoggerLevel string
 }
 
-type Database struct {
+type Mysql struct {
 	DirverName string
+	Connect    string
 	Name       string
-	UserName   string
-	Password   string
-	Addr       string
 }
 
 type Mongodb struct {

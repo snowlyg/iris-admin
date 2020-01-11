@@ -35,15 +35,12 @@ func Register(rc *transformer.Conf) {
 			panic(fmt.Sprintf("gorm open 错误: %v", err))
 		}
 	} else {
-		baseConn := rc.Database.UserName + ":" + rc.Database.Password + "@tcp(" + rc.Database.Addr + ")/"
-
-		c, err = gormadapter.NewAdapter(rc.Database.DirverName, baseConn) // Your driver and data source.
+		c, err = gormadapter.NewAdapter(rc.Mysql.DirverName, rc.Mysql.Connect) // Your driver and data source.
 		if err != nil {
 			panic(fmt.Sprintf("NewAdapter 错误: %v", err))
 		}
 
-		connect := baseConn + rc.Database.Name + "?charset=utf8&parseTime=True&loc=Local"
-		Db, err = gorm.Open(rc.Database.DirverName, connect)
+		Db, err = gorm.Open(rc.Mysql.DirverName, rc.Mysql.Connect+"/"+rc.Mysql.Name+"?charset=utf8&parseTime=True&loc=Local")
 		if err != nil {
 			panic(fmt.Sprintf("gorm open 错误: %v", err))
 		}

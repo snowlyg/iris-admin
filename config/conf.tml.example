@@ -10,13 +10,11 @@ Charset = "UTF-8"
         Name = "IrisAdminApi"
         URl = "http://localhost"
         Port = ":8081"
-        LoggerLevel = "debug" # "disable" "fatal" "error" "warn""info" "debug"
-    [Other.Database]
+        LoggerLevel = "disable" # "disable" "fatal" "error" "warn""info" "debug"
+    [Other.Mysql]
         DirverName = "mysql"
-        Name ="iris"
-        UserName ="root"
-        Password =""
-        Addr ="127.0.0.1:3306"
+        Connect ="root:password@(127.0.0.1:3306)"
+        Name ="database_name"
     [Other.Mongodb]
         Connect = "mongodb://root:123456@127.0.0.1:27017/admin"
 

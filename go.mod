@@ -20,7 +20,7 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible
 	github.com/satori/go.uuid v1.2.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	github.com/snowlyg/gotransformer v0.0.0-20200107031743-38a7dfd0c373
+	github.com/snowlyg/gotransformer v0.0.0-20200110152229-9bd5bc642e46
 	github.com/valyala/fasthttp v1.7.1 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect

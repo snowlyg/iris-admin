@@ -122,13 +122,14 @@ func getSysConf() *transformer.Conf {
 	g.InsertObj = Sc.Other["TestData"]
 	_ = g.Transformer()
 
-	cf := &transformer.Conf{}
-	cf.App = app
-	cf.Database = db
-	cf.Mongodb = mongodb
-	cf.Redis = redis
-	cf.Sqlite = sqlite
-	cf.TestData = testData
+	cf := &transformer.Conf{
+		App:      app,
+		Database: db,
+		Mongodb:  mongodb,
+		Redis:    redis,
+		Sqlite:   sqlite,
+		TestData: testData,
+	}
 
 	return cf
 }

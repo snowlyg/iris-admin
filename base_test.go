@@ -57,9 +57,8 @@ func login(t *testing.T, url string, Object interface{}, StatusCode int, Status 
 // 单元测试 create 方法
 func create(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
-	at := GetLoginToken()
 
-	ob := e.POST(url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(Object).
+	ob := e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 
 	ob.Value("status").Equal(Status)
@@ -75,9 +74,8 @@ func create(t *testing.T, url string, Object interface{}, StatusCode int, Status
 // 单元测试 update 方法
 func update(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
-	at := GetLoginToken()
 
-	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+at.Token).WithJSON(Object).
+	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 
 	ob.Value("status").Equal(Status)
@@ -93,13 +91,12 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Status
 // 单元测试 getOne 方法
 func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
-	at := GetLoginToken()
 	if Data != nil {
-		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+		e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).
 			Expect().Status(StatusCode).
 			JSON().Object().Values().Contains(Status, Msg, Data)
 	} else {
-		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+		e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).
 			Expect().Status(StatusCode).
 			JSON().Object().Values().Contains(Status, Msg)
 	}
@@ -110,13 +107,13 @@ func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string, D
 // 单元测试 getMore 方法
 func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
-	at := GetLoginToken()
+
 	if Data != nil {
-		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+		e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).
 			Expect().Status(StatusCode).
 			JSON().Object().Values().Contains(Status, Msg, Data)
 	} else {
-		e.GET(url).WithHeader("Authorization", "Bearer "+at.Token).
+		e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).
 			Expect().Status(StatusCode).
 			JSON().Object().Values().Contains(Status, Msg)
 	}
@@ -127,9 +124,8 @@ func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, 
 // 单元测试 delete 方法
 func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
-	at := GetLoginToken()
 
-	e.DELETE(url).WithHeader("Authorization", "Bearer "+at.Token).
+	e.DELETE(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Status, Msg)
 
@@ -173,4 +169,13 @@ func CreateUser() *models.User {
 	}
 
 	return models.CreateUser(rr)
+}
+
+func GetOauthToken() string {
+	ot, b, _ := models.CheckLogin(rc.TestData.UserName, rc.TestData.Pwd)
+	if b {
+		return ot.Token
+	}
+
+	return ""
 }

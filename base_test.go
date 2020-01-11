@@ -28,8 +28,6 @@ func TestMain(m *testing.M) {
 	// 初始化app
 	app = NewApp(rc)
 
-	//baseCase() //创建测试数据
-
 	flag.Parse()
 	exitCode := m.Run()
 

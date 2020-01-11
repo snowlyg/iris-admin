@@ -155,3 +155,24 @@ func GetLoginToken() models.Token {
 
 	return response
 }
+
+func CreateRole() *models.Role {
+	rr := &models.RoleRequest{
+		Name:        "name",
+		DisplayName: "DisplayName",
+		Description: "DisplayName",
+	}
+
+	return models.CreateRole(rr, []uint{})
+}
+
+func CreateUser() *models.User {
+	rr := &models.UserRequest{
+		Username: "Username",
+		Password: "Password",
+		Name:     "Name",
+		RoleIds:  []uint{},
+	}
+
+	return models.CreateUser(rr)
+}

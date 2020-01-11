@@ -6,6 +6,7 @@ import (
 
 type OauthToken struct {
 	gorm.Model
+
 	Token     string `gorm:"not null default '' comment('Token') VARCHAR(191)"`
 	UserId    uint   `gorm:"not null default '' comment('UserId') VARCHAR(191)"`
 	Secret    string `gorm:"not null default '' comment('Secret') VARCHAR(191)"`

@@ -17,11 +17,12 @@ func TestUserProfile(t *testing.T) {
 }
 
 func TestUserCreate(t *testing.T) {
+	tr := CreateRole()
 	oj := map[string]interface{}{
 		"username": "test_user",
 		"password": "password",
 		"name":     "name",
-		"role_ids": []uint{testRole.ID},
+		"role_ids": []uint{tr.ID},
 	}
 
 	data := map[string]interface{}{
@@ -35,12 +36,12 @@ func TestUserCreate(t *testing.T) {
 }
 
 func TestUserUpdate(t *testing.T) {
-
+	tr := CreateRole()
 	oj := map[string]interface{}{
 		"username": "test_update_user",
 		"password": "update_name",
 		"name":     "update_name",
-		"role_ids": []uint{testRole.ID},
+		"role_ids": []uint{tr.ID},
 	}
 
 	data := map[string]interface{}{
@@ -48,12 +49,13 @@ func TestUserUpdate(t *testing.T) {
 		"Name":     oj["name"],
 	}
 
+	tu := CreateUser()
 	url := "/v1/admin/users/%d"
-	update(t, fmt.Sprintf(url, testUser.ID), oj, iris.StatusOK, true, "操作成功", data)
+	update(t, fmt.Sprintf(url, tu.ID), oj, iris.StatusOK, true, "操作成功", data)
 }
 
 func TestUserDelete(t *testing.T) {
-
+	tu := CreateUser()
 	url := "/v1/admin/users/%d"
-	delete(t, fmt.Sprintf(url, testUser.ID), iris.StatusOK, true, "删除成功", nil)
+	delete(t, fmt.Sprintf(url, tu.ID), iris.StatusOK, true, "删除成功", nil)
 }

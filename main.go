@@ -97,7 +97,7 @@ func getSysConf() *transformer.Conf {
 	g := gf.NewTransform(&app, Sc.Other["App"], time.RFC3339)
 	_ = g.Transformer()
 
-	db := transformer.Database{}
+	db := transformer.Mysql{}
 	g.OutputObj = &db
 	g.InsertObj = Sc.Other["Database"]
 	_ = g.Transformer()
@@ -124,7 +124,7 @@ func getSysConf() *transformer.Conf {
 
 	cf := &transformer.Conf{
 		App:      app,
-		Database: db,
+		Mysql:    db,
 		Mongodb:  mongodb,
 		Redis:    redis,
 		Sqlite:   sqlite,

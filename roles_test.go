@@ -35,7 +35,7 @@ func TestRoleCreate(t *testing.T) {
 
 // 更新角色
 func TestRoleUpdate(t *testing.T) {
-
+	tr := CreateRole()
 	oj := map[string]interface{}{
 		"name":         "test_update_role",
 		"display_name": "update_display_name",
@@ -49,11 +49,12 @@ func TestRoleUpdate(t *testing.T) {
 	}
 
 	url := "/v1/admin/roles/%d"
-	update(t, fmt.Sprintf(url, testRole.ID), oj, iris.StatusOK, true, "操作成功", data)
+	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, true, "操作成功", data)
 }
 
 // 删除角色
 func TestRoleDelete(t *testing.T) {
+	tr := CreateRole()
 	url := "/v1/admin/roles/%d"
-	delete(t, fmt.Sprintf(url, testRole.ID), iris.StatusOK, true, "删除成功", nil)
+	delete(t, fmt.Sprintf(url, tr.ID), iris.StatusOK, true, "删除成功", nil)
 }

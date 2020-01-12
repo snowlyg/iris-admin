@@ -28,7 +28,7 @@ type PermissionRequest struct {
  */
 func GetPermissionById(id uint) *Permission {
 	permission := new(Permission)
-	Db.Where("id = ?", id).First(permission)
+	IsNotFound(Db.Where("id = ?", id).First(permission).Error)
 
 	return permission
 }
@@ -40,7 +40,7 @@ func GetPermissionById(id uint) *Permission {
  */
 func GetPermissionByNameAct(name, act string) *Permission {
 	permission := new(Permission)
-	Db.Where("name = ?", name).Where("act = ?", act).First(permission)
+	IsNotFound(Db.Where("name = ?", name).Where("act = ?", act).First(permission).Error)
 	return permission
 }
 

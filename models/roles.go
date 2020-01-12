@@ -35,7 +35,7 @@ type RoleFormRequest struct {
  */
 func GetRoleById(id uint) *Role {
 	role := new(Role)
-	Db.Where("id = ?", id).First(role)
+	IsNotFound(Db.Where("id = ?", id).First(role).Error)
 	return role
 }
 
@@ -46,7 +46,7 @@ func GetRoleById(id uint) *Role {
  */
 func GetRoleByName(name string) *Role {
 	role := new(Role)
-	Db.Where("name = ?", name).First(role)
+	IsNotFound(Db.Where("name = ?", name).First(role).Error)
 	return role
 }
 
@@ -86,14 +86,14 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
  * @param  {[type]} mp int    [description]
  */
 func CreateRole(aul *RoleRequest, permIds []uint) (role *Role) {
-
-	role = new(Role)
-	role.Name = aul.Name
-	role.DisplayName = aul.DisplayName
-	role.Description = aul.Description
+	role = &Role{
+		Name:        aul.Name,
+		DisplayName: aul.DisplayName,
+		Description: aul.Description,
+	}
 
 	if err := Db.Create(role).Error; err != nil {
-		fmt.Printf("CreateRoleErr:%s \n", err)
+		fmt.Printf("CreateRoleErr:%v \n", err)
 	}
 
 	addPerms(permIds, role)

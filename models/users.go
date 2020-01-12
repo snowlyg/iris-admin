@@ -7,7 +7,6 @@ import (
 
 	"IrisAdminApi/transformer"
 	"github.com/iris-contrib/middleware/jwt"
-
 	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
 )
@@ -34,9 +33,8 @@ type UserRequest struct {
  */
 func UserAdminCheckLogin(username string) *User {
 	user := new(User)
-	if err := Db.Where("username = ?", username).First(user).Error; err != nil {
-		fmt.Printf("UserAdminCheckLoginErr:%s \n ", err)
-	}
+	IsNotFound(Db.Where("username = ?", username).First(user).Error)
+
 	return user
 }
 
@@ -47,7 +45,7 @@ func UserAdminCheckLogin(username string) *User {
  */
 func GetUserById(id uint) *User {
 	user := new(User)
-	Db.Where("id= ?", id).First(user)
+	IsNotFound(Db.Where("id= ?", id).First(user).Error)
 	return user
 }
 
@@ -58,7 +56,7 @@ func GetUserById(id uint) *User {
  */
 func GetUserByUserName(username string) *User {
 	user := new(User)
-	Db.Where("username= ?", username).First(user)
+	IsNotFound(Db.Where("username= ?", username).First(user).Error)
 	return user
 }
 
@@ -69,7 +67,6 @@ func GetUserByUserName(username string) *User {
 func DeleteUserById(id uint) {
 	u := new(User)
 	u.ID = id
-
 	if err := Db.Delete(u).Error; err != nil {
 		fmt.Printf("DeleteUserByIdErr:%s \n ", err)
 	}
@@ -210,11 +207,13 @@ func UserAdminLogout(userId uint) bool {
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
 func CreateSystemAdmin(roleId uint, rc *transformer.Conf) *User {
-	aul := new(UserRequest)
-	aul.Username = rc.TestData.UserName
-	aul.Password = rc.TestData.Pwd
-	aul.Name = rc.TestData.UserName
-	aul.RoleIds = []uint{roleId}
+	aul := &UserRequest{
+		Username: rc.TestData.UserName,
+		Password: rc.TestData.Pwd,
+		Name:     rc.TestData.Name,
+		RoleIds:  []uint{roleId},
+	}
+
 	user := GetUserByUserName(aul.Username)
 	if user.ID == 0 {
 		return CreateUser(aul)

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -16,34 +17,50 @@ import (
 var Db *gorm.DB
 var Enforcer *casbin.Enforcer
 var err error
+var c *gormadapter.Adapter
+var dirverName string
+var casbinConn string
+var conn string
 
 /**
 *设置数据库连接
 *@param diver string
  */
 func Register(rc *transformer.Conf) {
-	var c *gormadapter.Adapter
 
 	if isTestEnv() {
-		c, err = gormadapter.NewAdapter(rc.Sqlite.DirverName, rc.Sqlite.Connect) // Your driver and data source.
-		if err != nil {
-			panic(fmt.Sprintf("NewAdapter 错误: %v", err))
+
+	}
+
+	if rc.App.DirverType == "Sqlite" {
+		dirverName = rc.Sqlite.DirverName
+		if isTestEnv() {
+			casbinConn = rc.Sqlite.TConnect
+			conn = rc.Sqlite.TConnect
+		} else {
+			casbinConn = rc.Sqlite.Connect
+			conn = rc.Sqlite.Connect
 		}
 
-		Db, err = gorm.Open(rc.Sqlite.DirverName, rc.Sqlite.Connect)
-		if err != nil {
-			panic(fmt.Sprintf("gorm open 错误: %v", err))
+	} else if rc.App.DirverType == "Mysql" {
+		dirverName = rc.Mysql.DirverName
+		if isTestEnv() {
+			casbinConn = rc.Mysql.Connect
+			conn = rc.Mysql.Connect + rc.Mysql.TName + "?charset=utf8&parseTime=True&loc=Local"
+		} else {
+			casbinConn = rc.Mysql.Connect
+			conn = rc.Mysql.Connect + rc.Mysql.Name + "?charset=utf8&parseTime=True&loc=Local"
 		}
-	} else {
-		c, err = gormadapter.NewAdapter(rc.Mysql.DirverName, rc.Mysql.Connect) // Your driver and data source.
-		if err != nil {
-			panic(fmt.Sprintf("NewAdapter 错误: %v", err))
-		}
+	}
 
-		Db, err = gorm.Open(rc.Mysql.DirverName, rc.Mysql.Connect+rc.Mysql.Name+"?charset=utf8&parseTime=True&loc=Local")
-		if err != nil {
-			panic(fmt.Sprintf("gorm open 错误: %v", err))
-		}
+	Db, err = gorm.Open(dirverName, conn)
+	if err != nil {
+		panic(fmt.Sprintf("gorm open 错误: %v", err))
+	}
+
+	c, err = gormadapter.NewAdapter(dirverName, casbinConn) // Your driver and data source.
+	if err != nil {
+		panic(fmt.Sprintf("NewAdapter 错误: %v", err))
 	}
 
 	Enforcer, err = casbin.NewEnforcer("./config/rbac_model.conf", c)
@@ -52,6 +69,23 @@ func Register(rc *transformer.Conf) {
 	}
 	_ = Enforcer.LoadPolicy()
 
+}
+
+/**
+*初始化系统 账号 权限 角色
+ */
+func CreateSystemData(rc *transformer.Conf, perms []*PermissionRequest) {
+	permIds := CreateSystemAdminPermission(perms) //初始化权限
+	role := CreateSystemAdminRole(permIds)        //初始化角色
+	if role.ID != 0 {
+		CreateSystemAdmin(role.ID, rc) //初始化管理员
+	}
+}
+
+func IsNotFound(err error) {
+	if ok := errors.Is(err, gorm.ErrRecordNotFound); !ok && err != nil {
+		fmt.Printf("error :%v \n ", err)
+	}
 }
 
 //获取程序运行环境

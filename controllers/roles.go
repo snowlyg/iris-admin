@@ -78,7 +78,7 @@ func CreateRole(ctx iris.Context) {
 			if u.ID == 0 {
 				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
 			} else {
-				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
 			}
 		}
 	}
@@ -133,7 +133,7 @@ func UpdateRole(ctx iris.Context) {
 			if u.ID == 0 {
 				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
 			} else {
-				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
 			}
 		}
 	}

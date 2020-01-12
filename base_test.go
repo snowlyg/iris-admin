@@ -22,7 +22,7 @@ var (
 func TestMain(m *testing.M) {
 
 	// 设置静态资源
-	Sc = iris.TOML("./config/test.tml")
+	Sc = iris.TOML("./config/conf.tml")
 	rc = getSysConf()
 
 	// 初始化app
@@ -32,7 +32,7 @@ func TestMain(m *testing.M) {
 	exitCode := m.Run()
 
 	// 删除测试数据表，保持测试环境
-	models.Db.DropTable("users", "roles", "permissions", &models.OauthToken{})
+	models.Db.DropTable("users", "roles", "permissions", "oauth_tokens")
 
 	os.Exit(exitCode)
 
@@ -132,50 +132,43 @@ func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string, D
 	return
 }
 
-/**
-*登陆用户
-*@return   Token 返回登陆后的token
- */
-func GetLoginToken() models.Token {
-	response, status, msg := models.CheckLogin(
-		rc.TestData.UserName,
-		rc.TestData.Pwd,
-	)
-
-	// 打印错误信息
-	if !status {
-		fmt.Println(msg)
-	}
-
-	return response
-}
-
-func CreateRole() *models.Role {
+func CreateRole(name, disName, dec string) *models.Role {
 	rr := &models.RoleRequest{
-		Name:        "name",
-		DisplayName: "DisplayName",
-		Description: "DisplayName",
+		Name:        name,
+		DisplayName: disName,
+		Description: dec,
 	}
 
-	return models.CreateRole(rr, []uint{})
+	role := models.GetRoleByName("Tname")
+	if role.ID == 0 {
+		return models.CreateRole(rr, []uint{})
+	} else {
+		return role
+	}
 }
 
 func CreateUser() *models.User {
 	rr := &models.UserRequest{
-		Username: "Username",
-		Password: "Password",
-		Name:     "Name",
+		Username: "TUsername",
+		Password: "TPassword",
+		Name:     "TName",
 		RoleIds:  []uint{},
 	}
 
-	return models.CreateUser(rr)
+	user := models.GetUserByUserName("TUsername")
+	if user.ID == 0 {
+		return models.CreateUser(rr)
+	} else {
+		return user
+	}
 }
 
 func GetOauthToken() string {
-	ot, b, _ := models.CheckLogin(rc.TestData.UserName, rc.TestData.Pwd)
+	ot, b, msg := models.CheckLogin(rc.TestData.UserName, rc.TestData.Pwd)
 	if b {
 		return ot.Token
+	} else {
+		fmt.Println(fmt.Sprintf("GetOauthToken Error : %v", msg))
+		return ""
 	}
-
-	return ""
 }

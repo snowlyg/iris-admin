@@ -18,12 +18,14 @@ type App struct {
 	URl         string
 	Port        string
 	LoggerLevel string
+	DirverType  string
 }
 
 type Mysql struct {
 	DirverName string
 	Connect    string
 	Name       string
+	TName      string
 }
 
 type Mongodb struct {
@@ -33,6 +35,7 @@ type Mongodb struct {
 type Sqlite struct {
 	DirverName string
 	Connect    string
+	TConnect   string
 }
 
 type Redis struct {

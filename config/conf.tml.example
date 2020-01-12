@@ -11,16 +11,19 @@ Charset = "UTF-8"
         URl = "http://localhost"
         Port = ":8081"
         LoggerLevel = "disable" # "disable" "fatal" "error" "warn""info" "debug"
+        DirverType = "Mysql" # "Sqlite" "Mysql"
     [Other.Mysql]
         DirverName = "mysql"
-        Connect ="root:password@(127.0.0.1:3306)/"
-        Name ="database_name"
+        Connect ="root:passwrod@(127.0.0.1:3306)/"
+        Name ="iris"
+        TName ="iris_test"
     [Other.Mongodb]
         Connect = "mongodb://root:123456@127.0.0.1:27017/admin"
 
     [Other.Sqlite]
         DirverName = "sqlite3"
         Connect = "./tmp/gorm.db"
+        TConnect = "./tmp/tgorm.db"
 
 #    [Other.Redis]
 #      Addr = "127.0.0.1:6379"

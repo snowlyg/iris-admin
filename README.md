@@ -108,7 +108,7 @@ https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ```
 
->访问文档，从浏览器直接打开 http://localhost：8081/apiDoc
+>访问文档，从浏览器直接打开 http://localhost:8081/apiDoc
 
 ---
 

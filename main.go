@@ -99,7 +99,7 @@ func getSysConf() *transformer.Conf {
 
 	db := transformer.Mysql{}
 	g.OutputObj = &db
-	g.InsertObj = Sc.Other["Database"]
+	g.InsertObj = Sc.Other["Mysql"]
 	_ = g.Transformer()
 
 	mongodb := transformer.Mongodb{}

@@ -40,7 +40,7 @@ func Register(rc *transformer.Conf) {
 			panic(fmt.Sprintf("NewAdapter 错误: %v", err))
 		}
 
-		Db, err = gorm.Open(rc.Mysql.DirverName, rc.Mysql.Connect+"/"+rc.Mysql.Name+"?charset=utf8&parseTime=True&loc=Local")
+		Db, err = gorm.Open(rc.Mysql.DirverName, rc.Mysql.Connect+rc.Mysql.Name+"?charset=utf8&parseTime=True&loc=Local")
 		if err != nil {
 			panic(fmt.Sprintf("gorm open 错误: %v", err))
 		}

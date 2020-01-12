@@ -13,7 +13,7 @@ Charset = "UTF-8"
         LoggerLevel = "disable" # "disable" "fatal" "error" "warn""info" "debug"
     [Other.Mysql]
         DirverName = "mysql"
-        Connect ="root:password@(127.0.0.1:3306)"
+        Connect ="root:password@(127.0.0.1:3306)/"
         Name ="database_name"
     [Other.Mongodb]
         Connect = "mongodb://root:123456@127.0.0.1:27017/admin"

@@ -19,6 +19,7 @@ env:
     - GOARCH=386
 
 script:
+  - cp conf.tml.example conf.tml
   - go vet ./...
   - go test ./... -v -coverprofile=coverage.txt -covermode=atomic
 after_success:

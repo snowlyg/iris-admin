@@ -11,7 +11,7 @@ Charset = "UTF-8"
         URl = "http://localhost"
         Port = ":8081"
         LoggerLevel = "disable" # "disable" "fatal" "error" "warn""info" "debug"
-        DirverType = "Mysql" # "Sqlite" "Mysql"
+        DirverType = "Sqlite" # "Sqlite" "Mysql"
     [Other.Mysql]
         DirverName = "mysql"
         Connect ="root:passwrod@(127.0.0.1:3306)/"

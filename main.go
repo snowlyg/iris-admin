@@ -10,6 +10,7 @@ import (
 	"IrisAdminApi/routes"
 	"IrisAdminApi/transformer"
 	"github.com/betacraft/yaag/yaag"
+	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/core/router"
 	gf "github.com/snowlyg/gotransformer"
@@ -24,7 +25,7 @@ func main() {
 	api := NewApp(rc)
 	err := api.Run(iris.Addr(rc.App.Port), iris.WithConfiguration(Sc))
 	if err != nil {
-		fmt.Println(err)
+		color.Yellow(fmt.Sprintf("项目运行结束: %v", err))
 	}
 }
 
@@ -36,18 +37,18 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 	api.HandleDir("/static", "resources/static")
 
 	models.Register(rc)
-	//同步模型数据表
-	//如果模型表这里没有添加模型，单元测试会报错数据表不存在。
-	//因为单元测试结束，会删除数据表
+
 	models.Db.AutoMigrate(
 		&models.User{},
 		&models.OauthToken{},
 		&models.Role{},
 		&models.Permission{},
 	)
+
 	iris.RegisterOnInterrupt(func() {
 		_ = models.Db.Close()
 	})
+
 	//api 文档配置
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
 		On:       true,
@@ -58,10 +59,12 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 			"Staging":    "",
 		},
 	})
+
 	routes.Register(api) //注册路由
 	middleware.Register(api)
 	apiRoutes := getRoutes(api)
-	models.CreateSystemData(rc, apiRoutes) //初始化系统 账号 权限 角色
+	models.CreateSystemData(rc, apiRoutes)
+	//初始化系统 账号 权限 角色
 	return api
 }
 

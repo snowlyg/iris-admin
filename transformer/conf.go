@@ -14,11 +14,12 @@ type Conf struct {
 }
 
 type App struct {
-	Name        string
-	URl         string
-	Port        string
-	LoggerLevel string
-	DirverType  string
+	Name          string
+	URl           string
+	Port          string
+	LoggerLevel   string
+	DirverType    string
+	CreateSysData bool
 }
 
 type Mysql struct {

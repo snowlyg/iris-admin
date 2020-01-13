@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"IrisAdminApi/transformer"
+	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
@@ -68,7 +69,7 @@ func DeleteUserById(id uint) {
 	u := new(User)
 	u.ID = id
 	if err := Db.Delete(u).Error; err != nil {
-		fmt.Printf("DeleteUserByIdErr:%s \n ", err)
+		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
 	}
 }
 
@@ -85,7 +86,7 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
 	var users []*User
 	q := GetAll(name, orderBy, offset, limit)
 	if err := q.Find(&users).Error; err != nil {
-		fmt.Printf("GetAllUserErr:%s \n ", err)
+		color.Red(fmt.Sprintf("GetAllUserErr:%s \n ", err))
 		return nil
 	}
 	return users
@@ -108,19 +109,19 @@ func CreateUser(aul *UserRequest) (user *User) {
 	user.Name = aul.Name
 
 	if err := Db.Create(user).Error; err != nil {
-		fmt.Printf("CreateUserErr:%s \n ", err)
+		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 	}
 
 	if len(aul.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
 		if _, err = Enforcer.DeleteRolesForUser(userId); err != nil {
-			fmt.Printf("CreateUserErr:%s \n ", err)
+			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 		}
 
 		for _, roleId := range aul.RoleIds {
 			roleId := strconv.FormatUint(uint64(roleId), 10)
 			if _, err = Enforcer.AddRoleForUser(userId, roleId); err != nil {
-				fmt.Printf("CreateUserErr:%s \n ", err)
+				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 			}
 		}
 	}
@@ -144,7 +145,7 @@ func UpdateUser(uj *UserRequest, id uint) *User {
 	uj.Password = hash
 
 	if err := Db.Model(user).Updates(uj).Error; err != nil {
-		fmt.Printf("UpdateUserErr:%s \n ", err)
+		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
 	}
 
 	return user

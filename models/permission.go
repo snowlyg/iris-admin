@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 
+	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 )
 
@@ -53,7 +54,7 @@ func DeletePermissionById(id uint) {
 	u.ID = id
 
 	if err := Db.Delete(u).Error; err != nil {
-		fmt.Printf("DeletePermissionByIdError:%s \n", err)
+		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
 	}
 }
 
@@ -67,7 +68,7 @@ func DeletePermissionById(id uint) {
  */
 func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*Permission) {
 	if err := GetAll(name, orderBy, offset, limit).Find(&permissions).Error; err != nil {
-		fmt.Printf("GetAllPermissionsError:%s \n", err)
+		color.Red(fmt.Sprintf("GetAllPermissionsError:%s \n", err))
 	}
 
 	return
@@ -87,7 +88,7 @@ func CreatePermission(aul *PermissionRequest) (permission *Permission) {
 	permission.Description = aul.Description
 	permission.Act = aul.Act
 	if err := Db.Create(permission).Error; err != nil {
-		fmt.Printf("CreatePermissionError:%s \n", err)
+		color.Red(fmt.Sprintf("CreatePermissionError:%s \n", err))
 	}
 	return
 }
@@ -104,7 +105,7 @@ func UpdatePermission(pj *PermissionRequest, id uint) (permission *Permission) {
 	permission.ID = id
 
 	if err := Db.Model(&permission).Updates(pj).Error; err != nil {
-		fmt.Printf("UpdatePermissionError:%s \n", err)
+		color.Red(fmt.Sprintf("UpdatePermissionError:%s \n", err))
 	}
 
 	return

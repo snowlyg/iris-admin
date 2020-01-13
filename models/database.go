@@ -9,6 +9,7 @@ import (
 	"IrisAdminApi/transformer"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
+	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/mattn/go-sqlite3"
@@ -55,17 +56,17 @@ func Register(rc *transformer.Conf) {
 
 	Db, err = gorm.Open(dirverName, conn)
 	if err != nil {
-		panic(fmt.Sprintf("gorm open 错误: %v", err))
+		color.Red(fmt.Sprintf("gorm open 错误: %v", err))
 	}
 
 	c, err = gormadapter.NewAdapter(dirverName, casbinConn) // Your driver and data source.
 	if err != nil {
-		panic(fmt.Sprintf("NewAdapter 错误: %v", err))
+		color.Red(fmt.Sprintf("NewAdapter 错误: %v", err))
 	}
 
 	Enforcer, err = casbin.NewEnforcer("./config/rbac_model.conf", c)
 	if err != nil {
-		panic(fmt.Sprintf("NewEnforcer 错误: %v", err))
+		color.Red(fmt.Sprintf("NewEnforcer 错误: %v", err))
 	}
 	_ = Enforcer.LoadPolicy()
 
@@ -75,16 +76,18 @@ func Register(rc *transformer.Conf) {
 *初始化系统 账号 权限 角色
  */
 func CreateSystemData(rc *transformer.Conf, perms []*PermissionRequest) {
-	permIds := CreateSystemAdminPermission(perms) //初始化权限
-	role := CreateSystemAdminRole(permIds)        //初始化角色
-	if role.ID != 0 {
-		CreateSystemAdmin(role.ID, rc) //初始化管理员
+	if rc.App.CreateSysData {
+		permIds := CreateSystemAdminPermission(perms) //初始化权限
+		role := CreateSystemAdminRole(permIds)        //初始化角色
+		if role.ID != 0 {
+			CreateSystemAdmin(role.ID, rc) //初始化管理员
+		}
 	}
 }
 
 func IsNotFound(err error) {
 	if ok := errors.Is(err, gorm.ErrRecordNotFound); !ok && err != nil {
-		fmt.Printf("error :%v \n ", err)
+		color.Red(fmt.Sprintf("error :%v \n ", err))
 	}
 }
 

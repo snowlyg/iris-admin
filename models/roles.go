@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 )
 
@@ -58,7 +59,7 @@ func DeleteRoleById(id uint) {
 	u := new(Role)
 	u.ID = id
 	if err := Db.Delete(u).Error; err != nil {
-		fmt.Printf("DeleteRoleErr:%s \n", err)
+		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 	}
 }
 
@@ -73,7 +74,7 @@ func DeleteRoleById(id uint) {
 func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
 
 	if err := GetAll(name, orderBy, offset, limit).Find(&roles).Error; err != nil {
-		fmt.Printf("GetAllRoleErr:%s \n", err)
+		color.Red(fmt.Sprintf("GetAllRoleErr:%s \n", err))
 	}
 	return
 }
@@ -93,7 +94,7 @@ func CreateRole(aul *RoleRequest, permIds []uint) (role *Role) {
 	}
 
 	if err := Db.Create(role).Error; err != nil {
-		fmt.Printf("CreateRoleErr:%v \n", err)
+		color.Red(fmt.Sprintf("CreateRoleErr:%v \n", err))
 	}
 
 	addPerms(permIds, role)
@@ -105,13 +106,13 @@ func addPerms(permIds []uint, role *Role) {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
 		if _, err := Enforcer.DeletePermissionsForUser(roleId); err != nil {
-			fmt.Printf("AppendPermsErr:%s \n", err)
+			color.Red(fmt.Sprintf("AppendPermsErr:%s \n", err))
 		}
 		var perms []Permission
 		Db.Where("id in (?)", permIds).Find(&perms)
 		for _, perm := range perms {
 			if _, err := Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
-				fmt.Printf("AddPolicy:%s \n", err)
+				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
 			}
 		}
 	}
@@ -129,7 +130,7 @@ func UpdateRole(rj *RoleRequest, id uint, permIds []uint) (role *Role) {
 	role.ID = id
 
 	if err := Db.Model(&role).Updates(rj).Error; err != nil {
-		fmt.Printf("UpdatRoleErr:%s \n", err)
+		color.Red(fmt.Sprintf("UpdatRoleErr:%s \n", err))
 	}
 
 	addPerms(permIds, role)

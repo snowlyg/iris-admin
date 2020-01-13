@@ -11,5 +11,5 @@ func TestPermissions(t *testing.T) {
 }
 
 func TestImportPermissions(t *testing.T) {
-	bImport(t, baseUrl+"permissions/import", iris.StatusOK, true, "操作成功", nil)
+	bImport(t, baseUrl+"permissions/import", iris.StatusOK, true, "导入成功", nil)
 }

@@ -104,6 +104,22 @@ func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string, D
 	return
 }
 
+// 单元测试 bImport 方法
+func bImport(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
+	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+	if Data != nil {
+		e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg, Data)
+	} else {
+		e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken()).
+			Expect().Status(StatusCode).
+			JSON().Object().Values().Contains(Status, Msg)
+	}
+
+	return
+}
+
 // 单元测试 getMore 方法
 func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string, Data map[string]interface{}) (e *httpexpect.Expect) {
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})

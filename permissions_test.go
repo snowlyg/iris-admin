@@ -7,6 +7,9 @@ import (
 )
 
 func TestPermissions(t *testing.T) {
-	url := "/v1/admin/permissions"
-	getMore(t, url, iris.StatusOK, true, "操作成功", nil)
+	getMore(t, "/v1/admin/permissions", iris.StatusOK, true, "操作成功", nil)
+}
+
+func TestImportPermissions(t *testing.T) {
+	bImport(t, "/v1/admin/permissions/import", iris.StatusOK, true, "操作成功", nil)
 }

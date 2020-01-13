@@ -8,12 +8,11 @@ import (
 )
 
 func TestUsers(t *testing.T) {
-	getMore(t, "/v1/admin/users", iris.StatusOK, true, "操作成功", nil)
+	getMore(t, baseUrl+"users", iris.StatusOK, true, "操作成功")
 }
 
 func TestUserProfile(t *testing.T) {
-	url := "/v1/admin/users/profile"
-	getMore(t, url, iris.StatusOK, true, "操作成功", nil)
+	getMore(t, baseUrl+"users/profile", iris.StatusOK, true, "操作成功")
 }
 
 func TestUserCreate(t *testing.T) {
@@ -25,8 +24,7 @@ func TestUserCreate(t *testing.T) {
 		"role_ids": []uint{tr.ID},
 	}
 
-	url := "/v1/admin/users"
-	create(t, url, oj, iris.StatusOK, true, "操作成功", nil)
+	create(t, baseUrl+"users", oj, iris.StatusOK, true, "操作成功")
 }
 
 func TestUserUpdate(t *testing.T) {
@@ -39,10 +37,10 @@ func TestUserUpdate(t *testing.T) {
 	}
 
 	tu := CreateUser()
-	update(t, fmt.Sprintf("/v1/admin/users/%d", tu.ID), oj, iris.StatusOK, true, "操作成功", nil)
+	update(t, fmt.Sprintf(baseUrl+"users/%d", tu.ID), oj, iris.StatusOK, true, "操作成功")
 }
 
 func TestUserDelete(t *testing.T) {
 	tu := CreateUser()
-	delete(t, fmt.Sprintf("/v1/admin/users/%d", tu.ID), iris.StatusOK, true, "删除成功", nil)
+	delete(t, fmt.Sprintf(baseUrl+"users/%d", tu.ID), iris.StatusOK, true, "删除成功")
 }

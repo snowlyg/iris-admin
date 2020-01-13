@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"io"
 	"os"
 	"time"
@@ -165,11 +166,27 @@ func DeletePermission(ctx iris.Context) {
 func ImportPermission(ctx iris.Context) {
 
 	file, info, err := ctx.FormFile("file")
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
+	}
+
 	fullPath, err := files.GetUploadFileUPath(file, info, "excel")
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
+	}
+
 	out, err := os.OpenFile(fullPath, os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
+	}
+
+	if out == nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, errors.New("excel 文件上次失败"), "导入失败"))
+		return
 	}
 
 	defer out.Close()
@@ -178,8 +195,14 @@ func ImportPermission(ctx iris.Context) {
 
 	f, err := excelize.OpenFile(fullPath)
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
+	}
+
+	if f == nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, errors.New("excel 文件打开失败"), "导入失败"))
+		return
 	}
 
 	// Excel 导入行数据转换
@@ -193,8 +216,8 @@ func ImportPermission(ctx iris.Context) {
 			x := gf.NewXlxsTransform(&m, titles, row, "", time.RFC3339, nil)
 			err := x.XlxsTransformer()
 			if err != nil {
-				ctx.StatusCode(iris.StatusInternalServerError)
-				_, _ = ctx.JSON(ApiResource(true, err.Error(), "上传失败"))
+				ctx.StatusCode(iris.StatusOK)
+				_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
 			}
 
 			models.CreatePermission(&m)
@@ -202,7 +225,7 @@ func ImportPermission(ctx iris.Context) {
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))
+	_, _ = ctx.JSON(ApiResource(true, nil, "导入成功"))
 }
 
 /**

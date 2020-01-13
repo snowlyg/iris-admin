@@ -9,9 +9,7 @@ import (
 
 // 后台账号列表
 func TestRoles(t *testing.T) {
-
-	url := "/v1/admin/roles"
-	getMore(t, url, iris.StatusOK, true, "操作成功", nil)
+	getMore(t, baseUrl+"roles", iris.StatusOK, true, "操作成功")
 }
 
 // 创建角色
@@ -23,8 +21,7 @@ func TestRoleCreate(t *testing.T) {
 		"description":  "create_description",
 	}
 
-	url := "/v1/admin/roles"
-	create(t, url, oj, iris.StatusOK, true, "操作成功", nil)
+	create(t, baseUrl+"roles", oj, iris.StatusOK, true, "操作成功")
 }
 
 // 更新角色
@@ -36,13 +33,12 @@ func TestRoleUpdate(t *testing.T) {
 		"description":  "update_description",
 	}
 
-	url := "/v1/admin/roles/%d"
-	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, true, "操作成功", nil)
+	url := baseUrl + "roles/%d"
+	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, true, "操作成功")
 }
 
 // 删除角色
 func TestRoleDelete(t *testing.T) {
 	tr := CreateRole("tname2", "tdsiName2", "tdec2")
-	url := "/v1/admin/roles/%d"
-	delete(t, fmt.Sprintf(url, tr.ID), iris.StatusOK, true, "删除成功", nil)
+	delete(t, fmt.Sprintf(baseUrl+"roles/%d", tr.ID), iris.StatusOK, true, "删除成功")
 }

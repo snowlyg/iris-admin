@@ -43,10 +43,9 @@ func GetUploadFileUPath(f multipart.File, h *multipart.FileHeader, fileType stri
 
 	uid := uuid.NewV4()
 	if h != nil {
-
-		filepath := "static/upload/" + fileType
-		if err := CreateFile(filepath); err != nil {
-			return "", err
+		filepath := "upload/" + fileType + "/"
+		if err := CreateFile(filepath + h.Filename); err != nil {
+			return filepath + h.Filename, err
 		}
 
 		fileNamePath := filepath + uid.String() + "_" + h.Filename

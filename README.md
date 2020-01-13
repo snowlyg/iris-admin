@@ -23,7 +23,7 @@
  **注意：**
  - 更新代码后，如果启动报错，请尝试手动删所有数据表后重启。
  - 默认数据库设置为   DirverType = "Sqlite" ，使用 mysql 需要修改为 DirverType = "Mysql" //config/conf.tml
- - permissions.xlsx 为测试导入权限模板
+ - permissions.xlsx 权限导入测试模板文件
 ---
 
 #### 更新日志

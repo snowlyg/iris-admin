@@ -56,7 +56,11 @@ func GetRoleByName(name string) *Role {
  * @method DeleteRoleById
  */
 func DeleteRoleById(id uint) {
-	u := new(Role)
+	u := &Role{
+		Model: gorm.Model{
+			ID: id,
+		},
+	}
 	u.ID = id
 	if err := Db.Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
@@ -126,8 +130,11 @@ func addPerms(permIds []uint, role *Role) {
  * @param  {[type]} mp int    [description]
  */
 func UpdateRole(rj *RoleRequest, id uint, permIds []uint) (role *Role) {
-	role = new(Role)
-	role.ID = id
+	role = &Role{
+		Model: gorm.Model{
+			ID: id,
+		},
+	}
 
 	if err := Db.Model(&role).Updates(rj).Error; err != nil {
 		color.Red(fmt.Sprintf("UpdatRoleErr:%s \n", err))
@@ -158,10 +165,11 @@ func RolePermisions(id uint) []*Permission {
 *@return   *models.AdminRoleTranform api格式化后的数据格式
  */
 func CreateSystemAdminRole(permIds []uint) *Role {
-	aul := new(RoleRequest)
-	aul.Name = "admin"
-	aul.DisplayName = "超级管理员"
-	aul.Description = "超级管理员"
+	aul := &RoleRequest{
+		Name:        "admin",
+		DisplayName: "超级管理员",
+		Description: "超级管理员",
+	}
 
 	role := GetRoleByName(aul.Name)
 	if role.ID == 0 {

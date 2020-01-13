@@ -66,8 +66,11 @@ func GetUserByUserName(username string) *User {
  * @method DeleteUserById
  */
 func DeleteUserById(id uint) {
-	u := new(User)
-	u.ID = id
+	u := &User{
+		Model: gorm.Model{
+			ID: id,
+		},
+	}
 	if err := Db.Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
 	}
@@ -103,10 +106,11 @@ func CreateUser(aul *UserRequest) (user *User) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
-	user = new(User)
-	user.Username = aul.Username
-	user.Password = hash
-	user.Name = aul.Name
+	user = &User{
+		Username: aul.Username,
+		Password: hash,
+		Name:     aul.Name,
+	}
 
 	if err := Db.Create(user).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
@@ -140,9 +144,12 @@ func UpdateUser(uj *UserRequest, id uint) *User {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(uj.Password, salt)
 
-	user := new(User)
-	user.ID = id
-	uj.Password = hash
+	user := &User{
+		Model: gorm.Model{
+			ID: id,
+		},
+		Password: hash,
+	}
 
 	if err := Db.Model(user).Updates(uj).Error; err != nil {
 		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))

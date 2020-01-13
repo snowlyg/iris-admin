@@ -28,11 +28,6 @@ var conn string
 *@param diver string
  */
 func Register(rc *transformer.Conf) {
-
-	if isTestEnv() {
-
-	}
-
 	if rc.App.DirverType == "Sqlite" {
 		dirverName = rc.Sqlite.DirverName
 		if isTestEnv() {
@@ -114,24 +109,19 @@ func isTestEnv() bool {
  * @param  {[type]} limit int    [description]
  */
 func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
-
 	if len(orderBy) > 0 {
 		Db.Order(orderBy + "desc")
 	} else {
 		Db.Order("created_at desc")
 	}
-
 	if len(string) > 0 {
 		Db.Where("name LIKE  ?", "%"+string+"%")
 	}
-
 	if offset > 0 {
 		Db.Offset((offset - 1) * limit)
 	}
-
 	if limit > 0 {
 		Db.Limit(limit)
 	}
-
 	return Db
 }

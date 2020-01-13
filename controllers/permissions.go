@@ -146,7 +146,6 @@ func UpdatePermission(ctx iris.Context) {
 func DeletePermission(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	models.DeletePermissionById(id)
-
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))
 }

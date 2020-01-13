@@ -19,9 +19,9 @@ import (
 var Sc iris.Configuration
 
 func main() {
-	// 设置静态资源
-	Sc = iris.TOML("./config/conf.tml")
-	rc := getSysConf()
+
+	Sc = iris.TOML("./config/conf.tml") // 加载配置文件
+	rc := getSysConf()                  //格式化配置文件 other 数据
 	api := NewApp(rc)
 	err := api.Run(iris.Addr(rc.App.Port), iris.WithConfiguration(Sc))
 	if err != nil {
@@ -36,21 +36,18 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 	api.RegisterView(iris.HTML("resources", ".html"))
 	api.HandleDir("/static", "resources/static")
 
-	models.Register(rc)
-
+	models.Register(rc) // 数据初始化
 	models.Db.AutoMigrate(
 		&models.User{},
 		&models.OauthToken{},
 		&models.Role{},
 		&models.Permission{},
 	)
-
 	iris.RegisterOnInterrupt(func() {
 		_ = models.Db.Close()
 	})
 
-	//api 文档配置
-	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware.
+	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. //api 文档配置
 		On:       true,
 		DocTitle: rc.App.Name,
 		DocPath:  "./resources/apiDoc/index.html", //设置绝对路径
@@ -60,11 +57,11 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 		},
 	})
 
-	routes.Register(api) //注册路由
-	middleware.Register(api)
-	apiRoutes := getRoutes(api)
-	models.CreateSystemData(rc, apiRoutes)
-	//初始化系统 账号 权限 角色
+	routes.Register(api)                   //注册路由
+	middleware.Register(api)               // 中间件注册
+	apiRoutes := getRoutes(api)            // 获取路由数据
+	models.CreateSystemData(rc, apiRoutes) // 初始化系统数据 管理员账号，角色，权限
+
 	return api
 }
 
@@ -95,7 +92,6 @@ func isPermRoute(s *router.Route) bool {
 
 // 获取配置信息
 func getSysConf() *transformer.Conf {
-
 	app := transformer.App{}
 	g := gf.NewTransform(&app, Sc.Other["App"], time.RFC3339)
 	_ = g.Transformer()

@@ -125,7 +125,7 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 #### 登录项目
 输入地址 http://localhost:8081
 
-//在 conig/conf.tml 内配置 
+//在 config/conf.tml 内配置 
 
 项目管理员账号 ： username
 项目管理员密码 ： password

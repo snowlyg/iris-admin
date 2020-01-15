@@ -2,14 +2,28 @@ package files
 
 import (
 	"archive/zip"
-	"errors"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"os"
-
-	uuid "github.com/satori/go.uuid"
 )
+
+// 创建临时文件
+func CreateTemFile(name string, file multipart.File) (string, error) {
+
+	f, err := ioutil.TempFile("upload/tmp/", "*_"+name)
+	if err != nil {
+		return "", err
+	}
+	defer os.Remove(f.Name())
+
+	_, err = io.Copy(f, file)
+	if err != nil {
+		return "", err
+	}
+
+	return f.Name(), nil
+}
 
 // 调用os.MkdirAll递归创建文件夹
 func CreateFile(filePath string) error {
@@ -30,32 +44,6 @@ func IsExist(path string) bool {
 		return false
 	}
 	return true
-}
-
-// 获取上传文件唯一地址
-func GetUploadFileUPath(f multipart.File, h *multipart.FileHeader, fileType string) (string, error) {
-
-	if f != nil {
-		defer f.Close()
-	} else {
-		return "", errors.New("上传失败")
-	}
-
-	uid := uuid.NewV4()
-	if h != nil {
-		filepath := "upload/" + fileType + "/"
-		if err := CreateFile(filepath + h.Filename); err != nil {
-			return filepath + h.Filename, err
-		}
-
-		fileNamePath := filepath + uid.String() + "_" + h.Filename
-
-		return fileNamePath, nil
-
-	} else {
-		return "", errors.New("上传失败")
-	}
-
 }
 
 //  WriteFile writes the contents of the output buffer to a file

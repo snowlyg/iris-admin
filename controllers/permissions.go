@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"io"
-	"os"
 	"time"
 
 	"IrisAdminApi/files"
@@ -170,27 +168,11 @@ func ImportPermission(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
 	}
 
-	fullPath, err := files.GetUploadFileUPath(file, info, "excel")
+	fullPath, err := files.CreateTemFile(info.Filename, file)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
 	}
-
-	out, err := os.OpenFile(fullPath, os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
-	}
-
-	if out == nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(false, errors.New("excel 文件上次失败"), "导入失败"))
-		return
-	}
-
-	defer out.Close()
-
-	_, _ = io.Copy(out, file)
 
 	f, err := excelize.OpenFile(fullPath)
 	if err != nil {

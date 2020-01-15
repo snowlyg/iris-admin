@@ -98,6 +98,11 @@ go run main.go // go 命令
  go test -v  //所有测试
  
  go test -run TestUserCreate -v //单个方法
+
+
+// go get github.com/rakyll/gotest@latest 增加测试输出数据颜色
+
+ gotest 
  
 ```
 

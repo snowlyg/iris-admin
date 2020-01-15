@@ -262,6 +262,8 @@ github.com/prometheus/client_model v0.0.0-20190115171406-56726106282f/go.mod h1:
 github.com/prometheus/common v0.2.0/go.mod h1:TNfzLD0ON7rHzMJeJkieUDPYmFC7Snx/y86RQel1bk4=
 github.com/prometheus/procfs v0.0.0-20181005140218-185b4288413d/go.mod h1:c3At6R/oaqEKCNdg8wHV1ftS6bRYblBhIjjI8uT2IGk=
 github.com/prometheus/procfs v0.0.0-20190117184657-bf6a532e95b1/go.mod h1:c3At6R/oaqEKCNdg8wHV1ftS6bRYblBhIjjI8uT2IGk=
+github.com/rakyll/gotest v0.0.0-20191108192113-45d501058f2a h1:/kX+lZpr87Pb0yJKyxW40ZZO6jl52jFMmoQ0YhfwGLM=
+github.com/rakyll/gotest v0.0.0-20191108192113-45d501058f2a/go.mod h1:jpFrc1UTqK0FtfF3doi3pEUBgWHYELkOPPECUlDsM2Q=
 github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/revel/config v0.21.0/go.mod h1:GT4a9px5kDGRqLizcw/md0QFErrhen76toz4qS3oIoI=
 github.com/revel/log15 v2.11.20+incompatible/go.mod h1:l0WmLRs+IM1hBl4noJiBc2tZQiOgZyXzS1mdmFt+5Gc=

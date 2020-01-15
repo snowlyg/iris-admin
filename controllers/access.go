@@ -37,6 +37,7 @@ func UserLogin(ctx iris.Context) {
 			ctx.StatusCode(iris.StatusOK)
 			_, _ = ctx.JSON(ApiResource(false, nil, "密码格式错误"))
 		} else {
+			ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
 			ctx.StatusCode(iris.StatusOK)
 			response, status, msg := models.CheckLogin(aul.Username, aul.Password)
 			_, _ = ctx.JSON(ApiResource(status, response, msg))
@@ -61,6 +62,7 @@ func UserLogout(ctx iris.Context) {
 	uid := uint(tools.ParseInt(aui, 0))
 	models.UserAdminLogout(uid)
 
+	ctx.Application().Logger().Infof("%d 退出系统", uid)
 	ctx.StatusCode(http.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, nil, "退出登陆"))
+	_, _ = ctx.JSON(ApiResource(true, nil, "退出"))
 }

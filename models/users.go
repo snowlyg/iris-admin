@@ -229,3 +229,8 @@ func CreateSystemAdmin(roleId uint, rc *transformer.Conf) *User {
 		return user
 	}
 }
+
+//func (u *User) AfterUpdate(tx *gorm.DB) (err error) {
+//	fmt.Println( fmt.Sprintf("AfterUpdate: %s", u.Name))
+//	return
+//}

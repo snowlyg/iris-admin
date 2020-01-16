@@ -33,14 +33,17 @@ func UserLogin(ctx iris.Context) {
 		if UserNameErr := validate.Var(aul.Username, "required,min=4,max=20"); UserNameErr != nil {
 			ctx.StatusCode(iris.StatusOK)
 			_, _ = ctx.JSON(ApiResource(false, nil, "用户名格式错误"))
+			return
 		} else if PwdErr := validate.Var(aul.Password, "required,min=5,max=20"); PwdErr != nil {
 			ctx.StatusCode(iris.StatusOK)
 			_, _ = ctx.JSON(ApiResource(false, nil, "密码格式错误"))
+			return
 		} else {
 			ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
 			ctx.StatusCode(iris.StatusOK)
 			response, status, msg := models.CheckLogin(aul.Username, aul.Password)
 			_, _ = ctx.JSON(ApiResource(status, response, msg))
+			return
 		}
 	}
 }

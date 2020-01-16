@@ -165,12 +165,14 @@ func ImportPermission(ctx iris.Context) {
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
+		return
 	}
 
 	f, err := excelize.OpenReader(file)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
+		return
 	}
 
 	// Excel 导入行数据转换
@@ -187,6 +189,7 @@ func ImportPermission(ctx iris.Context) {
 			if err != nil {
 				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
+				return
 			}
 
 			models.CreatePermission(&m)

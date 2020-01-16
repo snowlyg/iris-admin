@@ -157,6 +157,7 @@ func DeleteRole(ctx iris.Context) {
 	if role.Name == "admin" {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(true, nil, "不能管理员角色"))
+		return
 	}
 
 	models.DeleteRoleById(id)

@@ -162,6 +162,7 @@ func DeleteUser(ctx iris.Context) {
 	if user.Username == "username" {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(true, nil, "不能删除管理员"))
+		return
 	}
 
 	models.DeleteUserById(id)

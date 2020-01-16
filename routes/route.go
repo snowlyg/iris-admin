@@ -53,6 +53,8 @@ func Register(api *iris.Application) {
 				})
 			})
 		}
+
+		api.Any("/payload", controllers.Payload)
 	}
 
 }

@@ -157,6 +157,13 @@ func UpdateUser(ctx iris.Context) {
  */
 func DeleteUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
+
+	user := models.GetUserById(id)
+	if user.Username == "username" {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(true, nil, "不能删除管理员"))
+	}
+
 	models.DeleteUserById(id)
 
 	ctx.StatusCode(iris.StatusOK)

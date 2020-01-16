@@ -153,7 +153,6 @@ func UpdateRole(ctx iris.Context) {
  */
 func DeleteRole(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-
 	role := models.GetRoleById(id)
 	if role.Name == "admin" {
 		ctx.StatusCode(iris.StatusOK)

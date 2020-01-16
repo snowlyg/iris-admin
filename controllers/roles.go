@@ -77,8 +77,10 @@ func CreateRole(ctx iris.Context) {
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
 				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+				return
 			} else {
 				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+				return
 			}
 		}
 	}
@@ -125,7 +127,7 @@ func UpdateRole(ctx iris.Context) {
 			role := models.GetRoleById(id)
 			if role.Name == "admin" {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(true, nil, "不能编辑管理员角色"))
+				_, _ = ctx.JSON(ApiResource(false, nil, "不能编辑管理员角色"))
 				return
 			}
 

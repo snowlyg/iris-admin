@@ -134,7 +134,7 @@ func UpdateUser(ctx iris.Context) {
 			user := models.GetUserById(id)
 			if user.Username == "username" {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(true, nil, "不能编辑管理员"))
+				_, _ = ctx.JSON(ApiResource(false, nil, "不能编辑管理员"))
 				return
 			}
 
@@ -169,7 +169,7 @@ func DeleteUser(ctx iris.Context) {
 	user := models.GetUserById(id)
 	if user.Username == "username" {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(true, nil, "不能删除管理员"))
+		_, _ = ctx.JSON(ApiResource(false, nil, "不能删除管理员"))
 		return
 	}
 

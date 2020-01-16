@@ -129,15 +129,23 @@ func UpdateUser(ctx iris.Context) {
 			//	fmt.Println()
 			//}
 		} else {
-			id, _ := ctx.Params().GetInt("id")
-			uid := uint(id)
+			id, _ := ctx.Params().GetUint("id")
 
-			u := models.UpdateUser(aul, uid)
+			user := models.GetUserById(id)
+			if user.Username == "username" {
+				ctx.StatusCode(iris.StatusOK)
+				_, _ = ctx.JSON(ApiResource(true, nil, "不能编辑管理员"))
+				return
+			}
+
+			u := models.UpdateUser(aul, id)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
 				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+				return
 			} else {
 				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+				return
 			}
 		}
 	}

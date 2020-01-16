@@ -120,20 +120,28 @@ func UpdateRole(ctx iris.Context) {
 			//	fmt.Println()
 			//}
 		} else {
-			id, _ := ctx.Params().GetInt("id")
-			uid := uint(id)
+			id, _ := ctx.Params().GetUint("id")
+
+			role := models.GetRoleById(id)
+			if role.Name == "admin" {
+				ctx.StatusCode(iris.StatusOK)
+				_, _ = ctx.JSON(ApiResource(true, nil, "不能编辑管理员角色"))
+				return
+			}
 
 			roleJson := new(models.RoleRequest)
 			roleJson.Name = roleForm.Name
 			roleJson.Description = roleForm.Description
 			roleJson.DisplayName = roleForm.DisplayName
 
-			u := models.UpdateRole(roleJson, uid, roleForm.PermissionsIds)
+			u := models.UpdateRole(roleJson, id, roleForm.PermissionsIds)
 			ctx.StatusCode(iris.StatusOK)
 			if u.ID == 0 {
 				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+				return
 			} else {
 				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+				return
 			}
 		}
 	}
@@ -156,7 +164,7 @@ func DeleteRole(ctx iris.Context) {
 	role := models.GetRoleById(id)
 	if role.Name == "admin" {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(true, nil, "不能管理员角色"))
+		_, _ = ctx.JSON(ApiResource(true, nil, "不能删除管理员角色"))
 		return
 	}
 

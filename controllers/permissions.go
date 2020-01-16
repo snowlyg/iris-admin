@@ -1,10 +1,9 @@
 package controllers
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
-	"IrisAdminApi/files"
 	"IrisAdminApi/models"
 	"IrisAdminApi/tools"
 	"IrisAdminApi/transformer"
@@ -162,34 +161,23 @@ func DeletePermission(ctx iris.Context) {
  */
 func ImportPermission(ctx iris.Context) {
 
-	file, info, err := ctx.FormFile("file")
+	file, _, err := ctx.FormFile("file")
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
 	}
 
-	fullPath, err := files.CreateTemFile(info.Filename, file)
+	f, err := excelize.OpenReader(file)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
-	}
-
-	f, err := excelize.OpenFile(fullPath)
-	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(false, err.Error(), "导入失败"))
-	}
-
-	if f == nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(false, errors.New("excel 文件打开失败"), "导入失败"))
-		return
 	}
 
 	// Excel 导入行数据转换
 	// 获取 Sheet1 上所有单元格
 	rows := f.GetRows("Sheet1")
 	titles := map[string]string{"0": "Name", "1": "DisplayName", "2": "Description", "3": "Act"}
+	num := 0
 	for roI, row := range rows {
 		if roI > 0 {
 			// 将数组  转成对应的 map
@@ -202,11 +190,12 @@ func ImportPermission(ctx iris.Context) {
 			}
 
 			models.CreatePermission(&m)
+			num++
 		}
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, nil, "导入成功"))
+	_, _ = ctx.JSON(ApiResource(true, nil, fmt.Sprintf("成功导入%d项数据", num)))
 }
 
 /**

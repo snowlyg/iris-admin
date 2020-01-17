@@ -14,7 +14,7 @@
 - `gorm` 数据库模块 
 - `jwt` 的单点登陆认证方式
 - `cors` 跨域认证
-- 数据支持 `mysql`，`sqlite3` 配置; `sqlite3` 需要下载 `gcc`, 并且在 `/temp` 目录下文件 `gorm.db` ,  `tgorm.db`。  [gcc 下载地址](http://mingw-w64.org/doku.php/download)
+- 数据支持 `mysql`，`sqlite3` 配置; `sqlite3` 需要下载 `gcc`, 并且在 `/temp` 目录下新建文件 `gorm.db` ,  `tgorm.db`。  [gcc 下载地址](http://mingw-w64.org/doku.php/download)
 - 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
 - 增加了 `excel` 文件接口导入实例
 - 前端采用了 `element-ui` 框架，如果需要修改前端代码请移步 [https://github.com/snowlyg/IrisApiVueAdmin](https://github.com/snowlyg/IrisApiVueAdmin)

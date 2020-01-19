@@ -75,7 +75,7 @@ func CreateUser(ctx iris.Context) {
 		return
 	}
 
-	err := Validate.Struct(models.UserRequest{})
+	err := Validate.Struct(aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(ValidateTrans) {
@@ -121,7 +121,7 @@ func UpdateUser(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 	}
 
-	err := Validate.Struct(models.UserRequest{})
+	err := Validate.Struct(aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(ValidateTrans) {

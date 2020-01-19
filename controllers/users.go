@@ -6,6 +6,7 @@ import (
 
 	"IrisAdminApi/models"
 	"IrisAdminApi/transformer"
+	"github.com/go-playground/validator/v10"
 	gf "github.com/snowlyg/gotransformer"
 
 	"github.com/kataras/iris/v12"
@@ -69,31 +70,33 @@ func CreateUser(ctx iris.Context) {
 	aul := new(models.UserRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		_, _ = ctx.JSON(errorData(err))
-	} else {
-		err := validate.Struct(aul)
-		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			//for _, err := range err.(validator.ValidationErrors) {
-			//	fmt.Println()
-			//	fmt.Println(err.Namespace())
-			//	fmt.Println(err.Field())
-			//	fmt.Println(err.Type())
-			//	fmt.Println(err.Param())
-			//	fmt.Println()
-			//}
-		} else {
-			u := models.CreateUser(aul)
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
+		return
+	}
 
-			ctx.StatusCode(iris.StatusOK)
-			if u.ID == 0 {
-				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
-			} else {
-				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+	err := Validate.Struct(models.UserRequest{})
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(ValidateTrans) {
+			if len(e) > 0 {
+				ctx.StatusCode(iris.StatusOK)
+				_, _ = ctx.JSON(ApiResource(false, nil, e))
+				return
 			}
 		}
 	}
+
+	u := models.CreateUser(aul)
+	ctx.StatusCode(iris.StatusOK)
+	if u.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+		return
+	} else {
+		_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+		return
+	}
+
 }
 
 /**
@@ -114,41 +117,40 @@ func UpdateUser(ctx iris.Context) {
 	aul := new(models.UserRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		_, _ = ctx.JSON(errorData(err))
-	} else {
-		err := validate.Struct(aul)
-		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			//for _, err := range err.(validator.ValidationErrors) {
-			//	fmt.Println()
-			//	fmt.Println(err.Namespace())
-			//	fmt.Println(err.Field())
-			//	fmt.Println(err.Type())
-			//	fmt.Println(err.Param())
-			//	fmt.Println()
-			//}
-		} else {
-			id, _ := ctx.Params().GetUint("id")
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
+	}
 
-			user := models.GetUserById(id)
-			if user.Username == "username" {
+	err := Validate.Struct(models.UserRequest{})
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(ValidateTrans) {
+			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(false, nil, "不能编辑管理员"))
-				return
-			}
-
-			u := models.UpdateUser(aul, id)
-			ctx.StatusCode(iris.StatusOK)
-			if u.ID == 0 {
-				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
-				return
-			} else {
-				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(false, nil, e))
 				return
 			}
 		}
 	}
+
+	id, _ := ctx.Params().GetUint("id")
+	user := models.GetUserById(id)
+	if user.Username == "username" {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, nil, "不能编辑管理员"))
+		return
+	}
+
+	u := models.UpdateUser(aul, id)
+	ctx.StatusCode(iris.StatusOK)
+	if u.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+		return
+	} else {
+		_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+		return
+	}
+
 }
 
 /**

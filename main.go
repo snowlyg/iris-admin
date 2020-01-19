@@ -144,7 +144,7 @@ func main() {
 	Sc = iris.TOML("./config/conf.tml") // 加载配置文件
 	rc := getSysConf()                  //格式化配置文件 other 数据
 	api := NewApp(rc)
-	api.Logger().SetOutput(f) //记录日志
+	//api.Logger().SetOutput(f) //记录日志
 	err := api.Run(iris.Addr(rc.App.Port), iris.WithConfiguration(Sc))
 	if err != nil {
 		color.Yellow(fmt.Sprintf("项目运行结束: %v", err))

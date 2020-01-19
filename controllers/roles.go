@@ -6,6 +6,7 @@ import (
 	"IrisAdminApi/models"
 	"IrisAdminApi/tools"
 	"IrisAdminApi/transformer"
+	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	gf "github.com/snowlyg/gotransformer"
 )
@@ -53,37 +54,38 @@ func CreateRole(ctx iris.Context) {
 	roleForm := new(models.RoleFormRequest)
 
 	if err := ctx.ReadJSON(&roleForm); err != nil {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		_, _ = ctx.JSON(errorData(err))
-	} else {
-		err := validate.Struct(roleForm)
-		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			//for _, err := range err.(validator.ValidationErrors) {
-			//	fmt.Println()
-			//	fmt.Println(err.Namespace())
-			//	fmt.Println(err.Field())
-			//	fmt.Println(err.Type())
-			//	fmt.Println(err.Param())
-			//	fmt.Println()
-			//}
-		} else {
-			roleJson := new(models.RoleRequest)
-			roleJson.Name = roleForm.Name
-			roleJson.Description = roleForm.Description
-			roleJson.DisplayName = roleForm.DisplayName
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
+		return
+	}
 
-			u := models.CreateRole(roleJson, roleForm.PermissionsIds)
-			ctx.StatusCode(iris.StatusOK)
-			if u.ID == 0 {
-				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
-				return
-			} else {
-				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+	err := Validate.Struct(roleForm)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(ValidateTrans) {
+			if len(e) > 0 {
+				ctx.StatusCode(iris.StatusOK)
+				_, _ = ctx.JSON(ApiResource(false, nil, e))
 				return
 			}
 		}
 	}
+
+	roleJson := new(models.RoleRequest)
+	roleJson.Name = roleForm.Name
+	roleJson.Description = roleForm.Description
+	roleJson.DisplayName = roleForm.DisplayName
+
+	u := models.CreateRole(roleJson, roleForm.PermissionsIds)
+	ctx.StatusCode(iris.StatusOK)
+	if u.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+		return
+	} else {
+		_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+		return
+	}
+
 }
 
 /**
@@ -107,46 +109,46 @@ func UpdateRole(ctx iris.Context) {
 	roleForm := new(models.RoleFormRequest)
 
 	if err := ctx.ReadJSON(&roleForm); err != nil {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		_, _ = ctx.JSON(errorData(err))
-	} else {
-		err := validate.Struct(roleForm)
-		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			//for _, err := range err.(validator.ValidationErrors) {
-			//	fmt.Println()
-			//	fmt.Println(err.Namespace())
-			//	fmt.Println(err.Field())
-			//	fmt.Println(err.Type())
-			//	fmt.Println(err.Param())
-			//	fmt.Println()
-			//}
-		} else {
-			id, _ := ctx.Params().GetUint("id")
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
+		return
+	}
 
-			role := models.GetRoleById(id)
-			if role.Name == "admin" {
+	err := Validate.Struct(roleForm)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(ValidateTrans) {
+			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(false, nil, "不能编辑管理员角色"))
-				return
-			}
-
-			roleJson := new(models.RoleRequest)
-			roleJson.Name = roleForm.Name
-			roleJson.Description = roleForm.Description
-			roleJson.DisplayName = roleForm.DisplayName
-
-			u := models.UpdateRole(roleJson, id, roleForm.PermissionsIds)
-			ctx.StatusCode(iris.StatusOK)
-			if u.ID == 0 {
-				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
-				return
-			} else {
-				_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+				_, _ = ctx.JSON(ApiResource(false, nil, e))
 				return
 			}
 		}
 	}
+
+	id, _ := ctx.Params().GetUint("id")
+	role := models.GetRoleById(id)
+	if role.Name == "admin" {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, nil, "不能编辑管理员角色"))
+		return
+	}
+
+	roleJson := new(models.RoleRequest)
+	roleJson.Name = roleForm.Name
+	roleJson.Description = roleForm.Description
+	roleJson.DisplayName = roleForm.DisplayName
+
+	u := models.UpdateRole(roleJson, id, roleForm.PermissionsIds)
+	ctx.StatusCode(iris.StatusOK)
+	if u.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+		return
+	} else {
+		_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
+		return
+	}
+
 }
 
 /**

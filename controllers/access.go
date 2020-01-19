@@ -5,6 +5,7 @@ import (
 
 	"IrisAdminApi/models"
 	"IrisAdminApi/tools"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/kataras/iris/v12"
 )
@@ -25,27 +26,29 @@ import (
  */
 func UserLogin(ctx iris.Context) {
 	aul := new(models.UserRequest)
-
 	if err := ctx.ReadJSON(&aul); err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
+		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, "请求参数错误"))
-	} else {
-		if UserNameErr := validate.Var(aul.Username, "required,min=4,max=20"); UserNameErr != nil {
+		return
+	}
+
+	err := Validate.Struct(models.UserRequest{})
+	errs := err.(validator.ValidationErrors)
+	errs.Translate(ValidateTrans)
+	for _, e := range errs.Translate(ValidateTrans) {
+		if len(e) > 0 {
 			ctx.StatusCode(iris.StatusOK)
-			_, _ = ctx.JSON(ApiResource(false, nil, "用户名格式错误"))
-			return
-		} else if PwdErr := validate.Var(aul.Password, "required,min=5,max=20"); PwdErr != nil {
-			ctx.StatusCode(iris.StatusOK)
-			_, _ = ctx.JSON(ApiResource(false, nil, "密码格式错误"))
-			return
-		} else {
-			ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
-			ctx.StatusCode(iris.StatusOK)
-			response, status, msg := models.CheckLogin(aul.Username, aul.Password)
-			_, _ = ctx.JSON(ApiResource(status, response, msg))
+			_, _ = ctx.JSON(ApiResource(false, nil, e))
 			return
 		}
 	}
+
+	ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
+	ctx.StatusCode(iris.StatusOK)
+	response, status, msg := models.CheckLogin(aul.Username, aul.Password)
+	_, _ = ctx.JSON(ApiResource(status, response, msg))
+	return
+
 }
 
 /**

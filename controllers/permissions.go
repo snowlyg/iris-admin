@@ -8,6 +8,7 @@ import (
 	"IrisAdminApi/tools"
 	"IrisAdminApi/transformer"
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	gf "github.com/snowlyg/gotransformer"
 )
@@ -53,30 +54,29 @@ func CreatePermission(ctx iris.Context) {
 	aul := new(models.PermissionRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		_, _ = ctx.JSON(errorData(err))
-	} else {
-		err := validate.Struct(aul)
-		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			//for _, err := range err.(validator.ValidationErrors) {
-			//	fmt.Println()
-			//	fmt.Println(err.Namespace())
-			//	fmt.Println(err.Field())
-			//	fmt.Println(err.Type())
-			//	fmt.Println(err.Param())
-			//	fmt.Println()
-			//}
-		} else {
-			u := models.CreatePermission(aul)
-			ctx.StatusCode(iris.StatusOK)
-			if u.ID == 0 {
-				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
-			} else {
-				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
+		return
+	}
+	err := Validate.Struct(aul)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(ValidateTrans) {
+			if len(e) > 0 {
+				ctx.StatusCode(iris.StatusOK)
+				_, _ = ctx.JSON(ApiResource(false, nil, e))
+				return
 			}
 		}
 	}
+	u := models.CreatePermission(aul)
+	ctx.StatusCode(iris.StatusOK)
+	if u.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+	} else {
+		_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
+	}
+
 }
 
 /**
@@ -99,33 +99,32 @@ func UpdatePermission(ctx iris.Context) {
 	aul := new(models.PermissionRequest)
 
 	if err := ctx.ReadJSON(&aul); err != nil {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		_, _ = ctx.JSON(errorData(err))
-	} else {
-		err := validate.Struct(aul)
-		if err != nil {
-			ctx.StatusCode(iris.StatusBadRequest)
-			//for _, err := range err.(validator.ValidationErrors) {
-			//	fmt.Println()
-			//	fmt.Println(err.Namespace())
-			//	fmt.Println(err.Field())
-			//	fmt.Println(err.Type())
-			//	fmt.Println(err.Param())
-			//	fmt.Println()
-			//}
-		} else {
-			id, _ := ctx.Params().GetInt("id")
-			uid := uint(id)
-
-			u := models.UpdatePermission(aul, uid)
-			ctx.StatusCode(iris.StatusOK)
-			if u.ID == 0 {
-				_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
-			} else {
-				_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
+		return
+	}
+	err := Validate.Struct(aul)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(ValidateTrans) {
+			if len(e) > 0 {
+				ctx.StatusCode(iris.StatusOK)
+				_, _ = ctx.JSON(ApiResource(false, nil, e))
+				return
 			}
 		}
 	}
+	id, _ := ctx.Params().GetInt("id")
+	uid := uint(id)
+
+	u := models.UpdatePermission(aul, uid)
+	ctx.StatusCode(iris.StatusOK)
+	if u.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+	} else {
+		_, _ = ctx.JSON(ApiResource(true, u, "操作成功"))
+	}
+
 }
 
 /**

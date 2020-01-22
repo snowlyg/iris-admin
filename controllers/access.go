@@ -32,7 +32,7 @@ func UserLogin(ctx iris.Context) {
 		return
 	}
 
-	err := Validate.Struct(models.UserRequest{})
+	err := Validate.Struct(aul)
 	errs := err.(validator.ValidationErrors)
 	errs.Translate(ValidateTrans)
 	for _, e := range errs.Translate(ValidateTrans) {

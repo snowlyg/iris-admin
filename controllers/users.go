@@ -75,7 +75,7 @@ func CreateUser(ctx iris.Context) {
 		return
 	}
 
-	err := Validate.Struct(aul)
+	err := Validate.Struct(*aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(ValidateTrans) {
@@ -121,7 +121,7 @@ func UpdateUser(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 	}
 
-	err := Validate.Struct(aul)
+	err := Validate.Struct(*aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(ValidateTrans) {
@@ -221,10 +221,19 @@ func userTransform(user *models.User) *transformer.User {
 
 	roleIds, _ := models.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(user.ID), 10))
 	var ris []int
-	for _, roleId := range roleIds {
+	var roleName string
+	for num, roleId := range roleIds {
 		ri, _ := strconv.Atoi(roleId)
 		ris = append(ris, ri)
+		role := models.GetRoleById(uint(ri))
+		if num == len(roleIds)-1 {
+			roleName += role.DisplayName
+		} else {
+			roleName += role.DisplayName + ","
+		}
+
 	}
 	u.RoleIds = ris
+	u.RoleName = roleName
 	return u
 }

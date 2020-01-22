@@ -58,7 +58,7 @@ func CreatePermission(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
 	}
-	err := Validate.Struct(aul)
+	err := Validate.Struct(*aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(ValidateTrans) {
@@ -103,7 +103,7 @@ func UpdatePermission(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
 	}
-	err := Validate.Struct(aul)
+	err := Validate.Struct(*aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(ValidateTrans) {

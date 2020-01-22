@@ -116,19 +116,7 @@ func CreateUser(aul *UserRequest) (user *User) {
 		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 	}
 
-	if len(aul.RoleIds) > 0 {
-		userId := strconv.FormatUint(uint64(user.ID), 10)
-		if _, err = Enforcer.DeleteRolesForUser(userId); err != nil {
-			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
-		}
-
-		for _, roleId := range aul.RoleIds {
-			roleId := strconv.FormatUint(uint64(roleId), 10)
-			if _, err = Enforcer.AddRoleForUser(userId, roleId); err != nil {
-				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
-			}
-		}
-	}
+	addRoles(aul, user)
 
 	return
 }
@@ -155,7 +143,25 @@ func UpdateUser(uj *UserRequest, id uint) *User {
 		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
 	}
 
+	addRoles(uj, user)
+
 	return user
+}
+
+func addRoles(uj *UserRequest, user *User) {
+	if len(uj.RoleIds) > 0 {
+		userId := strconv.FormatUint(uint64(user.ID), 10)
+		if _, err = Enforcer.DeleteRolesForUser(userId); err != nil {
+			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
+		}
+
+		for _, roleId := range uj.RoleIds {
+			roleId := strconv.FormatUint(uint64(roleId), 10)
+			if _, err = Enforcer.AddRoleForUser(userId, roleId); err != nil {
+				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
+			}
+		}
+	}
 }
 
 /**

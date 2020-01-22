@@ -24,20 +24,22 @@ import (
  */
 func UserLogin(ctx iris.Context) {
 	aul := new(models.UserRequest)
+
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(false, nil, "请求参数错误"))
+		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
 	}
 
 	//err := Validate.Struct(*aul)
-	//errs := err.(validator.ValidationErrors)
-	//errs.Translate(ValidateTrans)
-	//for _, e := range errs.Translate(ValidateTrans) {
-	//	if len(e) > 0 {
-	//		ctx.StatusCode(iris.StatusOK)
-	//		_, _ = ctx.JSON(ApiResource(false, nil, e))
-	//		return
+	//if err != nil {
+	//	errs := err.(validator.ValidationErrors)
+	//	for _, e := range errs.Translate(ValidateTrans) {
+	//		if len(e) > 0 {
+	//			ctx.StatusCode(iris.StatusOK)
+	//			_, _ = ctx.JSON(ApiResource(false, nil, e))
+	//			return
+	//		}
 	//	}
 	//}
 

@@ -59,7 +59,7 @@ func CreateRole(ctx iris.Context) {
 		return
 	}
 
-	err := Validate.Struct(roleForm)
+	err := Validate.Struct(*roleForm)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(ValidateTrans) {
@@ -114,7 +114,7 @@ func UpdateRole(ctx iris.Context) {
 		return
 	}
 
-	err := Validate.Struct(roleForm)
+	err := Validate.Struct(*roleForm)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(ValidateTrans) {

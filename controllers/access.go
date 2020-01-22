@@ -5,8 +5,6 @@ import (
 
 	"IrisAdminApi/models"
 	"IrisAdminApi/tools"
-	"github.com/go-playground/validator/v10"
-
 	"github.com/kataras/iris/v12"
 )
 
@@ -26,22 +24,22 @@ import (
  */
 func UserLogin(ctx iris.Context) {
 	aul := new(models.UserRequest)
-	if err := ctx.ReadJSON(&aul); err != nil {
+	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, "请求参数错误"))
 		return
 	}
 
-	err := Validate.Struct(aul)
-	errs := err.(validator.ValidationErrors)
-	errs.Translate(ValidateTrans)
-	for _, e := range errs.Translate(ValidateTrans) {
-		if len(e) > 0 {
-			ctx.StatusCode(iris.StatusOK)
-			_, _ = ctx.JSON(ApiResource(false, nil, e))
-			return
-		}
-	}
+	//err := Validate.Struct(*aul)
+	//errs := err.(validator.ValidationErrors)
+	//errs.Translate(ValidateTrans)
+	//for _, e := range errs.Translate(ValidateTrans) {
+	//	if len(e) > 0 {
+	//		ctx.StatusCode(iris.StatusOK)
+	//		_, _ = ctx.JSON(ApiResource(false, nil, e))
+	//		return
+	//	}
+	//}
 
 	ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
 	ctx.StatusCode(iris.StatusOK)

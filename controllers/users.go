@@ -69,7 +69,7 @@ func CreateUser(ctx iris.Context) {
 
 	aul := new(models.UserRequest)
 
-	if err := ctx.ReadJSON(&aul); err != nil {
+	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
@@ -116,7 +116,7 @@ func CreateUser(ctx iris.Context) {
 func UpdateUser(ctx iris.Context) {
 	aul := new(models.UserRequest)
 
-	if err := ctx.ReadJSON(&aul); err != nil {
+	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 	}

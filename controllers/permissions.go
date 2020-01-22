@@ -53,7 +53,7 @@ func CreatePermission(ctx iris.Context) {
 
 	aul := new(models.PermissionRequest)
 
-	if err := ctx.ReadJSON(&aul); err != nil {
+	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
@@ -98,7 +98,7 @@ func CreatePermission(ctx iris.Context) {
 func UpdatePermission(ctx iris.Context) {
 	aul := new(models.PermissionRequest)
 
-	if err := ctx.ReadJSON(&aul); err != nil {
+	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return

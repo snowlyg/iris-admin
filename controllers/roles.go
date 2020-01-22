@@ -53,7 +53,7 @@ func GetRole(ctx iris.Context) {
 func CreateRole(ctx iris.Context) {
 	roleForm := new(models.RoleFormRequest)
 
-	if err := ctx.ReadJSON(&roleForm); err != nil {
+	if err := ctx.ReadJSON(roleForm); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
@@ -108,7 +108,7 @@ func UpdateRole(ctx iris.Context) {
 
 	roleForm := new(models.RoleFormRequest)
 
-	if err := ctx.ReadJSON(&roleForm); err != nil {
+	if err := ctx.ReadJSON(roleForm); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return

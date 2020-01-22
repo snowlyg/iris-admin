@@ -36,6 +36,26 @@ func TestUserLoginWithErrorPwd(t *testing.T) {
 	login(t, oj, iris.StatusOK, false, "用户名或密码错误")
 }
 
+// 不输入用户名
+func TestUserLoginWithNoUsername(t *testing.T) {
+
+	oj := map[string]string{
+		"username": "",
+		"password": "admin",
+	}
+	login(t, oj, iris.StatusOK, false, "用户名为必填字段")
+}
+
+// 不输入密码
+func TestUserLoginWithNoPwd(t *testing.T) {
+
+	oj := map[string]string{
+		"username": "",
+		"password": "admin",
+	}
+	login(t, oj, iris.StatusOK, false, "密码为必填字段")
+}
+
 // 输入登陆密码格式错误
 func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 	oj := map[string]string{

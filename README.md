@@ -27,6 +27,11 @@
  - `permissions.xlsx` 权限导入测试模板文件，仅供测试使用; 权限会自动生成，无需另外导入。
 ---
 
+#### 项目开发过程详解
+[Iris-go 项目 casbin + gorm 构建 API 权限控制实现过程](https://learnku.com/articles/39551)
+---
+
+
 #### 更新日志
 [更新日志](UPDATE.MD)
 ---

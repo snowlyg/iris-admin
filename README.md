@@ -74,10 +74,10 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ```
 
->项目配置文件 /config/config.toml
+>项目配置文件 /config/conf.tml
 
 ```
-cp config.toml.example config.toml
+cp conf.tml.example conf.tml
 ```
 
 >运行项目 

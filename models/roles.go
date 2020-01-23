@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 )
@@ -14,19 +15,6 @@ type Role struct {
 	Name        string `gorm:"unique;not null VARCHAR(191)"`
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
-}
-
-type RoleRequest struct {
-	Name        string `json:"name"`
-	DisplayName string `json:"display_name"`
-	Description string `json:"description"`
-}
-
-type RoleFormRequest struct {
-	Name           string `json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
-	DisplayName    string `json:"display_name" comment:"显示名称"`
-	Description    string `json:"description" comment:"描述"`
-	PermissionsIds []uint `json:"permissions_ids" comment:"权限"`
 }
 
 /**
@@ -90,7 +78,7 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateRole(aul *RoleRequest, permIds []uint) (role *Role) {
+func CreateRole(aul *validates.RoleRequest, permIds []uint) (role *Role) {
 	role = &Role{
 		Name:        aul.Name,
 		DisplayName: aul.DisplayName,
@@ -129,7 +117,7 @@ func addPerms(permIds []uint, role *Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateRole(rj *RoleRequest, id uint, permIds []uint) (role *Role) {
+func UpdateRole(rj *validates.RoleRequest, id uint, permIds []uint) (role *Role) {
 	role = &Role{
 		Model: gorm.Model{
 			ID: id,
@@ -165,7 +153,7 @@ func RolePermisions(id uint) []*Permission {
 *@return   *models.AdminRoleTranform api格式化后的数据格式
  */
 func CreateSystemAdminRole(permIds []uint) *Role {
-	aul := &RoleRequest{
+	aul := &validates.RoleRequest{
 		Name:        "admin",
 		DisplayName: "超级管理员",
 		Description: "超级管理员",

@@ -6,6 +6,7 @@ import (
 	"IrisAdminApi/models"
 	"IrisAdminApi/tools"
 	"IrisAdminApi/transformer"
+	"IrisAdminApi/validates"
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	gf "github.com/snowlyg/gotransformer"
@@ -51,18 +52,18 @@ func GetRole(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateRole(ctx iris.Context) {
-	roleForm := new(models.RoleFormRequest)
+	roleJson := new(validates.RoleRequest)
 
-	if err := ctx.ReadJSON(roleForm); err != nil {
+	if err := ctx.ReadJSON(roleJson); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
 	}
 
-	err := Validate.Struct(*roleForm)
+	err := validates.Validate.Struct(*roleJson)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		for _, e := range errs.Translate(ValidateTrans) {
+		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(false, nil, e))
@@ -71,12 +72,7 @@ func CreateRole(ctx iris.Context) {
 		}
 	}
 
-	roleJson := new(models.RoleRequest)
-	roleJson.Name = roleForm.Name
-	roleJson.Description = roleForm.Description
-	roleJson.DisplayName = roleForm.DisplayName
-
-	u := models.CreateRole(roleJson, roleForm.PermissionsIds)
+	u := models.CreateRole(roleJson, roleJson.PermissionsIds)
 	ctx.StatusCode(iris.StatusOK)
 	if u.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
@@ -106,7 +102,7 @@ func CreateRole(ctx iris.Context) {
  */
 func UpdateRole(ctx iris.Context) {
 
-	roleForm := new(models.RoleFormRequest)
+	roleForm := new(validates.RoleRequest)
 
 	if err := ctx.ReadJSON(roleForm); err != nil {
 		ctx.StatusCode(iris.StatusOK)
@@ -114,10 +110,10 @@ func UpdateRole(ctx iris.Context) {
 		return
 	}
 
-	err := Validate.Struct(*roleForm)
+	err := validates.Validate.Struct(*roleForm)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		for _, e := range errs.Translate(ValidateTrans) {
+		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(false, nil, e))
@@ -134,7 +130,7 @@ func UpdateRole(ctx iris.Context) {
 		return
 	}
 
-	roleJson := new(models.RoleRequest)
+	roleJson := new(validates.RoleRequest)
 	roleJson.Name = roleForm.Name
 	roleJson.Description = roleForm.Description
 	roleJson.DisplayName = roleForm.DisplayName

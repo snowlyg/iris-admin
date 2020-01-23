@@ -7,6 +7,7 @@ import (
 	"IrisAdminApi/models"
 	"IrisAdminApi/tools"
 	"IrisAdminApi/transformer"
+	"IrisAdminApi/validates"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
@@ -51,17 +52,17 @@ func GetPermission(ctx iris.Context) {
  */
 func CreatePermission(ctx iris.Context) {
 
-	aul := new(models.PermissionRequest)
+	aul := new(validates.PermissionRequest)
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
 	}
-	err := Validate.Struct(*aul)
+	err := validates.Validate.Struct(*aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		for _, e := range errs.Translate(ValidateTrans) {
+		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(false, nil, e))
@@ -96,17 +97,17 @@ func CreatePermission(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdatePermission(ctx iris.Context) {
-	aul := new(models.PermissionRequest)
+	aul := new(validates.PermissionRequest)
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
 	}
-	err := Validate.Struct(*aul)
+	err := validates.Validate.Struct(*aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		for _, e := range errs.Translate(ValidateTrans) {
+		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(false, nil, e))
@@ -182,7 +183,7 @@ func ImportPermission(ctx iris.Context) {
 	for roI, row := range rows {
 		if roI > 0 {
 			// 将数组  转成对应的 map
-			m := models.PermissionRequest{}
+			m := validates.PermissionRequest{}
 			x := gf.NewXlxsTransform(&m, titles, row, "", time.RFC3339, nil)
 			err := x.XlxsTransformer()
 			if err != nil {

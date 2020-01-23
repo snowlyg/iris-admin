@@ -6,6 +6,7 @@ import (
 
 	"IrisAdminApi/models"
 	"IrisAdminApi/transformer"
+	"IrisAdminApi/validates"
 	"github.com/go-playground/validator/v10"
 	gf "github.com/snowlyg/gotransformer"
 
@@ -67,18 +68,17 @@ func GetUser(ctx iris.Context) {
  */
 func CreateUser(ctx iris.Context) {
 
-	aul := new(models.UserRequest)
-
+	aul := new(validates.CreateUpdateUserRequest)
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 		return
 	}
 
-	err := Validate.Struct(*aul)
+	err := validates.Validate.Struct(*aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		for _, e := range errs.Translate(ValidateTrans) {
+		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(false, nil, e))
@@ -114,17 +114,17 @@ func CreateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateUser(ctx iris.Context) {
-	aul := new(models.UserRequest)
+	aul := new(validates.CreateUpdateUserRequest)
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, err.Error()))
 	}
 
-	err := Validate.Struct(*aul)
+	err := validates.Validate.Struct(*aul)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
-		for _, e := range errs.Translate(ValidateTrans) {
+		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(false, nil, e))

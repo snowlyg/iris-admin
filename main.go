@@ -11,6 +11,7 @@ import (
 	"IrisAdminApi/models"
 	"IrisAdminApi/routes"
 	"IrisAdminApi/transformer"
+	"IrisAdminApi/validates"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
@@ -21,13 +22,13 @@ import (
 var Sc iris.Configuration
 
 // 获取路由信息
-func getRoutes(api *iris.Application) []*models.PermissionRequest {
+func getRoutes(api *iris.Application) []*validates.PermissionRequest {
 	rs := api.APIBuilder.GetRoutes()
-	var rrs []*models.PermissionRequest
+	var rrs []*validates.PermissionRequest
 	for _, s := range rs {
 		if !isPermRoute(s) {
 			path := strings.Replace(s.Path, ":id", "*", 1)
-			rr := &models.PermissionRequest{Name: path, DisplayName: s.Name, Description: s.Name, Act: s.Method}
+			rr := &validates.PermissionRequest{Name: path, DisplayName: s.Name, Description: s.Name, Act: s.Method}
 			rrs = append(rrs, rr)
 		}
 	}

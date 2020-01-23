@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"IrisAdminApi/transformer"
+	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/jameskeane/bcrypt"
@@ -18,13 +19,6 @@ type User struct {
 	Name     string `gorm:"not null VARCHAR(191)"`
 	Username string `gorm:"unique;VARCHAR(191)"`
 	Password string `gorm:"not null VARCHAR(191)"`
-}
-
-type UserRequest struct {
-	Username string `json:"username" validate:"required,gte=2,lte=50" comment:"用户名"`
-	Password string `json:"password" validate:"required"  comment:"密码"`
-	Name     string `json:"name" validate:"required,gte=2,lte=50"  comment:"名称"`
-	RoleIds  []uint `json:"role_ids" validate:"required" comment:"角色"`
 }
 
 /**
@@ -102,7 +96,7 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateUser(aul *UserRequest) (user *User) {
+func CreateUser(aul *validates.CreateUpdateUserRequest) (user *User) {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(aul.Password, salt)
 
@@ -128,7 +122,7 @@ func CreateUser(aul *UserRequest) (user *User) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateUser(uj *UserRequest, id uint) *User {
+func UpdateUser(uj *validates.CreateUpdateUserRequest, id uint) *User {
 	salt, _ := bcrypt.Salt(10)
 	hash, _ := bcrypt.Hash(uj.Password, salt)
 
@@ -148,7 +142,7 @@ func UpdateUser(uj *UserRequest, id uint) *User {
 	return user
 }
 
-func addRoles(uj *UserRequest, user *User) {
+func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
 	if len(uj.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
 		if _, err = Enforcer.DeleteRolesForUser(userId); err != nil {
@@ -221,7 +215,7 @@ func UserAdminLogout(userId uint) bool {
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
 func CreateSystemAdmin(roleId uint, rc *transformer.Conf) *User {
-	aul := &UserRequest{
+	aul := &validates.CreateUpdateUserRequest{
 		Username: rc.TestData.UserName,
 		Password: rc.TestData.Pwd,
 		Name:     rc.TestData.Name,

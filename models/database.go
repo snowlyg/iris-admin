@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"IrisAdminApi/transformer"
+	"IrisAdminApi/validates"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"github.com/fatih/color"
@@ -70,7 +71,7 @@ func Register(rc *transformer.Conf) {
 /**
 *初始化系统 账号 权限 角色
  */
-func CreateSystemData(rc *transformer.Conf, perms []*PermissionRequest) {
+func CreateSystemData(rc *transformer.Conf, perms []*validates.PermissionRequest) {
 	if rc.App.CreateSysData {
 		permIds := CreateSystemAdminPermission(perms) //初始化权限
 		role := CreateSystemAdminRole(permIds)        //初始化角色

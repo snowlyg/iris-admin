@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 
+	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 )
@@ -13,13 +14,6 @@ type Permission struct {
 	DisplayName string `gorm:"VARCHAR(191)"`
 	Description string `gorm:"VARCHAR(191)"`
 	Act         string `gorm:"VARCHAR(191)"`
-}
-
-type PermissionRequest struct {
-	Name        string `json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
-	DisplayName string `json:"display_name" comment:"显示名称"`
-	Description string `json:"description" comment:"描述"`
-	Act         string `json:"act" comment:"Act"`
 }
 
 /**
@@ -81,7 +75,7 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreatePermission(aul *PermissionRequest) (permission *Permission) {
+func CreatePermission(aul *validates.PermissionRequest) (permission *Permission) {
 	permission = new(Permission)
 	permission.Name = aul.Name
 	permission.DisplayName = aul.DisplayName
@@ -100,7 +94,7 @@ func CreatePermission(aul *PermissionRequest) (permission *Permission) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdatePermission(pj *PermissionRequest, id uint) (permission *Permission) {
+func UpdatePermission(pj *validates.PermissionRequest, id uint) (permission *Permission) {
 	permission = new(Permission)
 	permission.ID = id
 
@@ -115,7 +109,7 @@ func UpdatePermission(pj *PermissionRequest, id uint) (permission *Permission) {
  * 创建系统权限
  * @return
  */
-func CreateSystemAdminPermission(perms []*PermissionRequest) []uint {
+func CreateSystemAdminPermission(perms []*validates.PermissionRequest) []uint {
 	var permIds []uint
 	for _, perm := range perms {
 		p := GetPermissionByNameAct(perm.Name, perm.Act)

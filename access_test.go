@@ -7,14 +7,13 @@ import (
 )
 
 // 登陆成功
-//func TestUserLoginSuccess(t *testing.T) {
-//
-//	oj := map[string]string{
-//		"username": rc.TestData.UserName,
-//		"password": rc.TestData.Pwd,
-//	}
-//	login(t,  oj, iris.StatusOK, true, "登陆成功", nil)
-//}
+func TestUserLoginSuccess(t *testing.T) {
+	oj := map[string]string{
+		"username": rc.TestData.UserName,
+		"password": rc.TestData.Pwd,
+	}
+	login(t, oj, iris.StatusOK, true, "登陆成功")
+}
 
 // 输入不存在的用户名登陆
 func TestUserLoginWithErrorName(t *testing.T) {
@@ -37,24 +36,24 @@ func TestUserLoginWithErrorPwd(t *testing.T) {
 }
 
 // 不输入用户名
-//func TestUserLoginWithNoUsername(t *testing.T) {
-//
-//	oj := map[string]string{
-//		"username": "",
-//		"password": "admin",
-//	}
-//	login(t, oj, iris.StatusOK, false, "用户名为必填字段")
-//}
-//
-//// 不输入密码
-//func TestUserLoginWithNoPwd(t *testing.T) {
-//
-//	oj := map[string]string{
-//		"username": "",
-//		"password": "admin",
-//	}
-//	login(t, oj, iris.StatusOK, false, "密码为必填字段")
-//}
+func TestUserLoginWithNoUsername(t *testing.T) {
+
+	oj := map[string]string{
+		"username": "",
+		"password": "admin",
+	}
+	login(t, oj, iris.StatusOK, false, "用户名为必填字段")
+}
+
+// 不输入密码
+func TestUserLoginWithNoPwd(t *testing.T) {
+
+	oj := map[string]string{
+		"username": "username",
+		"password": "",
+	}
+	login(t, oj, iris.StatusOK, false, "密码为必填字段")
+}
 
 // 输入登陆密码格式错误
 func TestUserLoginWithErrorFormtPwd(t *testing.T) {

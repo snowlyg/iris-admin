@@ -1,4 +1,4 @@
-package controllers
+package validates
 
 import (
 	"fmt"

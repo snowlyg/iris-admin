@@ -8,6 +8,7 @@ import (
 
 	"IrisAdminApi/models"
 	"IrisAdminApi/transformer"
+	"IrisAdminApi/validates"
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
@@ -129,7 +130,7 @@ func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string) (
 }
 
 func CreateRole(name, disName, dec string) *models.Role {
-	rr := &models.RoleRequest{
+	rr := &validates.RoleRequest{
 		Name:        name,
 		DisplayName: disName,
 		Description: dec,
@@ -144,7 +145,7 @@ func CreateRole(name, disName, dec string) *models.Role {
 }
 
 func CreateUser() *models.User {
-	rr := &models.UserRequest{
+	rr := &validates.CreateUpdateUserRequest{
 		Username: "TUsername",
 		Password: "TPassword",
 		Name:     "TName",

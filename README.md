@@ -17,7 +17,7 @@
 - 数据支持 `mysql`，`sqlite3` 配置; `sqlite3` 需要下载 `gcc`, 并且在 `/temp` 目录下新建文件 `gorm.db` ,  `tgorm.db`。  [gcc 下载地址](http://mingw-w64.org/doku.php/download)
 - 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
 - 增加了 `excel` 文件接口导入实例
-- 前端采用了 `element-ui` 框架,代码位于 `resources/Front/`
+- 前端采用了 `element-ui` 框架,代码位于 `front`
 - 使用 `casbin` 做权限控制, `config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
 
@@ -90,6 +90,7 @@ cp conf.tml.example conf.tml
 
 >打包前端代码 
 ```shell script
+ cd front // 进入前端代码目录
  npm install  //加载依赖
  npm run-script build  //打包前端代码
 

@@ -17,7 +17,7 @@
 - 数据支持 `mysql`，`sqlite3` 配置; `sqlite3` 需要下载 `gcc`, 并且在 `/temp` 目录下新建文件 `gorm.db` ,  `tgorm.db`。  [gcc 下载地址](http://mingw-w64.org/doku.php/download)
 - 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
 - 增加了 `excel` 文件接口导入实例
-- 前端采用了 `element-ui` 框架，如果需要修改前端代码请移步 [https://github.com/snowlyg/IrisApiVueAdmin](https://github.com/snowlyg/IrisApiVueAdmin)
+- 前端采用了 `element-ui` 框架,代码位于 `resources/Front/`
 - 使用 `casbin` 做权限控制, `config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
 
@@ -53,10 +53,10 @@
 
 >拉取项目
 
-```
+```shell script
 git clone https://github.com/snowlyg/IrisAdminApi.git
 
-// github 克隆太慢可以用 gitee 地址：
+// github 克隆太慢可以用 gitee 地址:
 
 git clone https://gitee.com/dtouyu/IrisAdminApi.git
 
@@ -76,7 +76,7 @@ git clone https://gitee.com/dtouyu/IrisAdminApi.git
 >其他：https://gocenter.io
 >
 >golang 1.13 可以直接执行：
-```
+```shell script
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
 
@@ -84,14 +84,23 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 >项目配置文件 /config/conf.tml
 
-```
+```shell script
 cp conf.tml.example conf.tml
+```
+
+>打包前端代码 
+```shell script
+ npm install  //加载依赖
+ npm run-script build  //打包前端代码
+
+ // 如果是开发前端代码,使用热加载
+ npm run dev  
 ```
 
 >运行项目 
 
 [gowatch](https://gitee.com/silenceper/gowatch)
-```
+```shell script
 go get github.com/silenceper/gowatch
 
 gowatch //安装 gowatch 后才可以使用
@@ -103,7 +112,7 @@ go run main.go // go 命令
 ##### 单元测试 
 >http test
 
-```
+```shell script
  go test -v  //所有测试
  
  go test -run TestUserCreate -v //单个方法
@@ -123,7 +132,7 @@ go run main.go // go 命令
 有条件的可以开个 vpn ,如果没有可以根据下面的方法修改一下，访问就很快了
 >打开 /resource/apiDoc/index.html 修改里面的
 
-```
+```shell script
 https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 
 国内的 cdn

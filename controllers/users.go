@@ -26,10 +26,11 @@ import (
 * @apiPermission 登陆用户
  */
 func GetProfile(ctx iris.Context) {
+	username := ctx.Subdomain()
 	userId := ctx.Values().Get("auth_user_id").(uint)
 	user := models.GetUserById(userId)
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(true, userTransform(user), "操作成功"))
+	_, _ = ctx.JSON(ApiResource(true, userTransform(user), username))
 }
 
 /**

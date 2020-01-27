@@ -9,7 +9,7 @@ import (
 )
 
 func Register(api *iris.Application) {
-	main := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
+	main := api.Party("*.", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
 	{
 		api.Get("/", func(ctx iris.Context) { // 首页模块
 			_ = ctx.View("index.html")

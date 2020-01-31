@@ -136,7 +136,6 @@ func (u *User) CheckLogin(password string) (*Token, bool, string) {
 	if u.ID == 0 {
 		return nil, false, "用户不存在"
 	} else {
-		color.Yellow(fmt.Sprintf("user %s ,password %s", u.Username, u.Password))
 		if ok := bcrypt.Match(password, u.Password); ok {
 			token := jwt.NewTokenWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 				"exp": time.Now().Add(time.Hour * time.Duration(1)).Unix(),

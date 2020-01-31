@@ -41,7 +41,7 @@ func (u *User) GetUser() {
  * 通过 id 删除用户
  * @method DeleteUserById
  */
-func (u *User) DeleteUserById() {
+func (u *User) DeleteUser() {
 	if err := database.GetGdb().Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
 	}
@@ -144,7 +144,9 @@ func (u *User) CheckLogin(password string) (response Token, status bool, msg str
 		msg = "用户不存在"
 		return
 	} else {
-		if ok := bcrypt.Match(password, u.Password); ok {
+		salt, _ := bcrypt.Salt(10)
+		hash, _ := bcrypt.Hash(password, salt)
+		if ok := bcrypt.Match(hash, u.Password); ok {
 
 			token := jwt.NewTokenWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 				"exp": time.Now().Add(time.Hour * time.Duration(1)).Unix(),

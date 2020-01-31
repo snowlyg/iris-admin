@@ -3,8 +3,8 @@ package controllers
 import (
 	"time"
 
+	"IrisAdminApi/libs"
 	"IrisAdminApi/models"
-	"IrisAdminApi/tools"
 	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
 	"github.com/go-playground/validator/v10"
@@ -187,8 +187,8 @@ func DeleteRole(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllRoles(ctx iris.Context) {
-	offset := tools.ParseInt(ctx.FormValue("offset"), 1)
-	limit := tools.ParseInt(ctx.FormValue("limit"), 20)
+	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
+	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
 

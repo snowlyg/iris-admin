@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	"IrisAdminApi/libs"
 	"IrisAdminApi/models"
-	"IrisAdminApi/tools"
 	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
 	"github.com/360EntSecGroup-Skylar/excelize"
@@ -214,8 +214,8 @@ func ImportPermission(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllPermissions(ctx iris.Context) {
-	offset := tools.ParseInt(ctx.URLParam("offset"), 1)
-	limit := tools.ParseInt(ctx.URLParam("limit"), 20)
+	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
+	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
 	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
 

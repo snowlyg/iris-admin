@@ -179,7 +179,7 @@ func DeleteUser(ctx iris.Context) {
 		return
 	}
 
-	user.DeleteUserById()
+	user.DeleteUser()
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))

@@ -12,7 +12,7 @@ func TestUsers(t *testing.T) {
 }
 
 func TestUserProfile(t *testing.T) {
-	getMore(t, baseUrl+"users/profile", iris.StatusOK, true, "操作成功")
+	getMore(t, baseUrl+"users/profile", iris.StatusOK, true, "")
 }
 
 func TestUserCreate(t *testing.T) {

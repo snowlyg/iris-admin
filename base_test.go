@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"IrisAdminApi/config"
+	"IrisAdminApi/database"
 	"IrisAdminApi/models"
 	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
@@ -25,22 +27,13 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-
-	// 设置静态资源
-	Sc = iris.TOML("./config/conf.tml")
-	rc = getSysConf()
-
-	// 初始化app
-	app = NewApp(rc)
-
+	rc = config.GetTfConf()
+	app = NewApp(rc) // 初始化app
 	flag.Parse()
 	exitCode := m.Run()
-
 	// 删除测试数据表，保持测试环境
-	models.Db.DropTable("users", "roles", "permissions", "oauth_tokens")
-
+	database.GetGdb().DropTable("users", "roles", "permissions", "oauth_tokens")
 	os.Exit(exitCode)
-
 }
 
 // 单元测试 login 方法
@@ -152,16 +145,16 @@ func CreateUser() *models.User {
 		RoleIds:  []uint{},
 	}
 
-	user := models.GetUserByUserName("TUsername")
+	user := models.NewUser(0, "TUsername")
 	if user.ID == 0 {
-		return models.CreateUser(rr)
+		user.CreateUser(rr)
+		return user
 	} else {
 		return user
 	}
 }
 
 func GetOauthToken(e *httpexpect.Expect) string {
-
 	if len(token) > 0 {
 		return token
 	}

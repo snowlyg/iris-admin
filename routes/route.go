@@ -2,14 +2,14 @@ package routes
 
 import (
 	"IrisAdminApi/controllers"
+	"IrisAdminApi/database"
 	"IrisAdminApi/middleware"
-	"IrisAdminApi/models"
 	"github.com/betacraft/yaag/irisyaag"
 	"github.com/kataras/iris/v12"
 )
 
 func Register(api *iris.Application) {
-	main := api.Party("*.", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
+	main := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
 	{
 		api.Get("/", func(ctx iris.Context) { // 首页模块
 			_ = ctx.View("index.html")
@@ -24,7 +24,7 @@ func Register(api *iris.Application) {
 			v1.Post("/admin/login", controllers.UserLogin)
 			v1.PartyFunc("/admin", func(admin iris.Party) {
 				v1.Use(irisyaag.New())
-				casbinMiddleware := middleware.New(models.Enforcer)                  //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
+				casbinMiddleware := middleware.New(database.GetEnforcer())           //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				admin.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				admin.Get("/logout", controllers.UserLogout).Name = "退出"
 

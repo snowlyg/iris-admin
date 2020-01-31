@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"IrisAdminApi/database"
 	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
@@ -21,51 +22,27 @@ type User struct {
 	Password string `gorm:"not null VARCHAR(191)"`
 }
 
-/**
- * 校验用户登录
- * @method UserAdminCheckLogin
- * @param  {[type]}       username string [description]
- */
-func UserAdminCheckLogin(username string) *User {
-	user := new(User)
-	IsNotFound(Db.Where("username = ?", username).First(user).Error)
-
-	return user
+func NewUser(id uint, username string) *User {
+	return &User{
+		Model: gorm.Model{
+			ID:        id,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		Username: username,
+	}
 }
 
-/**
- * 通过 id 获取 user 记录
- * @method GetUserById
- * @param  {[type]}       user  *User [description]
- */
-func GetUserById(id uint) *User {
-	user := new(User)
-	IsNotFound(Db.Where("id= ?", id).First(user).Error)
-	return user
-}
-
-/**
- * 通过 username 获取 user 记录
- * @method GetUserByUserName
- * @param  {[type]}       user  *User [description]
- */
-func GetUserByUserName(username string) *User {
-	user := new(User)
-	IsNotFound(Db.Where("username= ?", username).First(user).Error)
-	return user
+func (u *User) GetUser() {
+	IsNotFound(database.GetGdb().First(u).Error)
 }
 
 /**
  * 通过 id 删除用户
  * @method DeleteUserById
  */
-func DeleteUserById(id uint) {
-	u := &User{
-		Model: gorm.Model{
-			ID: id,
-		},
-	}
-	if err := Db.Delete(u).Error; err != nil {
+func (u *User) DeleteUserById() {
+	if err := database.GetGdb().Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
 	}
 }
@@ -96,21 +73,21 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateUser(aul *validates.CreateUpdateUserRequest) (user *User) {
-	salt, _ := bcrypt.Salt(10)
-	hash, _ := bcrypt.Hash(aul.Password, salt)
+func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
+	//salt, _ := bcrypt.Salt(10)
+	//hash, _ := bcrypt.Hash(aul.Password, salt)
 
-	user = &User{
-		Username: aul.Username,
-		Password: hash,
-		Name:     aul.Name,
-	}
+	//user = &User{
+	//	Username: aul.Username,
+	//	Password: hash,
+	//	Name:     aul.Name,
+	//}
 
-	if err := Db.Create(user).Error; err != nil {
+	if err := database.GetGdb().Create(u).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 	}
 
-	addRoles(aul, user)
+	addRoles(aul, u)
 
 	return
 }
@@ -122,36 +99,34 @@ func CreateUser(aul *validates.CreateUpdateUserRequest) (user *User) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateUser(uj *validates.CreateUpdateUserRequest, id uint) *User {
-	salt, _ := bcrypt.Salt(10)
-	hash, _ := bcrypt.Hash(uj.Password, salt)
+func (u *User) UpdateUser(uj *validates.CreateUpdateUserRequest) {
+	//salt, _ := bcrypt.Salt(10)
+	//hash, _ := bcrypt.Hash(uj.Password, salt)
+	//
+	//user := &User{
+	//	Model: gorm.Model{
+	//		ID: id,
+	//	},
+	//	Password: hash,
+	//}
 
-	user := &User{
-		Model: gorm.Model{
-			ID: id,
-		},
-		Password: hash,
-	}
-
-	if err := Db.Model(user).Updates(uj).Error; err != nil {
+	if err := database.GetGdb().Model(u).Updates(uj).Error; err != nil {
 		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
 	}
 
-	addRoles(uj, user)
-
-	return user
+	addRoles(uj, u)
 }
 
 func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
 	if len(uj.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
-		if _, err = Enforcer.DeleteRolesForUser(userId); err != nil {
+		if _, err := database.GetEnforcer().DeleteRolesForUser(userId); err != nil {
 			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 		}
 
 		for _, roleId := range uj.RoleIds {
 			roleId := strconv.FormatUint(uint64(roleId), 10)
-			if _, err = Enforcer.AddRoleForUser(userId, roleId); err != nil {
+			if _, err := database.GetEnforcer().AddRoleForUser(userId, roleId); err != nil {
 				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 			}
 		}
@@ -164,13 +139,12 @@ func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
  * @param  {[type]}  id       int    [description]
  * @param  {[type]}  password string [description]
  */
-func CheckLogin(username, password string) (response Token, status bool, msg string) {
-	user := UserAdminCheckLogin(username)
-	if user.ID == 0 {
+func (u *User) CheckLogin(password string) (response Token, status bool, msg string) {
+	if u.ID == 0 {
 		msg = "用户不存在"
 		return
 	} else {
-		if ok := bcrypt.Match(password, user.Password); ok {
+		if ok := bcrypt.Match(password, u.Password); ok {
 
 			token := jwt.NewTokenWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 				"exp": time.Now().Add(time.Hour * time.Duration(1)).Unix(),
@@ -180,7 +154,7 @@ func CheckLogin(username, password string) (response Token, status bool, msg str
 
 			oauthToken := new(OauthToken)
 			oauthToken.Token = tokenString
-			oauthToken.UserId = user.ID
+			oauthToken.UserId = u.ID
 			oauthToken.Secret = "secret"
 			oauthToken.Revoked = false
 			oauthToken.ExpressIn = time.Now().Add(time.Hour * time.Duration(1)).Unix()
@@ -205,7 +179,8 @@ func CheckLogin(username, password string) (response Token, status bool, msg str
 * @param  {[type]} ids string [description]
  */
 func UserAdminLogout(userId uint) bool {
-	ot := UpdateOauthTokenByUserId(userId)
+	ot := OauthToken{}
+	ot.UpdateOauthTokenByUserId(userId)
 	return ot.Revoked
 }
 
@@ -214,7 +189,7 @@ func UserAdminLogout(userId uint) bool {
 *@param role_id uint
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
-func CreateSystemAdmin(roleId uint, rc *transformer.Conf) *User {
+func (u *User) CreateSystemAdmin(roleId uint, rc *transformer.Conf) {
 	aul := &validates.CreateUpdateUserRequest{
 		Username: rc.TestData.UserName,
 		Password: rc.TestData.Pwd,
@@ -222,15 +197,8 @@ func CreateSystemAdmin(roleId uint, rc *transformer.Conf) *User {
 		RoleIds:  []uint{roleId},
 	}
 
-	user := GetUserByUserName(aul.Username)
-	if user.ID == 0 {
-		return CreateUser(aul)
-	} else {
-		return user
+	u.Username = aul.Username
+	if u.ID == 0 {
+		u.CreateUser(aul)
 	}
 }
-
-//func (u *User) AfterUpdate(tx *gorm.DB) (err error) {
-//	fmt.Println( fmt.Sprintf("AfterUpdate: %s", u.Name))
-//	return
-//}

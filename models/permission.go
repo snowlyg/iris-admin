@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 
+	"IrisAdminApi/database"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
@@ -23,7 +24,7 @@ type Permission struct {
  */
 func GetPermissionById(id uint) *Permission {
 	permission := new(Permission)
-	IsNotFound(Db.Where("id = ?", id).First(permission).Error)
+	IsNotFound(database.GetGdb().Where("id = ?", id).First(permission).Error)
 
 	return permission
 }
@@ -35,7 +36,7 @@ func GetPermissionById(id uint) *Permission {
  */
 func GetPermissionByNameAct(name, act string) *Permission {
 	permission := new(Permission)
-	IsNotFound(Db.Where("name = ?", name).Where("act = ?", act).First(permission).Error)
+	IsNotFound(database.GetGdb().Where("name = ?", name).Where("act = ?", act).First(permission).Error)
 	return permission
 }
 
@@ -47,7 +48,7 @@ func DeletePermissionById(id uint) {
 	u := new(Permission)
 	u.ID = id
 
-	if err := Db.Delete(u).Error; err != nil {
+	if err := database.GetGdb().Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
 	}
 }
@@ -81,7 +82,7 @@ func CreatePermission(aul *validates.PermissionRequest) (permission *Permission)
 	permission.DisplayName = aul.DisplayName
 	permission.Description = aul.Description
 	permission.Act = aul.Act
-	if err := Db.Create(permission).Error; err != nil {
+	if err := database.GetGdb().Create(permission).Error; err != nil {
 		color.Red(fmt.Sprintf("CreatePermissionError:%s \n", err))
 	}
 	return
@@ -98,7 +99,7 @@ func UpdatePermission(pj *validates.PermissionRequest, id uint) (permission *Per
 	permission = new(Permission)
 	permission.ID = id
 
-	if err := Db.Model(&permission).Updates(pj).Error; err != nil {
+	if err := database.GetGdb().Model(&permission).Updates(pj).Error; err != nil {
 		color.Red(fmt.Sprintf("UpdatePermissionError:%s \n", err))
 	}
 

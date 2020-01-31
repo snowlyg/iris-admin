@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"IrisAdminApi/database"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
@@ -24,7 +25,7 @@ type Role struct {
  */
 func GetRoleById(id uint) *Role {
 	role := new(Role)
-	IsNotFound(Db.Where("id = ?", id).First(role).Error)
+	IsNotFound(database.GetGdb().Where("id = ?", id).First(role).Error)
 	return role
 }
 
@@ -35,7 +36,7 @@ func GetRoleById(id uint) *Role {
  */
 func GetRoleByName(name string) *Role {
 	role := new(Role)
-	IsNotFound(Db.Where("name = ?", name).First(role).Error)
+	IsNotFound(database.GetGdb().Where("name = ?", name).First(role).Error)
 	return role
 }
 
@@ -50,7 +51,7 @@ func DeleteRoleById(id uint) {
 		},
 	}
 	u.ID = id
-	if err := Db.Delete(u).Error; err != nil {
+	if err := database.GetGdb().Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 	}
 }
@@ -85,7 +86,7 @@ func CreateRole(aul *validates.RoleRequest, permIds []uint) (role *Role) {
 		Description: aul.Description,
 	}
 
-	if err := Db.Create(role).Error; err != nil {
+	if err := database.GetGdb().Create(role).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateRoleErr:%v \n", err))
 	}
 
@@ -97,13 +98,13 @@ func CreateRole(aul *validates.RoleRequest, permIds []uint) (role *Role) {
 func addPerms(permIds []uint, role *Role) {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
-		if _, err := Enforcer.DeletePermissionsForUser(roleId); err != nil {
+		if _, err := database.GetEnforcer().DeletePermissionsForUser(roleId); err != nil {
 			color.Red(fmt.Sprintf("AppendPermsErr:%s \n", err))
 		}
 		var perms []Permission
-		Db.Where("id in (?)", permIds).Find(&perms)
+		database.GetGdb().Where("id in (?)", permIds).Find(&perms)
 		for _, perm := range perms {
-			if _, err := Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
+			if _, err := database.GetEnforcer().AddPolicy(roleId, perm.Name, perm.Act); err != nil {
 				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
 			}
 		}
@@ -124,7 +125,7 @@ func UpdateRole(rj *validates.RoleRequest, id uint, permIds []uint) (role *Role)
 		},
 	}
 
-	if err := Db.Model(&role).Updates(rj).Error; err != nil {
+	if err := database.GetGdb().Model(&role).Updates(rj).Error; err != nil {
 		color.Red(fmt.Sprintf("UpdatRoleErr:%s \n", err))
 	}
 
@@ -135,7 +136,7 @@ func UpdateRole(rj *validates.RoleRequest, id uint, permIds []uint) (role *Role)
 
 // 角色权限
 func RolePermisions(id uint) []*Permission {
-	perms := Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(id), 10))
+	perms := database.GetEnforcer().GetPermissionsForUser(strconv.FormatUint(uint64(id), 10))
 	var ps []*Permission
 	for _, perm := range perms {
 		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {

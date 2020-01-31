@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"IrisAdminApi/database"
 	"IrisAdminApi/validates"
@@ -18,15 +19,37 @@ type Role struct {
 	Description string `gorm:"VARCHAR(191)"`
 }
 
+func NewRole(id uint, name string) *Role {
+	return &Role{
+		Model: gorm.Model{
+			ID:        id,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		Name: name,
+	}
+}
+
+func NewRoleByStruct(rr *validates.RoleRequest) *Role {
+	return &Role{
+		Model: gorm.Model{
+			ID:        0,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		Name:        rr.Name,
+		DisplayName: rr.DisplayName,
+		Description: rr.Description,
+	}
+}
+
 /**
  * 通过 id 获取 role 记录
  * @method GetRoleById
  * @param  {[type]}       role  *Role [description]
  */
-func GetRoleById(id uint) *Role {
-	role := new(Role)
-	IsNotFound(database.GetGdb().Where("id = ?", id).First(role).Error)
-	return role
+func (r *Role) GetRoleById() {
+	IsNotFound(database.GetGdb().Where("id = ?", r.ID).First(r).Error)
 }
 
 /**
@@ -34,24 +57,16 @@ func GetRoleById(id uint) *Role {
  * @method GetRoleByName
  * @param  {[type]}       role  *Role [description]
  */
-func GetRoleByName(name string) *Role {
-	role := new(Role)
-	IsNotFound(database.GetGdb().Where("name = ?", name).First(role).Error)
-	return role
+func (r *Role) GetRoleByName() {
+	IsNotFound(database.GetGdb().Where("name = ?", r.Name).First(r).Error)
 }
 
 /**
  * 通过 id 删除角色
  * @method DeleteRoleById
  */
-func DeleteRoleById(id uint) {
-	u := &Role{
-		Model: gorm.Model{
-			ID: id,
-		},
-	}
-	u.ID = id
-	if err := database.GetGdb().Delete(u).Error; err != nil {
+func (r *Role) DeleteRoleById() {
+	if err := database.GetGdb().Delete(r).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 	}
 }
@@ -79,18 +94,12 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreateRole(aul *validates.RoleRequest, permIds []uint) (role *Role) {
-	role = &Role{
-		Name:        aul.Name,
-		DisplayName: aul.DisplayName,
-		Description: aul.Description,
-	}
-
-	if err := database.GetGdb().Create(role).Error; err != nil {
+func (r *Role) CreateRole(permIds []uint) {
+	if err := database.GetGdb().Create(r).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateRoleErr:%v \n", err))
 	}
 
-	addPerms(permIds, role)
+	addPerms(permIds, r)
 
 	return
 }
@@ -118,52 +127,29 @@ func addPerms(permIds []uint, role *Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdateRole(rj *validates.RoleRequest, id uint, permIds []uint) (role *Role) {
-	role = &Role{
-		Model: gorm.Model{
-			ID: id,
-		},
-	}
+func (r *Role) UpdateRole(rj *validates.RoleRequest, permIds []uint) {
 
-	if err := database.GetGdb().Model(&role).Updates(rj).Error; err != nil {
+	if err := database.Update(r, rj); err != nil {
 		color.Red(fmt.Sprintf("UpdatRoleErr:%s \n", err))
 	}
 
-	addPerms(permIds, role)
+	addPerms(permIds, r)
 
 	return
 }
 
 // 角色权限
-func RolePermisions(id uint) []*Permission {
-	perms := database.GetEnforcer().GetPermissionsForUser(strconv.FormatUint(uint64(id), 10))
+func (r *Role) RolePermisions() []*Permission {
+	perms := database.GetPermissionsForUser(r.ID)
 	var ps []*Permission
 	for _, perm := range perms {
 		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {
-			p := GetPermissionByNameAct(perm[1], perm[2])
+			p := NewPermission(0, perm[1], perm[2])
+			p.GetPermissionByNameAct()
 			if p.ID > 0 {
 				ps = append(ps, p)
 			}
 		}
 	}
 	return ps
-}
-
-/**
-*创建系统管理员
-*@return   *models.AdminRoleTranform api格式化后的数据格式
- */
-func CreateSystemAdminRole(permIds []uint) *Role {
-	aul := &validates.RoleRequest{
-		Name:        "admin",
-		DisplayName: "超级管理员",
-		Description: "超级管理员",
-	}
-
-	role := GetRoleByName(aul.Name)
-	if role.ID == 0 {
-		return CreateRole(aul, permIds)
-	} else {
-		return role
-	}
 }

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"IrisAdminApi/database"
-	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
@@ -33,12 +32,25 @@ func NewUser(id uint, username string) *User {
 	}
 }
 
+func NewUserByStruct(ru *validates.CreateUpdateUserRequest) *User {
+	return &User{
+		Model: gorm.Model{
+			ID:        0,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		Username: ru.Username,
+		Name:     ru.Name,
+		Password: HashPassword(ru.Password),
+	}
+}
+
 func (u *User) GetUserByUsername() {
 	IsNotFound(database.GetGdb().Where("username = ?", u.Username).First(u).Error)
 }
 
 func (u *User) GetUserById() {
-	IsNotFound(database.GetGdb().First(u).Error)
+	IsNotFound(database.GetGdb().Where("id = ?", u.ID).First(u).Error)
 }
 
 /**
@@ -97,7 +109,7 @@ func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
  */
 func (u *User) UpdateUser(uj *validates.CreateUpdateUserRequest) {
 	uj.Password = HashPassword(uj.Password)
-	if err := database.GetGdb().Model(u).Updates(uj).Error; err != nil {
+	if err := database.Update(u, uj); err != nil {
 		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
 	}
 
@@ -169,23 +181,4 @@ func UserAdminLogout(userId uint) bool {
 	ot := OauthToken{}
 	ot.UpdateOauthTokenByUserId(userId)
 	return ot.Revoked
-}
-
-/**
-*创建系统管理员
-*@param role_id uint
-*@return   *models.AdminUserTranform api格式化后的数据格式
- */
-func (u *User) CreateSystemAdmin(roleId uint, rc *transformer.Conf) {
-	aul := &validates.CreateUpdateUserRequest{
-		Username: rc.TestData.UserName,
-		Password: rc.TestData.Pwd,
-		Name:     rc.TestData.Name,
-		RoleIds:  []uint{roleId},
-	}
-
-	u.Username = aul.Username
-	if u.ID == 0 {
-		u.CreateUser(aul)
-	}
 }

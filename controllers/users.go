@@ -90,7 +90,7 @@ func CreateUser(ctx iris.Context) {
 		}
 	}
 
-	user := models.NewUser(0, "")
+	user := models.NewUserByStruct(aul)
 	user.CreateUser(aul)
 	ctx.StatusCode(iris.StatusOK)
 	if user.ID == 0 {
@@ -223,13 +223,14 @@ func userTransform(user *models.User) *transformer.User {
 	g := gf.NewTransform(u, user, time.RFC3339)
 	_ = g.Transformer()
 
-	roleIds, _ := database.GetEnforcer().GetRolesForUser(strconv.FormatUint(uint64(user.ID), 10))
+	roleIds := database.GetRolesForUser(user.ID)
 	var ris []int
 	var roleName string
 	for num, roleId := range roleIds {
 		ri, _ := strconv.Atoi(roleId)
 		ris = append(ris, ri)
-		role := models.GetRoleById(uint(ri))
+		role := models.NewRole(uint(ri), "")
+		role.GetRoleById()
 		if num == len(roleIds)-1 {
 			roleName += role.DisplayName
 		} else {

@@ -26,12 +26,13 @@ import (
  */
 func GetRole(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	role := models.GetRoleById(id)
+	role := models.NewRole(id, "")
+	role.GetRoleById()
 
 	ctx.StatusCode(iris.StatusOK)
 
 	rr := roleTransform(role)
-	rr.Perms = permsTransform(models.RolePermisions(role.ID))
+	rr.Perms = permsTransform(role.RolePermisions())
 	_, _ = ctx.JSON(ApiResource(true, rr, "操作成功"))
 }
 
@@ -72,10 +73,11 @@ func CreateRole(ctx iris.Context) {
 		}
 	}
 
-	u := models.CreateRole(roleJson, roleJson.PermissionsIds)
+	role := models.NewRoleByStruct(roleJson)
+	role.CreateRole(roleJson.PermissionsIds)
 	ctx.StatusCode(iris.StatusOK)
-	if u.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+	if role.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(false, role, "操作失败"))
 		return
 	} else {
 		_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
@@ -123,7 +125,8 @@ func UpdateRole(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	role := models.GetRoleById(id)
+	role := models.NewRole(id, "")
+	role.GetRoleById()
 	if role.Name == "admin" {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(false, nil, "不能编辑管理员角色"))
@@ -135,10 +138,10 @@ func UpdateRole(ctx iris.Context) {
 	roleJson.Description = roleForm.Description
 	roleJson.DisplayName = roleForm.DisplayName
 
-	u := models.UpdateRole(roleJson, id, roleForm.PermissionsIds)
+	role.UpdateRole(roleJson, roleForm.PermissionsIds)
 	ctx.StatusCode(iris.StatusOK)
-	if u.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(false, u, "操作失败"))
+	if role.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(false, role, "操作失败"))
 		return
 	} else {
 		_, _ = ctx.JSON(ApiResource(true, nil, "操作成功"))
@@ -161,14 +164,15 @@ func UpdateRole(ctx iris.Context) {
  */
 func DeleteRole(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	role := models.GetRoleById(id)
+	role := models.NewRole(id, "")
+	role.GetRoleById()
 	if role.Name == "admin" {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(true, nil, "不能删除管理员角色"))
 		return
 	}
 
-	models.DeleteRoleById(id)
+	role.DeleteRoleById()
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, nil, "删除成功"))

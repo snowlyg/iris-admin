@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"IrisAdminApi/config"
@@ -12,37 +11,10 @@ import (
 	"IrisAdminApi/models"
 	"IrisAdminApi/routes"
 	"IrisAdminApi/transformer"
-	"IrisAdminApi/validates"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/core/router"
 )
-
-// 获取路由信息
-func getRoutes(api *iris.Application) []*validates.PermissionRequest {
-	rs := api.APIBuilder.GetRoutes()
-	var rrs []*validates.PermissionRequest
-	for _, s := range rs {
-		if !isPermRoute(s) {
-			path := strings.Replace(s.Path, ":id", "*", 1)
-			rr := &validates.PermissionRequest{Name: path, DisplayName: s.Name, Description: s.Name, Act: s.Method}
-			rrs = append(rrs, rr)
-		}
-	}
-	return rrs
-}
-
-// 过滤非必要权限
-func isPermRoute(s *router.Route) bool {
-	exceptRouteName := []string{"OPTIONS", "GET", "POST", "HEAD", "PUT", "PATCH"}
-	for _, er := range exceptRouteName {
-		if strings.Contains(s.Name, er) {
-			return true
-		}
-	}
-	return false
-}
 
 func newLogFile() *os.File {
 	path := "./logs/"
@@ -85,9 +57,7 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 		},
 	})
 
-	routes.Register(api)                   //注册路由
-	apiRoutes := getRoutes(api)            // 获取路由数据
-	models.CreateSystemData(rc, apiRoutes) // 初始化系统数据 管理员账号，角色，权限
+	routes.Register(api) //注册路由
 
 	return api
 }
@@ -98,7 +68,7 @@ func main() {
 
 	cf := config.GetTfConf()
 	api := NewApp(cf)
-	//api.Logger().SetOutput(f) //记录日志
+	api.Logger().SetOutput(f) //记录日志
 	err := api.Run(iris.Addr(cf.App.Port), iris.WithConfiguration(config.GetIrisConf()))
 	if err != nil {
 		color.Yellow(fmt.Sprintf("项目运行结束: %v", err))

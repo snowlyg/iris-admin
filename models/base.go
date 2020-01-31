@@ -19,10 +19,66 @@ func CreateSystemData(rc *transformer.Conf, perms []*validates.PermissionRequest
 		permIds := CreateSystemAdminPermission(perms) //初始化权限
 		role := CreateSystemAdminRole(permIds)        //初始化角色
 		if role.ID != 0 {
-			user := NewUser(0, "")
-			user.CreateSystemAdmin(role.ID, rc) //初始化管理员
+			CreateSystemAdmin(role.ID, rc) //初始化管理员
 		}
 	}
+}
+
+/**
+*创建系统管理员
+*@param role_id uint
+*@return   *models.AdminUserTranform api格式化后的数据格式
+ */
+func CreateSystemAdmin(roleId uint, rc *transformer.Conf) {
+	aul := &validates.CreateUpdateUserRequest{
+		Username: rc.TestData.UserName,
+		Password: rc.TestData.Pwd,
+		Name:     rc.TestData.Name,
+		RoleIds:  []uint{roleId},
+	}
+
+	user := NewUserByStruct(aul)
+	user.GetUserByUsername()
+	if user.ID == 0 {
+		user.CreateUser(aul)
+	}
+}
+
+/**
+*创建系统管理员
+*@return   *models.AdminRoleTranform api格式化后的数据格式
+ */
+func CreateSystemAdminRole(permIds []uint) *Role {
+	rr := &validates.RoleRequest{
+		Name:        "admin",
+		DisplayName: "管理员",
+		Description: "管理员",
+	}
+	role := NewRoleByStruct(rr)
+	role.GetRoleByName()
+	if role.ID == 0 {
+		role.CreateRole(permIds)
+	}
+
+	return role
+}
+
+/**
+ * 创建系统权限
+ * @return
+ */
+func CreateSystemAdminPermission(perms []*validates.PermissionRequest) []uint {
+	var permIds []uint
+	for _, perm := range perms {
+		p := NewPermission(0, perm.Name, perm.Act)
+		p.GetPermissionByNameAct()
+		if p.ID != 0 {
+			continue
+		}
+		p.CreatePermission()
+		permIds = append(permIds, p.ID)
+	}
+	return permIds
 }
 
 func IsNotFound(err error) {
@@ -57,4 +113,12 @@ func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 		db.Limit(limit)
 	}
 	return db
+}
+
+func DelAllData() {
+	database.GetGdb().Unscoped().Delete(&OauthToken{})
+	database.GetGdb().Unscoped().Delete(&Permission{})
+	database.GetGdb().Unscoped().Delete(&Role{})
+	database.GetGdb().Unscoped().Delete(&User{})
+	database.GetGdb().Exec("DELETE FROM casbin_rule;")
 }

@@ -22,6 +22,7 @@ func Register(api *iris.Application) {
 		v1 := main.Party("/v1")
 		{
 			v1.Post("/admin/login", controllers.UserLogin)
+			v1.Get("/admin/resetData", controllers.ResetData)
 			v1.PartyFunc("/admin", func(admin iris.Party) {
 				v1.Use(irisyaag.New())
 				casbinMiddleware := middleware.New(database.GetEnforcer())           //casbin for gorm                                                   // <- IMPORTANT, register the middleware.

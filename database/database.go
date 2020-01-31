@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -30,26 +31,21 @@ type DataBase struct {
 func getDataBase() *DataBase {
 	once.Do(func() {
 		var dirverName string
-		var casbinConn string
 		var conn string
 
 		cf := config.GetTfConf()
 		if cf.App.DirverType == "Sqlite" {
 			dirverName = cf.Sqlite.DirverName
 			if isTestEnv() {
-				casbinConn = cf.Sqlite.TConnect
 				conn = cf.Sqlite.TConnect
 			} else {
-				casbinConn = cf.Sqlite.Connect
 				conn = cf.Sqlite.Connect
 			}
 		} else if cf.App.DirverType == "Mysql" {
 			dirverName = cf.Mysql.DirverName
 			if isTestEnv() {
-				casbinConn = cf.Mysql.Connect
 				conn = cf.Mysql.Connect + cf.Mysql.TName + "?charset=utf8&parseTime=True&loc=Local"
 			} else {
-				casbinConn = cf.Mysql.Connect
 				conn = cf.Mysql.Connect + cf.Mysql.Name + "?charset=utf8&parseTime=True&loc=Local"
 			}
 		}
@@ -59,7 +55,7 @@ func getDataBase() *DataBase {
 			color.Red(fmt.Sprintf("gorm open 错误: %v", err))
 		}
 
-		c, err := gormadapter.NewAdapter(dirverName, casbinConn) // Your driver and data source.
+		c, err := gormadapter.NewAdapter(dirverName, conn, true) // Your driver and data source.
 		if err != nil {
 			color.Red(fmt.Sprintf("NewAdapter 错误: %v", err))
 		}
@@ -91,4 +87,28 @@ func isTestEnv() bool {
 		}
 	}
 	return false
+}
+func Update(v, d interface{}) error {
+	if err := GetGdb().Model(v).Updates(d).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetRolesForUser(uid uint) []string {
+	uids, err := GetEnforcer().GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
+	if err != nil {
+		color.Red(fmt.Sprintf("GetRolesForUser 错误: %v", err))
+		return []string{}
+	}
+
+	return uids
+}
+
+func GetPermissionsForUser(uid uint) [][]string {
+	return GetEnforcer().GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
+}
+
+func DropTables() {
+	GetGdb().DropTable("users", "roles", "permissions", "oauth_tokens", "casbin_rule")
 }

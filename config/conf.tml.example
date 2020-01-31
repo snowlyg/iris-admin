@@ -31,5 +31,5 @@ Charset = "UTF-8"
 
     [Other.TestData]
           UserName = "username" #管理员用户名
-          Name = "name"  #管理员名称
+          Name = "超级管理员"  #管理员名称
           Pwd = "password" #管理员密码

@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"time"
 
 	"IrisAdminApi/database"
 	"IrisAdminApi/validates"
@@ -17,16 +18,39 @@ type Permission struct {
 	Act         string `gorm:"VARCHAR(191)"`
 }
 
+func NewPermission(id uint, name, act string) *Permission {
+	return &Permission{
+		Model: gorm.Model{
+			ID:        id,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		Name: name,
+		Act:  act,
+	}
+}
+
+func NewPermissionByStruct(jp *validates.PermissionRequest) *Permission {
+	return &Permission{
+		Model: gorm.Model{
+			ID:        0,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
+		Name:        jp.Name,
+		DisplayName: jp.DisplayName,
+		Description: jp.Description,
+		Act:         jp.Act,
+	}
+}
+
 /**
  * 通过 id 获取 permission 记录
  * @method GetPermissionById
  * @param  {[type]}       permission  *Permission [description]
  */
-func GetPermissionById(id uint) *Permission {
-	permission := new(Permission)
-	IsNotFound(database.GetGdb().Where("id = ?", id).First(permission).Error)
-
-	return permission
+func (p *Permission) GetPermissionById() {
+	IsNotFound(database.GetGdb().Where("id = ?", p.ID).First(p).Error)
 }
 
 /**
@@ -34,21 +58,16 @@ func GetPermissionById(id uint) *Permission {
  * @method GetPermissionByName
  * @param  {[type]}       permission  *Permission [description]
  */
-func GetPermissionByNameAct(name, act string) *Permission {
-	permission := new(Permission)
-	IsNotFound(database.GetGdb().Where("name = ?", name).Where("act = ?", act).First(permission).Error)
-	return permission
+func (p *Permission) GetPermissionByNameAct() {
+	IsNotFound(database.GetGdb().Where("name = ?", p.Name).Where("act = ?", p.Act).First(p).Error)
 }
 
 /**
  * 通过 id 删除权限
  * @method DeletePermissionById
  */
-func DeletePermissionById(id uint) {
-	u := new(Permission)
-	u.ID = id
-
-	if err := database.GetGdb().Delete(u).Error; err != nil {
+func (p *Permission) DeletePermissionById() {
+	if err := database.GetGdb().Delete(p).Error; err != nil {
 		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
 	}
 }
@@ -76,13 +95,8 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func CreatePermission(aul *validates.PermissionRequest) (permission *Permission) {
-	permission = new(Permission)
-	permission.Name = aul.Name
-	permission.DisplayName = aul.DisplayName
-	permission.Description = aul.Description
-	permission.Act = aul.Act
-	if err := database.GetGdb().Create(permission).Error; err != nil {
+func (p *Permission) CreatePermission() {
+	if err := database.GetGdb().Create(p).Error; err != nil {
 		color.Red(fmt.Sprintf("CreatePermissionError:%s \n", err))
 	}
 	return
@@ -95,30 +109,8 @@ func CreatePermission(aul *validates.PermissionRequest) (permission *Permission)
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func UpdatePermission(pj *validates.PermissionRequest, id uint) (permission *Permission) {
-	permission = new(Permission)
-	permission.ID = id
-
-	if err := database.GetGdb().Model(&permission).Updates(pj).Error; err != nil {
+func (p *Permission) UpdatePermission(pj *validates.PermissionRequest) {
+	if err := database.Update(p, pj); err != nil {
 		color.Red(fmt.Sprintf("UpdatePermissionError:%s \n", err))
 	}
-
-	return
-}
-
-/**
- * 创建系统权限
- * @return
- */
-func CreateSystemAdminPermission(perms []*validates.PermissionRequest) []uint {
-	var permIds []uint
-	for _, perm := range perms {
-		p := GetPermissionByNameAct(perm.Name, perm.Act)
-		if p.ID != 0 {
-			continue
-		}
-		pp := CreatePermission(perm)
-		permIds = append(permIds, pp.ID)
-	}
-	return permIds
 }

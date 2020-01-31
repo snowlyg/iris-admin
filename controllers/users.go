@@ -29,7 +29,7 @@ import (
 func GetProfile(ctx iris.Context) {
 	userId := ctx.Values().Get("auth_user_id").(uint)
 	user := models.NewUser(userId, "")
-	user.GetUser()
+	user.GetUserById()
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, userTransform(user), ""))
 }
@@ -49,7 +49,7 @@ func GetProfile(ctx iris.Context) {
 func GetUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	user := models.NewUser(id, "")
-	user.GetUser()
+	user.GetUserById()
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(true, userTransform(user), "操作成功"))

@@ -33,7 +33,11 @@ func NewUser(id uint, username string) *User {
 	}
 }
 
-func (u *User) GetUser() {
+func (u *User) GetUserByUsername() {
+	IsNotFound(database.GetGdb().Where("username = ?", u.Username).First(u).Error)
+}
+
+func (u *User) GetUserById() {
 	IsNotFound(database.GetGdb().First(u).Error)
 }
 
@@ -74,15 +78,7 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  * @param  {[type]} mp int    [description]
  */
 func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
-	//salt, _ := bcrypt.Salt(10)
-	//hash, _ := bcrypt.Hash(aul.Password, salt)
-
-	//user = &User{
-	//	Username: aul.Username,
-	//	Password: hash,
-	//	Name:     aul.Name,
-	//}
-
+	u.Password = HashPassword(aul.Password)
 	if err := database.GetGdb().Create(u).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 	}
@@ -100,21 +96,18 @@ func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
  * @param  {[type]} mp int    [description]
  */
 func (u *User) UpdateUser(uj *validates.CreateUpdateUserRequest) {
-	//salt, _ := bcrypt.Salt(10)
-	//hash, _ := bcrypt.Hash(uj.Password, salt)
-	//
-	//user := &User{
-	//	Model: gorm.Model{
-	//		ID: id,
-	//	},
-	//	Password: hash,
-	//}
-
+	uj.Password = HashPassword(uj.Password)
 	if err := database.GetGdb().Model(u).Updates(uj).Error; err != nil {
 		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
 	}
 
 	addRoles(uj, u)
+}
+
+func HashPassword(pwd string) string {
+	salt, _ := bcrypt.Salt(10)
+	hash, _ := bcrypt.Hash(pwd, salt)
+	return hash
 }
 
 func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
@@ -139,15 +132,12 @@ func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
  * @param  {[type]}  id       int    [description]
  * @param  {[type]}  password string [description]
  */
-func (u *User) CheckLogin(password string) (response Token, status bool, msg string) {
+func (u *User) CheckLogin(password string) (*Token, bool, string) {
 	if u.ID == 0 {
-		msg = "用户不存在"
-		return
+		return nil, false, "用户不存在"
 	} else {
-		salt, _ := bcrypt.Salt(10)
-		hash, _ := bcrypt.Hash(password, salt)
-		if ok := bcrypt.Match(hash, u.Password); ok {
-
+		color.Yellow(fmt.Sprintf("user %s ,password %s", u.Username, u.Password))
+		if ok := bcrypt.Match(password, u.Password); ok {
 			token := jwt.NewTokenWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 				"exp": time.Now().Add(time.Hour * time.Duration(1)).Unix(),
 				"iat": time.Now().Unix(),
@@ -162,15 +152,11 @@ func (u *User) CheckLogin(password string) (response Token, status bool, msg str
 			oauthToken.ExpressIn = time.Now().Add(time.Hour * time.Duration(1)).Unix()
 			oauthToken.CreatedAt = time.Now()
 
-			response = oauthToken.OauthTokenCreate()
-			status = true
-			msg = "登陆成功"
+			response := oauthToken.OauthTokenCreate()
 
-			return
-
+			return response, true, "登陆成功"
 		} else {
-			msg = "用户名或密码错误"
-			return
+			return nil, false, "用户名或密码错误"
 		}
 	}
 }

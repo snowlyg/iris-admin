@@ -34,7 +34,7 @@ func getRoutes(rs []context.RouteReadOnly) []*validates.PermissionRequest {
 
 // 过滤非必要权限
 func isPermRoute(s context.RouteReadOnly) bool {
-	exceptRouteName := []string{"OPTIONS", "GET", "POST", "HEAD", "PUT", "PATCH"}
+	exceptRouteName := []string{"OPTIONS", "GET", "POST", "HEAD", "PUT", "PATCH", "payload"}
 	for _, er := range exceptRouteName {
 		if strings.Contains(s.Name(), er) {
 			return true

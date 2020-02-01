@@ -9,6 +9,7 @@ import (
 	"IrisAdminApi/config"
 	"IrisAdminApi/database"
 	"IrisAdminApi/models"
+	"IrisAdminApi/routepath"
 	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
 	"github.com/gavv/httpexpect"
@@ -27,19 +28,21 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
+
 	rc = config.GetTfConf()
 	app = NewApp(rc) // 初始化app
+	routes := routepath.GetRoutes(app.APIBuilder.GetRoutes())
+	models.CreateSystemData(rc, routes)
 
 	flag.Parse()
 	exitCode := m.Run()
-	// 删除测试数据表，保持测试环境
-	database.DropTables()
+
+	database.DropTables() // 删除测试数据表，保持测试环境
 	os.Exit(exitCode)
 }
 
 // 单元测试 login 方法
 func login(t *testing.T, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	getOnAuth(t, baseUrl+"resetData", iris.StatusOK, true, "重置数据成功")
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	e.POST(loginUrl).WithJSON(Object).
 		Expect().Status(StatusCode).
@@ -50,7 +53,6 @@ func login(t *testing.T, Object interface{}, StatusCode int, Status bool, Msg st
 
 // 单元测试 create 方法
 func create(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	getOnAuth(t, baseUrl+"resetData", iris.StatusOK, true, "重置数据成功")
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	ob := e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
@@ -62,7 +64,6 @@ func create(t *testing.T, url string, Object interface{}, StatusCode int, Status
 
 // 单元测试 update 方法
 func update(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	getOnAuth(t, baseUrl+"resetData", iris.StatusOK, true, "重置数据成功")
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
@@ -74,7 +75,6 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Status
 
 // 单元测试 getOne 方法
 func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	getOnAuth(t, baseUrl+"resetData", iris.StatusOK, true, "重置数据成功")
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
@@ -93,7 +93,6 @@ func getOnAuth(t *testing.T, url string, StatusCode int, Status bool, Msg string
 
 // 单元测试 bImport 方法
 func bImport(t *testing.T, url string, StatusCode int, Status bool, Msg string, _ map[string]interface{}) (e *httpexpect.Expect) {
-	getOnAuth(t, baseUrl+"resetData", iris.StatusOK, true, "重置数据成功")
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		WithMultipart().
@@ -106,7 +105,6 @@ func bImport(t *testing.T, url string, StatusCode int, Status bool, Msg string, 
 
 // 单元测试 getMore 方法
 func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	getOnAuth(t, baseUrl+"resetData", iris.StatusOK, true, "重置数据成功")
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
@@ -117,7 +115,6 @@ func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string) 
 
 // 单元测试 delete 方法
 func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	getOnAuth(t, baseUrl+"resetData", iris.StatusOK, true, "重置数据成功")
 	e = httptest.New(t, app, httptest.Configuration{Debug: true})
 	e.DELETE(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).

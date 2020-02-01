@@ -114,3 +114,11 @@ func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 	}
 	return db
 }
+
+func DelAllData() {
+	database.GetGdb().Unscoped().Delete(&OauthToken{})
+	database.GetGdb().Unscoped().Delete(&Permission{})
+	database.GetGdb().Unscoped().Delete(&Role{})
+	database.GetGdb().Unscoped().Delete(&User{})
+	database.GetGdb().Exec("DELETE FROM casbin_rule;")
+}

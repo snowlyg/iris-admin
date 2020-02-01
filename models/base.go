@@ -8,6 +8,7 @@ import (
 	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
+	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -121,4 +122,10 @@ func DelAllData() {
 	database.GetGdb().Unscoped().Delete(&Role{})
 	database.GetGdb().Unscoped().Delete(&User{})
 	database.GetGdb().Exec("DELETE FROM casbin_rule;")
+}
+
+func HashPassword(pwd string) string {
+	salt, _ := bcrypt.Salt(10)
+	hash, _ := bcrypt.Hash(pwd, salt)
+	return hash
 }

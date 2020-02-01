@@ -2,7 +2,6 @@ package models
 
 import (
 	"fmt"
-	"strconv"
 	"time"
 
 	"IrisAdminApi/database"
@@ -13,70 +12,70 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-type User struct {
+type Admin struct {
 	gorm.Model
 
-	Name     string `gorm:"not null VARCHAR(191)"`
-	Username string `gorm:"unique;VARCHAR(191)"`
-	Password string `gorm:"not null VARCHAR(191)"`
+	Name      string `gorm:"not null VARCHAR(191)"`
+	Adminname string `gorm:"unique;VARCHAR(191)"`
+	Password  string `gorm:"not null VARCHAR(191)"`
 }
 
-func NewUser(id uint, username string) *User {
-	return &User{
+func NewAdmin(id uint, username string) *Admin {
+	return &Admin{
 		Model: gorm.Model{
 			ID:        id,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Username: username,
+		Adminname: username,
 	}
 }
 
-func NewUserByStruct(ru *validates.CreateUpdateUserRequest) *User {
-	return &User{
+func NewAdminByStruct(ru *validates.CreateUpdateAdminRequest) *Admin {
+	return &Admin{
 		Model: gorm.Model{
 			ID:        0,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Username: ru.Username,
-		Name:     ru.Name,
-		Password: HashPassword(ru.Password),
+		Adminname: ru.Adminname,
+		Name:      ru.Name,
+		Password:  HashPassword(ru.Password),
 	}
 }
 
-func (u *User) GetUserByUsername() {
-	IsNotFound(database.GetGdb().Where("username = ?", u.Username).First(u).Error)
+func (u *Admin) GetAdminByAdminname() {
+	IsNotFound(database.GetGdb().Where("username = ?", u.Adminname).First(u).Error)
 }
 
-func (u *User) GetUserById() {
+func (u *Admin) GetAdminById() {
 	IsNotFound(database.GetGdb().Where("id = ?", u.ID).First(u).Error)
 }
 
 /**
  * 通过 id 删除用户
- * @method DeleteUserById
+ * @method DeleteAdminById
  */
-func (u *User) DeleteUser() {
+func (u *Admin) DeleteAdmin() {
 	if err := database.GetGdb().Delete(u).Error; err != nil {
-		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
+		color.Red(fmt.Sprintf("DeleteAdminByIdErr:%s \n ", err))
 	}
 }
 
 /**
  * 获取所有的账号
- * @method GetAllUser
+ * @method GetAllAdmin
  * @param  {[type]} name string [description]
  * @param  {[type]} username string [description]
  * @param  {[type]} orderBy string [description]
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllUsers(name, orderBy string, offset, limit int) []*User {
-	var users []*User
+func GetAllAdmins(name, orderBy string, offset, limit int) []*Admin {
+	var users []*Admin
 	q := GetAll(name, orderBy, offset, limit)
 	if err := q.Find(&users).Error; err != nil {
-		color.Red(fmt.Sprintf("GetAllUserErr:%s \n ", err))
+		color.Red(fmt.Sprintf("GetAllAdminErr:%s \n ", err))
 		return nil
 	}
 	return users
@@ -84,51 +83,31 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
 
 /**
  * 创建
- * @method CreateUser
+ * @method CreateAdmin
  * @param  {[type]} kw string [description]
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
+func (u *Admin) CreateAdmin(aul *validates.CreateUpdateAdminRequest) {
 	u.Password = HashPassword(aul.Password)
 	if err := database.GetGdb().Create(u).Error; err != nil {
-		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
+		color.Red(fmt.Sprintf("CreateAdminErr:%s \n ", err))
 	}
-
-	addRoles(aul, u)
 
 	return
 }
 
 /**
  * 更新
- * @method UpdateUser
+ * @method UpdateAdmin
  * @param  {[type]} kw string [description]
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (u *User) UpdateUser(uj *validates.CreateUpdateUserRequest) {
+func (u *Admin) UpdateAdmin(uj *validates.CreateUpdateAdminRequest) {
 	uj.Password = HashPassword(uj.Password)
 	if err := database.Update(u, uj); err != nil {
-		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
-	}
-
-	addRoles(uj, u)
-}
-
-func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
-	if len(uj.RoleIds) > 0 {
-		userId := strconv.FormatUint(uint64(user.ID), 10)
-		if _, err := database.GetEnforcer().DeleteRolesForUser(userId); err != nil {
-			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
-		}
-
-		for _, roleId := range uj.RoleIds {
-			roleId := strconv.FormatUint(uint64(roleId), 10)
-			if _, err := database.GetEnforcer().AddRoleForUser(userId, roleId); err != nil {
-				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
-			}
-		}
+		color.Red(fmt.Sprintf("UpdateAdminErr:%s \n ", err))
 	}
 }
 
@@ -138,7 +117,7 @@ func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
  * @param  {[type]}  id       int    [description]
  * @param  {[type]}  password string [description]
  */
-func (u *User) CheckLogin(password string) (*Token, bool, string) {
+func (u *Admin) CheckLogin(password string) (*Token, bool, string) {
 	if u.ID == 0 {
 		return nil, false, "用户不存在"
 	} else {
@@ -168,10 +147,10 @@ func (u *User) CheckLogin(password string) (*Token, bool, string) {
 
 /**
 * 用户退出登陆
-* @method UserAdminLogout
+* @method AdminAdminLogout
 * @param  {[type]} ids string [description]
  */
-func UserAdminLogout(userId uint) bool {
+func AdminAdminLogout(userId uint) bool {
 	ot := OauthToken{}
 	ot.UpdateOauthTokenByUserId(userId)
 	return ot.Revoked

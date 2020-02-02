@@ -2,5 +2,3 @@ config/conf.tml
 IrisAdminApi.exe
 IrisAdminApi
 /.idea
-/resources/static
-/resources/index.html

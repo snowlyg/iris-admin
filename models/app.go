@@ -65,7 +65,7 @@ func (u *App) DeleteApp() {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllTenancies(name, orderBy string, offset, limit int) []*App {
+func GetAllApps(name, orderBy string, offset, limit int) []*App {
 	var users []*App
 	q := GetAll(name, orderBy, offset, limit)
 	if err := q.Find(&users).Error; err != nil {

@@ -10,7 +10,6 @@ import (
 	"IrisAdminApi/database"
 	"IrisAdminApi/models"
 	"IrisAdminApi/routepath"
-	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"
@@ -22,17 +21,15 @@ const loginUrl = baseUrl + "login"
 
 var (
 	app   *iris.Application // iris.Applications
-	rc    *transformer.Conf
 	token string
 )
 
 //单元测试基境
 func TestMain(m *testing.M) {
 
-	rc = config.GetTfConf()
-	app = NewApp(rc) // 初始化app
+	app = NewApp() // 初始化app
 	routes := routepath.GetRoutes(app.APIBuilder.GetRoutes())
-	models.CreateSystemData(rc, routes)
+	models.CreateSystemData(routes)
 
 	flag.Parse()
 	exitCode := m.Run()
@@ -160,8 +157,8 @@ func GetOauthToken(e *httpexpect.Expect) string {
 	}
 
 	oj := map[string]string{
-		"username": rc.TestData.UserName,
-		"password": rc.TestData.Pwd,
+		"username":  config.GetTestDataUserName(),
+		"password":  config.GetTestDataPwd(),
 	}
 	r := e.POST(loginUrl).WithJSON(oj).
 		Expect().

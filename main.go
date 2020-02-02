@@ -10,7 +10,6 @@ import (
 	"IrisAdminApi/files"
 	"IrisAdminApi/models"
 	"IrisAdminApi/routes"
-	"IrisAdminApi/transformer"
 	"github.com/betacraft/yaag/yaag"
 	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
@@ -28,12 +27,13 @@ func newLogFile() *os.File {
 	return f
 }
 
-func NewApp(rc *transformer.Conf) *iris.Application {
+func NewApp() *iris.Application {
 	api := iris.New()
-	api.Logger().SetLevel(rc.App.LoggerLevel)
+	api.Logger().SetLevel(config.GetAppLoggerLevel())
 
 	api.RegisterView(iris.HTML("resources", ".html"))
-	api.HandleDir("/static", "resources/static")
+	//api.HandleDir("/admin", "resources/admin")
+	//api.HandleDir("/static", "resources/app/static")
 
 	db := database.GetGdb()
 	db.AutoMigrate(
@@ -49,15 +49,16 @@ func NewApp(rc *transformer.Conf) *iris.Application {
 
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. //api 文档配置
 		On:       true,
-		DocTitle: rc.App.Name,
+		DocTitle: config.GetAppName(),
 		DocPath:  "./resources/apiDoc/index.html", //设置绝对路径
 		BaseUrls: map[string]string{
-			"Production": rc.App.URl + rc.App.Port,
+			"Production": config.GetAppUrl(),
 			"Staging":    "",
 		},
 	})
 
-	routes.Register(api) //注册路由
+	routes.App(api) //注册 app 路由
+	//routes.Admin(api) //注册 admin 路由
 
 	return api
 }
@@ -66,10 +67,9 @@ func main() {
 	f := newLogFile()
 	defer f.Close()
 
-	cf := config.GetTfConf()
-	api := NewApp(cf)
+	api := NewApp()
 	api.Logger().SetOutput(f) //记录日志
-	err := api.Run(iris.Addr(cf.App.Port), iris.WithConfiguration(config.GetIrisConf()))
+	err := api.Run(iris.Addr(config.GetAppUrl()), iris.WithConfiguration(config.GetIrisConf()))
 	if err != nil {
 		color.Yellow(fmt.Sprintf("项目运行结束: %v", err))
 	}

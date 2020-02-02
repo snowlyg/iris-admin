@@ -20,6 +20,7 @@
 - 前端采用了 `element-ui` 框架,代码集成到 `front` 目录
 - 使用 `casbin` 做权限控制, `config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
+- 增加多商户模式，分为管理端和商户端
 
  **注意：**
  - 更新代码后，如果启动报错，请尝试手动删所有数据表后重启。
@@ -98,6 +99,13 @@ cp conf.tml.example conf.tml
  npm run dev  
 ```
 
+>增加 hosts 
+```shell script
+127.0.0.1       admin.irisadminapi.com # 管理端
+127.0.0.1       app.irisadminapi.com  # 商户端
+127.0.0.1       irisadminapi.com #公共域名
+```
+
 >运行项目 
 
 [gowatch](https://gitee.com/silenceper/gowatch)
@@ -147,7 +155,8 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ---
 
 #### 登录项目
-输入地址 http://localhost:8081
+管理端 http://admin.irisadminapi.com
+商户端 http://app.irisadminapi.com
 
 //在 `config/conf.tml` 内配置 
 

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
+	"IrisAdminApi/config"
 	"IrisAdminApi/database"
-	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/jameskeane/bcrypt"
@@ -15,12 +15,12 @@ import (
 /**
 *初始化系统 账号 权限 角色
  */
-func CreateSystemData(rc *transformer.Conf, perms []*validates.PermissionRequest) {
-	if rc.App.CreateSysData {
+func CreateSystemData(perms []*validates.PermissionRequest) {
+	if config.GetAppCreateSysData() {
 		permIds := CreateSystemAdminPermission(perms) //初始化权限
 		role := CreateSystemAdminRole(permIds)        //初始化角色
 		if role.ID != 0 {
-			CreateSystemAdmin(role.ID, rc) //初始化管理员
+			CreateSystemAdmin(role.ID) //初始化管理员
 		}
 	}
 }
@@ -30,11 +30,11 @@ func CreateSystemData(rc *transformer.Conf, perms []*validates.PermissionRequest
 *@param role_id uint
 *@return   *models.AdminUserTranform api格式化后的数据格式
  */
-func CreateSystemAdmin(roleId uint, rc *transformer.Conf) {
+func CreateSystemAdmin(roleId uint) {
 	aul := &validates.CreateUpdateUserRequest{
-		Username: rc.TestData.UserName,
-		Password: rc.TestData.Pwd,
-		Name:     rc.TestData.Name,
+		Username: config.GetTestDataUserName(),
+		Password: config.GetTestDataPwd(),
+		Name:    config.GetTestDataName(),
 		RoleIds:  []uint{roleId},
 	}
 

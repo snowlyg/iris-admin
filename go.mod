@@ -19,16 +19,11 @@ require (
 	github.com/jinzhu/gorm v1.9.12
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kataras/iris/v12 v12.1.4
-	github.com/lib/pq v1.1.1
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible
 	github.com/onsi/ginkgo v1.11.0 // indirect
 	github.com/onsi/gomega v1.8.1 // indirect
-	github.com/rakyll/gotest v0.0.0-20191108192113-45d501058f2a // indirect
-	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/snowlyg/gotransformer v0.0.0-20200113053933-95313ccbc2fb
 	github.com/valyala/fasthttp v1.7.1 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.31.0
 )

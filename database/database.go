@@ -33,20 +33,21 @@ func getDataBase() *DataBase {
 		var dirverName string
 		var conn string
 
-		cf := config.GetTfConf()
-		if cf.App.DirverType == "Sqlite" {
-			dirverName = cf.Sqlite.DirverName
+		dirverType := config.GetAppDirverType()
+		if dirverType == "Sqlite" {
+			dirverName = "sqlite3"
 			if isTestEnv() {
-				conn = cf.Sqlite.TConnect
+				conn = config.GetSqliteTConnect()
 			} else {
-				conn = cf.Sqlite.Connect
+				conn = config.GetSqliteConnect()
 			}
-		} else if cf.App.DirverType == "Mysql" {
-			dirverName = cf.Mysql.DirverName
+		} else if dirverType == "Mysql" {
+			dirverName = "mysql"
+			connect := config.GetMysqlConnect()
 			if isTestEnv() {
-				conn = cf.Mysql.Connect + cf.Mysql.TName + "?charset=utf8&parseTime=True&loc=Local"
+				conn = connect + config.GetMysqlTName() + "?charset=utf8&parseTime=True&loc=Local"
 			} else {
-				conn = cf.Mysql.Connect + cf.Mysql.Name + "?charset=utf8&parseTime=True&loc=Local"
+				conn = connect +config.GetMysqlName() + "?charset=utf8&parseTime=True&loc=Local"
 			}
 		}
 

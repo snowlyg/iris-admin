@@ -2,6 +2,8 @@ package main
 
 import (
 	"testing"
+
+	"IrisAdminApi/config"
 )
 
 func TestGetAppCreateSysData(t *testing.T) {
@@ -16,7 +18,7 @@ func TestGetAppCreateSysData(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetAppCreateSysData(); got != tt.want {
+			if got := config.GetAppCreateSysData(); got != tt.want {
 				t.Errorf("GetAppCreateSysData() = %v, want %v", got, tt.want)
 			}
 		})
@@ -35,7 +37,7 @@ func TestGetAppDirverType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetAppDirverType(); got != tt.want {
+			if got :=  config.GetAppDirverType(); got != tt.want {
 				t.Errorf("GetAppDirverType() = %v, want %v", got, tt.want)
 			}
 		})
@@ -54,7 +56,7 @@ func TestGetAppLoggerLevel(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetAppLoggerLevel(); got != tt.want {
+			if got :=  config.GetAppLoggerLevel(); got != tt.want {
 				t.Errorf("GetAppLoggerLevel() = %v, want %v", got, tt.want)
 			}
 		})
@@ -73,7 +75,7 @@ func TestGetAppName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetAppName(); got != tt.want {
+			if got :=  config.GetAppName(); got != tt.want {
 				t.Errorf("GetAppName() = %v, want %v", got, tt.want)
 			}
 		})
@@ -94,7 +96,7 @@ func TestGetAppURl(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetAppUrl(); got != tt.want {
+			if got :=  config.GetAppUrl(); got != tt.want {
 				t.Errorf("GetAppURl() = %v, want %v", got, tt.want)
 			}
 		})
@@ -114,7 +116,7 @@ func TestGetMongodbConnect(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetMongodbConnect(); got != tt.want {
+			if got := config.GetMongodbConnect(); got != tt.want {
 				t.Errorf("GetMongodbConnect() = %v, want %v", got, tt.want)
 			}
 		})
@@ -133,7 +135,7 @@ func TestGetMysqlConnect(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetMysqlConnect(); got != tt.want {
+			if got :=  config.GetMysqlConnect(); got != tt.want {
 				t.Errorf("GetMysqlConnect() = %v, want %v", got, tt.want)
 			}
 		})
@@ -152,7 +154,7 @@ func TestGetMysqlName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetMysqlName(); got != tt.want {
+			if got := config.GetMysqlName(); got != tt.want {
 				t.Errorf("GetMysqlName() = %v, want %v", got, tt.want)
 			}
 		})
@@ -171,7 +173,7 @@ func TestGetMysqlTName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetMysqlTName(); got != tt.want {
+			if got :=  config.GetMysqlTName(); got != tt.want {
 				t.Errorf("GetMysqlTName() = %v, want %v", got, tt.want)
 			}
 		})
@@ -190,7 +192,7 @@ func TestGetSqliteConnect(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetSqliteConnect(); got != tt.want {
+			if got :=  config.GetSqliteConnect(); got != tt.want {
 				t.Errorf("GetSqliteConnect() = %v, want %v", got, tt.want)
 			}
 		})
@@ -209,7 +211,7 @@ func TestGetSqliteTConnect(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetSqliteTConnect(); got != tt.want {
+			if got :=  config.GetSqliteTConnect(); got != tt.want {
 				t.Errorf("GetSqliteTConnect() = %v, want %v", got, tt.want)
 			}
 		})
@@ -228,7 +230,7 @@ func TestGetTestDataName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetTestDataName(); got != tt.want {
+			if got :=  config.GetTestDataName(); got != tt.want {
 				t.Errorf("GetTestDataName() = %v, want %v", got, tt.want)
 			}
 		})
@@ -247,7 +249,7 @@ func TestGetTestDataPwd(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetTestDataPwd(); got != tt.want {
+			if got :=  config.GetTestDataPwd(); got != tt.want {
 				t.Errorf("GetTestDataPwd() = %v, want %v", got, tt.want)
 			}
 		})
@@ -266,7 +268,7 @@ func TestGetTestDataUserName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetTestDataUserName(); got != tt.want {
+			if got :=  config.GetTestDataUserName(); got != tt.want {
 				t.Errorf("GetTestDataUserName() = %v, want %v", got, tt.want)
 			}
 		})

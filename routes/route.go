@@ -18,8 +18,8 @@ func App(api *iris.Application) {
 
 		v1 := app.Party("/v1")
 		{
-			v1.Post("/app/login", controllers.UserLogin)
-			v1.PartyFunc("/app", func(app iris.Party) {
+			v1.Post("/admin/login", controllers.UserLogin)
+			v1.PartyFunc("/admin", func(app iris.Party) {
 				v1.Use(irisyaag.New())
 				casbinMiddleware := middleware.New(database.GetEnforcer())           //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				app.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证

@@ -19,7 +19,7 @@ var once sync.Once
 
 func getConfig() *config {
 	once.Do(func() {
-		isc := iris.TOML("./config/conf.tml") // 加载配置文件
+		isc := iris.TOML("config/conf.tml") // 加载配置文件
 		tc := getTfConf(isc)
 		cfg = &config{Tc: tc, Isc: isc}
 	})

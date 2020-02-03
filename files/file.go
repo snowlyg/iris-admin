@@ -8,7 +8,6 @@ import (
 	"mime/multipart"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/fatih/color"
 )
@@ -137,7 +136,7 @@ func GetAbsPath(confPath string) string {
 
 	end := filepath.Base(getwd)
 
-	if strings.Contains(confPath,end) {
+	if end != "IrisAdminApi" {
 		return filepath.Join(filepath.Dir(getwd) , confPath)
 	}
 

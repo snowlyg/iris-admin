@@ -20,6 +20,7 @@ env:
 
 script:
   - cp ./config/conf.tml.example ./config/conf.tml
+  - touch ./tmp/tgorm.db
   - go vet ./...
   - go test ./... -v -coverprofile=coverage.txt -covermode=atomic
 after_success:

@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"time"
 
-	"IrisAdminApi/database"
 	"IrisAdminApi/models"
 	"IrisAdminApi/transformer"
 	"IrisAdminApi/validates"
@@ -223,7 +222,7 @@ func userTransform(user *models.User) *transformer.User {
 	g := gf.NewTransform(u, user, time.RFC3339)
 	_ = g.Transformer()
 
-	roleIds := database.GetRolesForUser(user.ID)
+	roleIds := models.GetRolesForUser(user.ID)
 	var ris []int
 	var roleName string
 	for num, roleId := range roleIds {

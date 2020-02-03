@@ -98,7 +98,7 @@ func (u *App) CreateApp() {
  * @param  {[type]} mp int    [description]
  */
 func (u *App) UpdateApp(uj *validates.AppRequest) {
-	if err := database.Update(u, uj); err != nil {
+	if err := Update(u, uj); err != nil {
 		color.Red(fmt.Sprintf("UpdateAppErr:%s \n ", err))
 	}
 }

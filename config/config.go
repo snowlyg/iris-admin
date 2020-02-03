@@ -1,3 +1,8 @@
+/*
+	此包用于获取配置，
+	iris 框架本身的配置处理已经比较完善，
+	增加这些方法主要是增加配置使用的灵活性
+*/
 package config
 
 import (
@@ -31,9 +36,12 @@ func getConfig() *config {
 	return cfg
 }
 
-func SetConfigPath(confPath string) string {
+/*
+	重置配置文件路径
+	该方法目前仅用于测试 ，有些多余
+*/
+func SetConfigPath(confPath string)  {
 	path = confPath
-	return path
 }
 
 func getTfConf(isc iris.Configuration) *transformer.Conf {

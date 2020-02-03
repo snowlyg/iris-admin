@@ -110,7 +110,7 @@ func (p *Permission) CreatePermission() {
  * @param  {[type]} mp int    [description]
  */
 func (p *Permission) UpdatePermission(pj *validates.PermissionRequest) {
-	if err := database.Update(p, pj); err != nil {
+	if err := Update(p, pj); err != nil {
 		color.Red(fmt.Sprintf("UpdatePermissionError:%s \n", err))
 	}
 }

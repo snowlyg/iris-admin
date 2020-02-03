@@ -4,6 +4,8 @@ import (
 	"encoding/base64"
 	"math/rand"
 	"strconv"
+
+	"github.com/jameskeane/bcrypt"
 )
 
 /**
@@ -97,3 +99,10 @@ func Base64Decode(str string) string {
 	}
 	return string(s)
 }
+
+func HashPassword(pwd string) string {
+	salt, _ := bcrypt.Salt(10)
+	hash, _ := bcrypt.Hash(pwd, salt)
+	return hash
+}
+

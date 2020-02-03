@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"IrisAdminApi/database"
+	"IrisAdminApi/libs"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
@@ -15,9 +16,9 @@ import (
 type Admin struct {
 	gorm.Model
 
-	Name      string `gorm:"not null VARCHAR(191)"`
-	Adminname string `gorm:"unique;VARCHAR(191)"`
-	Password  string `gorm:"not null VARCHAR(191)"`
+	Name     string `gorm:"not null VARCHAR(191)"`
+	UserName string `gorm:"unique;VARCHAR(191)"`
+	Password string `gorm:"not null VARCHAR(191)"`
 }
 
 func NewAdmin(id uint, username string) *Admin {
@@ -27,7 +28,7 @@ func NewAdmin(id uint, username string) *Admin {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Adminname: username,
+		UserName: username,
 	}
 }
 
@@ -38,14 +39,14 @@ func NewAdminByStruct(ru *validates.CreateUpdateAdminRequest) *Admin {
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Adminname: ru.Adminname,
-		Name:      ru.Name,
-		Password:  HashPassword(ru.Password),
+		UserName: ru.UserName,
+		Name:     ru.Name,
+		Password: libs.HashPassword(ru.Password),
 	}
 }
 
-func (u *Admin) GetAdminByAdminname() {
-	IsNotFound(database.GetGdb().Where("username = ?", u.Adminname).First(u).Error)
+func (u *Admin) GetAdminByUserName() {
+	IsNotFound(database.GetGdb().Where("username = ?", u.UserName).First(u).Error)
 }
 
 func (u *Admin) GetAdminById() {
@@ -89,7 +90,7 @@ func GetAllAdmins(name, orderBy string, offset, limit int) []*Admin {
  * @param  {[type]} mp int    [description]
  */
 func (u *Admin) CreateAdmin(aul *validates.CreateUpdateAdminRequest) {
-	u.Password = HashPassword(aul.Password)
+	u.Password = libs.HashPassword(aul.Password)
 	if err := database.GetGdb().Create(u).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateAdminErr:%s \n ", err))
 	}
@@ -105,8 +106,8 @@ func (u *Admin) CreateAdmin(aul *validates.CreateUpdateAdminRequest) {
  * @param  {[type]} mp int    [description]
  */
 func (u *Admin) UpdateAdmin(uj *validates.CreateUpdateAdminRequest) {
-	uj.Password = HashPassword(uj.Password)
-	if err := database.Update(u, uj); err != nil {
+	uj.Password = libs.HashPassword(uj.Password)
+	if err := Update(u, uj); err != nil {
 		color.Red(fmt.Sprintf("UpdateAdminErr:%s \n ", err))
 	}
 }
@@ -150,7 +151,7 @@ func (u *Admin) CheckLogin(password string) (*Token, bool, string) {
 * @method AdminAdminLogout
 * @param  {[type]} ids string [description]
  */
-func AdminAdminLogout(userId uint) bool {
+func AdminLogout(userId uint) bool {
 	ot := OauthToken{}
 	ot.UpdateOauthTokenByUserId(userId)
 	return ot.Revoked

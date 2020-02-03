@@ -16,12 +16,6 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
-func TestSetConfigPath(t *testing.T) {
-	if got := SetConfigPath("conf.tml"); got != "conf.tml" {
-		t.Errorf("GetAppCreateSysData() = %v, want %v", got, "conf.tml")
-	}
-}
-
 func TestGetAppCreateSysData(t *testing.T) {
 	tests := []struct {
 		name string
@@ -201,7 +195,7 @@ func TestGetSqliteConnect(t *testing.T) {
 	}{
 		{
 			name: "config",
-			want: "/tmp/gorm.db",
+			want: "./tmp/gorm.db",
 		},
 	}
 	for _, tt := range tests {

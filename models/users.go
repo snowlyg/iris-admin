@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"IrisAdminApi/database"
+	"IrisAdminApi/libs"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
@@ -41,7 +42,7 @@ func NewUserByStruct(ru *validates.CreateUpdateUserRequest) *User {
 		},
 		Username: ru.Username,
 		Name:     ru.Name,
-		Password: HashPassword(ru.Password),
+		Password: libs.HashPassword(ru.Password),
 	}
 }
 
@@ -90,7 +91,7 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  * @param  {[type]} mp int    [description]
  */
 func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
-	u.Password = HashPassword(aul.Password)
+	u.Password = libs.HashPassword(aul.Password)
 	if err := database.GetGdb().Create(u).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 	}
@@ -108,8 +109,8 @@ func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
  * @param  {[type]} mp int    [description]
  */
 func (u *User) UpdateUser(uj *validates.CreateUpdateUserRequest) {
-	uj.Password = HashPassword(uj.Password)
-	if err := database.Update(u, uj); err != nil {
+	uj.Password = libs.HashPassword(uj.Password)
+	if err := Update(u, uj); err != nil {
 		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
 	}
 

@@ -129,7 +129,7 @@ func addPerms(permIds []uint, role *Role) {
  */
 func (r *Role) UpdateRole(rj *validates.RoleRequest, permIds []uint) {
 
-	if err := database.Update(r, rj); err != nil {
+	if err := Update(r, rj); err != nil {
 		color.Red(fmt.Sprintf("UpdatRoleErr:%s \n", err))
 	}
 
@@ -140,7 +140,7 @@ func (r *Role) UpdateRole(rj *validates.RoleRequest, permIds []uint) {
 
 // 角色权限
 func (r *Role) RolePermisions() []*Permission {
-	perms := database.GetPermissionsForUser(r.ID)
+	perms := GetPermissionsForUser(r.ID)
 	var ps []*Permission
 	for _, perm := range perms {
 		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {

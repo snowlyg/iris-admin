@@ -45,11 +45,11 @@ func AdminLogin(ctx iris.Context) {
 		}
 	}
 
-	ctx.Application().Logger().Infof("%s 登录系统", aul.Adminname)
+	ctx.Application().Logger().Infof("%s 登录系统", aul.UserName)
 	ctx.StatusCode(iris.StatusOK)
 
-	admin := models.NewAdmin(0, aul.Adminname)
-	admin.GetAdminByAdminname()
+	admin := models.NewAdmin(0, aul.UserName)
+	admin.GetAdminByUserName()
 
 	response, status, msg := admin.CheckLogin(aul.Password)
 
@@ -73,7 +73,7 @@ func AdminLogin(ctx iris.Context) {
 func AdminLogout(ctx iris.Context) {
 	aui := ctx.Values().GetString("auth_user_id")
 	uid := uint(libs.ParseInt(aui, 0))
-	models.AdminAdminLogout(uid)
+	models.AdminLogout(uid)
 
 	ctx.Application().Logger().Infof("%d 退出系统", uid)
 	ctx.StatusCode(http.StatusOK)

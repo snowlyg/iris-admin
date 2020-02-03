@@ -98,7 +98,7 @@ func (u *Tenancy) CreateTenancy() {
  * @param  {[type]} mp int    [description]
  */
 func (u *Tenancy) UpdateTenancy(uj *validates.TenancyRequest) {
-	if err := database.Update(u, uj); err != nil {
+	if err := Update(u, uj); err != nil {
 		color.Red(fmt.Sprintf("UpdateTenancyErr:%s \n ", err))
 	}
 }

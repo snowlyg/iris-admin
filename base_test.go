@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"IrisAdminApi/config"
-	"IrisAdminApi/database"
 	"IrisAdminApi/models"
 	"IrisAdminApi/routepath"
 	"IrisAdminApi/validates"
@@ -31,7 +30,7 @@ func TestMain(m *testing.M) {
 	flag.Parse()
 	exitCode := m.Run()
 
-	database.DropTables() // 删除测试数据表，保持测试环境
+	models.DropTables() // 删除测试数据表，保持测试环境
 	os.Exit(exitCode)
 }
 

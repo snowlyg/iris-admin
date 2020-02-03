@@ -3,12 +3,12 @@ package models
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"IrisAdminApi/config"
 	"IrisAdminApi/database"
 	"IrisAdminApi/validates"
 	"github.com/fatih/color"
-	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -124,8 +124,27 @@ func DelAllData() {
 	database.GetGdb().Exec("DELETE FROM casbin_rule;")
 }
 
-func HashPassword(pwd string) string {
-	salt, _ := bcrypt.Salt(10)
-	hash, _ := bcrypt.Hash(pwd, salt)
-	return hash
+func Update(v, d interface{}) error {
+	if err := database.GetGdb().Model(v).Updates(d).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetRolesForUser(uid uint) []string {
+	uids, err := database.GetEnforcer().GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
+	if err != nil {
+		color.Red(fmt.Sprintf("GetRolesForUser 错误: %v", err))
+		return []string{}
+	}
+
+	return uids
+}
+
+func GetPermissionsForUser(uid uint) [][]string {
+	return database.GetEnforcer().GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
+}
+
+func DropTables() {
+	database.GetGdb().DropTable("users", "roles", "permissions", "oauth_tokens", "casbin_rule")
 }

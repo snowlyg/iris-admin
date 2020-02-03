@@ -1,6 +1,7 @@
 package config
 
 import (
+	"regexp"
 	"testing"
 
 	"IrisAdminApi/files"
@@ -128,12 +129,14 @@ func TestGetMysqlConnect(t *testing.T) {
 	}{
 		{
 			name: "config",
-			want: "root:passwrod@(127.0.0.1:3306)/",
+			want: "root:([a-z]+)@(127.0.0.1:3306)/",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := GetMysqlConnect(); got != tt.want {
+			got := GetMysqlConnect()
+			matchString, err := regexp.MatchString(tt.want, got)
+			if matchString || err != nil {
 				t.Errorf("GetMysqlConnect() = %v, want %v", got, tt.want)
 			}
 		})

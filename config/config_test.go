@@ -1,20 +1,8 @@
 package config
 
 import (
-	"flag"
-	"os"
 	"testing"
 )
-
-func TestMain(m *testing.M) {
-
-	SetConfigPath("conf.tml")
-
-	flag.Parse()
-	exitCode := m.Run()
-
-	os.Exit(exitCode)
-}
 
 func TestGetAppCreateSysData(t *testing.T) {
 	tests := []struct {
@@ -62,7 +50,7 @@ func TestGetAppLoggerLevel(t *testing.T) {
 	}{
 		{
 			name: "config",
-			want: "disable",
+			want: "debug",
 		},
 	}
 	for _, tt := range tests {
@@ -176,7 +164,7 @@ func TestGetMysqlTName(t *testing.T) {
 	}{
 		{
 			name: "config",
-			want: "iris_test",
+			want: "tiris",
 		},
 	}
 	for _, tt := range tests {

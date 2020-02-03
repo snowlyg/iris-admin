@@ -35,7 +35,6 @@ func getPathNames(i interface{}) []*PathName {
 			pns = append(pns, pn)
 		}
 	}
-
 	return pns
 }
 

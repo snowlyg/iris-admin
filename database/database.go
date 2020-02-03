@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"IrisAdminApi/config"
+	"IrisAdminApi/files"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"github.com/fatih/color"
@@ -17,7 +18,6 @@ import (
 
 var db *dataBase
 var once sync.Once
-var path string
 
 type dataBase struct {
 	Db       *gorm.DB
@@ -41,11 +41,7 @@ func getDataBase() *dataBase {
 			color.Red(fmt.Sprintf("NewAdapter 错误: %v", err))
 		}
 
-		if len(path) == 0 {
-			path = "database/rbac_model.conf"
-		}
-
-		e, err := casbin.NewEnforcer(path, c)
+		e, err := casbin.NewEnforcer(files.GetAbsPath("database/rbac_model.conf"), c)
 		if err != nil {
 			color.Red(fmt.Sprintf("NewEnforcer 错误: %v", err))
 		}
@@ -57,13 +53,6 @@ func getDataBase() *dataBase {
 	return db
 }
 
-/*
-	重置配置文件路径
-	该方法目前仅用于测试 ，有些多余
-*/
-func SetDatabasePath(dbPath string)  {
-	path = dbPath
-}
 
 /*
 	获取数据连接驱动类型和链接

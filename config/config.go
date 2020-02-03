@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"IrisAdminApi/files"
 	"IrisAdminApi/transformer"
 	"github.com/kataras/iris/v12"
 	gf "github.com/snowlyg/gotransformer"
@@ -21,28 +22,17 @@ type config struct {
 
 var cfg *config
 var once sync.Once
-var path string
 
 func getConfig() *config {
-	if len(path) == 0 {
-		path = "config/conf.tml"
-	}
 	once.Do(func() {
-		isc := iris.TOML(path) // 加载配置文件
+		isc := iris.TOML(files.GetAbsPath("config/conf.tml")) // 加载配置文件
 		tc := getTfConf(isc)
 		cfg = &config{Tc: tc, Isc: isc}
 	})
-
 	return cfg
 }
 
-/*
-	重置配置文件路径
-	该方法目前仅用于测试 ，有些多余
-*/
-func SetConfigPath(confPath string)  {
-	path = confPath
-}
+
 
 func getTfConf(isc iris.Configuration) *transformer.Conf {
 	app := transformer.App{}
@@ -129,11 +119,11 @@ func GetMongodbConnect() string {
 }
 
 func GetSqliteConnect() string {
-	return getTc().Sqlite.Connect
+	return files.GetAbsPath(getTc().Sqlite.Connect)
 }
 
 func GetSqliteTConnect() string {
-	return getTc().Sqlite.TConnect
+	return files.GetAbsPath(getTc().Sqlite.TConnect)
 }
 
 func GetTestDataUserName() string {

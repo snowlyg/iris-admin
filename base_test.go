@@ -16,11 +16,8 @@ import (
 	"github.com/kataras/iris/v12/httptest"
 )
 
-const baseUrl = "/v1/admin/"
-const loginUrl = baseUrl + "login"
-
 var (
-	app   *iris.Application // iris.Applications
+	app   *iris.Application
 	token string
 )
 
@@ -38,19 +35,25 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
+func getHttpexpect(t *testing.T) *httpexpect.Expect {
+	return httptest.New(t, app, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/admin/"})
+}
+
+
 // 单元测试 login 方法
 func login(t *testing.T, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
-	e.POST(loginUrl).WithJSON(Object).
+	e = getHttpexpect(t)
+	e.POST( "login").WithJSON(Object).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Status, Msg)
 
 	return
 }
 
+
 // 单元测试 create 方法
 func create(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+	e = getHttpexpect(t)
 	ob := e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 	ob.Value("status").Equal(Status)
@@ -61,7 +64,7 @@ func create(t *testing.T, url string, Object interface{}, StatusCode int, Status
 
 // 单元测试 update 方法
 func update(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+	e = getHttpexpect(t)
 	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 	ob.Value("status").Equal(Status)
@@ -72,7 +75,7 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Status
 
 // 单元测试 getOne 方法
 func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+	e = getHttpexpect(t)
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Status, Msg)
@@ -81,7 +84,7 @@ func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string) (
 
 // 单元测试 getOnAuth 方法
 func getOnAuth(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+	e = getHttpexpect(t)
 	e.GET(url).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Status, Msg)
@@ -90,7 +93,7 @@ func getOnAuth(t *testing.T, url string, StatusCode int, Status bool, Msg string
 
 // 单元测试 bImport 方法
 func bImport(t *testing.T, url string, StatusCode int, Status bool, Msg string, _ map[string]interface{}) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+	e = getHttpexpect(t)
 	e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		WithMultipart().
 		WithFile("file", "permissions.xlsx").
@@ -102,7 +105,7 @@ func bImport(t *testing.T, url string, StatusCode int, Status bool, Msg string, 
 
 // 单元测试 getMore 方法
 func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+	e = getHttpexpect(t)
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Status, Msg)
@@ -112,7 +115,7 @@ func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string) 
 
 // 单元测试 delete 方法
 func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
-	e = httptest.New(t, app, httptest.Configuration{Debug: true})
+	e = getHttpexpect(t)
 	e.DELETE(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Status, Msg)
@@ -157,10 +160,10 @@ func GetOauthToken(e *httpexpect.Expect) string {
 	}
 
 	oj := map[string]string{
-		"username":  config.GetTestDataUserName(),
-		"password":  config.GetTestDataPwd(),
+		"username": config.GetTestDataUserName(),
+		"password": config.GetTestDataPwd(),
 	}
-	r := e.POST(loginUrl).WithJSON(oj).
+	r := e.POST( "login").WithJSON(oj).
 		Expect().
 		Status(http.StatusOK).JSON().Object()
 

@@ -16,15 +16,24 @@ type config struct {
 
 var cfg *config
 var once sync.Once
+var path string
 
 func getConfig() *config {
+	if len(path) == 0 {
+		path = "config/conf.tml"
+	}
 	once.Do(func() {
-		isc := iris.TOML("config/conf.tml") // 加载配置文件
+		isc := iris.TOML(path) // 加载配置文件
 		tc := getTfConf(isc)
 		cfg = &config{Tc: tc, Isc: isc}
 	})
 
 	return cfg
+}
+
+func SetConfigPath(confPath string) string {
+	path = confPath
+	return path
 }
 
 func getTfConf(isc iris.Configuration) *transformer.Conf {
@@ -71,7 +80,7 @@ func GetIrisConf() iris.Configuration {
 	return getConfig().Isc
 }
 
-func getTc()  *transformer.Conf {
+func getTc() *transformer.Conf {
 	return getConfig().Tc
 }
 

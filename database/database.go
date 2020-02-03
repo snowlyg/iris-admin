@@ -61,7 +61,7 @@ func getDataBase() *DataBase {
 			color.Red(fmt.Sprintf("NewAdapter 错误: %v", err))
 		}
 
-		e, err := casbin.NewEnforcer("./config/rbac_model.conf", c)
+		e, err := casbin.NewEnforcer("rbac_model.conf", c)
 		if err != nil {
 			color.Red(fmt.Sprintf("NewEnforcer 错误: %v", err))
 		}
@@ -89,6 +89,7 @@ func isTestEnv() bool {
 	}
 	return false
 }
+
 func Update(v, d interface{}) error {
 	if err := GetGdb().Model(v).Updates(d).Error; err != nil {
 		return err

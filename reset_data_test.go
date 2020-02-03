@@ -8,5 +8,5 @@ import (
 
 func TestResetData(t *testing.T) {
 	t.Skip()
-	getOnAuth(t, baseUrl+"resetData", iris.StatusOK, true, "重置数据成功")
+	getOnAuth(t, "resetData", iris.StatusOK, true, "重置数据成功")
 }

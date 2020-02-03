@@ -141,5 +141,5 @@ func GetAbsPath(confPath string) string {
 		return filepath.Dir(getwd) + confPath
 	}
 
-	return getwd + confPath
+	return confPath
 }

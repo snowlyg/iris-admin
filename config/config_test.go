@@ -2,6 +2,8 @@ package config
 
 import (
 	"testing"
+
+	"IrisAdminApi/files"
 )
 
 func TestGetAppCreateSysData(t *testing.T) {
@@ -183,7 +185,7 @@ func TestGetSqliteConnect(t *testing.T) {
 	}{
 		{
 			name: "config",
-			want: "./tmp/gorm.db",
+			want: files.GetAbsPath("./tmp/gorm.db"),
 		},
 	}
 	for _, tt := range tests {
@@ -202,7 +204,7 @@ func TestGetSqliteTConnect(t *testing.T) {
 	}{
 		{
 			name: "config",
-			want: "./tmp/tgorm.db",
+			want: files.GetAbsPath("./tmp/tgorm.db"),
 		},
 	}
 	for _, tt := range tests {

@@ -138,7 +138,7 @@ func GetAbsPath(confPath string) string {
 	end := filepath.Base(getwd)
 
 	if strings.Contains(confPath,end) {
-		return filepath.Dir(getwd) + confPath
+		return filepath.Join(filepath.Dir(getwd) , confPath)
 	}
 
 	return confPath

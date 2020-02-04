@@ -6,6 +6,7 @@ import (
 )
 
 func TestGetAbsPath(t *testing.T) {
+	t.Skipped()
 	absPath := "C:\\Users\\Administrator\\go\\src\\IrisAdminApi\\"
 
 	conf := "config/conf.tml"

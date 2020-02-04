@@ -101,8 +101,15 @@ func Base64Decode(str string) string {
 }
 
 func HashPassword(pwd string) string {
-	salt, _ := bcrypt.Salt(10)
-	hash, _ := bcrypt.Hash(pwd, salt)
+	salt, err := bcrypt.Salt(10)
+	if err !=nil {
+		return ""
+	}
+	hash, err := bcrypt.Hash(pwd, salt)
+	if err !=nil {
+		return ""
+	}
+
 	return hash
 }
 

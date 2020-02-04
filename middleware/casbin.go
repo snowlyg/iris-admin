@@ -12,24 +12,12 @@ import (
 	"github.com/casbin/casbin/v2"
 )
 
-/*
-	Updated for the casbin 2.x released 3 days ago.
-	2019-07-15
-*/
 
-// New returns the auth service which receives a casbin enforcer.
-//
-// Adapt with its `Wrapper` for the entire application
-// or its `ServeHTTP` for specific routes or parties.
 func New(e *casbin.Enforcer) *Casbin {
 	return &Casbin{enforcer: e}
 }
 
-// ServeHTTP is the iris compatible casbin handler which should be passed to specific routes or parties.
-// Usage:
-// [...]
-// app.Get("/dataset1/resource1", casbinMiddleware.ServeHTTP, myHandler)
-// [...]
+
 func (c *Casbin) ServeHTTP(ctx context.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
 	token := models.OauthToken{}

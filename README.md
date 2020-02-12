@@ -9,6 +9,8 @@
     <h5 align="center">Iris后台接口项目</h5>
 </div>
 
+项目功能升级迁移到 [snowlyg/GoTenancy](https://github.com/snowlyg/GoTenancy),本项目将停止更新。
+
 #### 项目介绍
 - `iris-go` 框架后台接口项目
 - `gorm` 数据库模块 

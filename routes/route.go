@@ -21,10 +21,10 @@ func Register(api *iris.Application) {
 
 		v1 := main.Party("/v1")
 		{
+			v1.Use(irisyaag.New())
 			v1.Post("/admin/login", controllers.UserLogin)
 			v1.PartyFunc("/admin", func(admin iris.Party) {
-				v1.Use(irisyaag.New())
-				casbinMiddleware := middleware.New(models.Enforcer)                  //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
+				casbinMiddleware := middleware.New(models.Enforcer)                  //casbin for gorm
 				admin.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				admin.Get("/logout", controllers.UserLogout).Name = "退出"
 

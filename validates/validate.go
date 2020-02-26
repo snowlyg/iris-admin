@@ -21,9 +21,7 @@ var (
 func init() {
 	zh2 := zh.New()
 	uni = ut.New(zh2, zh2)
-
 	ValidateTrans, _ = uni.GetTranslator("zh")
-
 	Validate = validator.New()
 	// 收集结构体中的comment标签，用于替换英文字段名称，这样返回错误就能展示中文字段名称了
 	Validate.RegisterTagNameFunc(func(fld reflect.StructField) string {

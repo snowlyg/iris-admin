@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 
+	"IrisAdminApi/libs"
 	"IrisAdminApi/models"
-	"IrisAdminApi/tools"
 	"IrisAdminApi/validates"
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
@@ -47,7 +47,12 @@ func UserLogin(ctx iris.Context) {
 
 	ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
 	ctx.StatusCode(iris.StatusOK)
-	response, status, msg := models.CheckLogin(aul.Username, aul.Password)
+
+	user := models.NewUser(0, aul.Username)
+	user.GetUserByUsername()
+
+	response, status, msg := user.CheckLogin(aul.Password)
+
 	_, _ = ctx.JSON(ApiResource(status, response, msg))
 	return
 
@@ -67,7 +72,7 @@ func UserLogin(ctx iris.Context) {
  */
 func UserLogout(ctx iris.Context) {
 	aui := ctx.Values().GetString("auth_user_id")
-	uid := uint(tools.ParseInt(aui, 0))
+	uid := uint(libs.ParseInt(aui, 0))
 	models.UserAdminLogout(uid)
 
 	ctx.Application().Logger().Infof("%d 退出系统", uid)

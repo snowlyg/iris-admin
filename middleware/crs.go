@@ -13,5 +13,4 @@ func CrsAuth() context.Handler {
 		ExposedHeaders:   []string{"Accept", "Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization"},
 		AllowCredentials: true,
 	})
-
 }

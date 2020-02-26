@@ -1,6 +1,7 @@
 package models
 
 import (
+	"IrisAdminApi/database"
 	"github.com/jinzhu/gorm"
 )
 
@@ -22,11 +23,9 @@ type Token struct {
  * oauth_token
  * @method OauthTokenCreate
  */
-func (ot *OauthToken) OauthTokenCreate() (response Token) {
-	Db.Create(ot)
-	response = Token{ot.Token}
-
-	return
+func (ot *OauthToken) OauthTokenCreate() *Token {
+	database.GetGdb().Create(ot)
+	return &Token{ot.Token}
 }
 
 /**
@@ -34,10 +33,8 @@ func (ot *OauthToken) OauthTokenCreate() (response Token) {
  * @method GetOauthTokenByToken
  * @param  {[type]}       token string [description]
  */
-func GetOauthTokenByToken(token string) (ot *OauthToken) {
-	ot = new(OauthToken)
-	Db.Where("token =  ?", token).First(&ot)
-	return
+func (ot *OauthToken) GetOauthTokenByToken(token string) {
+	database.GetGdb().Where("token =  ?", token).First(&ot)
 }
 
 /**
@@ -45,9 +42,8 @@ func GetOauthTokenByToken(token string) (ot *OauthToken) {
  * @method UpdateOauthTokenByUserId
  *@param  {[type]}       user  *OauthToken [description]
  */
-func UpdateOauthTokenByUserId(userId uint) (ot *OauthToken) {
-	Db.Model(ot).Where("revoked = ?", false).
+func (ot *OauthToken) UpdateOauthTokenByUserId(userId uint) {
+	database.GetGdb().Model(ot).Where("revoked = ?", false).
 		Where("user_id = ?", userId).
 		Updates(map[string]interface{}{"revoked": true})
-	return
 }

@@ -8,11 +8,11 @@ import (
 )
 
 func TestUsers(t *testing.T) {
-	getMore(t, baseUrl+"users", iris.StatusOK, true, "操作成功")
+	getMore(t, "users", iris.StatusOK, true, "操作成功")
 }
 
 func TestUserProfile(t *testing.T) {
-	getMore(t, baseUrl+"users/profile", iris.StatusOK, true, "操作成功")
+	getMore(t, "users/profile", iris.StatusOK, true, "")
 }
 
 func TestUserCreate(t *testing.T) {
@@ -24,7 +24,7 @@ func TestUserCreate(t *testing.T) {
 		"role_ids": []uint{tr.ID},
 	}
 
-	create(t, baseUrl+"users", oj, iris.StatusOK, true, "操作成功")
+	create(t, "users", oj, iris.StatusOK, true, "操作成功")
 }
 
 func TestUserUpdate(t *testing.T) {
@@ -37,10 +37,10 @@ func TestUserUpdate(t *testing.T) {
 	}
 
 	tu := CreateUser()
-	update(t, fmt.Sprintf(baseUrl+"users/%d", tu.ID), oj, iris.StatusOK, true, "操作成功")
+	update(t, fmt.Sprintf("users/%d", tu.ID), oj, iris.StatusOK, true, "操作成功")
 }
 
 func TestUserDelete(t *testing.T) {
 	tu := CreateUser()
-	delete(t, fmt.Sprintf(baseUrl+"users/%d", tu.ID), iris.StatusOK, true, "删除成功")
+	delete(t, fmt.Sprintf("users/%d", tu.ID), iris.StatusOK, true, "删除成功")
 }

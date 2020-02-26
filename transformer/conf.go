@@ -15,15 +15,13 @@ type Conf struct {
 
 type App struct {
 	Name          string
-	URl           string
-	Port          string
+	Url           string
 	LoggerLevel   string
 	DirverType    string
 	CreateSysData bool
 }
 
 type Mysql struct {
-	DirverName string
 	Connect    string
 	Name       string
 	TName      string
@@ -34,7 +32,6 @@ type Mongodb struct {
 }
 
 type Sqlite struct {
-	DirverName string
 	Connect    string
 	TConnect   string
 }

@@ -1,15 +1,9 @@
 mode: atomic
-IrisAdminApi/main.go:20.13,26.16 5 0
-IrisAdminApi/main.go:26.16,28.3 1 0
-IrisAdminApi/main.go:31.53,48.34 7 1
-IrisAdminApi/main.go:52.2,65.12 6 1
-IrisAdminApi/main.go:48.34,50.3 1 0
-IrisAdminApi/main.go:69.67,72.23 3 1
-IrisAdminApi/main.go:79.2,79.12 1 1
-IrisAdminApi/main.go:72.23,73.22 1 30
-IrisAdminApi/main.go:73.22,77.4 3 15
-IrisAdminApi/main.go:83.40,85.37 2 30
-IrisAdminApi/main.go:90.2,90.14 1 15
-IrisAdminApi/main.go:85.37,86.35 1 113
-IrisAdminApi/main.go:86.35,88.4 1 15
-IrisAdminApi/main.go:94.37,135.2 25 1
+IrisAdminApi/main.go:18.28,23.16 5 0
+IrisAdminApi/main.go:27.2,27.10 1 0
+IrisAdminApi/main.go:23.16,25.3 1 0
+IrisAdminApi/main.go:30.33,46.34 6 1
+IrisAdminApi/main.go:50.2,63.12 3 1
+IrisAdminApi/main.go:46.34,48.3 1 0
+IrisAdminApi/main.go:66.13,73.16 6 0
+IrisAdminApi/main.go:73.16,75.3 1 0

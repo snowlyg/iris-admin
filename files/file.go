@@ -2,15 +2,18 @@ package files
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"os"
+	"path/filepath"
+
+	"github.com/fatih/color"
 )
 
 // 创建临时文件
 func CreateTemFile(name string, file multipart.File) (string, error) {
-
 	f, err := ioutil.TempFile("upload/tmp/", "*_"+name)
 	if err != nil {
 		return "", err
@@ -57,13 +60,10 @@ func AppendFile(filename string, output []byte) error {
 	if err != nil {
 		return err
 	}
-
 	defer f.Close()
-
 	if _, err = f.Write(output); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -122,4 +122,23 @@ func compress(file *os.File, prefix string, zw *zip.Writer) error {
 		}
 	}
 	return nil
+}
+
+/*
+	重置配置文件路径
+	该方法目前仅用于测试 ，有些多余
+*/
+func GetAbsPath(confPath string) string {
+	getwd, err := os.Getwd()
+	if err != nil {
+		color.Red(fmt.Sprintf("Getwd err %v",err) )
+	}
+
+	end := filepath.Base(getwd)
+
+	if end != "IrisAdminApi" {
+		return filepath.Join(filepath.Dir(getwd) , confPath)
+	}
+
+	return confPath
 }

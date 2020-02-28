@@ -6,12 +6,12 @@ import (
 	"os"
 	"testing"
 
-	"IrisAdminApi/models"
-	"IrisAdminApi/transformer"
-	"IrisAdminApi/validates"
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
+	"github.com/snowlyg/iris-base-rabc/models"
+	"github.com/snowlyg/iris-base-rabc/transformer"
+	"github.com/snowlyg/iris-base-rabc/validates"
 )
 
 const baseUrl = "/v1/admin/"

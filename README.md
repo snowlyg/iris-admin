@@ -18,6 +18,10 @@
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
 
  **注意：**
+ 项目核心代码分离从一个新的项目 [https://github.com/snowlyg/iris-base-rabc](https://github.com/snowlyg/iris-base-rabc),
+ 使用新的项目包可以快速创建一个 RABC 权限控制 Api。
+ 
+ `iris-base-rabc` 项目会持续更新,欢迎大家提出宝贵意见 [issues](https://github.com/snowlyg/iris-base-rabc/issues)。
 
 ---
 

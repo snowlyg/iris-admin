@@ -8,5 +8,5 @@ require (
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/onsi/ginkgo v1.11.0 // indirect
 	github.com/onsi/gomega v1.8.1 // indirect
-	github.com/snowlyg/iris-base-rabc v0.0.0-20200228105330-e695987a8495
+	github.com/snowlyg/iris-base-rabc v0.0.0-20200228123840-511c70ecb1e3
 )

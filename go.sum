@@ -325,6 +325,8 @@ github.com/snowlyg/iris-base-rabc v0.0.0-20200228102506-ec2ee129f579 h1:21ctJhZr
 github.com/snowlyg/iris-base-rabc v0.0.0-20200228102506-ec2ee129f579/go.mod h1:QccvM/TrCc6Uf7BQNx2KOuvQJ9PfMyZgVMuhdgDLjms=
 github.com/snowlyg/iris-base-rabc v0.0.0-20200228105330-e695987a8495 h1:rZayS3ev19wXreheBXBKbhDTb0V/pngilZQ1Fpxhg9Y=
 github.com/snowlyg/iris-base-rabc v0.0.0-20200228105330-e695987a8495/go.mod h1:gG2LMmydhs2cd62xEz800ZxwzJvCXyrxVECj4dubcB4=
+github.com/snowlyg/iris-base-rabc v0.0.0-20200228123840-511c70ecb1e3 h1:Kc2Vhnd3cw91OjsmgEcGgZEUKApr4pq9bg+Ck4HvCT4=
+github.com/snowlyg/iris-base-rabc v0.0.0-20200228123840-511c70ecb1e3/go.mod h1:gG2LMmydhs2cd62xEz800ZxwzJvCXyrxVECj4dubcB4=
 github.com/snowlyg/qor-registerviews v0.0.0-20200228055356-1db9340ae42c h1:WgsdfuIB/NNyTKOxobp1Ofo0GeelMHA68jxi7GhSjck=
 github.com/snowlyg/qor-registerviews v0.0.0-20200228055356-1db9340ae42c/go.mod h1:bInyxCwlU5fuviD0vWuKcKEPEMs4qKVXVJbDXlobe6A=
 github.com/spf13/afero v1.1.2/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B0CQ=

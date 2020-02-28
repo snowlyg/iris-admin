@@ -3,7 +3,6 @@ package main
 import (
 	"testing"
 
-	"IrisAdminApi/config"
 	"github.com/kataras/iris/v12"
 )
 

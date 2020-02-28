@@ -6,13 +6,13 @@
     <a href="https://goreportcard.com/report/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
     <a href="https://godoc.org/github.com/snowlyg/IrisAdminApi"><img src="https://godoc.org/github.com/snowlyg/IrisAdminApi?status.svg" alt="GoDoc"></a>
     <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
-    <h5 align="center">I</h5>
+    <h5 align="center"></h5>
 </div>
 
 项目功能升级迁移到 [snowlyg/go-tenancy](https://github.com/snowlyg/go-tenancy) （开发中）,本项目将停止更新。
 
 #### 项目介绍
-- 数据支持 `mysql`，`sqlite3` 配置; `sqlite3` 需要下载 `gcc`,   `tgorm.db`。  [gcc 下载地址](http://mingw-w64.org/doku.php/download)
+- 数据支持 `mysql`，`sqlite3` 配置; `sqlite3` 需要下载 `gcc`,  [gcc 下载地址](http://mingw-w64.org/doku.php/download)
 - 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
 - 前端采用了 `element-ui` 框架,代码集成到 `front` 目录
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`

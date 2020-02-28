@@ -15,8 +15,8 @@ func main() {
 
 	api := irisbaserabc.NewApp()
 	api.Logger().SetOutput(f) //记录日志
-	err := api.Run(iris.Addr(config.GetAppUrl()), iris.WithConfiguration(config.GetIrisConf()))
-	if err != nil {
+
+	if err := api.Run(iris.Addr(config.GetAppUrl()), iris.WithConfiguration(config.GetIrisConf())); err != nil {
 		color.Yellow(fmt.Sprintf("项目运行结束: %v", err))
 	}
 }

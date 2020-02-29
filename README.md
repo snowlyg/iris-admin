@@ -6,7 +6,7 @@
     <a href="https://goreportcard.com/report/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
     <a href="https://godoc.org/github.com/snowlyg/IrisAdminApi"><img src="https://godoc.org/github.com/snowlyg/IrisAdminApi?status.svg" alt="GoDoc"></a>
     <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
-    <h5 align="center">I</h5>
+    <h5 align="center">IrisAdminApi</h5>
 </div>
 
 项目功能升级迁移到 [snowlyg/go-tenancy](https://github.com/snowlyg/go-tenancy) （开发中）,本项目将停止更新。

@@ -5,28 +5,29 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
-	irisbaserabc "github.com/snowlyg/iris-base-rabc"
-	"github.com/snowlyg/iris-base-rabc/config"
+	"github.com/snowlyg/IrisAdminApi/config"
 )
 
 func main() {
-	f := irisbaserabc.NewLogFile()
+	f := NewLogFile()
 	defer f.Close()
 
-	api := irisbaserabc.NewApp()
+	api := NewApp()
 	api.Logger().SetOutput(f) //记录日志
 
-	// 修改系统默认设置方法
+	// 修改默认设置
 	//config.SetAppDriverType("Mysql")
 	//config.SetMysqlConnect("root:password@(127.0.0.1:3306)/")
 	//config.SetMysqlName("root")
-	//config.SetAppUrl("http://localhost:8080")
+	//config.SetAppUrl("localhost:8081")
 	//config.SetAppName("MySiteName")
 	//config.SetAppCreateSysData(false)
 	//config.SetAppLoggerLevel("debug")
 	//config.SetTestDataName("username")
 
-	if err := api.Run(iris.Addr(config.GetAppUrl()), iris.WithConfiguration(config.GetIrisConf())); err != nil {
+	url := config.GetAppUrl()
+	conf := config.GetIrisConf()
+	if err := api.Run(iris.Addr(url), iris.WithConfiguration(conf)); err != nil {
 		color.Yellow(fmt.Sprintf("项目运行结束: %v", err))
 	}
 }

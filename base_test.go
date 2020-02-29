@@ -9,8 +9,10 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
-	"github.com/snowlyg/iris-base-rabc/models"
-	"github.com/snowlyg/iris-base-rabc/validates"
+	"github.com/snowlyg/IrisAdminApi/config"
+	"github.com/snowlyg/IrisAdminApi/models"
+	"github.com/snowlyg/IrisAdminApi/routepath"
+	"github.com/snowlyg/IrisAdminApi/validates"
 )
 
 var (

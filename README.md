@@ -18,6 +18,16 @@
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
 
  **注意：**
+ 项目核心代码分离从一个新的项目 [https://github.com/snowlyg/iris-base-rabc](https://github.com/snowlyg/iris-base-rabc),
+ 使用新的项目包可以快速创建一个 RABC 权限控制 Api。
+ 
+ `iris-base-rabc` 项目开始会频繁更新，使用如果出现问题请优先更新到最新版本，再提问。
+ 
+ `iris-base-rabc` 项目会持续更新,欢迎大家提出宝贵意见 [issues](https://github.com/snowlyg/iris-base-rabc/issues)。
+
+###### Iris-go 学习交流QQ群 ：676717248
+<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
+
 
 ---
 
@@ -145,8 +155,4 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 
 #### 演示地址
 [http://112.74.61.105:8087/](http://112.74.61.105:8087)
-
-
-###### Iris-go 学习交流QQ群 ：676717248
-<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
 

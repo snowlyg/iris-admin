@@ -38,7 +38,8 @@ func getDataBase() *dataBase {
 			color.Red(fmt.Sprintf("gorm open 错误: %v", err))
 		}
 
-		c, err := gormadapter.NewAdapter(driverName, conn, true) // Your driver and data source.
+		c, err := gormadapter.NewAdapterByDB(gdb)
+		//c, err := gormadapter.NewAdapter(driverName, conn, true) // Your driver and data source.
 		if err != nil {
 			color.Red(fmt.Sprintf("NewAdapter 错误: %v", err))
 		}

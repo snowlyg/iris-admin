@@ -24,7 +24,7 @@
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
 
  **注意：**
- - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 mysql 需要修改为 `DriverType = "Mysql"` ,在 `config/conf.tml` 文件中
+ - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 mysql 需要修改为 `DriverType = "Mysql"`，并且创建对应数据库 ,在 `config/conf.tml` 文件中
  - `permissions.xlsx` 权限导入测试模板文件，仅供测试使用; 权限会自动生成，无需另外导入。
  
  - 为了兼容测试 `files/file.go` 内增加了 `GetAbsPath()` 方法去获取配置文件的绝对路径，没有测试可以不需要此方法。
@@ -35,6 +35,7 @@
 #### 项目开发过程详解
 
 [Iris-go 项目登陆 API 构建细节实现过程](https://learnku.com/articles/39551)
+[iris + casbin 从陌生到学会使用的过程](https://learnku.com/articles/41416)
 
 ---
 
@@ -151,7 +152,7 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ---
 
 #### 登录项目
-- http://localhost:8080
+- http://localhost:8081
 
 
 #### 演示地址

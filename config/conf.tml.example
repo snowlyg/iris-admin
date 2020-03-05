@@ -8,7 +8,7 @@ Charset = "UTF-8"
 [Other]
     [Other.App]
         Name = "IrisAdminApi" #项目名称
-        Url = "localhost:8080"
+        Url = "localhost:8081"
         LoggerLevel = "debug" # 日志类型 "disable" "fatal" "error" "warn""info" "debug"
         DriverType = "Sqlite" # 数据库类型 "Sqlite" "Mysql"
         CreateSysData = true # 是否创建系统数据 true / false

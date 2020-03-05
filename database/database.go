@@ -7,6 +7,8 @@ import (
 	"sync"
 
 	"github.com/casbin/casbin/v2"
+	defaultrolemanager "github.com/casbin/casbin/v2/rbac/default-role-manager"
+	"github.com/casbin/casbin/v2/util"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
@@ -45,7 +47,8 @@ func getDataBase() *dataBase {
 		if err != nil {
 			color.Red(fmt.Sprintf("NewEnforcer 错误: %v", err))
 		}
-
+		rm := defaultrolemanager.NewRoleManager(10).(*defaultrolemanager.RoleManager)
+		rm.AddMatchingFunc("KeyMatch4", util.KeyMatch2)
 		_ = e.LoadPolicy()
 
 		db = &dataBase{Db: gdb, Enforcer: e}

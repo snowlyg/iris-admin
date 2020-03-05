@@ -72,6 +72,8 @@ func CreateSystemAdminPermission(perms []*validates.PermissionRequest) []uint {
 	var permIds []uint
 	for _, perm := range perms {
 		p := NewPermission(0, perm.Name, perm.Act)
+		p.DisplayName = perm.DisplayName
+		p.Description = perm.Description
 		p.GetPermissionByNameAct()
 		if p.ID != 0 {
 			continue

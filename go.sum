@@ -39,6 +39,8 @@ github.com/aymerick/raymond v2.0.3-0.20180322193309-b565731e1464+incompatible/go
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/betacraft/yaag v1.0.1-0.20191027021412-565f65e36090 h1:+GqA3rJ5SyB3K8OmAW6q9ue/pOz+ySnK103xUrAy/Ss=
 github.com/betacraft/yaag v1.0.1-0.20191027021412-565f65e36090/go.mod h1:/ckKeGGiG5nDlbew5K+R5EsJYdkpnUsJBg54kHdWm/0=
+github.com/casbin/casbin v1.9.1 h1:ucjbS5zTrmSLtH4XogqOG920Poe6QatdXtz1FEbApeM=
+github.com/casbin/casbin v1.9.1/go.mod h1:z8uPsfBJGUsnkagrt3G8QvjgTKFMBJ32UP8HpZllfog=
 github.com/casbin/casbin/v2 v2.0.0/go.mod h1:YcPU1XXisHhLzuxH9coDNf2FbKpjGlbCg3n9yuLkIJQ=
 github.com/casbin/casbin/v2 v2.2.1 h1:ijrSMfBfbQlDc4LnMTGtGYWmhKuuR6RLSQRj8vHrMzc=
 github.com/casbin/casbin/v2 v2.2.1/go.mod h1:YcPU1XXisHhLzuxH9coDNf2FbKpjGlbCg3n9yuLkIJQ=

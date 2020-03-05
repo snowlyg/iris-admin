@@ -9,7 +9,7 @@
     <h5 align="center">IrisAdminApi</h5>
 </div>
 
-项目功能升级迁移到 [snowlyg/go-tenancy](https://github.com/snowlyg/go-tenancy) （开发中）,本项目将停止更新。
+项目功能升级迁移到 [snowlyg/go-tenancy](https://github.com/snowlyg/go-tenancy) ,本项目将停止更新。
 
 #### 项目介绍
 - `iris-go` 框架后台接口项目
@@ -22,7 +22,6 @@
 - 前端采用了 `element-ui` 框架,代码集成到 `front` 目录
 - 使用 `casbin` 做权限控制, `config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
-- 增加多商户模式，分为管理端和商户端
 
  **注意：**
  - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 mysql 需要修改为 `DriverType = "Mysql"` ,在 `config/conf.tml` 文件中

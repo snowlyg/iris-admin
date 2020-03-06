@@ -43,8 +43,7 @@ func GetRoutes(i interface{}) []*validates.PermissionRequest {
 	var rrs []*validates.PermissionRequest
 	for _, s := range getPathNames(i) {
 		if !isPermRoute(s.Name) {
-			path := strings.Replace(s.Path, ":id", "*", 1)
-			rr := &validates.PermissionRequest{Name: path, DisplayName: s.Name, Description: s.Name, Act: s.Method}
+			rr := &validates.PermissionRequest{Name: s.Path, DisplayName: s.Name, Description: s.Name, Act: s.Method}
 			rrs = append(rrs, rr)
 		}
 	}

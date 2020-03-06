@@ -3,7 +3,9 @@ package libs
 import (
 	"encoding/base64"
 	"math/rand"
+	"os"
 	"strconv"
+	"strings"
 
 	"github.com/jameskeane/bcrypt"
 )
@@ -111,4 +113,14 @@ func HashPassword(pwd string) string {
 	}
 
 	return hash
+}
+
+func IsTestEnv() bool {
+	files := os.Args
+	for _, v := range files {
+		if strings.Contains(v, "test") {
+			return true
+		}
+	}
+	return false
 }

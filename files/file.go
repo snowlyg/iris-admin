@@ -124,5 +124,5 @@ func compress(file *os.File, prefix string, zw *zip.Writer) error {
 
 // 获取配置文件的绝对路径
 func GetAbsPath(subpath, filename string) string {
-	return registerviews.DetectViewsDir("github.com/snowlyg/IrisAdminApi/"+subpath, "", "") + "/" + filename
+	return registerviews.DetectViewsDir("github.com/snowlyg/IrisAdminApi/"+subpath, "", "") + `/` + filename
 }

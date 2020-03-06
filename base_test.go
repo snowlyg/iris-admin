@@ -24,7 +24,7 @@ var (
 func TestMain(m *testing.M) {
 
 	app = NewApp() // 初始化app
-	routes := routepath.GetRoutes(app.APIBuilder.GetRoutes())
+	routes := routepath.GetRoutes(app.GetRoutesReadOnly())
 	models.CreateSystemData(routes)
 
 	flag.Parse()

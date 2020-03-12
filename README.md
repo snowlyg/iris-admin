@@ -27,8 +27,7 @@
  - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 mysql 需要修改为 `DriverType = "Mysql"`，并且创建对应数据库 ,在 `config/conf.tml` 文件中
  - `permissions.xlsx` 权限导入测试模板文件，仅供测试使用; 权限会自动生成，无需另外导入。
  
- - 为了兼容测试 `files/file.go` 内增加了 `GetAbsPath()` 方法去获取配置文件的绝对路径，没有测试可以不需要此方法。
-    如果你使用了此方法，需要将此方法中的路径修改为你项目的路径，而且你的项目必须要在 `gopath` 的 `/src` 目录下。
+ -  `config/config.go` 文件中的路径 `Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi"` 需要修改为你的项目路径,用于加载配置文件
  
 ---
 

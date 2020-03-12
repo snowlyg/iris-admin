@@ -22,7 +22,7 @@ func App(api *iris.Application) {
 			v1.Use(irisyaag.New())
 			v1.PartyFunc("/admin", func(app iris.Party) {
 				app.Get("/resetData", controllers.ResetData)
-				casbinMiddleware := middleware.New(database.GetEnforcer())         //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
+				casbinMiddleware := middleware.New(database.Enforcer)              //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				app.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				app.Get("/logout", controllers.UserLogout).Name = "退出"
 
@@ -45,13 +45,11 @@ func App(api *iris.Application) {
 					permissions.Get("/", controllers.GetAllPermissions).Name = "权限列表"
 					permissions.Get("/{id:uint}", controllers.GetPermission).Name = "权限详情"
 					permissions.Post("/import", controllers.ImportPermission).Name = "导入权限"
-					//permissions.Post("/", controllers.CreatePermission).Name = "创建权限"
-					//permissions.Put("/{id:uint}", controllers.UpdatePermission).Name = "编辑权限"
-					//permissions.Delete("/{id:uint}", controllers.DeletePermission).Name = "删除权限"
+					permissions.Post("/", controllers.CreatePermission).Name = "创建权限"
+					permissions.Put("/{id:uint}", controllers.UpdatePermission).Name = "编辑权限"
+					permissions.Delete("/{id:uint}", controllers.DeletePermission).Name = "删除权限"
 				})
 			})
 		}
-
-		api.Any("/payload", controllers.Payload)
 	}
 }

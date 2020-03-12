@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"os"
-
-	registerviews "github.com/snowlyg/qor-registerviews"
 )
 
 // 创建临时文件
@@ -120,9 +118,4 @@ func compress(file *os.File, prefix string, zw *zip.Writer) error {
 		}
 	}
 	return nil
-}
-
-// 获取配置文件的绝对路径
-func GetAbsPath(subpath, filename string) string {
-	return registerviews.DetectViewsDir("github.com/snowlyg/IrisAdminApi/"+subpath, "", "") + `/` + filename
 }

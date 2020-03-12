@@ -100,7 +100,7 @@ func IsNotFound(err error) {
  * @param  {[type]} limit int    [description]
  */
 func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
-	db := database.GetGdb()
+	db := database.Db
 	if len(orderBy) > 0 {
 		db.Order(orderBy + "desc")
 	} else {
@@ -119,22 +119,22 @@ func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 }
 
 func DelAllData() {
-	database.GetGdb().Unscoped().Delete(&OauthToken{})
-	database.GetGdb().Unscoped().Delete(&Permission{})
-	database.GetGdb().Unscoped().Delete(&Role{})
-	database.GetGdb().Unscoped().Delete(&User{})
-	database.GetGdb().Exec("DELETE FROM casbin_rule;")
+	database.Db.Unscoped().Delete(&OauthToken{})
+	database.Db.Unscoped().Delete(&Permission{})
+	database.Db.Unscoped().Delete(&Role{})
+	database.Db.Unscoped().Delete(&User{})
+	database.Db.Exec("DELETE FROM casbin_rule;")
 }
 
 func Update(v, d interface{}) error {
-	if err := database.GetGdb().Model(v).Updates(d).Error; err != nil {
+	if err := database.Db.Model(v).Updates(d).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
 func GetRolesForUser(uid uint) []string {
-	uids, err := database.GetEnforcer().GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
+	uids, err := database.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
 	if err != nil {
 		color.Red(fmt.Sprintf("GetRolesForUser 错误: %v", err))
 		return []string{}
@@ -144,9 +144,9 @@ func GetRolesForUser(uid uint) []string {
 }
 
 func GetPermissionsForUser(uid uint) [][]string {
-	return database.GetEnforcer().GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
+	return database.Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
 }
 
 func DropTables() {
-	database.GetGdb().DropTable("users", "roles", "permissions", "oauth_tokens", "casbin_rule")
+	database.Db.DropTable("users", "roles", "permissions", "oauth_tokens", "casbin_rule")
 }

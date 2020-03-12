@@ -47,11 +47,11 @@ func NewUserByStruct(ru *validates.CreateUpdateUserRequest) *User {
 }
 
 func (u *User) GetUserByUsername() {
-	IsNotFound(database.GetGdb().Where("username = ?", u.Username).First(u).Error)
+	IsNotFound(database.Db.Where("username = ?", u.Username).First(u).Error)
 }
 
 func (u *User) GetUserById() {
-	IsNotFound(database.GetGdb().Where("id = ?", u.ID).First(u).Error)
+	IsNotFound(database.Db.Where("id = ?", u.ID).First(u).Error)
 }
 
 /**
@@ -59,7 +59,7 @@ func (u *User) GetUserById() {
  * @method DeleteUserById
  */
 func (u *User) DeleteUser() {
-	if err := database.GetGdb().Delete(u).Error; err != nil {
+	if err := database.Db.Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
 	}
 }
@@ -92,7 +92,7 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  */
 func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
 	u.Password = libs.HashPassword(aul.Password)
-	if err := database.GetGdb().Create(u).Error; err != nil {
+	if err := database.Db.Create(u).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 	}
 
@@ -120,13 +120,13 @@ func (u *User) UpdateUser(uj *validates.CreateUpdateUserRequest) {
 func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
 	if len(uj.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
-		if _, err := database.GetEnforcer().DeleteRolesForUser(userId); err != nil {
+		if _, err := database.Enforcer.DeleteRolesForUser(userId); err != nil {
 			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 		}
 
 		for _, roleId := range uj.RoleIds {
 			roleId := strconv.FormatUint(uint64(roleId), 10)
-			if _, err := database.GetEnforcer().AddRoleForUser(userId, roleId); err != nil {
+			if _, err := database.Enforcer.AddRoleForUser(userId, roleId); err != nil {
 				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 			}
 		}

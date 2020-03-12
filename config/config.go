@@ -5,30 +5,22 @@ package config
 
 import (
 	"errors"
-	"sync"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/files"
 	"github.com/snowlyg/IrisAdminApi/transformer"
 	gf "github.com/snowlyg/gotransformer"
 )
 
-type config struct {
-	Tc  *transformer.Conf
-	Isc iris.Configuration
-}
+var (
+	Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi"
+	Isc  = iris.TOML(filepath.Join(Root, "config", "conf.tml")) // 加载配置文件
+)
 
-var cfg *config
-var once sync.Once
-
-func getConfig() *config {
-	once.Do(func() {
-		isc := iris.TOML(files.GetAbsPath("config", "conf.tml")) // 加载配置文件
-		tc := getTfConf(isc)
-		cfg = &config{Tc: tc, Isc: isc}
-	})
-	return cfg
+func newConfig() *transformer.Conf {
+	return getTfConf(Isc)
 }
 
 func getTfConf(isc iris.Configuration) *transformer.Conf {
@@ -71,75 +63,67 @@ func getTfConf(isc iris.Configuration) *transformer.Conf {
 	}
 }
 
-func GetIrisConf() iris.Configuration {
-	return getConfig().Isc
-}
-
-func getTc() *transformer.Conf {
-	return getConfig().Tc
-}
-
 func GetAppName() string {
-	return getTc().App.Name
+	return newConfig().App.Name
 }
 
 func GetAppUrl() string {
-	return getTc().App.Url
+	return newConfig().App.Url
 }
 
 func GetAppLoggerLevel() string {
-	return getTc().App.LoggerLevel
+	return newConfig().App.LoggerLevel
 }
 
 func GetAppDriverType() string {
-	return getTc().App.DriverType
+	return newConfig().App.DriverType
 }
 
 func GetAppCreateSysData() bool {
-	return getTc().App.CreateSysData
+	return newConfig().App.CreateSysData
 }
 
 func GetMysqlConnect() string {
-	return getTc().Mysql.Connect
+	return newConfig().Mysql.Connect
 }
 
 func GetMysqlName() string {
-	return getTc().Mysql.Name
+	return newConfig().Mysql.Name
 }
 
 func GetMysqlTName() string {
-	return getTc().Mysql.TName
+	return newConfig().Mysql.TName
 }
 
 func GetMongodbConnect() string {
-	return getTc().Mongodb.Connect
+	return newConfig().Mongodb.Connect
 }
 
 func GetSqliteConnect() string {
-	return files.GetAbsPath("tmp", getTc().Sqlite.Connect)
+	return filepath.Join(Root, "tmp", newConfig().Sqlite.Connect)
 }
 
 func GetSqliteTConnect() string {
-	return files.GetAbsPath("tmp", getTc().Sqlite.TConnect)
+	return filepath.Join(Root, "tmp", newConfig().Sqlite.TConnect)
 }
 
 func GetTestDataUserName() string {
-	return getTc().TestData.UserName
+	return newConfig().TestData.UserName
 }
 
 func GetTestDataName() string {
-	return getTc().TestData.Name
+	return newConfig().TestData.Name
 }
 
 func GetTestDataPwd() string {
-	return getTc().TestData.Pwd
+	return newConfig().TestData.Pwd
 }
 
 func SetAppName(arg string) error {
 	if len(arg) == 0 {
 		return errors.New("AppName is not be empty")
 	}
-	getTc().App.Name = arg
+	newConfig().App.Name = arg
 	return nil
 }
 
@@ -147,7 +131,7 @@ func SetAppUrl(arg string) error {
 	if len(arg) == 0 {
 		return errors.New("AppUrl is not be empty")
 	}
-	getTc().App.Url = arg
+	newConfig().App.Url = arg
 	return nil
 }
 
@@ -155,7 +139,7 @@ func SetAppLoggerLevel(arg string) error {
 	if len(arg) == 0 {
 		return errors.New("AppLoggerLevel is not be empty")
 	}
-	getTc().App.LoggerLevel = arg
+	newConfig().App.LoggerLevel = arg
 	return nil
 }
 
@@ -166,14 +150,12 @@ func SetAppDriverType(arg string) error {
 	if arg != "Sqlite" && arg != "Mysql" {
 		return errors.New("DriverType only support Sqlite or Mysql")
 	}
-	getTc().App.DriverType = arg
+	newConfig().App.DriverType = arg
 	return nil
 }
 
 func SetAppCreateSysData(arg bool) error {
-
-	getTc().App.CreateSysData = arg
-
+	newConfig().App.CreateSysData = arg
 	return nil
 }
 
@@ -181,8 +163,7 @@ func SetMysqlConnect(arg string) error {
 	if len(arg) == 0 {
 		return errors.New("MysqlConnect is not be empty")
 	}
-
-	getTc().Mysql.Connect = arg
+	newConfig().Mysql.Connect = arg
 	return nil
 }
 
@@ -190,7 +171,7 @@ func SetMysqlName(arg string) error {
 	if len(arg) == 0 {
 		return errors.New("MysqlName is not be empty")
 	}
-	getTc().Mysql.Name = arg
+	newConfig().Mysql.Name = arg
 	return nil
 }
 
@@ -198,7 +179,7 @@ func SetMysqlTName(arg string) error {
 	if len(arg) == 0 {
 		return errors.New("MysqlTName is not be empty")
 	}
-	getTc().Mysql.TName = arg
+	newConfig().Mysql.TName = arg
 	return nil
 }
 
@@ -206,7 +187,7 @@ func SetMongodbConnect(arg string) error {
 	if len(arg) == 0 {
 		return errors.New("MongodbConnect is not be empty")
 	}
-	getTc().Mongodb.Connect = arg
+	newConfig().Mongodb.Connect = arg
 	return nil
 }
 
@@ -214,7 +195,7 @@ func SetTestDataUserName(arg string) error {
 	if len(arg) < 6 {
 		return errors.New("DataUserName is not be empty")
 	}
-	getTc().TestData.UserName = arg
+	newConfig().TestData.UserName = arg
 	return nil
 }
 
@@ -222,7 +203,7 @@ func SetTestDataName(arg string) error {
 	if len(arg) < 6 {
 		return errors.New("DataName 必须大于6个字符")
 	}
-	getTc().TestData.Name = arg
+	newConfig().TestData.Name = arg
 	return nil
 }
 
@@ -230,6 +211,6 @@ func SetTestDataPwd(arg string) error {
 	if len(arg) < 6 {
 		return errors.New("DataPwd 必须大于6个字符")
 	}
-	getTc().TestData.Pwd = arg
+	newConfig().TestData.Pwd = arg
 	return nil
 }

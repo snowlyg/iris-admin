@@ -24,7 +24,7 @@ type Token struct {
  * @method OauthTokenCreate
  */
 func (ot *OauthToken) OauthTokenCreate() *Token {
-	database.GetGdb().Create(ot)
+	database.Db.Create(ot)
 	return &Token{ot.Token}
 }
 
@@ -34,7 +34,7 @@ func (ot *OauthToken) OauthTokenCreate() *Token {
  * @param  {[type]}       token string [description]
  */
 func (ot *OauthToken) GetOauthTokenByToken(token string) {
-	database.GetGdb().Where("token =  ?", token).First(&ot)
+	database.Db.Where("token =  ?", token).First(&ot)
 }
 
 /**
@@ -43,7 +43,7 @@ func (ot *OauthToken) GetOauthTokenByToken(token string) {
  *@param  {[type]}       user  *OauthToken [description]
  */
 func (ot *OauthToken) UpdateOauthTokenByUserId(userId uint) {
-	database.GetGdb().Model(ot).Where("revoked = ?", false).
+	database.Db.Model(ot).Where("revoked = ?", false).
 		Where("user_id = ?", userId).
 		Updates(map[string]interface{}{"revoked": true})
 }

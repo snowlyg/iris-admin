@@ -33,7 +33,7 @@ func NewApp() *iris.Application {
 
 	api.RegisterView(iris.HTML("resources", ".html"))
 
-	db := database.GetGdb()
+	db := database.Db
 	db.AutoMigrate(
 		&models.User{},
 		&models.OauthToken{},

@@ -49,7 +49,7 @@ func NewRoleByStruct(rr *validates.RoleRequest) *Role {
  * @param  {[type]}       role  *Role [description]
  */
 func (r *Role) GetRoleById() {
-	IsNotFound(database.GetGdb().Where("id = ?", r.ID).First(r).Error)
+	IsNotFound(database.Db.Where("id = ?", r.ID).First(r).Error)
 }
 
 /**
@@ -58,7 +58,7 @@ func (r *Role) GetRoleById() {
  * @param  {[type]}       role  *Role [description]
  */
 func (r *Role) GetRoleByName() {
-	IsNotFound(database.GetGdb().Where("name = ?", r.Name).First(r).Error)
+	IsNotFound(database.Db.Where("name = ?", r.Name).First(r).Error)
 }
 
 /**
@@ -66,7 +66,7 @@ func (r *Role) GetRoleByName() {
  * @method DeleteRoleById
  */
 func (r *Role) DeleteRoleById() {
-	if err := database.GetGdb().Delete(r).Error; err != nil {
+	if err := database.Db.Delete(r).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 	}
 }
@@ -95,7 +95,7 @@ func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
  * @param  {[type]} mp int    [description]
  */
 func (r *Role) CreateRole(permIds []uint) {
-	if err := database.GetGdb().Create(r).Error; err != nil {
+	if err := database.Db.Create(r).Error; err != nil {
 		color.Red(fmt.Sprintf("CreateRoleErr:%v \n", err))
 	}
 
@@ -107,13 +107,13 @@ func (r *Role) CreateRole(permIds []uint) {
 func addPerms(permIds []uint, role *Role) {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
-		if _, err := database.GetEnforcer().DeletePermissionsForUser(roleId); err != nil {
+		if _, err := database.Enforcer.DeletePermissionsForUser(roleId); err != nil {
 			color.Red(fmt.Sprintf("AppendPermsErr:%s \n", err))
 		}
 		var perms []Permission
-		database.GetGdb().Where("id in (?)", permIds).Find(&perms)
+		database.Db.Where("id in (?)", permIds).Find(&perms)
 		for _, perm := range perms {
-			if _, err := database.GetEnforcer().AddPolicy(roleId, perm.Name, perm.Act); err != nil {
+			if _, err := database.Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
 				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
 			}
 		}

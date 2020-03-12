@@ -9,7 +9,7 @@
     <h5 align="center">IrisAdminApi</h5>
 </div>
 
-项目功能升级迁移到 [snowlyg/go-tenancy](https://github.com/snowlyg/go-tenancy) ,本项目将停止更新。
+> 简单学习项目 ----写的挺烂欢迎指点
 
 #### 项目介绍
 - `iris-go` 框架后台接口项目

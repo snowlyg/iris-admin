@@ -4,7 +4,6 @@
 package config
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 	"time"
@@ -117,100 +116,4 @@ func GetTestDataName() string {
 
 func GetTestDataPwd() string {
 	return newConfig().TestData.Pwd
-}
-
-func SetAppName(arg string) error {
-	if len(arg) == 0 {
-		return errors.New("AppName is not be empty")
-	}
-	newConfig().App.Name = arg
-	return nil
-}
-
-func SetAppUrl(arg string) error {
-	if len(arg) == 0 {
-		return errors.New("AppUrl is not be empty")
-	}
-	newConfig().App.Url = arg
-	return nil
-}
-
-func SetAppLoggerLevel(arg string) error {
-	if len(arg) == 0 {
-		return errors.New("AppLoggerLevel is not be empty")
-	}
-	newConfig().App.LoggerLevel = arg
-	return nil
-}
-
-func SetAppDriverType(arg string) error {
-	if len(arg) == 0 {
-		return errors.New("DriverType is not be empty")
-	}
-	if arg != "Sqlite" && arg != "Mysql" {
-		return errors.New("DriverType only support Sqlite or Mysql")
-	}
-	newConfig().App.DriverType = arg
-	return nil
-}
-
-func SetAppCreateSysData(arg bool) error {
-	newConfig().App.CreateSysData = arg
-	return nil
-}
-
-func SetMysqlConnect(arg string) error {
-	if len(arg) == 0 {
-		return errors.New("MysqlConnect is not be empty")
-	}
-	newConfig().Mysql.Connect = arg
-	return nil
-}
-
-func SetMysqlName(arg string) error {
-	if len(arg) == 0 {
-		return errors.New("MysqlName is not be empty")
-	}
-	newConfig().Mysql.Name = arg
-	return nil
-}
-
-func SetMysqlTName(arg string) error {
-	if len(arg) == 0 {
-		return errors.New("MysqlTName is not be empty")
-	}
-	newConfig().Mysql.TName = arg
-	return nil
-}
-
-func SetMongodbConnect(arg string) error {
-	if len(arg) == 0 {
-		return errors.New("MongodbConnect is not be empty")
-	}
-	newConfig().Mongodb.Connect = arg
-	return nil
-}
-
-func SetTestDataUserName(arg string) error {
-	if len(arg) < 6 {
-		return errors.New("DataUserName is not be empty")
-	}
-	newConfig().TestData.UserName = arg
-	return nil
-}
-
-func SetTestDataName(arg string) error {
-	if len(arg) < 6 {
-		return errors.New("DataName 必须大于6个字符")
-	}
-	newConfig().TestData.Name = arg
-	return nil
-}
-
-func SetTestDataPwd(arg string) error {
-	if len(arg) < 6 {
-		return errors.New("DataPwd 必须大于6个字符")
-	}
-	newConfig().TestData.Pwd = arg
-	return nil
 }

@@ -10,7 +10,7 @@ Charset = "UTF-8"
         Name = "IrisAdminApi" #项目名称
         Url = "localhost:8081"
         LoggerLevel = "debug" # 日志类型 "disable" "fatal" "error" "warn""info" "debug"
-        DirverType = "sqlite3" # 数据库类型 "sqlite3" "mysql"
+        DriverType = "sqlite3" # 数据库类型 "sqlite3" "mysql"
         CreateSysData = true # 是否创建系统数据 true / false
     [Other.Mysql]
         Connect ="root:password@(127.0.0.1:3306)/"

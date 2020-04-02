@@ -162,3 +162,7 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 #### 登录项目
 - http://localhost:8081
 
+#### 感谢 
+
+[JetBrains](https://www.jetbrains.com/?from=IrisAdminApi) 对本项目的支持。
+

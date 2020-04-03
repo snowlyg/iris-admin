@@ -119,7 +119,7 @@ go get github.com/silenceper/gowatch
 gowatch 
 
 # go 命令
-go run main.go 
+go run ./.
 ```
 
 ---

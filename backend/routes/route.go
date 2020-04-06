@@ -11,7 +11,7 @@ import (
 func App(api *iris.Application) {
 	app := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
 	{
-		app.HandleDir("/static", "resources/app/static")
+		app.HandleDir("/static", "./resources/app/static")
 		app.Get("/", func(ctx iris.Context) { // 首页模块
 			_ = ctx.View("app/index.html")
 		})

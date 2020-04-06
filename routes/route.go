@@ -4,8 +4,8 @@ import (
 	"github.com/betacraft/yaag/irisyaag"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/controllers"
-	"github.com/snowlyg/IrisAdminApi/database"
 	"github.com/snowlyg/IrisAdminApi/middleware"
+	"github.com/snowlyg/IrisAdminApi/sysinit"
 )
 
 func App(api *iris.Application) {
@@ -22,7 +22,7 @@ func App(api *iris.Application) {
 			v1.Use(irisyaag.New())
 			v1.PartyFunc("/admin", func(app iris.Party) {
 				app.Get("/resetData", controllers.ResetData)
-				casbinMiddleware := middleware.New(database.Enforcer)              //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
+				casbinMiddleware := middleware.New(sysinit.Enforcer)               //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				app.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				app.Get("/logout", controllers.UserLogout).Name = "退出"
 

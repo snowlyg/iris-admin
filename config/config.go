@@ -1,119 +1,41 @@
-//此包用于获取配置，
-//iris 框架本身的配置处理已经比较完善，
-//增加这些方法主要是增加配置使用的灵活性
 package config
 
 import (
 	"os"
 	"path/filepath"
-	"time"
 
-	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/transformer"
-	gf "github.com/snowlyg/gotransformer"
+	"github.com/jinzhu/configor"
 )
 
-var (
-	Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi"
-	Isc  = iris.TOML(filepath.Join(Root, "config", "conf.tml")) // 加载配置文件
-)
-
-func newConfig() *transformer.Conf {
-	return getTfConf(Isc)
-}
-
-func getTfConf(isc iris.Configuration) *transformer.Conf {
-	app := transformer.App{}
-	g := gf.NewTransform(&app, isc.Other["App"], time.RFC3339)
-	_ = g.Transformer()
-
-	db := transformer.Mysql{}
-	g.OutputObj = &db
-	g.InsertObj = isc.Other["Mysql"]
-	_ = g.Transformer()
-
-	mongodb := transformer.Mongodb{}
-	g.OutputObj = &mongodb
-	g.InsertObj = isc.Other["Mongodb"]
-	_ = g.Transformer()
-
-	redis := transformer.Redis{}
-	g.OutputObj = &redis
-	g.InsertObj = isc.Other["Redis"]
-	_ = g.Transformer()
-
-	sqlite := transformer.Sqlite{}
-	g.OutputObj = &sqlite
-	g.InsertObj = isc.Other["Sqlite"]
-	_ = g.Transformer()
-
-	testData := transformer.TestData{}
-	g.OutputObj = &testData
-	g.InsertObj = isc.Other["TestData"]
-	_ = g.Transformer()
-
-	return &transformer.Conf{
-		App:      app,
-		Mysql:    db,
-		Mongodb:  mongodb,
-		Redis:    redis,
-		Sqlite:   sqlite,
-		TestData: testData,
+var Config = struct {
+	HTTPS  bool   `default:"false" env:"HTTPS"`
+	Port   uint   `default:"7000" env:"PORT"`
+	Host   string `default:"localhost" env:"Host"`
+	Tenant struct {
+		RoleName        string `env:"TenantRoleName" default:"tenant_role"`
+		RoleDisplayName string `env:"TenantRoleDisplayName" default:"超级管理员"`
 	}
-}
+	Admin struct {
+		UserName        string `env:"AdminUserName" default:"username"`
+		Name            string `env:"AdminName" default:"name"`
+		Pwd             string `env:"AdminPwd" default:"123456"`
+		RoleName        string `env:"AdminRoleName" default:"superadmin_role"`
+		RoleDisplayName string `env:"TenantRoleDisplayName" default:"商户管理员"`
+	}
+	DB struct {
+		Name     string `env:"DBName" default:"qor_example"`
+		Adapter  string `env:"DBAdapter" default:"mysql"`
+		Host     string `env:"DBHost" default:"mysql"`
+		Port     string `env:"DBPort" default:"3306"`
+		User     string `env:"DBUser" default:"root"`
+		Password string `env:"DBPassword" default:""`
+	}
+}{}
 
-func GetAppName() string {
-	return newConfig().App.Name
-}
+var Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi"
 
-func GetAppUrl() string {
-	return newConfig().App.Url
-}
-
-func GetAppLoggerLevel() string {
-	return newConfig().App.LoggerLevel
-}
-
-func GetAppDriverType() string {
-	return newConfig().App.DriverType
-}
-
-func GetAppCreateSysData() bool {
-	return newConfig().App.CreateSysData
-}
-
-func GetMysqlConnect() string {
-	return newConfig().Mysql.Connect
-}
-
-func GetMysqlName() string {
-	return newConfig().Mysql.Name
-}
-
-func GetMysqlTName() string {
-	return newConfig().Mysql.TName
-}
-
-func GetMongodbConnect() string {
-	return newConfig().Mongodb.Connect
-}
-
-func GetSqliteConnect() string {
-	return filepath.Join(Root, "tmp", newConfig().Sqlite.Connect)
-}
-
-func GetSqliteTConnect() string {
-	return filepath.Join(Root, "tmp", newConfig().Sqlite.TConnect)
-}
-
-func GetTestDataUserName() string {
-	return newConfig().TestData.UserName
-}
-
-func GetTestDataName() string {
-	return newConfig().TestData.Name
-}
-
-func GetTestDataPwd() string {
-	return newConfig().TestData.Pwd
+func init() {
+	if err := configor.Load(&Config, filepath.Join(Root, "config/application.yml")); err != nil {
+		panic(err)
+	}
 }

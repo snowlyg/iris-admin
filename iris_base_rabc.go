@@ -9,10 +9,10 @@ import (
 	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/config"
-	"github.com/snowlyg/IrisAdminApi/database"
 	"github.com/snowlyg/IrisAdminApi/files"
 	"github.com/snowlyg/IrisAdminApi/models"
 	"github.com/snowlyg/IrisAdminApi/routes"
+	"github.com/snowlyg/IrisAdminApi/sysinit"
 )
 
 func NewLogFile() *os.File {
@@ -29,11 +29,11 @@ func NewLogFile() *os.File {
 
 func NewApp() *iris.Application {
 	api := iris.New()
-	api.Logger().SetLevel(config.GetAppLoggerLevel())
+	api.Logger().SetLevel("debug")
 
 	api.RegisterView(iris.HTML("resources", ".html"))
 
-	db := database.Db
+	db := sysinit.Db
 	db.AutoMigrate(
 		&models.User{},
 		&models.OauthToken{},
@@ -47,10 +47,10 @@ func NewApp() *iris.Application {
 
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. //api 文档配置
 		On:       true,
-		DocTitle: config.GetAppName(),
+		DocTitle: "irisadminapi",
 		DocPath:  "./resources/apiDoc/index.html", //设置绝对路径
 		BaseUrls: map[string]string{
-			"Production": config.GetAppUrl(),
+			"Production": config.Config.Host,
 			"Staging":    "",
 		},
 	})

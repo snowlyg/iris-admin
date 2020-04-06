@@ -8,7 +8,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/config"
-	"github.com/snowlyg/IrisAdminApi/database"
+	"github.com/snowlyg/IrisAdminApi/sysinit"
 	"github.com/snowlyg/IrisAdminApi/validates"
 )
 
@@ -16,12 +16,10 @@ import (
 *初始化系统 账号 权限 角色
  */
 func CreateSystemData(perms []*validates.PermissionRequest) {
-	if config.GetAppCreateSysData() {
-		permIds := CreateSystemAdminPermission(perms) //初始化权限
-		role := CreateSystemAdminRole(permIds)        //初始化角色
-		if role.ID != 0 {
-			CreateSystemAdmin(role.ID) //初始化管理员
-		}
+	permIds := CreateSystemAdminPermission(perms) //初始化权限
+	role := CreateSystemAdminRole(permIds)        //初始化角色
+	if role.ID != 0 {
+		CreateSystemAdmin(role.ID) //初始化管理员
 	}
 }
 
@@ -32,9 +30,9 @@ func CreateSystemData(perms []*validates.PermissionRequest) {
  */
 func CreateSystemAdmin(roleId uint) {
 	aul := &validates.CreateUpdateUserRequest{
-		Username: config.GetTestDataUserName(),
-		Password: config.GetTestDataPwd(),
-		Name:     config.GetTestDataName(),
+		Username: config.Config.Admin.UserName,
+		Password: config.Config.Admin.Pwd,
+		Name:     config.Config.Admin.Name,
 		RoleIds:  []uint{roleId},
 	}
 
@@ -100,7 +98,7 @@ func IsNotFound(err error) {
  * @param  {[type]} limit int    [description]
  */
 func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
-	db := database.Db
+	db := sysinit.Db
 	if len(orderBy) > 0 {
 		db.Order(orderBy + "desc")
 	} else {
@@ -119,22 +117,22 @@ func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 }
 
 func DelAllData() {
-	database.Db.Unscoped().Delete(&OauthToken{})
-	database.Db.Unscoped().Delete(&Permission{})
-	database.Db.Unscoped().Delete(&Role{})
-	database.Db.Unscoped().Delete(&User{})
-	database.Db.Exec("DELETE FROM casbin_rule;")
+	sysinit.Db.Unscoped().Delete(&OauthToken{})
+	sysinit.Db.Unscoped().Delete(&Permission{})
+	sysinit.Db.Unscoped().Delete(&Role{})
+	sysinit.Db.Unscoped().Delete(&User{})
+	sysinit.Db.Exec("DELETE FROM casbin_rule;")
 }
 
 func Update(v, d interface{}) error {
-	if err := database.Db.Model(v).Updates(d).Error; err != nil {
+	if err := sysinit.Db.Model(v).Updates(d).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
 func GetRolesForUser(uid uint) []string {
-	uids, err := database.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
+	uids, err := sysinit.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
 	if err != nil {
 		color.Red(fmt.Sprintf("GetRolesForUser 错误: %v", err))
 		return []string{}
@@ -144,9 +142,9 @@ func GetRolesForUser(uid uint) []string {
 }
 
 func GetPermissionsForUser(uid uint) [][]string {
-	return database.Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
+	return sysinit.Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
 }
 
 func DropTables() {
-	database.Db.DropTable("users", "roles", "permissions", "oauth_tokens", "casbin_rule")
+	sysinit.Db.DropTable("users", "roles", "permissions", "oauth_tokens", "casbin_rule")
 }

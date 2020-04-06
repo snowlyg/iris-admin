@@ -1,0 +1,28 @@
+version: '2'
+services:
+  irisadminapi:
+    build: ./.
+    expose:
+     - "8081"
+    ports:
+     - "8081:8081"
+    networks:
+     - default
+    links:
+     - "mysql"
+  mysql:
+    image: mysql:8.0.13
+    container_name: irisadminapi_mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf:ro
+      - ./mysql/data:/var/lib/mysql/:rw
+    restart: always
+    networks:
+      - default
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      TZ: "Asia/Shanghai"
+networks:
+  default:

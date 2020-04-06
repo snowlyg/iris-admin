@@ -24,6 +24,7 @@ vendor_watch: false
 #不监听前端代码
 excluded_paths:
     - front
+    - mysql
 
 #build_tags: ""
 

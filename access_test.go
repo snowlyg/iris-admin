@@ -10,8 +10,8 @@ import (
 // 登陆成功
 func TestUserLoginSuccess(t *testing.T) {
 	oj := map[string]string{
-		"username": config.GetTestDataUserName(),
-		"password": config.GetTestDataPwd(),
+		"username": config.Config.Admin.UserName,
+		"password": config.Config.Admin.Pwd,
 	}
 	login(t, oj, iris.StatusOK, true, "登陆成功")
 }
@@ -20,7 +20,7 @@ func TestUserLoginSuccess(t *testing.T) {
 func TestUserLoginWithErrorName(t *testing.T) {
 	oj := map[string]string{
 		"username": "err_user",
-		"password": config.GetTestDataPwd(),
+		"password": config.Config.Admin.Pwd,
 	}
 
 	login(t, oj, iris.StatusOK, false, "用户不存在")
@@ -30,7 +30,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 func TestUserLoginWithErrorPwd(t *testing.T) {
 
 	oj := map[string]string{
-		"username": config.GetTestDataUserName(),
+		"username": config.Config.Admin.UserName,
 		"password": "admin",
 	}
 	login(t, oj, iris.StatusOK, false, "用户名或密码错误")
@@ -59,7 +59,7 @@ func TestUserLoginWithNoPwd(t *testing.T) {
 // 输入登陆密码格式错误
 func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 	oj := map[string]string{
-		"username": config.GetTestDataUserName(),
+		"username": config.Config.Admin.UserName,
 		"password": "123",
 	}
 

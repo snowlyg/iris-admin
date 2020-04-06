@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"time"
 
-	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/config"
 )
@@ -15,7 +15,12 @@ func main() {
 	api := NewApp()
 	api.Logger().SetOutput(f) //记录日志
 
-	if err := api.Run(iris.Addr(config.GetAppUrl()), iris.WithConfiguration(config.Isc)); err != nil {
-		color.Yellow(fmt.Sprintf("项目运行结束: %v", err))
+	if err := api.Run(
+		iris.Addr(fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)),
+		iris.WithoutServerError(iris.ErrServerClosed),
+		iris.WithOptimizations,
+		iris.WithTimeFormat(time.RFC3339),
+	); err != nil {
+		fmt.Println(err)
 	}
 }

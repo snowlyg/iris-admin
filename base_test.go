@@ -157,8 +157,8 @@ func GetOauthToken(e *httpexpect.Expect) string {
 	}
 
 	oj := map[string]string{
-		"username": config.GetTestDataUserName(),
-		"password": config.GetTestDataPwd(),
+		"username": config.Config.Admin.UserName,
+		"password": config.Config.Admin.Pwd,
 	}
 	r := e.POST("login").WithJSON(oj).
 		Expect().

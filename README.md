@@ -72,6 +72,12 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 
 ```
 
+#### 增加 docker-compose 支持， docker-compose 无需执行后续命令， 如果没有 docker 请跳过此步骤。
+```shell script
+  # 需要有 docker 环境，
+  docker-compose up -d
+```
+
 >加载依赖管理包 (解决国内下载依赖太慢问题)
 >使用国内七牛云的 go module 镜像。
 >
@@ -95,7 +101,7 @@ go env -w GOPROXY=https://goproxy.cn,direct
 >项目配置文件 /config/conf.tml
 
 ```shell script
-cp conf.tml.example conf.tml
+cp config/application.yml.example config/application.yml
 ```
 
 >打包前端代码 

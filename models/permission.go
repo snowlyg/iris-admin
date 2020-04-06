@@ -6,7 +6,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
-	"github.com/snowlyg/IrisAdminApi/database"
+	"github.com/snowlyg/IrisAdminApi/sysinit"
 	"github.com/snowlyg/IrisAdminApi/validates"
 )
 
@@ -50,7 +50,7 @@ func NewPermissionByStruct(jp *validates.PermissionRequest) *Permission {
  * @param  {[type]}       permission  *Permission [description]
  */
 func (p *Permission) GetPermissionById() {
-	IsNotFound(database.Db.Where("id = ?", p.ID).First(p).Error)
+	IsNotFound(sysinit.Db.Where("id = ?", p.ID).First(p).Error)
 }
 
 /**
@@ -59,7 +59,7 @@ func (p *Permission) GetPermissionById() {
  * @param  {[type]}       permission  *Permission [description]
  */
 func (p *Permission) GetPermissionByNameAct() {
-	IsNotFound(database.Db.Where("name = ?", p.Name).Where("act = ?", p.Act).First(p).Error)
+	IsNotFound(sysinit.Db.Where("name = ?", p.Name).Where("act = ?", p.Act).First(p).Error)
 }
 
 /**
@@ -67,7 +67,7 @@ func (p *Permission) GetPermissionByNameAct() {
  * @method DeletePermissionById
  */
 func (p *Permission) DeletePermissionById() {
-	if err := database.Db.Delete(p).Error; err != nil {
+	if err := sysinit.Db.Delete(p).Error; err != nil {
 		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
 	}
 }
@@ -96,7 +96,7 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
  * @param  {[type]} mp int    [description]
  */
 func (p *Permission) CreatePermission() {
-	if err := database.Db.Create(p).Error; err != nil {
+	if err := sysinit.Db.Create(p).Error; err != nil {
 		color.Red(fmt.Sprintf("CreatePermissionError:%s \n", err))
 	}
 	return

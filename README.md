@@ -29,14 +29,14 @@
 - 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
 - 增加了 `excel` 文件接口导入实例
 - 前端采用了 `element-ui` 框架,代码集成到 `front` 目录
-- 使用 `casbin` 做权限控制, `config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
-- 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
+- 使用 `casbin` 做权限控制, `backend/config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
+- 增加系统日志记录 `backend//logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
 
  **注意：**
- - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 mysql 需要修改为 `DriverType = "Mysql"`，并且创建对应数据库 ,在 `config/conf.tml` 文件中
+ - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 mysql 需要修改为 `DriverType = "Mysql"`，并且创建对应数据库 ,在 `backend/config/conf.tml` 文件中
  - `permissions.xlsx` 权限导入测试模板文件，仅供测试使用; 权限会自动生成，无需另外导入。
  
- -  `config/config.go` 文件中的路径 `Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi"` 需要修改为你的项目路径,用于加载配置文件
+ -  `backend/config/config.go` 文件中的路径 `Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi/backend/"` 需要修改为你的项目路径,用于加载配置文件
  
 ---
 
@@ -75,7 +75,9 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 #### 增加 docker-compose 支持， docker-compose 无需执行后续命令， 如果没有 docker 请跳过此步骤。
 ```shell script
   # 需要有 docker 环境，
-  docker-compose up -d
+  docker-compose up -d  
+
+ # 执行完成需要到
 ```
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)
@@ -98,10 +100,10 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ```
 
->项目配置文件 /config/conf.tml
+>项目配置文件 backend/config/conf.tml
 
 ```shell script
-cp config/application.yml.example config/application.yml
+cp backend/config/application.yml.example backend/config/application.yml
 ```
 
 >打包前端代码 
@@ -125,7 +127,7 @@ go get github.com/silenceper/gowatch
 gowatch 
 
 # go 命令
-go run ./.
+go run main.go iris_base_rabc.go
 ```
 
 ---

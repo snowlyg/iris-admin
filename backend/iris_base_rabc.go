@@ -31,7 +31,7 @@ func NewApp() *iris.Application {
 	api := iris.New()
 	api.Logger().SetLevel("debug")
 
-	api.RegisterView(iris.HTML("./resources", ".html"))
+	api.RegisterView(iris.HTML(config.Root+"resources", ".html"))
 
 	db := sysinit.Db
 	db.AutoMigrate(
@@ -48,7 +48,7 @@ func NewApp() *iris.Application {
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. //api 文档配置
 		On:       true,
 		DocTitle: "irisadminapi",
-		DocPath:  "./backend/resources/apiDoc/index.html", //设置绝对路径
+		DocPath:  "./resources/apiDoc/index.html", //设置绝对路径
 		BaseUrls: map[string]string{
 			"Production": config.Config.Host,
 			"Staging":    "",

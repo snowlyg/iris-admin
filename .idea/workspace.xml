@@ -1,283 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="286e76c8-e7c6-4791-b51d-603a7c7c1850" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/IrisAdminApi.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.travis.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/access_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/access_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/base_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/base_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/application.yml.example" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/application.yml.example" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/rbac_model.conf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/rbac_model.conf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/base.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/base.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/permissions.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/permissions.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/reset_data.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/reset_data.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/roles.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/roles.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/users.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/controllers/users.go" afterDir="false" />
+    <list default="true" id="286e76c8-e7c6-4791-b51d-603a7c7c1850" name="Default Changelist" comment="修改项目目录结构">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/backend/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/config/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/config/application.yml.example" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/application.yml.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/config/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/files/file.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/files/file.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/front/config/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/front/config/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/backend/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gowatch.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/gowatch.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/iris_base_rabc.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/iris_base_rabc.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/string.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libs/string.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/string_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libs/string_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/struct.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libs/struct.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/struct_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libs/struct_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/time.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libs/time.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/libs/time_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/libs/time_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/logs/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/casbin.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/middleware/casbin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/crs.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/middleware/crs.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/middleware/jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/middleware/jwt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/base.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/base.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/oauth_token.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/oauth_token.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/permission.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/permission.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/roles.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/roles.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/users.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/models/users.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/permissions.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/backend/permissions.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/permissions_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/permissions_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/reset_data_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/reset_data_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/api/clear.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/api/clear.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/api/init.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/api/init.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/api/menus.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/api/menus.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/api/table.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/api/table.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/api/tableSelect.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/api/tableSelect.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/api/upload.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/api/upload.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/css/layuimini.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/css/layuimini.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/css/public.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/css/public.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/images/bg.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/images/bg.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/images/captcha.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/images/captcha.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/images/donate_qrcode.png" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/images/donate_qrcode.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/images/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/images/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/images/home.png" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/images/home.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/images/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/images/logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-config.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/echarts/echarts.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/echarts/echarts.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/echarts/echartsTheme.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/echarts/echartsTheme.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/iconPicker/iconPickerFa.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/iconPicker/iconPickerFa.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/layarea/layarea.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/layarea/layarea.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/layuimini/layuimini.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/layuimini/layuimini.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/step-lay/step.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/step-lay/step.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/step-lay/step.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/step-lay/step.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/tableSelect/tableSelect.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/tableSelect/tableSelect.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/treetable-lay/treetable.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/treetable-lay/treetable.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/treetable-lay/treetable.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/treetable-lay/treetable.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/wangEditor/fonts/w-e-icon.woff" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/wangEditor/fonts/w-e-icon.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/wangEditor/wangEditor.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/wangEditor/wangEditor.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/wangEditor/wangEditor.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/wangEditor/wangEditor.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/wangEditor/wangEditor.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/wangEditor/wangEditor.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/wangEditor/wangEditor.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/wangEditor/wangEditor.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/js/lay-module/wangEditor/wangEditor.min.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/js/lay-module/wangEditor/wangEditor.min.js.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/HELP-US-OUT.txt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/HELP-US-OUT.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/css/font-awesome.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/css/font-awesome.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/css/font-awesome.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/css/font-awesome.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/fonts/FontAwesome.otf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/fonts/FontAwesome.otf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.eot" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.eot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.svg" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/animated.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/animated.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/bordered-pulled.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/bordered-pulled.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/core.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/core.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/fixed-width.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/fixed-width.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/font-awesome.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/font-awesome.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/icons.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/icons.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/larger.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/larger.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/list.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/list.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/mixins.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/mixins.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/path.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/path.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/rotated-flipped.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/rotated-flipped.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/screen-reader.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/screen-reader.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/stacked.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/stacked.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/less/variables.less" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/less/variables.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_animated.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_animated.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_bordered-pulled.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_bordered-pulled.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_core.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_core.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_fixed-width.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_fixed-width.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_icons.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_icons.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_larger.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_larger.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_list.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_list.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_mixins.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_mixins.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_path.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_path.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_rotated-flipped.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_rotated-flipped.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_screen-reader.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_screen-reader.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_stacked.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_stacked.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/_variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/_variables.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/font-awesome-4.7.0/scss/font-awesome.scss" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/font-awesome-4.7.0/scss/font-awesome.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/jq-module/jquery.particleground.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/jq-module/jquery.particleground.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/jq-module/paigusu.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/jq-module/paigusu.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/jq-module/zyupload/zyupload-1.0.0.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/jq-module/zyupload/zyupload-1.0.0.min.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/jq-module/zyupload/zyupload-1.0.0.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/jq-module/zyupload/zyupload-1.0.0.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/jquery-3.4.1/jquery-3.4.1.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/jquery-3.4.1/jquery-3.4.1.min.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/layui.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/layui.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/layui.mobile.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/layui.mobile.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/modules/code.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/modules/code.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/modules/laydate/default/laydate.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/modules/laydate/default/laydate.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/icon-ext.png" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/icon-ext.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/icon.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/layer.css" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/layer.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/loading-0.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/loading-0.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/loading-1.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/loading-1.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/loading-2.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/css/modules/layer/default/loading-2.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/font/iconfont.eot" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/font/iconfont.eot" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/font/iconfont.svg" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/font/iconfont.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/font/iconfont.ttf" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/font/iconfont.ttf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/font/iconfont.woff" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/font/iconfont.woff" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/font/iconfont.woff2" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/font/iconfont.woff2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/0.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/0.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/1.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/1.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/10.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/10.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/11.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/11.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/12.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/12.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/13.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/13.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/14.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/14.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/15.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/15.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/16.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/16.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/17.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/17.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/18.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/18.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/19.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/19.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/2.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/2.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/20.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/20.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/21.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/21.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/22.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/22.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/23.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/23.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/24.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/24.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/25.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/25.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/26.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/26.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/27.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/27.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/28.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/28.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/29.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/29.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/3.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/3.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/30.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/30.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/31.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/31.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/32.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/32.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/33.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/33.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/34.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/34.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/35.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/35.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/36.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/36.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/37.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/37.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/38.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/38.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/39.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/39.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/4.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/4.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/40.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/40.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/41.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/41.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/42.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/42.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/43.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/43.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/44.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/44.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/45.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/45.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/46.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/46.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/47.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/47.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/48.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/48.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/49.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/49.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/5.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/5.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/50.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/50.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/51.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/51.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/52.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/52.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/53.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/53.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/54.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/54.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/55.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/55.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/56.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/56.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/57.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/57.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/58.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/58.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/59.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/59.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/6.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/6.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/60.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/60.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/61.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/61.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/62.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/62.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/63.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/63.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/64.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/64.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/65.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/65.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/66.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/66.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/67.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/67.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/68.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/68.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/69.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/69.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/7.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/7.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/70.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/70.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/71.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/71.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/8.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/8.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/images/face/9.gif" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/images/face/9.gif" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/carousel.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/carousel.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/code.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/code.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/colorpicker.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/colorpicker.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/element.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/element.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/flow.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/flow.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/form.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/form.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/jquery.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/jquery.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/laydate.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/laydate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/layedit.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/layedit.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/layer.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/layer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/laypage.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/laypage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/laytpl.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/laytpl.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/mobile.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/mobile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/rate.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/rate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/slider.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/slider.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/table.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/table.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/transfer.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/transfer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/tree.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/tree.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/upload.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/upload.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/lay/modules/util.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/lay/modules/util.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/layui.all.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/layui.all.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/lib/layui-v2.5.5/layui.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/lib/layui-v2.5.5/layui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/404.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/404.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/area.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/area.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/button.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/button.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/color-select.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/color-select.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/editor.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/editor.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/form-step.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/form-step.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/form.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/icon-picker.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/icon-picker.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/icon.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/icon.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/layer.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/layer.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/login-1.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/login-1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/login-2.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/login-2.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/menu.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/menu.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/setting.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/setting.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/table-select.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/table-select.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/table.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/table.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/table/add.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/table/add.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/table/edit.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/table/edit.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/upload.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/upload.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/user-password.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/user-password.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/user-setting.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/user-setting.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/welcome-1.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/welcome-1.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/welcome-2.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/welcome-2.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/admin/page/welcome-3.html" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/admin/page/welcome-3.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/apiDoc/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/apiDoc/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/app/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/app/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/backend/resources/app/favicon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/roles_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/roles_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routepath/route_path.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routepath/route_path.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/route.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sysinit/casbin.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/sysinit/casbin.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sysinit/database.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/sysinit/database.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tmp/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/backend/tmp/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transformer/perm.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/transformer/perm.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transformer/role.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/transformer/role.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transformer/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/transformer/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/users_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/validates/permission.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/validates/permission.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/validates/role.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/validates/role.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/validates/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/validates/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/validates/validate.go" beforeDir="false" afterPath="$PROJECT_DIR$/backend/validates/validate.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -345,7 +75,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="增加 docker-compose 支持" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加 docker-compose 支持" />
+    <MESSAGE value="修改项目目录结构" />
+    <option name="LAST_COMMIT_MESSAGE" value="修改项目目录结构" />
   </component>
   <component name="VgoProject">
     <integration-enabled>true</integration-enabled>
@@ -360,10 +91,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586180595477" />
-    <state x="526" y="113" key="CommitChangelistDialog2" timestamp="1586181586769">
+    <state x="526" y="113" key="CommitChangelistDialog2" timestamp="1586187872963">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="526" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1586181586769" />
+    <state x="526" y="113" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1586187872963" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1586164760306">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -372,10 +103,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="603" y="91" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1586185133742" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1586181591051">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1586185952081">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1586181591051" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1586185952081" />
     <state x="567" y="70" width="786" height="900" key="find.popup" timestamp="1586166338315">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

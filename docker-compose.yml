@@ -1,6 +1,7 @@
 version: '2'
 services:
-  mysql:
+  irisadminapi_mysql:
+    user: "1000:50"
     image: mysql:8.0.13
     container_name: irisadminapi_mysql
     ports:
@@ -23,6 +24,6 @@ services:
     networks:
      - default
     links:
-     - "mysql"
+     - "irisadminapi_mysql:irisadminapi_mysql"
 networks:
   default:

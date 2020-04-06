@@ -3,7 +3,7 @@ host: localhost
 port: 8081
 db:
   adapter: mysql # mysql postgres sqlite3
-  host: mysql
+  host: irisadminapi_mysql
   port: 3306
   name: goirisadminapi
   user: root

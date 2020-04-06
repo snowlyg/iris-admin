@@ -20,11 +20,11 @@ var Config = struct {
 	}
 	DB struct {
 		Name     string `env:"DBName" default:"goirisadminapi"`
-		Adapter  string `env:"DBAdapter" default:"mysql"`
+		Adapter  string `env:"DBAdapter" default:"irisadminapi_mysql"`
 		Host     string `env:"DBHost" default:"mysql"`
 		Port     string `env:"DBPort" default:"3306"`
 		User     string `env:"DBUser" default:"root"`
-		Password string `env:"DBPassword" default:"123456"`
+		Password string `env:"DBPassword" default:""`
 	}
 }{}
 

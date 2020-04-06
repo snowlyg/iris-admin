@@ -9,7 +9,7 @@ import (
 
 var Config = struct {
 	HTTPS bool   `default:"false" env:"HTTPS"`
-	Port  uint   `default:"7000" env:"PORT"`
+	Port  uint   `default:"8081" env:"PORT"`
 	Host  string `default:"localhost" env:"Host"`
 	Admin struct {
 		UserName        string `env:"AdminUserName" default:"username"`

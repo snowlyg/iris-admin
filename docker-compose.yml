@@ -1,9 +1,9 @@
 version: '2'
 services:
-  irisadminapi_mysql:
+  mysql:
     user: "1000:50"
     image: mysql:8.0.13
-    container_name: irisadminapi_mysql
+    container_name: mysql
     ports:
       - "3306:3306"
     volumes:
@@ -17,14 +17,15 @@ services:
       TZ: "Asia/Shanghai"
   irisadminapi:
     build:
-      context: ./backend
+      context: backend
       dockerfile: Dockerfile
+    container_name: irisadminapi
     ports:
-      - "8081:8081"
+      - "5000:5000"
     restart: always
     networks:
       - default
     links:
-      - "irisadminapi_mysql:irisadminapi_mysql"
+      - "mysql:mysql"
 networks:
   default:

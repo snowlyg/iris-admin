@@ -1,9 +1,9 @@
 https: false
-host: localhost
-port: 8081
+host:
+port: 5000
 db:
   adapter: mysql # mysql postgres sqlite3
-  host: irisadminapi_mysql
+  host: mysql
   port: 3306
   name: goirisadminapi
   user: root

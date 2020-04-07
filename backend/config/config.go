@@ -9,8 +9,8 @@ import (
 
 var Config = struct {
 	HTTPS bool   `default:"false" env:"HTTPS"`
-	Port  uint   `default:"8081" env:"PORT"`
-	Host  string `default:"localhost" env:"Host"`
+	Port  uint   `default:"5000" env:"PORT"`
+	Host  string `default:"" env:"Host"`
 	Admin struct {
 		UserName        string `env:"AdminUserName" default:"username"`
 		Name            string `env:"AdminName" default:"name"`
@@ -20,7 +20,7 @@ var Config = struct {
 	}
 	DB struct {
 		Name     string `env:"DBName" default:"goirisadminapi"`
-		Adapter  string `env:"DBAdapter" default:"irisadminapi_mysql"`
+		Adapter  string `env:"DBAdapter" default:"mysql"`
 		Host     string `env:"DBHost" default:"mysql"`
 		Port     string `env:"DBPort" default:"3306"`
 		User     string `env:"DBUser" default:"root"`

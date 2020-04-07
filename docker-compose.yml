@@ -16,14 +16,15 @@ services:
       MYSQL_ROOT_PASSWORD: "123456"
       TZ: "Asia/Shanghai"
   irisadminapi:
-    build: ./backend
-    expose:
-     - "8081"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
-     - "8081:8081"
+      - "8081:8081"
+    restart: always
     networks:
-     - default
+      - default
     links:
-     - "irisadminapi_mysql:irisadminapi_mysql"
+      - "irisadminapi_mysql:irisadminapi_mysql"
 networks:
   default:

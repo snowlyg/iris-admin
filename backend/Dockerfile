@@ -14,5 +14,5 @@ RUN cd /go/src/github.com/snowlyg/IrisAdminApi/backend && go build
 # Run the command by default when the container starts.
 ENTRYPOINT /go/src/github.com/snowlyg/IrisAdminApi/backend/backend
 
-# Document that the service listens on port 8080
+# Document that the service listens on port 8081
 EXPOSE 8081

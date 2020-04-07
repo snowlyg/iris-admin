@@ -24,7 +24,7 @@ var Config = struct {
 		Host     string `env:"DBHost" default:"mysql"`
 		Port     string `env:"DBPort" default:"3306"`
 		User     string `env:"DBUser" default:"root"`
-		Password string `env:"DBPassword" default:""`
+		Password string `env:"DBPassword" default:"123456"`
 	}
 }{}
 

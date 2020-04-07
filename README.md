@@ -74,10 +74,10 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 
 #### 增加 docker-compose 支持， docker-compose 无需执行后续命令， 如果没有 docker 请跳过此步骤。
 ```shell script
-  # 需要有 docker 环境，
+  # 需要有 docker 环境，并且完成前段打包 npm install && npm run-script build
   docker-compose up -d  
 
- # 执行完成需要到
+ # 执行完成需要新建数据库 goirisadminapi
 ```
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)

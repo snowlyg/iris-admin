@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/betacraft/yaag/irisyaag"
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/IrisAdminApi/backend/config"
 	"github.com/snowlyg/IrisAdminApi/backend/controllers"
 	"github.com/snowlyg/IrisAdminApi/backend/middleware"
 	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
@@ -11,7 +12,7 @@ import (
 func App(api *iris.Application) {
 	app := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
 	{
-		app.HandleDir("/static", "./resources/app/static")
+		app.HandleDir("/static", config.Root+"resources/app/static")
 		app.Get("/", func(ctx iris.Context) { // 首页模块
 			_ = ctx.View("app/index.html")
 		})

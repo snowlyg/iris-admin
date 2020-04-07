@@ -13,7 +13,7 @@ func main() {
 	defer f.Close()
 
 	api := NewApp()
-	//api.Logger().SetOutput(f) //记录日志
+	api.Logger().SetOutput(f) //记录日志
 
 	if err := api.Run(
 		iris.Addr(fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)),

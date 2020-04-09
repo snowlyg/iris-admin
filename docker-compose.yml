@@ -13,7 +13,8 @@ services:
     networks:
       - default
     environment:
-      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: goirisadminapi
+      MYSQL_ROOT_PASSWORD: 123456
       TZ: "Asia/Shanghai"
   irisadminapi:
     build:

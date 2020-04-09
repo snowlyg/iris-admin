@@ -3,7 +3,7 @@
 
 FROM golang:1.14.1
 # Copy the local package files to the container's workspace.
-COPY backend /go/src/github.com/snowlyg/IrisAdminApi/backend
+COPY . /go/src/github.com/snowlyg/IrisAdminApi/backend
 
 #build the application
 RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct

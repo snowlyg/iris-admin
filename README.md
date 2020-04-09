@@ -77,7 +77,6 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
   # 需要有 docker 环境，并且完成前段打包 npm install && npm run-script build
   docker-compose up -d  
 
- # 执行完成需要新建数据库 goirisadminapi
 ```
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)

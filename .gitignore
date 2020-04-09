@@ -2,3 +2,4 @@ backend/backend.exe
 backend/backend.exe~
 backend/backend
 /.idea
+backend/config/application.yml

@@ -2,7 +2,7 @@ version: '2'
 services:
   mysql:
     user: "1000:50"
-    image: mysql:8.0.13
+    image: mysql
     container_name: mysql
     ports:
       - "3306:3306"
@@ -21,6 +21,8 @@ services:
       context: backend
       dockerfile: Dockerfile
     container_name: irisadminapi
+    volumes:
+      - ./backend/config/application.yml:/go/src/github.com/snowlyg/IrisAdminApi/backend/config/application.yml:ro
     ports:
       - "5000:5000"
     restart: always

@@ -3,12 +3,11 @@
 
 FROM golang:1.14.1
 # Copy the local package files to the container's workspace.
-COPY ./build /go/src/github.com/snowlyg/IrisAdminApi/backend
+ADD . /go/src/github.com/snowlyg/IrisAdminApi/backend
 
 #build the application
-#RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct
-#RUN cd /go/src/github.com/snowlyg/IrisAdminApi/backend/config && cp application.yml.example application.yml
-#RUN cd /go/src/github.com/snowlyg/IrisAdminApi/backend && go build
+RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct && go build
+# RUN cd /go/src/github.com/snowlyg/IrisAdminApi/backend/config && cp application.yml.example application.yml
 
 # Run the command by default when the container starts.
 ENTRYPOINT /go/src/github.com/snowlyg/IrisAdminApi/backend/backend

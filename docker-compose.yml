@@ -1,7 +1,6 @@
 version: '2'
 services:
   mysql:
-    user: "1000:50"
     image: mysql
     container_name: mysql
     ports:
@@ -11,9 +10,12 @@ services:
       - ./mysql/data:/var/lib/mysql/:rw
     restart: always
     networks:
-      - default
+      irisadminapi:
+        aliases:
+          - alias1
     environment:
       MYSQL_DATABASE: goirisadminapi
+      MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: 123456
       TZ: "Asia/Shanghai"
   irisadminapi:
@@ -21,14 +23,18 @@ services:
       context: backend
       dockerfile: Dockerfile
     container_name: irisadminapi
+    depends_on:
+      - mysql
     volumes:
       - ./backend/config/application.yml:/go/src/github.com/snowlyg/IrisAdminApi/backend/config/application.yml:ro
     ports:
       - "5000:5000"
     restart: always
     networks:
-      - default
+      irisadminapi:
+        aliases:
+          - alias1
     links:
       - "mysql:mysql"
 networks:
-  default:
+  irisadminapi:

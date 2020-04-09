@@ -78,6 +78,10 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
   docker-compose up -d  
 
  # 执行完成需要新建数据库 goirisadminapi
+ # docker ps
+ # docker exec -it cffe8d56f222 bash
+ # mysql -uroot -p
+ # create database irisadminapi;
 ```
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)

@@ -6,7 +6,7 @@ FROM golang:1.14.1
 ADD . /go/src/github.com/snowlyg/IrisAdminApi/backend
 
 #build the application
-RUN go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct && go build
+RUN cd /go/src/github.com/snowlyg/IrisAdminApi/backend go env -w GO111MODULE=on && go env -w GOPROXY=https://goproxy.cn,direct && go build
 # RUN cd /go/src/github.com/snowlyg/IrisAdminApi/backend/config && cp application.yml.example application.yml
 
 # Run the command by default when the container starts.

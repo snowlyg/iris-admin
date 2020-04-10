@@ -13,4 +13,4 @@ RUN cd /go/src/github.com/snowlyg/IrisAdminApi/backend go env -w GO111MODULE=on 
 ENTRYPOINT /go/src/github.com/snowlyg/IrisAdminApi/backend/backend
 
 # Document that the service listens on port 8081
-EXPOSE 5000
+EXPOSE 8085

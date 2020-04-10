@@ -28,7 +28,7 @@ services:
     volumes:
       - ./backend/config/application.yml:/go/src/github.com/snowlyg/IrisAdminApi/backend/config/application.yml:ro
     ports:
-      - "5000:80"
+      - "8085:80"
     restart: always
     networks:
       irisadminapi:

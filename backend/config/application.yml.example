@@ -2,7 +2,7 @@ https: false
 certpath:
 certkey:
 host:
-port: 5000
+port: 8085
 db:
   adapter: mysql # mysql postgres sqlite3
   host: mysql

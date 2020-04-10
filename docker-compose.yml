@@ -7,7 +7,6 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf:ro
-      - ./mysql/data:/var/lib/mysql/:rw
       - ./mysql/init:/docker-entrypoint-initdb.d/
     restart: always
     networks:
@@ -35,7 +34,5 @@ services:
       irisadminapi:
         aliases:
           - alias1
-    links:
-      - "mysql:mysql"
 networks:
   irisadminapi:

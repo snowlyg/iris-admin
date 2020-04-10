@@ -12,7 +12,9 @@
 > 简单学习项目 ----写的挺烂，欢迎指点
 >
 #### 演示地址
-[http://112.74.61.105:8087/](http://112.74.61.105:8087)
+[http://irisadminapi.snowlyg.com](http://irisadminapi.snowlyg.com)
+
+账号/密码 ： username/123456
 
 
 ###### Iris-go 学习交流QQ群 ：676717248
@@ -74,14 +76,9 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 
 #### 增加 docker-compose 支持， docker-compose 无需执行后续命令， 如果没有 docker 请跳过此步骤。
 ```shell script
-  # 需要有 docker 环境，并且完成前段打包 npm install && npm run-script build
+  # 需要有 docker 环境，并且完成前端打包
+  #  cd ./front && npm install && npm run-script build
   docker-compose up -d  
-
- # 执行完成需要新建数据库 goirisadminapi
- # docker ps
- # docker exec -it cffe8d56f222 bash
- # mysql -uroot -p
- # create database irisadminapi;
 ```
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)
@@ -104,10 +101,10 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ```
 
->项目配置文件 backend/config/conf.tml
+>项目配置文件 backend/config/application.yml
 
 ```shell script
-cp backend/config/application.yml.example backend/config/application.yml
+cp config/application.yml.example backend/config/application.yml
 ```
 
 >打包前端代码 
@@ -172,7 +169,7 @@ https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ---
 
 #### 登录项目
-- http://localhost:8081
+- http://localhost:8085
 
 #### 感谢 
 

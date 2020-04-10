@@ -16,7 +16,7 @@ func main() {
 	api.Logger().SetOutput(f) //记录日志
 
 	if config.Config.HTTPS {
-		host := fmt.Sprintf("%s:%d", config.Config.Host, "443")
+		host := fmt.Sprintf("%s:%d", config.Config.Host, 443)
 		if err := api.Run(iris.TLS(host, config.Config.Certpath, config.Config.Certkey)); err != nil {
 			fmt.Println(err)
 		}

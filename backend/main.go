@@ -13,7 +13,7 @@ func main() {
 	defer f.Close()
 
 	api := NewApp()
-	api.Logger().SetOutput(f) //记录日志
+	//api.Logger().SetOutput(f) //记录日志
 
 	if config.Config.HTTPS {
 		host := fmt.Sprintf("%s:%d", config.Config.Host, 443)

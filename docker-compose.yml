@@ -2,9 +2,9 @@ version: '2'
 services:
   mysql:
     image: mysql
-    container_name: "mysql"
+    container_name: mysql
     ports:
-      - "3306:3306"
+      - 3306:3306
     volumes:
       - ./mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf:ro
       - ./mysql/init:/docker-entrypoint-initdb.d/
@@ -14,21 +14,21 @@ services:
         aliases:
           - alias1
     environment:
-      MYSQL_DATABASE: "goirisadminapi"
-      MYSQL_USER: "root"
-      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: goirisadminapi
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: 123456
       TZ: "Asia/Shanghai"
   irisadminapi:
     build:
       context: backend
       dockerfile: Dockerfile
-    container_name: "irisadminapi"
+    container_name: irisadminapi
     depends_on:
       - mysql
     volumes:
       - ./backend/config/application.yml:/go/src/github.com/snowlyg/IrisAdminApi/backend/config/application.yml:ro
     ports:
-      - "8085:80"
+      - 8085:80
     restart: always
     networks:
       irisadminapi:

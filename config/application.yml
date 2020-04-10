@@ -1,0 +1,12 @@
+https: false
+certpath:
+certkey:
+host: 0.0.0.0
+port: 80
+db:
+  adapter: mysql # mysql postgres sqlite3
+  host: mysql
+  port: 3306
+  name: goirisadminapi
+  user: root
+  password: 123456

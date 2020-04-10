@@ -11,8 +11,8 @@ var Config = struct {
 	HTTPS    bool   `default:"false" env:"HTTPS"`
 	Certpath string `default:"" env:"Certpath"`
 	Certkey  string `default:"" env:"Certkey"`
-	Port     uint   `default:"8085" env:"PORT"`
-	Host     string `default:"127.0.0.1" env:"Host"`
+	Port     uint   `default:"80" env:"PORT"`
+	Host     string `default:"" env:"Host"`
 	Admin    struct {
 		UserName        string `env:"AdminUserName" default:"username"`
 		Name            string `env:"AdminName" default:"name"`

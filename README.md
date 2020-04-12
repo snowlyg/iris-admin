@@ -32,7 +32,7 @@
 - 增加了 `excel` 文件接口导入实例
 - 前端采用了 `element-ui` 框架,代码集成到 `front` 目录
 - 使用 `casbin` 做权限控制, `backend/config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
-- 增加系统日志记录 `backend//logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
+- 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
 
  **注意：**
  - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 mysql 需要修改为 `DriverType = "Mysql"`，并且创建对应数据库 ,在 `backend/config/conf.tml` 文件中
@@ -74,12 +74,25 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 
 ```
 
-#### 增加 docker-compose 支持， docker-compose 无需执行后续命令， 如果没有 docker 请跳过此步骤。
+####  docker-compose 安装 （需要 docker 环境）
+
 ```shell script
-  # 需要有 docker 环境，并且完成前端打包
-  #  cd ./front && npm install && npm run-script build
+  # 前端打包
+    cd ./front
+    npm install 
+    npm run-script build
+
+  # 复制配置文件，并修改配置
+  # 复制到 config/ 目录即可。  docker-compose 脚本会将配置文件同步到 backend/config 目录下。
+  cp config/application.yml.example config/application.yml 
+
+  # 启动项目
   docker-compose up -d  
 ```
+
+
+
+##### 普通环境安装项目
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)
 >使用国内七牛云的 go module 镜像。

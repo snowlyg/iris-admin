@@ -1,5 +1,5 @@
-use mysql;
-ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
+-- use mysql;
+-- ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
 create database custom;
-CREATE USER 'beecustom'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
-GRANT ALL PRIVILEGES ON *.* TO 'beecustom'@'%';
+use custom;
+source /root/go/src/BeeCustom/database/sql/bee_custom.sql;

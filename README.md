@@ -126,6 +126,11 @@ cp config/application.yml.example backend/config/application.yml
  npm install            #加载依赖
  npm run-script build   #打包前端代码
 
+  # 复制前端文件到后端目录
+  # 复制到 resources/app 到 backend/resources/app。
+  cp -R resources/app backend/resources/app
+
+
  # 如果是开发前端代码,使用热加载
  npm run dev  
 ```

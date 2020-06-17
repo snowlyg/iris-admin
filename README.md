@@ -145,7 +145,7 @@ go get github.com/silenceper/gowatch
 # 安装 gowatch 后才可以使用
 gowatch 
 
-# go 命令
+# 或者使用 go 命令（二选一）
 go run main.go iris_base_rabc.go
 ```
 

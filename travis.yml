@@ -1,0 +1,28 @@
+language: go
+
+install:
+  - go env -w GO111MODULE=on
+  - go env -w GOPROXY=https://goproxy.cn,direct
+  - go get -d -t -v -u ./... && go build -v ./...
+
+go:
+  - 1.14.x
+
+os:
+  - windows
+  - linux
+  - osx
+
+env:
+  matrix:
+    - GOARCH=amd64
+    - GOARCH=386
+
+script:
+  - cd backend
+  - cp ../config/application.yml.example ./application/conf.yml
+  - touch ./tmp/tgorm.db
+  - go vet ./...
+  - go test ./... -v -coverprofile=coverage.txt -covermode=atomic
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

@@ -15,38 +15,6 @@ func main() {
 	go func() {
 		inFilename := "rtsp://183.59.168.27/PLTV/88888905/224/3221227272/10000100000000060000000001030757_0.smil?icip=88888888"
 		ffmpegTest.ToHls(inFilename, config.Config.RecordPath)
-		fmt.Println(config.Config.RecordPath)
-		//log.Printf("Prepare to save stream to local....")
-		//defer log.Printf("End save stream to local....")
-		//var pusher *Pusher
-		//addChnOk := true
-		//removeChnOk := true
-		//for addChnOk || removeChnOk {
-		//	select {
-		//	case pusher, addChnOk = <-server.addPusherCh:
-		//		if addChnOk {
-		//
-		//			pusherPath := path.Join(config.Config.RecordPath, pusher.Path)
-		//			err = libs.CreateFile(pusherPath)
-		//			if err != nil {
-		//				log.Printf("EnsureDir:[%s] err:%v.", pusherPath, err)
-		//				continue
-		//			}
-		//
-		//
-		//			pusherPath = path.Join(pusherPath, fmt.Sprintf("out.m3u8"))
-		//
-		//		} else {
-		//			log.Printf("addPusherChan closed")
-		//		}
-		//	case pusher, removeChnOk = <-server.removePusherCh:
-		//		if removeChnOk {
-		//
-		//		} else {
-		//
-		//		}
-		//	}
-		//}
 	}()
 
 	f := NewLogFile()

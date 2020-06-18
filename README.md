@@ -20,6 +20,11 @@
 ###### Iris-go 学习交流QQ群 ：676717248
 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
 
+#### 新功能增加 ffmpeg 推流 (目前只仅支持 windows 环境)
+- 配置文件增加了 recordpath: D:\Env\nginx\html\hls\cctv1 选项，需要配置绝对路径
+- 启动项目后将地址 http://127.0.0.1:8085/record/out.m3u8 在 vlc 播放器打开即可播放中央9台。
+
+![cctv9.png](cctv9.png)
 
 
 #### 项目介绍

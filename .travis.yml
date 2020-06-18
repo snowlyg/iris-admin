@@ -1,7 +1,6 @@
 language: go
 
 install:
-  -
   - go env -w GO111MODULE=on
   - go env -w GOPROXY=https://goproxy.cn,direct
   - cd backend && go get -d -t -v -u ./... && go build -v ./...
@@ -20,8 +19,8 @@ env:
     - GOARCH=386
 
 script:
-  - cp /config/application.yml.example backend/application/conf.yml
-  - touch ./tmp/tgorm.db
+  - cp ./config/application.yml.example ./backend/application/conf.yml
+  - touch backend/tmp/tgorm.db
   - cd backend &&  go vet ./...
   - cd backend && go test ./... -v -coverprofile=coverage.txt -covermode=atomic
 after_success:

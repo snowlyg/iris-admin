@@ -25,6 +25,7 @@ require (
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/smartystreets/goconvey v1.6.4 // indirect
+	github.com/snowlyg/ffmpegTest v0.0.0-20200618110101-3dc4036f6eb3
 	github.com/snowlyg/gotransformer v0.1.1-0.20200203150046-087a5f2b1123
 	github.com/valyala/fasthttp v1.9.0 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect

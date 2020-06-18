@@ -121,6 +121,7 @@ func DelAllData() {
 	sysinit.Db.Unscoped().Delete(&Permission{})
 	sysinit.Db.Unscoped().Delete(&Role{})
 	sysinit.Db.Unscoped().Delete(&User{})
+	sysinit.Db.Unscoped().Delete(&Stream{})
 	sysinit.Db.Exec("DELETE FROM casbin_rule;")
 }
 

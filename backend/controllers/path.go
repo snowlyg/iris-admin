@@ -1,4 +1,4 @@
-package routepath
+package controllers
 
 import (
 	"strings"

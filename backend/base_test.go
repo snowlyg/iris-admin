@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/snowlyg/IrisAdminApi/backend/controllers"
 	"net/http"
 	"os"
 	"testing"
@@ -11,7 +12,6 @@ import (
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/snowlyg/IrisAdminApi/backend/config"
 	"github.com/snowlyg/IrisAdminApi/backend/models"
-	"github.com/snowlyg/IrisAdminApi/backend/routepath"
 	"github.com/snowlyg/IrisAdminApi/backend/validates"
 )
 
@@ -24,7 +24,7 @@ var (
 func TestMain(m *testing.M) {
 
 	app = NewApp() // 初始化app
-	routes := routepath.GetRoutes(app.GetRoutesReadOnly())
+	routes := controllers.GetRoutes(app.GetRoutesReadOnly())
 	models.CreateSystemData(routes)
 
 	flag.Parse()

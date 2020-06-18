@@ -1,4 +1,4 @@
-package files
+package libs
 
 import (
 	"archive/zip"

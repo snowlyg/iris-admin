@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/snowlyg/IrisAdminApi/backend/libs"
 	"os"
 	"time"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/backend/config"
-	"github.com/snowlyg/IrisAdminApi/backend/files"
 	"github.com/snowlyg/IrisAdminApi/backend/models"
 	"github.com/snowlyg/IrisAdminApi/backend/routes"
 	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
@@ -17,7 +17,7 @@ import (
 
 func NewLogFile() *os.File {
 	path := "./logs/"
-	_ = files.CreateFile(path)
+	_ = libs.CreateFile(path)
 	filename := path + time.Now().Format("2006-01-02") + ".log"
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
@@ -39,6 +39,7 @@ func NewApp() *iris.Application {
 		&models.OauthToken{},
 		&models.Role{},
 		&models.Permission{},
+		&models.Stream{},
 	)
 
 	iris.RegisterOnInterrupt(func() {

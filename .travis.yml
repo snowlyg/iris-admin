@@ -19,7 +19,7 @@ env:
     - GOARCH=386
 
 script:
-  - cp ../config/application.yml.example ./backend/config/application.yml
+  - cp ../config/application.yml.example ./config/application.yml
   - touch ./tmp/tgorm.db
   - go vet ./...
   - go test ./... -v -coverprofile=coverage.txt -covermode=atomic

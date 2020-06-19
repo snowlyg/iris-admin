@@ -5,7 +5,7 @@ host: 0.0.0.0
 port: 80
 recordpath: D:\Env\nginx\html\hls\cctv1
 db:
-  adapter: mysql # mysql postgres sqlite3
+  adapter: sqlite3 # mysql postgres sqlite3
   host: mysql
   port: 3306
   name: goirisadminapi

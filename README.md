@@ -30,7 +30,6 @@
 - windows 环境可以到 [github.com/snowlyg/ffmpegTest](github.com/snowlyg/ffmpegTest) 复制。
 - 除了复制 lib,include 目录，并配置变量。还需要把 dll 目录下的所有 dll 文件复制到 backend 目录下。 
 ```shell script
-
 export CGO_LDFLAGS="-L/usr/local/Cellar/ffmpeg/4.3_1/lib/ -lavcodec -lavformat -lavutil -lswscale -lswresample -lavdevice -lavfilter"
 export CGO_CFLAGS="-I/usr/local/Cellar/ffmpeg/4.3_1/include"
 

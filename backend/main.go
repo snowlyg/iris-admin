@@ -2,18 +2,22 @@ package main
 
 import (
 	"fmt"
-	"github.com/snowlyg/ffmpegTest"
+	"github.com/snowlyg/IrisAdminApi/backend/libs"
 	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/backend/config"
+	"github.com/snowlyg/ffmpegTest"
 )
 
 func main() {
-
-	//rtspServer := flv_server.GetServer()
 	go func() {
 		inFilename := "rtsp://183.59.168.27/PLTV/88888905/224/3221227272/10000100000000060000000001030757_0.smil?icip=88888888"
+		//inFilename := "http://ivi.bupt.edu.cn/hls/cctv1.m3u8"
+		err := libs.CreateFile(config.Config.RecordPath)
+		if err != nil {
+			panic(err)
+		}
 		ffmpegTest.ToHls(inFilename, config.Config.RecordPath)
 	}()
 

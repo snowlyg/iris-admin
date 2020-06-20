@@ -299,6 +299,8 @@ github.com/snowlyg/ffmpegTest v0.0.0-20200617234455-0fe7936d166b h1:JqdrSgPGTeYD
 github.com/snowlyg/ffmpegTest v0.0.0-20200617234455-0fe7936d166b/go.mod h1:BKlfANQTclA6XtPl73ttnqQldHr8rUQC0ks7Z+mSpfE=
 github.com/snowlyg/ffmpegTest v0.0.0-20200618110101-3dc4036f6eb3 h1:870ANPs5p+lhjhtLcSQXYwS8VD25KbaOv21ko0kXmK8=
 github.com/snowlyg/ffmpegTest v0.0.0-20200618110101-3dc4036f6eb3/go.mod h1:BKlfANQTclA6XtPl73ttnqQldHr8rUQC0ks7Z+mSpfE=
+github.com/snowlyg/ffmpegTest v0.0.0-20200620085523-7a67bc56e250 h1:DVxx0Q8wdSKSHitEpRjF2oimioIktoZdvbGm67GqPSs=
+github.com/snowlyg/ffmpegTest v0.0.0-20200620085523-7a67bc56e250/go.mod h1:OnCD1//0zy86Pe++n7kwIzgv3luaUNHHwKbisO8uN1c=
 github.com/snowlyg/gotransformer v0.1.1-0.20200203150046-087a5f2b1123 h1:ulbM5/AIh7VY6s4Yj8lU9HLhrhHtycgrrvxDoauXcmo=
 github.com/snowlyg/gotransformer v0.1.1-0.20200203150046-087a5f2b1123/go.mod h1:XQTsi1E7BSdtkFtsDNh0bLb7cooz/MfqoJws4FFIwYE=
 github.com/spf13/afero v1.1.2/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B0CQ=

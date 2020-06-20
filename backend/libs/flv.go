@@ -1,4 +1,4 @@
-package flv_server
+package libs
 
 import (
 	"github.com/snowlyg/IrisAdminApi/backend/config"

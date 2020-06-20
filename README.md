@@ -17,24 +17,29 @@
 账号/密码 ： username/123456
 
 
-###### Iris-go 学习交流QQ群 ：676717248
+###### `Iris-go` 学习交流 QQ 群 ：`676717248`
 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
 
-#### 新功能增加 ffmpeg 推流 (功能会继续更新)
+#### 新功能增加 `ffmpeg` 推流 (功能会继续更新)
 - 因为资源地址是电信地址，移动宽带可能d会出现无法播放的情况。
-- 通过 cgo 直接调用 ffmpeg C++ Api 的方式实现转码视频流,生成 .m3u8 文件到 hls 目录下。
-- 配置文件增加了 recordpath: D:\Env\nginx\html\hls\cctv1 选项，需要配置绝对路径
-- 启动项目后将地址 http://127.0.0.1:8085/record/out.m3u8 在 vlc 播放器打开即可播放中央9台。
+- 通过 `cgo` 直接调用 `ffmpeg C++ Api` 的方式实现转码视频流,生成 `.m3u8` 文件到 `hls` 目录下。
+- 配置文件增加了 `recordpath: D:\Env\nginx\html\hls\cctv1` 选项，需要配置绝对路径
+- 启动项目后将地址 `http://127.0.0.1:8085/record/out.m3u8` 在 `vlc` 播放器打开即可播放中央9台。
 
-#### 配置 ffmpeg api 库支持,增加系统变量
-- windows 环境可以到 [github.com/snowlyg/ffmpegTest](github.com/snowlyg/ffmpegTest) 复制。
-- 除了复制 lib,include 目录，并配置变量。还需要把 dll 目录下的所有 dll 文件复制到 backend 目录下。 
+#### 配置 `ffmpeg api` 库支持,增加系统变量
+- 需要安装 `pkg-config`。 [windows pkg-config 环境下载地址](https://www.jianshu.com/p/d060030ef2a2), `mac/linux` 直接命令安装即可。
+
+- `windows` 环境：可以到 [github.com/snowlyg/ffmpegTest](github.com/snowlyg/ffmpegTest) 复制相关依赖步骤如下：
+- 配置 PKG_CONFIG_PATH 系统变量，复制 lib/include 目录到环境变量配置的路径中。
+- 复修改项目根目录下的 `libavformat.pc/libavutil.pc` 文件，将 lib/include 目录路径修改为你的 `PKG_CONFIG_PATH` 路径。
+- 最后还需要把 `dll` 目录下的所有 `dll` 文件复制到 `backend` 目录下。 
+
+- `mac/linux` 环境：请配置系统变量
 ```shell script
 export CGO_LDFLAGS="-L/usr/local/Cellar/ffmpeg/4.3_1/lib/ -lavcodec -lavformat -lavutil -lswscale -lswresample -lavdevice -lavfilter"
 export CGO_CFLAGS="-I/usr/local/Cellar/ffmpeg/4.3_1/include"
 
 ```
-
 
 ![cctv9.png](cctv9.png)
 
@@ -52,7 +57,7 @@ export CGO_CFLAGS="-I/usr/local/Cellar/ffmpeg/4.3_1/include"
 - 增加系统日志记录 `/logs` 文件夹下，自定义记录，控制器内 `ctx.Application().Logger().Infof("%s 登录系统",aul.Username)`
 
  **注意：**
- - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 mysql 需要修改为 `DriverType = "Mysql"`，并且创建对应数据库 ,在 `backend/config/conf.tml` 文件中
+ - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 `mysql` 需要修改为 `DriverType = "Mysql"`，并且创建对应数据库 ,在 `backend/config/conf.tml` 文件中
  - `permissions.xlsx` 权限导入测试模板文件，仅供测试使用; 权限会自动生成，无需另外导入。
  
  -  `backend/config/config.go` 文件中的路径 `Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi/backend/"` 需要修改为你的项目路径,用于加载配置文件
@@ -66,7 +71,6 @@ export CGO_CFLAGS="-I/usr/local/Cellar/ffmpeg/4.3_1/include"
 
 ---
 
-
 #### 更新日志
 
 [UPDATE](UPDATE.MD)
@@ -75,7 +79,6 @@ export CGO_CFLAGS="-I/usr/local/Cellar/ffmpeg/4.3_1/include"
 #### 问题总结
 
 [ERRORS](ERRORS.MD)
-
 
 
 #### 项目初始化
@@ -95,9 +98,9 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 
 ```shell script
   # 前端打包
-    cd ./front
-    npm install 
-    npm run-script build
+  cd ./front
+  npm install 
+  npm run-script build
 
   # 复制配置文件，并修改配置
   # 复制到 config/ 目录即可。  docker-compose 脚本会将配置文件同步到 backend/config 目录下。
@@ -131,7 +134,7 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ```
 
->项目配置文件 backend/config/application.yml
+> 项目配置文件 `backend/config/application.yml`
 
 ```shell script
 cp config/application.yml.example backend/config/application.yml
@@ -146,7 +149,6 @@ cp config/application.yml.example backend/config/application.yml
   # 复制前端文件到后端目录
   # 复制到 resources/app 到 backend/resources/app。
   cp -R resources/app backend/resources/app
-
 
  # 如果是开发前端代码,使用热加载
  npm run dev  
@@ -168,7 +170,7 @@ go run main.go iris_base_rabc.go
 
 ---
 ##### 单元测试 
->http test
+> http test
 
 ```shell script
  go test -v  //所有测试
@@ -186,9 +188,7 @@ go run main.go iris_base_rabc.go
 
 ##### 接口文档
 自动生成文档 (访问过接口就会自动成功)
-因为原生的 jquery.min.js 里面的 cdn 是使用国外的，访问很慢。
-有条件的可以开个 vpn ,如果没有可以根据下面的方法修改一下，访问就很快了
->打开 /resource/apiDoc/index.html 修改里面的
+>打开 `/resource/apiDoc/index.html` 修改里面的
 
 ```shell script
 https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
@@ -199,7 +199,7 @@ https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
 https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
 ```
 
->访问文档，从浏览器直接打开 http://localhost:8081/apiDoc
+>访问文档，从浏览器直接打开 `http://localhost:8085/apiDoc`
 
 ---
 

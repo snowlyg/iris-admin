@@ -1,0 +1,7 @@
+Name: zlib
+Description: zlib compression library
+Version: 1.2.11
+
+Requires:
+Libs: -LC:/ffmpeg/ffmpeg/lib_win -lavutil
+Cflags: -IC:/ffmpeg/ffmpeg/include_win

@@ -1,4 +1,4 @@
-package flv_server
+package libs
 
 import (
 	"github.com/snowlyg/IrisAdminApi/backend/config"
@@ -39,7 +39,7 @@ func GetServer() *Server {
 func (server *Server) Start() (err error) {
 	go func() { // 保持到本地
 		inFilename := "rtsp://183.59.168.27/PLTV/88888905/224/3221227272/10000100000000060000000001030757_0.smil?icip=88888888"
-		ffmpegTest.ToHls(inFilename, config.Config.RecordPath)
+		ffmpegTest.ToHls(inFilename, config.Config.RecordPath, "udp")
 		//log.Printf("Prepare to save stream to local....")
 		//defer log.Printf("End save stream to local....")
 		//var pusher *Pusher

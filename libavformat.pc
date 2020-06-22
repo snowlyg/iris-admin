@@ -3,5 +3,5 @@ Description: zlib compression library
 Version: 1.2.11
 
 Requires:
-Libs: -LC:/ffmpeg/ffmpeg/lib_win -lavformat
-Cflags: -IC:/ffmpeg/ffmpeg/include_win
+Libs: -LD:/ffmpeg/lib/ -lavformat
+Cflags: -ID:/ffmpeg/include/

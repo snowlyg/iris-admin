@@ -3,5 +3,5 @@ Description: zlib compression library
 Version: 1.2.11
 
 Requires:
-Libs: -LD:/ffmpeg/lib/ -lavutil
+Libs: -LD:/ffmpeg/lib/ -lswscale
 Cflags: -ID:/ffmpeg/include/

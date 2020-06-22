@@ -30,8 +30,8 @@
 - 需要安装 `pkg-config`。 [windows pkg-config 环境下载地址](https://www.jianshu.com/p/d060030ef2a2), `mac/linux` 直接命令安装即可。
 
 - `windows` 环境：可以到 [github.com/snowlyg/ffmpegTest](github.com/snowlyg/ffmpegTest) 复制相关依赖步骤如下：
-- 配置 PKG_CONFIG_PATH 系统变量，复制 lib_win/include_win 目录到环境变量配置的路径中。
-- 复修改项目根目录下的 `libavformat.pc/libavutil.pc` 文件，将 lib_win/include_win 目录路径修改为你的 `PKG_CONFIG_PATH` 路径。
+- 配置 PKG_CONFIG_PATH 系统变量，复制 lib/include 目录到环境变量配置的路径中。
+- 复制项目根目录下的 `.pc` 文件到 `PKG_CONFIG_PATH` 路径中，将里面 lib/include 目录路径修改为你的 `PKG_CONFIG_PATH` 路径。
 - 最后还需要把 `dll` 目录下的所有 `dll` 文件复制到 `backend` 目录下。 
 
 - `mac/linux` 环境：请配置系统变量

@@ -1,3 +1,6 @@
+backend/*.dll
+*.dll
+
 backend/backend.exe
 backend/backend.exe~
 backend/backend

@@ -38,8 +38,8 @@ func GetServer() *Server {
 
 func (server *Server) Start() (err error) {
 	go func() { // 保持到本地
-		//inFilename := "rtsp://183.59.168.27/PLTV/88888905/224/3221227272/10000100000000060000000001030757_0.smil?icip=88888888"
-		inFilename := "rtmp://58.200.131.2:1935/livetv/hunantv"
+		inFilename := "rtsp://183.59.168.27/PLTV/88888905/224/3221227272/10000100000000060000000001030757_0.smil?icip=88888888"
+		//inFilename := "rtmp://58.200.131.2:1935/livetv/hunantv"
 		ffmpegTest.ToHls(inFilename, config.Config.RecordPath, "tcp")
 		//log.Printf("Prepare to save stream to local....")
 		//defer log.Printf("End save stream to local....")

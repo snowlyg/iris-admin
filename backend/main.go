@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/backend/config"
+	"github.com/snowlyg/IrisAdminApi/backend/libs"
 	"time"
 )
 
@@ -33,13 +34,11 @@ func main() {
 		}
 	}()
 
-	//go func() {
-	//	fmt.Println("hls start")
-	//	inFilename := "rtsp://183.59.168.27/PLTV/88888905/224/3221227272/10000100000000060000000001030757_0.smil?icip=88888888"
-	//	//inFilename := "rtmp://58.200.131.2:1935/livetv/hunantv"
-	//	ffmpegTest.ToHls(inFilename, config.Config.RecordPath, "tcp")
-	//	fmt.Println("hls end")
-	//}()
+	go func() {
+		fmt.Println("hls start")
+		_ = libs.GetServer().Start()
+		fmt.Println("hls end")
+	}()
 
 	select {}
 

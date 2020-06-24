@@ -20,7 +20,8 @@ require (
 	github.com/jinzhu/configor v1.2.0
 	github.com/jinzhu/gorm v1.9.14
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
-	github.com/kataras/iris v11.1.1+incompatible // indirect
+	github.com/kardianos/service v1.1.0
+	github.com/kataras/iris v11.1.1+incompatible
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/onsi/ginkgo v1.13.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect

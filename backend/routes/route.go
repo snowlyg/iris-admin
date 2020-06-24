@@ -8,6 +8,7 @@ import (
 	"github.com/snowlyg/IrisAdminApi/backend/middleware"
 	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
 	"mime"
+	"os"
 )
 
 func App(api *iris.Application) {
@@ -22,7 +23,11 @@ func App(api *iris.Application) {
 	//api.Favicon("./static/favicons/favicon.ico")
 	app := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
 	{
-		app.HandleDir("/static", config.Root+"resources/app/static")
+		staticPath := config.Root + "resources/app/static"
+		if len(os.Getenv("GOPATH")) == 0 {
+			staticPath = "resources/app/static"
+		}
+		app.HandleDir("/static", staticPath)
 		app.HandleDir("/record", config.Config.RecordPath) // 视频记录地址
 		app.Get("/", func(ctx iris.Context) {              // 首页模块
 			_ = ctx.View("app/index.html")

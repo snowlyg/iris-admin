@@ -34,7 +34,13 @@ var Config = struct {
 var Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi/backend/"
 
 func init() {
-	if err := configor.Load(&Config, filepath.Join(Root, "config/application.yml")); err != nil {
+	configPath := filepath.Join(Root, "config/application.yml")
+	if len(os.Getenv("GOPATH")) == 0 {
+		configPath = "config/application.yml"
+	}
+
+	if err := configor.Load(&Config, configPath); err != nil {
 		panic(err)
 	}
+
 }

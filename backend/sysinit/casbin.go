@@ -36,8 +36,11 @@ func init() {
 		panic(fmt.Sprintf("NewAdapter 错误: %v", err))
 	}
 
-	casbinmodelpath := filepath.Join(config.Root, "config", "rbac_model.conf")
-	Enforcer, err = casbin.NewEnforcer(casbinmodelpath, c)
+	casbinModelPath := filepath.Join(config.Root, "config", "rbac_model.conf")
+	if len(os.Getenv("GOPATH")) == 0 {
+		casbinModelPath = filepath.Join("config", "rbac_model.conf")
+	}
+	Enforcer, err = casbin.NewEnforcer(casbinModelPath, c)
 	if err != nil {
 		panic(fmt.Sprintf("NewEnforcer 错误: %v", err))
 	}

@@ -31,7 +31,11 @@ func NewApp() *iris.Application {
 	api := iris.New()
 	api.Logger().SetLevel("debug")
 
-	api.RegisterView(iris.HTML(config.Root+"resources", ".html"))
+	htmlPath := config.Root + "resources"
+	if len(os.Getenv("GOPATH")) == 0 {
+		htmlPath = "resources"
+	}
+	api.RegisterView(iris.HTML(htmlPath, ".html"))
 
 	db := sysinit.Db
 	db.AutoMigrate(
@@ -46,10 +50,14 @@ func NewApp() *iris.Application {
 		_ = db.Close()
 	})
 
+	docPath := config.Root + "resources/apiDoc/index.html"
+	if len(os.Getenv("GOPATH")) == 0 {
+		docPath = "resources/apiDoc/index.html"
+	}
 	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. //api 文档配置
 		On:       true,
 		DocTitle: "irisadminapi",
-		DocPath:  config.Root + "resources/apiDoc/index.html", //设置绝对路径
+		DocPath:  docPath, //设置绝对路径
 		BaseUrls: map[string]string{
 			"Production": config.Config.Host,
 			"Staging":    "",

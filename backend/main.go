@@ -29,42 +29,38 @@ func (p *program) Start(s service.Service) error {
 		logger.Info("Running under service manager.")
 	}
 
-	// Start should not block. Do the actual work async.
 	go p.run()
+
 	return nil
 }
 
 func (p *program) run() error {
-	logger.Infof("I'm running %v.", service.Platform())
 
 	go func() {
-		f := NewLogFile()
-		defer f.Close()
-
-		p.App = NewApp()
-		p.App.Logger().SetOutput(f) //记录日志
-
 		if config.Config.HTTPS {
 			host := fmt.Sprintf("%s:%d", config.Config.Host, 443)
+			logger.Infof("run on %v.", host)
 			if err := p.App.Run(iris.TLS(host, config.Config.Certpath, config.Config.Certkey)); err != nil {
 				fmt.Println(err)
 			}
 		} else {
+			host := fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)
+			logger.Infof("run on %v.", host)
 			if err := p.App.Run(
-				iris.Addr(fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)),
+				iris.Addr(host),
 				iris.WithoutServerError(iris.ErrServerClosed),
 				iris.WithOptimizations,
 				iris.WithTimeFormat(time.RFC3339),
 			); err != nil {
 				fmt.Println(err)
 			}
+
 		}
 	}()
 
 	go func() {
-		fmt.Println("hls start")
-		p.server = libs.GetServer()
 		_ = p.server.Start()
+		fmt.Println("hls is start")
 	}()
 
 	return nil
@@ -108,6 +104,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	f := NewLogFile()
+	defer f.Close()
+
+	prg.App = NewApp()
+	prg.App.Logger().SetOutput(f) //记录日志
+	prg.server = libs.GetServer()
+
 	logger, err = s.Logger(nil)
 	if err != nil {
 		log.Fatal(err)

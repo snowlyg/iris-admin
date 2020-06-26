@@ -25,7 +25,7 @@ require (
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/onsi/ginkgo v1.13.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	github.com/snowlyg/ffmpegTest v0.0.0-20200621032759-6bdbe46d6a5c
+	github.com/snowlyg/ffmpegTest v0.0.0-20200622024906-dccce0b26ff6
 	github.com/snowlyg/gotransformer v0.1.0
 	github.com/valyala/fasthttp v1.14.0 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect

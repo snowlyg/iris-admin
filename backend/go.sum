@@ -268,6 +268,8 @@ github.com/smartystreets/goconvey v1.6.4 h1:fv0U8FUIMPNf1L9lnHLvLhgicrIVChEkdzIK
 github.com/smartystreets/goconvey v1.6.4/go.mod h1:syvi0/a8iFYH4r/RixwvyeAJjdLS9QV7WQ/tjFTllLA=
 github.com/snowlyg/ffmpegTest v0.0.0-20200621032759-6bdbe46d6a5c h1:TPJgT9EzI54tpMDPUadBN0YtbaXgkFTfHuFcAbEcpFc=
 github.com/snowlyg/ffmpegTest v0.0.0-20200621032759-6bdbe46d6a5c/go.mod h1:OnCD1//0zy86Pe++n7kwIzgv3luaUNHHwKbisO8uN1c=
+github.com/snowlyg/ffmpegTest v0.0.0-20200622024906-dccce0b26ff6 h1:J0IOSxm5y1qN88L443jdTBawAEVsVGpqW7oRklqgrqU=
+github.com/snowlyg/ffmpegTest v0.0.0-20200622024906-dccce0b26ff6/go.mod h1:OnCD1//0zy86Pe++n7kwIzgv3luaUNHHwKbisO8uN1c=
 github.com/snowlyg/gotransformer v0.1.0 h1:Oa5cUFeVMFHrriTPdR9PlBiL7seZzzAwTi8FLcCK1j4=
 github.com/snowlyg/gotransformer v0.1.0/go.mod h1:XQTsi1E7BSdtkFtsDNh0bLb7cooz/MfqoJws4FFIwYE=
 github.com/spf13/afero v1.1.2/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B0CQ=

@@ -142,19 +142,6 @@ gowatch
 go run main.go iris_base_rabc.go
 ```
 
-##### 项目部署，mac/windows/linux 
-
-```shell script
-
-  cd backend && go build 
-
-  sudo ./backend -service install
-  sudo ./backend -service uninstall
-  sudo ./backend -service start
-  sudo ./backend -service stop
-  sudo ./backend -service restart
-```
-
 ---
 ##### 单元测试 
 > http test

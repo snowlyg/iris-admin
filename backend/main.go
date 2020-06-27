@@ -10,7 +10,6 @@ import (
 	"github.com/kardianos/service"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/backend/config"
-	"github.com/snowlyg/IrisAdminApi/backend/libs"
 )
 
 var logger service.Logger
@@ -18,8 +17,7 @@ var logger service.Logger
 // Program structures.
 //  Define Start and Stop methods.
 type program struct {
-	App    *iris.Application
-	server *libs.Server
+	App *iris.Application
 }
 
 func (p *program) Start(s service.Service) error {
@@ -36,36 +34,27 @@ func (p *program) Start(s service.Service) error {
 
 func (p *program) run() error {
 	logger.Infof("I'm running %v.", service.Platform())
+	f := NewLogFile()
+	defer f.Close()
 
-	go func() {
-		f := NewLogFile()
-		defer f.Close()
+	p.App = NewApp()
+	p.App.Logger().SetOutput(f) //记录日志
 
-		p.App = NewApp()
-		p.App.Logger().SetOutput(f) //记录日志
-
-		if config.Config.HTTPS {
-			host := fmt.Sprintf("%s:%d", config.Config.Host, 443)
-			if err := p.App.Run(iris.TLS(host, config.Config.Certpath, config.Config.Certkey)); err != nil {
-				fmt.Println(err)
-			}
-		} else {
-			if err := p.App.Run(
-				iris.Addr(fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)),
-				iris.WithoutServerError(iris.ErrServerClosed),
-				iris.WithOptimizations,
-				iris.WithTimeFormat(time.RFC3339),
-			); err != nil {
-				fmt.Println(err)
-			}
+	if config.Config.HTTPS {
+		host := fmt.Sprintf("%s:%d", config.Config.Host, 443)
+		if err := p.App.Run(iris.TLS(host, config.Config.Certpath, config.Config.Certkey)); err != nil {
+			fmt.Println(err)
 		}
-	}()
-
-	go func() {
-		fmt.Println("hls start")
-		p.server = libs.GetServer()
-		_ = p.server.Start()
-	}()
+	} else {
+		if err := p.App.Run(
+			iris.Addr(fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)),
+			iris.WithoutServerError(iris.ErrServerClosed),
+			iris.WithOptimizations,
+			iris.WithTimeFormat(time.RFC3339),
+		); err != nil {
+			fmt.Println(err)
+		}
+	}
 
 	return nil
 }
@@ -74,7 +63,6 @@ func (p *program) Stop(s service.Service) error {
 	logger.Info("I'm Stopping!")
 
 	p.shutdown()
-	p.server.Stop()
 
 	return nil
 }

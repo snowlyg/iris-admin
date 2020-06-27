@@ -8,13 +8,12 @@ import (
 )
 
 var Config = struct {
-	HTTPS      bool   `default:"false" env:"HTTPS"`
-	Certpath   string `default:"" env:"Certpath"`
-	Certkey    string `default:"" env:"Certkey"`
-	Port       uint   `default:"80" env:"PORT"`
-	Host       string `default:"" env:"Host"`
-	RecordPath string `default:"" env:"RecordPath"`
-	Admin      struct {
+	HTTPS    bool   `default:"false" env:"HTTPS"`
+	Certpath string `default:"" env:"Certpath"`
+	Certkey  string `default:"" env:"Certkey"`
+	Port     uint   `default:"80" env:"PORT"`
+	Host     string `default:"" env:"Host"`
+	Admin    struct {
 		UserName        string `env:"AdminUserName" default:"username"`
 		Name            string `env:"AdminName" default:"name"`
 		Pwd             string `env:"AdminPwd" default:"123456"`

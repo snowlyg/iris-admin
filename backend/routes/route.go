@@ -7,19 +7,10 @@ import (
 	"github.com/snowlyg/IrisAdminApi/backend/controllers"
 	"github.com/snowlyg/IrisAdminApi/backend/middleware"
 	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
-	"mime"
 	"os"
 )
 
 func App(api *iris.Application) {
-	mime.AddExtensionType(".svg", "image/svg+xml")
-	mime.AddExtensionType(".m3u8", "application/vnd.apple.mpegurl")
-	// mime.AddExtensionType(".m3u8", "application/x-mpegurl")
-	mime.AddExtensionType(".ts", "video/mp2t")
-	// prevent on Windows with Dreamware installed, modified registry .css -> application/x-css
-	// see https://stackoverflow.com/questions/22839278/python-built-in-server-not-loading-css
-	mime.AddExtensionType(".css", "text/css; charset=utf-8")
-
 	//api.Favicon("./static/favicons/favicon.ico")
 	app := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
 	{
@@ -28,8 +19,7 @@ func App(api *iris.Application) {
 			staticPath = "resources/app/static"
 		}
 		app.HandleDir("/static", staticPath)
-		app.HandleDir("/record", config.Config.RecordPath) // 视频记录地址
-		app.Get("/", func(ctx iris.Context) {              // 首页模块
+		app.Get("/", func(ctx iris.Context) { // 首页模块
 			_ = ctx.View("app/index.html")
 		})
 

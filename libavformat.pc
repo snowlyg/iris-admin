@@ -1,7 +1,0 @@
-Name: zlib
-Description: zlib compression library
-Version: 1.2.11
-
-Requires:
-Libs: -LD:/ffmpeg/lib/ -lavformat
-Cflags: -ID:/ffmpeg/include/

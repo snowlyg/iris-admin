@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/snowlyg/IrisAdminApi/backend/controllers"
+	"github.com/snowlyg/IrisAdminApi/backend/server"
 	"net/http"
 	"os"
 	"testing"
@@ -22,8 +23,8 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-
-	app = NewApp() // 初始化app
+	s := server.NewServer() // 初始化app
+	app = s.App
 	routes := controllers.GetRoutes(app.GetRoutesReadOnly())
 	models.CreateSystemData(routes)
 

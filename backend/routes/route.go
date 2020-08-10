@@ -1,26 +1,23 @@
 package routes
 
 import (
+	"fmt"
 	"github.com/betacraft/yaag/irisyaag"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/backend/config"
 	"github.com/snowlyg/IrisAdminApi/backend/controllers"
+	"github.com/snowlyg/IrisAdminApi/backend/libs"
 	"github.com/snowlyg/IrisAdminApi/backend/middleware"
 	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
-	"os"
 )
 
 func App(api *iris.Application) {
 	//api.Favicon("./static/favicons/favicon.ico")
 	app := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
 	{
-		staticPath := config.Root + "resources/app/static"
-		if len(os.Getenv("GOPATH")) == 0 {
-			staticPath = "resources/app/static"
-		}
+		staticPath := fmt.Sprintf("%s/www/dist/static", libs.CWD())
 		app.HandleDir("/static", staticPath)
 		app.Get("/", func(ctx iris.Context) { // 首页模块
-			_ = ctx.View("app/index.html")
+			_ = ctx.View("index.html")
 		})
 
 		v1 := app.Party("/v1")

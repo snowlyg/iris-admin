@@ -3,6 +3,7 @@ package sysinit
 import (
 	"errors"
 	"fmt"
+	"github.com/snowlyg/IrisAdminApi/backend/libs"
 	"os"
 	"path/filepath"
 
@@ -36,10 +37,7 @@ func init() {
 		panic(fmt.Sprintf("NewAdapter 错误: %v", err))
 	}
 
-	casbinModelPath := filepath.Join(config.Root, "config", "rbac_model.conf")
-	if len(os.Getenv("GOPATH")) == 0 {
-		casbinModelPath = filepath.Join("config", "rbac_model.conf")
-	}
+	casbinModelPath := filepath.Join(libs.CWD(), "config", "rbac_model.conf")
 	Enforcer, err = casbin.NewEnforcer(casbinModelPath, c)
 	if err != nil {
 		panic(fmt.Sprintf("NewEnforcer 错误: %v", err))

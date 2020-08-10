@@ -21,12 +21,12 @@ require (
 	github.com/jinzhu/gorm v1.9.14
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kardianos/service v1.1.0
-	github.com/kataras/iris v11.1.1+incompatible
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/onsi/ginkgo v1.13.0 // indirect
+	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	github.com/snowlyg/ffmpegTest v0.0.0-20200622024906-dccce0b26ff6
 	github.com/snowlyg/gotransformer v0.1.0
 	github.com/valyala/fasthttp v1.14.0 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	gopkg.in/ini.v1 v1.51.1
 )

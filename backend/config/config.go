@@ -1,7 +1,7 @@
 package config
 
 import (
-	"os"
+	"github.com/snowlyg/IrisAdminApi/backend/libs"
 	"path/filepath"
 
 	"github.com/jinzhu/configor"
@@ -30,14 +30,8 @@ var Config = struct {
 	}
 }{}
 
-var Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi/backend/"
-
 func init() {
-	configPath := filepath.Join(Root, "config/application.yml")
-	if len(os.Getenv("GOPATH")) == 0 {
-		configPath = "config/application.yml"
-	}
-
+	configPath := filepath.Join(libs.CWD(), "/config/application.yml")
 	if err := configor.Load(&Config, configPath); err != nil {
 		panic(err)
 	}

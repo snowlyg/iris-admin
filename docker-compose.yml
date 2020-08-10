@@ -20,7 +20,7 @@ services:
       TZ: "Asia/Shanghai"
   irisadminapi:
     build:
-      context: backend
+      context: server
       dockerfile: Dockerfile
     container_name: irisadminapi
     depends_on:

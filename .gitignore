@@ -1,9 +1,10 @@
 backend/*.dll
 *.dll
 
-backend/backend.exe
-backend/backend.exe~
-backend/backend
+server/backend.exe
+server/backend.exe~
+server/backend
+server/tmp
 /.idea
 /config/application.yml
-backend/config/application.yml
+server/config/application.yml

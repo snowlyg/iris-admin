@@ -73,14 +73,9 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 ####  docker-compose 安装 （需要 docker 环境）
 
 ```shell script
-  # 前端打包
-  cd ./front
-  npm install 
-  npm run-script build
-
   # 复制配置文件，并修改配置
-  # 复制到 config/ 目录即可。  docker-compose 脚本会将配置文件同步到 backend/config 目录下。
-  cp config/application.yml.example config/application.yml 
+  # 复制到 config/ 目录即可。  docker-compose 脚本会将配置文件同步到 server/config 目录下。
+  cp config/application.example.yml config/application.yml 
 
   # 启动项目
   docker-compose up -d  
@@ -108,38 +103,19 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ```
 
-> 项目配置文件 `backend/config/application.yml`
+> 项目配置文件 `server/config/application.yml`
 
 ```shell script
-cp config/application.yml.example backend/config/application.yml
+cp config/application.yml.example config/application.yml
 ```
-
->打包前端代码 
-```shell script
- cd front               # 进入前端代码目录
- npm install            #加载依赖
- npm run-script build   #打包前端代码
-
-  # 复制前端文件到后端目录
-  # 复制到 resources/app 到 backend/resources/app。
-  cp -R resources/app backend/resources/app
-
- # 如果是开发前端代码,使用热加载
- npm run dev  
-```
-
 
 >运行项目 
 
-[gowatch](https://gitee.com/silenceper/gowatch)
 ```shell script
-go get github.com/silenceper/gowatch
-
-# 安装 gowatch 后才可以使用
-gowatch 
-
-# 或者使用 go 命令（二选一）
-go run main.go iris_base_rabc.go
+cmd install
+cmd start
+cmd stop
+cmd uninstall
 ```
 
 ---

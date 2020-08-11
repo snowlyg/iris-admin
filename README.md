@@ -136,16 +136,6 @@ cmd uninstall
 
 ##### 接口文档
 自动生成文档 (访问过接口就会自动成功)
->打开 `/resource/apiDoc/index.html` 修改里面的
-
-```shell script
-https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js
-
-国内的 cdn
-
-https://cdn.bootcss.com/jquery/2.1.3/jquery.min.js
-```
-
 >访问文档，从浏览器直接打开 `http://localhost:8085/apiDoc`
 
 ---

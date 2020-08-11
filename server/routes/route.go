@@ -23,7 +23,6 @@ func App(api *iris.Application) {
 			v1.Post("/admin/login", controllers.UserLogin)
 			v1.Use(irisyaag.New())
 			v1.PartyFunc("/admin", func(app iris.Party) {
-				app.Get("/resetData", controllers.ResetData)
 				casbinMiddleware := middleware.New(sysinit.Enforcer)               //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				app.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				app.Post("/logout", controllers.UserLogout).Name = "退出"

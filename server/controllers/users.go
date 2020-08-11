@@ -70,14 +70,14 @@ func GetUser(ctx iris.Context) {
  */
 func CreateUser(ctx iris.Context) {
 
-	aul := new(validates.CreateUpdateUserRequest)
-	if err := ctx.ReadJSON(aul); err != nil {
+	user := new(models.User)
+	if err := ctx.ReadJSON(user); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	err := validates.Validate.Struct(*aul)
+	err := validates.Validate.Struct(*user)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
@@ -89,8 +89,7 @@ func CreateUser(ctx iris.Context) {
 		}
 	}
 
-	user := models.NewUserByStruct(aul)
-	user.CreateUser(aul)
+	user.CreateUser(user)
 	ctx.StatusCode(iris.StatusOK)
 	if user.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))
@@ -117,14 +116,14 @@ func CreateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateUser(ctx iris.Context) {
-	aul := new(validates.CreateUpdateUserRequest)
+	user := new(models.User)
 
-	if err := ctx.ReadJSON(aul); err != nil {
+	if err := ctx.ReadJSON(user); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
-	err := validates.Validate.Struct(*aul)
+	err := validates.Validate.Struct(*user)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
@@ -137,14 +136,14 @@ func UpdateUser(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	user := models.NewUser(id, "")
+	user.ID = id
 	if user.Username == "username" {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员"))
 		return
 	}
 
-	user.UpdateUser(aul)
+	user.UpdateUser(user)
 	ctx.StatusCode(iris.StatusOK)
 	if user.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))

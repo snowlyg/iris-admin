@@ -2,7 +2,7 @@ package controllers
 
 type Response struct {
 	Code int64       `json:"code"`
-	Msg  interface{} `json:"msg"`
+	Msg  interface{} `json:"message"`
 	Data interface{} `json:"data"`
 }
 

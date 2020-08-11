@@ -3,13 +3,12 @@ package sysinit
 import (
 	"errors"
 	"fmt"
-	"os"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/snowlyg/IrisAdminApi/server/config"
+	"github.com/snowlyg/IrisAdminApi/server/libs"
 )
 
 var (
@@ -25,7 +24,8 @@ func init() {
 	} else if config.Config.DB.Adapter == "postgres" {
 		conn = fmt.Sprintf("postgres://%v:%v@%v/%v?sslmode=disable", config.Config.DB.User, config.Config.DB.Password, config.Config.DB.Host, config.Config.DB.Name)
 	} else if config.Config.DB.Adapter == "sqlite3" {
-		conn = fmt.Sprintf("%v/%v", os.TempDir(), config.Config.DB.Name)
+		fmt.Println(libs.DBFile())
+		conn = libs.DBFile()
 	} else {
 		panic(errors.New("not supported database adapter"))
 	}

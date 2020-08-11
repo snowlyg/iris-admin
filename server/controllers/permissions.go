@@ -52,13 +52,13 @@ func GetPermission(ctx iris.Context) {
 * @apiPermission null
  */
 func CreatePermission(ctx iris.Context) {
-	aul := new(validates.PermissionRequest)
-	if err := ctx.ReadJSON(aul); err != nil {
+	perm := new(models.Permission)
+	if err := ctx.ReadJSON(perm); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	err := validates.Validate.Struct(*aul)
+	err := validates.Validate.Struct(*perm)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
@@ -70,7 +70,6 @@ func CreatePermission(ctx iris.Context) {
 		}
 	}
 
-	perm := models.NewPermissionByStruct(aul)
 	perm.CreatePermission()
 
 	ctx.StatusCode(iris.StatusOK)
@@ -187,8 +186,8 @@ func ImportPermission(ctx iris.Context) {
 	for roI, row := range rows {
 		if roI > 0 {
 			// 将数组  转成对应的 map
-			m := &validates.PermissionRequest{}
-			x := gf.NewXlxsTransform(m, titles, row, "", time.RFC3339, nil)
+			perm := new(models.Permission)
+			x := gf.NewXlxsTransform(perm, titles, row, "", time.RFC3339, nil)
 			err := x.XlxsTransformer()
 			if err != nil {
 				ctx.StatusCode(iris.StatusOK)
@@ -196,7 +195,6 @@ func ImportPermission(ctx iris.Context) {
 				return
 			}
 
-			perm := models.NewPermissionByStruct(m)
 			perm.CreatePermission()
 			num++
 		}
@@ -224,7 +222,11 @@ func GetAllPermissions(ctx iris.Context) {
 	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
 
-	permissions := models.GetAllPermissions(name, orderBy, offset, limit)
+	permissions, err := models.GetAllPermissions(name, orderBy, offset, limit)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+	}
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, permsTransform(permissions), "操作成功"))

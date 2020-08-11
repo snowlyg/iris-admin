@@ -53,15 +53,15 @@ func GetRole(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateRole(ctx iris.Context) {
-	roleJson := new(validates.RoleRequest)
+	role := new(models.Role)
 
-	if err := ctx.ReadJSON(roleJson); err != nil {
+	if err := ctx.ReadJSON(role); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	err := validates.Validate.Struct(*roleJson)
+	err := validates.Validate.Struct(*role)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
@@ -73,8 +73,7 @@ func CreateRole(ctx iris.Context) {
 		}
 	}
 
-	role := models.NewRoleByStruct(roleJson)
-	role.CreateRole(roleJson.PermissionsIds)
+	role.CreateRole()
 	ctx.StatusCode(iris.StatusOK)
 	if role.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, role, "操作失败"))
@@ -104,15 +103,15 @@ func CreateRole(ctx iris.Context) {
  */
 func UpdateRole(ctx iris.Context) {
 
-	roleForm := new(validates.RoleRequest)
+	role := new(models.Role)
 
-	if err := ctx.ReadJSON(roleForm); err != nil {
+	if err := ctx.ReadJSON(role); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	err := validates.Validate.Struct(*roleForm)
+	err := validates.Validate.Struct(*role)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
@@ -125,20 +124,14 @@ func UpdateRole(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	role := models.NewRole(id, "")
-	role.GetRoleById()
+	role.ID = id
 	if role.Name == "admin" {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员角色"))
 		return
 	}
 
-	roleJson := new(validates.RoleRequest)
-	roleJson.Name = roleForm.Name
-	roleJson.Description = roleForm.Description
-	roleJson.DisplayName = roleForm.DisplayName
-
-	role.UpdateRole(roleJson, roleForm.PermissionsIds)
+	role.UpdateRole(role)
 	ctx.StatusCode(iris.StatusOK)
 	if role.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, role, "操作失败"))

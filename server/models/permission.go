@@ -12,10 +12,10 @@ import (
 
 type Permission struct {
 	gorm.Model
-	Name        string `gorm:"not null VARCHAR(191)"`
-	DisplayName string `gorm:"VARCHAR(191)"`
-	Description string `gorm:"VARCHAR(191)"`
-	Act         string `gorm:"VARCHAR(191)"`
+	Name        string `gorm:"not null VARCHAR(191)" json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
+	DisplayName string `gorm:"VARCHAR(191)" json:"display_name" comment:"显示名称"`
+	Description string `gorm:"VARCHAR(191)" json:"description" comment:"描述"`
+	Act         string `gorm:"VARCHAR(191)" json:"act" comment:"Act"`
 }
 
 func NewPermission(id uint, name, act string) *Permission {
@@ -27,20 +27,6 @@ func NewPermission(id uint, name, act string) *Permission {
 		},
 		Name: name,
 		Act:  act,
-	}
-}
-
-func NewPermissionByStruct(jp *validates.PermissionRequest) *Permission {
-	return &Permission{
-		Model: gorm.Model{
-			ID:        0,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		Name:        jp.Name,
-		DisplayName: jp.DisplayName,
-		Description: jp.Description,
-		Act:         jp.Act,
 	}
 }
 
@@ -80,12 +66,13 @@ func (p *Permission) DeletePermissionById() {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*Permission) {
+func GetAllPermissions(name, orderBy string, offset, limit int) ([]*Permission, error) {
+	var permissions []*Permission
 	if err := GetAll(name, orderBy, offset, limit).Find(&permissions).Error; err != nil {
-		color.Red(fmt.Sprintf("GetAllPermissionsError:%s \n", err))
+		return nil, err
 	}
 
-	return
+	return permissions, nil
 }
 
 /**
@@ -95,11 +82,11 @@ func GetAllPermissions(name, orderBy string, offset, limit int) (permissions []*
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (p *Permission) CreatePermission() {
+func (p *Permission) CreatePermission() error {
 	if err := sysinit.Db.Create(p).Error; err != nil {
-		color.Red(fmt.Sprintf("CreatePermissionError:%s \n", err))
+		return err
 	}
-	return
+	return nil
 }
 
 /**
@@ -109,8 +96,9 @@ func (p *Permission) CreatePermission() {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (p *Permission) UpdatePermission(pj *validates.PermissionRequest) {
+func (p *Permission) UpdatePermission(pj *validates.PermissionRequest) error {
 	if err := Update(p, pj); err != nil {
-		color.Red(fmt.Sprintf("UpdatePermissionError:%s \n", err))
+		return err
 	}
+	return nil
 }

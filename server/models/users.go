@@ -11,15 +11,15 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/server/libs"
 	"github.com/snowlyg/IrisAdminApi/server/sysinit"
-	"github.com/snowlyg/IrisAdminApi/server/validates"
 )
 
 type User struct {
 	gorm.Model
 
-	Name     string `gorm:"not null VARCHAR(191)"`
-	Username string `gorm:"unique;VARCHAR(191)"`
-	Password string `gorm:"not null VARCHAR(191)"`
+	Name     string `gorm:"not null VARCHAR(191)" json:"username" validate:"required,gte=2,lte=50" comment:"用户名"`
+	Username string `gorm:"unique;VARCHAR(191)" json:"password" validate:"required"  comment:"密码"`
+	Password string `gorm:"not null VARCHAR(191)" json:"name" validate:"required,gte=2,lte=50"  comment:"名称"`
+	RoleIds  []uint `gorm:"-" json:"role_ids"  validate:"required" comment:"角色"`
 }
 
 func NewUser(id uint, username string) *User {
@@ -30,19 +30,6 @@ func NewUser(id uint, username string) *User {
 			UpdatedAt: time.Now(),
 		},
 		Username: username,
-	}
-}
-
-func NewUserByStruct(ru *validates.CreateUpdateUserRequest) *User {
-	return &User{
-		Model: gorm.Model{
-			ID:        0,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		Username: ru.Username,
-		Name:     ru.Name,
-		Password: libs.HashPassword(ru.Password),
 	}
 }
 
@@ -90,15 +77,15 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
-	u.Password = libs.HashPassword(aul.Password)
+func (u *User) CreateUser(pwd string) error {
+	u.Password = libs.HashPassword(pwd)
 	if err := sysinit.Db.Create(u).Error; err != nil {
-		color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
+		return err
 	}
 
-	addRoles(aul, u)
+	addRoles(u)
 
-	return
+	return nil
 }
 
 /**
@@ -108,23 +95,23 @@ func (u *User) CreateUser(aul *validates.CreateUpdateUserRequest) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (u *User) UpdateUser(uj *validates.CreateUpdateUserRequest) {
+func (u *User) UpdateUser(uj *User) {
 	uj.Password = libs.HashPassword(uj.Password)
 	if err := Update(u, uj); err != nil {
 		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
 	}
 
-	addRoles(uj, u)
+	addRoles(u)
 }
 
-func addRoles(uj *validates.CreateUpdateUserRequest, user *User) {
-	if len(uj.RoleIds) > 0 {
+func addRoles(user *User) {
+	if len(user.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
 		if _, err := sysinit.Enforcer.DeleteRolesForUser(userId); err != nil {
 			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 		}
 
-		for _, roleId := range uj.RoleIds {
+		for _, roleId := range user.RoleIds {
 			roleId := strconv.FormatUint(uint64(roleId), 10)
 			if _, err := sysinit.Enforcer.AddRoleForUser(userId, roleId); err != nil {
 				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))

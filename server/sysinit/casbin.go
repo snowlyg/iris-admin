@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/snowlyg/IrisAdminApi/server/libs"
-	"os"
 	"path/filepath"
 
 	"github.com/casbin/casbin/v2"
@@ -23,7 +22,7 @@ func init() {
 	} else if config.Config.DB.Adapter == "postgres" {
 		conn = fmt.Sprintf("postgres://%v:%v@%v/%v?sslmode=disable", config.Config.DB.User, config.Config.DB.Password, config.Config.DB.Host, config.Config.DB.Name)
 	} else if config.Config.DB.Adapter == "sqlite3" {
-		conn = fmt.Sprintf("%v/%v", os.TempDir(), config.Config.DB.Name)
+		conn = libs.DBFile()
 	} else {
 		panic(errors.New("not supported database adapter"))
 	}

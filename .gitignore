@@ -5,6 +5,7 @@ server/backend.exe
 server/backend.exe~
 server/backend
 server/config/application.yml
+server/.air.conf
 
 server/tmp/
 /logs/

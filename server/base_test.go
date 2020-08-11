@@ -23,7 +23,7 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-	s := serve.NewServer() // 初始化app
+	s := serve.NewServer(Asset, AssetNames, AssetInfo) // 初始化app
 	app = s.App
 	routes := controllers.GetRoutes(app.GetRoutesReadOnly())
 	models.CreateSystemData(routes)

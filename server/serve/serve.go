@@ -2,26 +2,33 @@ package serve
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/betacraft/yaag/yaag"
+	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/IrisAdminApi/server/config"
 	"github.com/snowlyg/IrisAdminApi/server/libs"
 	"github.com/snowlyg/IrisAdminApi/server/models"
 	"github.com/snowlyg/IrisAdminApi/server/routes"
 	"github.com/snowlyg/IrisAdminApi/server/sysinit"
-	"path/filepath"
-	"time"
-
-	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/server/config"
 )
 
 type Server struct {
-	App *iris.Application
+	App        *iris.Application
+	Asset      func(name string) ([]byte, error)
+	AssetNames func() []string
+	AssetInfo  func(name string) (os.FileInfo, error)
 }
 
-func NewServer() *Server {
+func NewServer(assetFn func(name string) ([]byte, error), namesFn func() []string, assetInfo func(name string) (os.FileInfo, error)) *Server {
 	app := iris.Default()
 	return &Server{
-		App: app,
+		App:        app,
+		Asset:      assetFn,
+		AssetNames: namesFn,
+		AssetInfo:  assetInfo,
 	}
 }
 
@@ -48,7 +55,14 @@ func (s *Server) Serve() error {
 func (s *Server) NewApp() {
 	s.App.Logger().SetLevel("debug")
 
-	s.App.RegisterView(iris.HTML(libs.WwwPath(), ".html"))
+	tmpl := iris.HTML(libs.WwwPath(), ".html").Binary(s.Asset, s.AssetNames)
+	s.App.RegisterView(tmpl)
+
+	s.App.HandleDir("/", libs.WwwPath(), iris.DirOptions{
+		Asset:      s.Asset,
+		AssetInfo:  s.AssetInfo,
+		AssetNames: s.AssetNames,
+	})
 
 	db := sysinit.Db
 	db.AutoMigrate(

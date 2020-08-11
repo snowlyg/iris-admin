@@ -4,7 +4,6 @@ import (
 	"github.com/betacraft/yaag/irisyaag"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/server/controllers"
-	"github.com/snowlyg/IrisAdminApi/server/libs"
 	"github.com/snowlyg/IrisAdminApi/server/middleware"
 	"github.com/snowlyg/IrisAdminApi/server/sysinit"
 )
@@ -13,7 +12,8 @@ func App(api *iris.Application) {
 	//api.Favicon("./static/favicons/favicon.ico")
 	app := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
 	{
-		app.HandleDir("/static", libs.StaticPath())
+		//app.HandleDir("/static", libs.StaticPath())
+
 		app.Get("/", func(ctx iris.Context) { // 首页模块
 			_ = ctx.View("index.html")
 		})

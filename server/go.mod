@@ -10,6 +10,7 @@ require (
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 // indirect
 	github.com/fatih/color v1.9.0
 	github.com/gavv/httpexpect v2.0.0+incompatible
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/go-check/check v1.0.0-20180628173108-788fd7840127 // indirect
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
@@ -28,5 +29,6 @@ require (
 	github.com/snowlyg/gotransformer v0.1.0
 	github.com/valyala/fasthttp v1.14.0 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	github.com/zserge/lorca v0.1.9 // indirect
 	gopkg.in/ini.v1 v1.51.1
 )

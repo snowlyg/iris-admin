@@ -1,3 +1,4 @@
+//go:generate go-bindata  ./www/dist/...
 package main
 
 import (
@@ -96,7 +97,7 @@ version: %s`, Version))
 		logger.Println(err)
 	}
 
-	opServer := serve.NewServer()
+	opServer := serve.NewServer(Asset, AssetNames, AssetInfo)
 	opServer.NewApp()
 	prg.irisServer = opServer
 

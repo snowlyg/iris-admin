@@ -55,7 +55,7 @@ func StaticPath() string {
 }
 
 func WwwPath() string {
-	return filepath.Join(CWD(), "../server/www/dist")
+	return "./www/dist"
 }
 
 // 工作目录

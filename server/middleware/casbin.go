@@ -8,7 +8,7 @@ import (
 
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12/context"
-	"github.com/snowlyg/IrisAdminApi/backend/models"
+	"github.com/snowlyg/IrisAdminApi/server/models"
 
 	"github.com/casbin/casbin/v2"
 )

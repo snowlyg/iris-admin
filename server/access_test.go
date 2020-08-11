@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/backend/config"
+	"github.com/snowlyg/IrisAdminApi/server/config"
 )
 
 // 登陆成功

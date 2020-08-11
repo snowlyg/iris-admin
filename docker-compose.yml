@@ -26,7 +26,7 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./logs/:/go/src/github.com/snowlyg/IrisAdminApi/backend/logs/:ro
+      - ./logs/:/go/src/github.com/snowlyg/IrisAdminApi/server/logs/:ro
     ports:
       - 8085:80
     restart: always

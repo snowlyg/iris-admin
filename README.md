@@ -36,7 +36,7 @@
  - 默认数据库设置为 `DriverType = "Sqlite"` ，使用 `mysql` 需要修改为 `DriverType = "Mysql"`，并且创建对应数据库 ,在 `backend/config/conf.tml` 文件中
  - `permissions.xlsx` 权限导入测试模板文件，仅供测试使用; 权限会自动生成，无需另外导入。
  
- -  `backend/config/config.go` 文件中的路径 `Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi/backend/"` 需要修改为你的项目路径,用于加载配置文件
+ -  `backend/config/config.go` 文件中的路径 `Root = os.Getenv("GOPATH") + "/src/github.com/snowlyg/IrisAdminApi/server/"` 需要修改为你的项目路径,用于加载配置文件
  
 ---
 

@@ -3,15 +3,15 @@ package serve
 import (
 	"fmt"
 	"github.com/betacraft/yaag/yaag"
-	"github.com/snowlyg/IrisAdminApi/backend/libs"
-	"github.com/snowlyg/IrisAdminApi/backend/models"
-	"github.com/snowlyg/IrisAdminApi/backend/routes"
-	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
+	"github.com/snowlyg/IrisAdminApi/server/libs"
+	"github.com/snowlyg/IrisAdminApi/server/models"
+	"github.com/snowlyg/IrisAdminApi/server/routes"
+	"github.com/snowlyg/IrisAdminApi/server/sysinit"
 	"path/filepath"
 	"time"
 
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/backend/config"
+	"github.com/snowlyg/IrisAdminApi/server/config"
 )
 
 type Server struct {

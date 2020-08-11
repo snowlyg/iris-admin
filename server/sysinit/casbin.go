@@ -3,13 +3,13 @@ package sysinit
 import (
 	"errors"
 	"fmt"
-	"github.com/snowlyg/IrisAdminApi/backend/libs"
+	"github.com/snowlyg/IrisAdminApi/server/libs"
 	"os"
 	"path/filepath"
 
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
-	"github.com/snowlyg/IrisAdminApi/backend/config"
+	"github.com/snowlyg/IrisAdminApi/server/config"
 )
 
 var Enforcer *casbin.Enforcer

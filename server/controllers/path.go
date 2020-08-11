@@ -5,7 +5,7 @@ import (
 
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/core/router"
-	"github.com/snowlyg/IrisAdminApi/backend/validates"
+	"github.com/snowlyg/IrisAdminApi/server/validates"
 )
 
 type PathName struct {

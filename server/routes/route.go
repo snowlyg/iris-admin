@@ -3,10 +3,10 @@ package routes
 import (
 	"github.com/betacraft/yaag/irisyaag"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/backend/controllers"
-	"github.com/snowlyg/IrisAdminApi/backend/libs"
-	"github.com/snowlyg/IrisAdminApi/backend/middleware"
-	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
+	"github.com/snowlyg/IrisAdminApi/server/controllers"
+	"github.com/snowlyg/IrisAdminApi/server/libs"
+	"github.com/snowlyg/IrisAdminApi/server/middleware"
+	"github.com/snowlyg/IrisAdminApi/server/sysinit"
 )
 
 func App(api *iris.Application) {

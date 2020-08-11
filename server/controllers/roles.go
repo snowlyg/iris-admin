@@ -5,10 +5,10 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/backend/libs"
-	"github.com/snowlyg/IrisAdminApi/backend/models"
-	"github.com/snowlyg/IrisAdminApi/backend/transformer"
-	"github.com/snowlyg/IrisAdminApi/backend/validates"
+	"github.com/snowlyg/IrisAdminApi/server/libs"
+	"github.com/snowlyg/IrisAdminApi/server/models"
+	"github.com/snowlyg/IrisAdminApi/server/transformer"
+	"github.com/snowlyg/IrisAdminApi/server/validates"
 	gf "github.com/snowlyg/gotransformer"
 )
 

@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"github.com/snowlyg/IrisAdminApi/backend/controllers"
-	"github.com/snowlyg/IrisAdminApi/backend/serve"
+	"github.com/snowlyg/IrisAdminApi/server/controllers"
+	"github.com/snowlyg/IrisAdminApi/server/serve"
 	"net/http"
 	"os"
 	"testing"
@@ -11,9 +11,9 @@ import (
 	"github.com/gavv/httpexpect"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
-	"github.com/snowlyg/IrisAdminApi/backend/config"
-	"github.com/snowlyg/IrisAdminApi/backend/models"
-	"github.com/snowlyg/IrisAdminApi/backend/validates"
+	"github.com/snowlyg/IrisAdminApi/server/config"
+	"github.com/snowlyg/IrisAdminApi/server/models"
+	"github.com/snowlyg/IrisAdminApi/server/validates"
 )
 
 var (

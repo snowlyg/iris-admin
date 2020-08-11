@@ -9,9 +9,9 @@ import (
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/jameskeane/bcrypt"
 	"github.com/jinzhu/gorm"
-	"github.com/snowlyg/IrisAdminApi/backend/libs"
-	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
-	"github.com/snowlyg/IrisAdminApi/backend/validates"
+	"github.com/snowlyg/IrisAdminApi/server/libs"
+	"github.com/snowlyg/IrisAdminApi/server/sysinit"
+	"github.com/snowlyg/IrisAdminApi/server/validates"
 )
 
 type User struct {

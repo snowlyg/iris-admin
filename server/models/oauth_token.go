@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/snowlyg/IrisAdminApi/backend/sysinit"
+	"github.com/snowlyg/IrisAdminApi/server/sysinit"
 )
 
 type OauthToken struct {

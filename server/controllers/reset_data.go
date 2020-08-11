@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/backend/models"
+	"github.com/snowlyg/IrisAdminApi/server/models"
 )
 
 /*

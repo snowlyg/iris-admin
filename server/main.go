@@ -9,9 +9,9 @@ import (
 
 	"github.com/kardianos/service"
 	logger "github.com/sirupsen/logrus"
-	"github.com/snowlyg/IrisAdminApi/backend/config"
-	"github.com/snowlyg/IrisAdminApi/backend/libs"
-	"github.com/snowlyg/IrisAdminApi/backend/serve"
+	"github.com/snowlyg/IrisAdminApi/server/config"
+	"github.com/snowlyg/IrisAdminApi/server/libs"
+	"github.com/snowlyg/IrisAdminApi/server/serve"
 )
 
 var Version = "master"

@@ -1,4 +1,4 @@
-module github.com/snowlyg/IrisAdminApi/backend
+module github.com/snowlyg/IrisAdminApi/server
 
 go 1.14
 

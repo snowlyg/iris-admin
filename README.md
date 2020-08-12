@@ -68,18 +68,7 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 
 ```
 
-####  docker-compose 安装 （需要 docker 环境）
-
-```shell script
-  # 复制配置文件，并修改配置
-  # 复制到 config/ 目录即可。  docker-compose 脚本会将配置文件同步到 server/config 目录下。
-  cp config/application.example.yml config/application.yml 
-
-  # 启动项目
-  docker-compose up -d  
-```
-
-##### 普通环境安装项目
+##### 安装项目
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)
 >使用国内七牛云的 go module 镜像。
@@ -98,7 +87,6 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 ```shell script
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
-
 ```
 
 > 项目配置文件 `server/config/application.yml`
@@ -110,10 +98,18 @@ cp config/application.yml.example config/application.yml
 >运行项目 
 
 ```shell script
-cmd install
-cmd start
-cmd stop
-cmd uninstall
+# 安装
+main install
+# 卸载
+main uninstall
+# 启动
+main start
+# 停止
+main stop
+# 查看版本
+main version
+# 数据填充
+main seeder
 ```
 
 ---

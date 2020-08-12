@@ -89,7 +89,7 @@ func CreateUser(ctx iris.Context) {
 		}
 	}
 
-	user.CreateUser(user)
+	user.CreateUser()
 	ctx.StatusCode(iris.StatusOK)
 	if user.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))

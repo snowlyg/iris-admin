@@ -121,31 +121,29 @@ func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string) (
 }
 
 func CreateRole(name, disName, dec string) *models.Role {
-	rr := &validates.RoleRequest{
+	role := &models.Role{
 		Name:        name,
 		DisplayName: disName,
 		Description: dec,
 	}
-	role := models.NewRoleByStruct(rr)
 	role.GetRoleByName()
 	if role.ID == 0 {
-		role.CreateRole([]uint{})
+		role.CreateRole()
 	}
 	return role
 
 }
 
 func CreateUser() *models.User {
-	rr := &validates.CreateUpdateUserRequest{
+	user := &models.User{
 		Username: "TUsername",
 		Password: "TPassword",
 		Name:     "TName",
 		RoleIds:  []uint{},
 	}
 
-	user := models.NewUser(0, "TUsername")
 	if user.ID == 0 {
-		user.CreateUser(rr)
+		_ = user.CreateUser()
 		return user
 	} else {
 		return user

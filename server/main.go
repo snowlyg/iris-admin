@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/snowlyg/IrisAdminApi/server/seeder"
 	"log"
 	"os"
 	"time"
@@ -105,6 +106,9 @@ version: %s`, Version))
 		if os.Args[1] == "version" {
 			logger.Println(fmt.Sprintf("版本号：%s", Version))
 			return
+		} else if os.Args[1] == "seeder" {
+			seeder.Run()
+			return
 		}
 
 		err = service.Control(s, os.Args[1])
@@ -112,8 +116,8 @@ version: %s`, Version))
 			logger.Fatal(err)
 		}
 		return
-
 	}
+
 	err = s.Run()
 	if err != nil {
 		logger.Println(err)

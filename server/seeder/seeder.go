@@ -1,6 +1,4 @@
-// build ignore
-
-package main
+package seeder
 
 import (
 	"fmt"
@@ -37,6 +35,24 @@ func init() {
 	if err := configor.Load(&Seeds, filepaths...); err != nil {
 		panic(err)
 	}
+}
+
+func Run() {
+
+	AutoMigrates()
+
+	fmt.Println(fmt.Sprintf("权限填充开始！！"))
+	CreatePerms()
+	fmt.Println(fmt.Sprintf("权限填充完成！！"))
+
+	fmt.Println(fmt.Sprintf("管理角色填充开始！！"))
+	CreateAdminRole()
+	fmt.Println(fmt.Sprintf("管理角色填充完成！！"))
+
+	fmt.Println(fmt.Sprintf("管理员填充开始！！"))
+	CreateAdminUser()
+	fmt.Println(fmt.Sprintf("管理员填充完成！！"))
+
 }
 
 // CreatePerms 新建菜单
@@ -83,10 +99,11 @@ func CreateAdminUser() {
 	admin := &models.User{
 		Username: "username",
 		Name:     "超级管理员",
+		Password: "123456",
 		Model:    gorm.Model{CreatedAt: time.Now()},
 	}
 
-	if err := admin.CreateUser("123456"); err != nil {
+	if err := admin.CreateUser(); err != nil {
 		panic(fmt.Sprintf("管理员填充错误：%v", err))
 	}
 }

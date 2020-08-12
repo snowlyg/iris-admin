@@ -77,8 +77,8 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (u *User) CreateUser(pwd string) error {
-	u.Password = libs.HashPassword(pwd)
+func (u *User) CreateUser() error {
+	u.Password = libs.HashPassword(u.Password)
 	if err := sysinit.Db.Create(u).Error; err != nil {
 		return err
 	}

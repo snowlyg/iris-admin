@@ -36,7 +36,8 @@ func init() {
 		panic(fmt.Sprintf("NewAdapter 错误: %v", err))
 	}
 
-	casbinModelPath := filepath.Join(libs.ConfigPath(), "rbac_model.conf")
+	casbinModelPath := filepath.Join(libs.CWD(), "rbac_model.conf")
+	fmt.Println(casbinModelPath)
 	Enforcer, err = casbin.NewEnforcer(casbinModelPath, c)
 	if err != nil {
 		panic(fmt.Sprintf("NewEnforcer 错误: %v", err))

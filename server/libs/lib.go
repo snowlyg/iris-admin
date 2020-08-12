@@ -44,11 +44,6 @@ func CWD() string {
 	return filepath.Dir(path)
 }
 
-// 配置目录
-func ConfigPath() string {
-	return filepath.Join(CWD(), "../server/config")
-}
-
 // 静态文件目录
 func StaticPath() string {
 	return filepath.Join(CWD(), "../server/www/dist/static")

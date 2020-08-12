@@ -10,10 +10,9 @@ import (
 
 func App(api *iris.Application) {
 	//api.Favicon("./static/favicons/favicon.ico")
-	app := api.Party("/", middleware.CrsAuth()).AllowMethods(iris.MethodOptions)
+	api.UseRouter(middleware.CrsAuth())
+	app := api.Party("/").AllowMethods(iris.MethodOptions)
 	{
-		//app.HandleDir("/static", libs.StaticPath())
-
 		app.Get("/", func(ctx iris.Context) { // 首页模块
 			_ = ctx.View("index.html")
 		})

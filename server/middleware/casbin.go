@@ -2,12 +2,12 @@ package middleware
 
 import (
 	"fmt"
+	"github.com/kataras/iris/v12"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/iris-contrib/middleware/jwt"
-	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/IrisAdminApi/server/models"
 
 	"github.com/casbin/casbin/v2"
@@ -17,7 +17,7 @@ func New(e *casbin.Enforcer) *Casbin {
 	return &Casbin{enforcer: e}
 }
 
-func (c *Casbin) ServeHTTP(ctx context.Context) {
+func (c *Casbin) ServeHTTP(ctx iris.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
 	token := models.OauthToken{}
 	token.GetOauthTokenByToken(value.Raw) //获取 access_token 信息

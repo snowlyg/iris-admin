@@ -83,10 +83,10 @@ go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
 ```
 
-> 项目配置文件 `server/config/application.yml`
+> 项目配置文件 `application.yml`
 
 ```shell script
-cp config/application.yml.example config/application.yml
+cp application.yml.example application.yml
 ```
 
 >运行项目 

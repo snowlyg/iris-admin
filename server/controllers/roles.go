@@ -102,9 +102,7 @@ func CreateRole(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateRole(ctx iris.Context) {
-
 	role := new(models.Role)
-
 	if err := ctx.ReadJSON(role); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -213,5 +211,6 @@ func roleTransform(role *models.Role) *transformer.Role {
 	r := &transformer.Role{}
 	g := gf.NewTransform(r, role, time.RFC3339)
 	_ = g.Transformer()
+	r.Perms = permsTransform(role.RolePermisions())
 	return r
 }

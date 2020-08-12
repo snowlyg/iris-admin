@@ -21,7 +21,7 @@ var Fake *faker.Faker
 var Seeds = struct {
 	Perms []struct {
 		Name        string `json:"name"`
-		DisplayName string `json:"display_name"`
+		DisplayName string `json:"displayname"`
 		Description string `json:"description"`
 		Act         string `json:"act"`
 	}

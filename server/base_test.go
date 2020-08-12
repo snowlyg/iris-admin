@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/snowlyg/IrisAdminApi/server/seeder"
 	"github.com/snowlyg/IrisAdminApi/server/serve"
 	"net/http"
 	"os"
@@ -23,8 +24,7 @@ var (
 func TestMain(m *testing.M) {
 	s := serve.NewServer(Asset, AssetNames, AssetInfo) // 初始化app
 	app = s.App
-	routes := s.GetRoutes()
-	models.CreateSystemData(routes)
+	seeder.Run()
 
 	flag.Parse()
 	exitCode := m.Run()

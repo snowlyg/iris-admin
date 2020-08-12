@@ -60,11 +60,11 @@ func (s *Server) NewApp() {
 	tmpl := iris.HTML(libs.WwwPath(), ".html").Binary(s.Asset, s.AssetNames)
 	s.App.RegisterView(tmpl)
 
-	s.App.HandleDir("/", libs.WwwPath(), iris.DirOptions{
-		Asset:      s.Asset,
-		AssetInfo:  s.AssetInfo,
-		AssetNames: s.AssetNames,
-	})
+	//s.App.HandleDir("/", iris.Dir(libs.WwwPath()), iris.DirOptions{
+	//	Asset:      s.Asset,
+	//	AssetInfo:  s.AssetInfo,
+	//	AssetNames: s.AssetNames,
+	//})
 
 	db := sysinit.Db
 	db.AutoMigrate(

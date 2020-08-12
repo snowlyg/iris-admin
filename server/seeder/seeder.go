@@ -115,6 +115,8 @@ func CreateAdminUser() {
 		Username: "username",
 		Name:     "超级管理员",
 		Password: "123456",
+		Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
+		Intro:    "超级弱鸡程序猿一枚！！！！",
 		Model:    gorm.Model{CreatedAt: time.Now()},
 	}
 	var roleIds []uint

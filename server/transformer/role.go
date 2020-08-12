@@ -2,9 +2,9 @@ package transformer
 
 type Role struct {
 	Id          int           `json:"id"`
-	Name        string        `json:"key"`
-	DisplayName string        `json:"name"`
+	Name        string        `json:"name"`
+	DisplayName string        `json:"display_name"`
 	Description string        `json:"description"`
-	Perms       []*Permission `json:"routes"`
+	Perms       []*Permission `json:"perms"`
 	CreatedAt   string        `json:"created_at"`
 }

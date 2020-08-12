@@ -98,7 +98,7 @@ func CreateAdminRole() {
 			permIds = append(permIds, perm.ID)
 		}
 
-		role.PermissionsIds = permIds
+		role.PermIds = permIds
 		if config.Config.Debug {
 			fmt.Println(fmt.Sprintf("填充角色数据：%v", role))
 		}

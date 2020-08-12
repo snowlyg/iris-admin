@@ -73,13 +73,17 @@ func CreateRole(ctx iris.Context) {
 		}
 	}
 
-	role.CreateRole()
+	err = role.CreateRole()
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, role, err.Error()))
+		return
+	}
 	ctx.StatusCode(iris.StatusOK)
 	if role.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, role, "操作失败"))
 		return
 	} else {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
+		_, _ = ctx.JSON(ApiResource(200, role, "操作成功"))
 		return
 	}
 

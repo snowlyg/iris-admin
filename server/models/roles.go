@@ -13,10 +13,10 @@ import (
 type Role struct {
 	gorm.Model
 
-	Name           string `gorm:"unique;not null VARCHAR(191)" json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
-	DisplayName    string `gorm:"VARCHAR(191)" json:"display_name" comment:"显示名称"`
-	Description    string `gorm:"VARCHAR(191)" json:"description" comment:"描述"`
-	PermissionsIds []uint `gorm:"-" json:"permissions_ids" comment:"权限"`
+	Name        string `gorm:"unique;not null VARCHAR(191)" json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
+	DisplayName string `gorm:"VARCHAR(191)" json:"display_name" comment:"显示名称"`
+	Description string `gorm:"VARCHAR(191)" json:"description" comment:"描述"`
+	PermIds     []uint `gorm:"-" json:"perm_ids" comment:"权限"`
 }
 
 func NewRole(id uint, name string) *Role {
@@ -86,7 +86,7 @@ func (r *Role) CreateRole() error {
 		return err
 	}
 
-	addPerms(r.PermissionsIds, r)
+	addPerms(r.PermIds, r)
 
 	return nil
 }
@@ -120,7 +120,7 @@ func (r *Role) UpdateRole(rj *Role) {
 		color.Red(fmt.Sprintf("UpdatRoleErr:%s \n", err))
 	}
 
-	addPerms(r.PermissionsIds, r)
+	addPerms(r.PermIds, r)
 
 	return
 }

@@ -19,7 +19,7 @@ var Config = struct {
 		Name            string `env:"AdminName" default:"name"`
 		Pwd             string `env:"AdminPwd" default:"123456"`
 		RoleName        string `env:"AdminRoleName" default:"superadmin_role"`
-		RoleDisplayName string `env:"TenantRoleDisplayName" default:"商户管理员"`
+		RoleDisplayName string `env:"TenantRoleDisplayName" default:"超级管理员"`
 	}
 	DB struct {
 		Name     string `env:"DBName" default:"goirisadminapi"`

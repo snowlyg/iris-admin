@@ -229,7 +229,7 @@ func userTransform(user *models.User) *transformer.User {
 		ris = append(ris, ri)
 		role := models.NewRole(uint(ri), "")
 		role.GetRoleById()
-		roleName = append(roleName, role.DisplayName)
+		roleName = append(roleName, role.Name)
 
 	}
 	u.RoleIds = ris

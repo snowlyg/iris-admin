@@ -104,10 +104,23 @@ version: %s`, Version))
 
 	if len(os.Args) == 2 {
 		if os.Args[1] == "version" {
-			logger.Println(fmt.Sprintf("版本号：%s", Version))
+			fmt.Println(fmt.Sprintf("版本号：%s", Version))
 			return
 		} else if os.Args[1] == "seeder" {
 			seeder.Run()
+			return
+		} else if os.Args[1] == "perms" {
+			fmt.Println("系统权限：")
+			fmt.Println()
+			routes := prg.irisServer.GetRoutes()
+			for _, route := range routes {
+				fmt.Println("+++++++++++++++")
+				fmt.Println(fmt.Sprintf("名称 ：%s ", route.DisplayName))
+				fmt.Println(fmt.Sprintf("路由地址 ：%s ", route.Name))
+				fmt.Println(fmt.Sprintf("请求方式 ：%s", route.Act))
+				fmt.Println()
+			}
+
 			return
 		}
 

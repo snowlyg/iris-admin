@@ -66,12 +66,12 @@ func (r *Role) DeleteRoleById() {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllRoles(name, orderBy string, offset, limit int) (roles []*Role) {
-
+func GetAllRoles(name, orderBy string, offset, limit int) ([]*Role, error) {
+	var roles []*Role
 	if err := GetAll(name, orderBy, offset, limit).Find(&roles).Error; err != nil {
-		color.Red(fmt.Sprintf("GetAllRoleErr:%s \n", err))
+		return nil, err
 	}
-	return
+	return roles, nil
 }
 
 /**

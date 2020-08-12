@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"fmt"
+	"github.com/snowlyg/IrisAdminApi/server/libs"
 	"math/rand"
 	"path/filepath"
 	"time"
@@ -31,7 +32,10 @@ func init() {
 	Fake.Rand = rand.New(rand.NewSource(42))
 	rand.Seed(time.Now().UnixNano())
 
-	filepaths, _ := filepath.Glob(filepath.Join("seeder", "data", "*.yml"))
+	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "../server/seeder/data", "*.yml"))
+	if config.Config.Debug {
+		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
+	}
 	if err := configor.Load(&Seeds, filepaths...); err != nil {
 		panic(err)
 	}
@@ -55,22 +59,26 @@ func Run() {
 
 }
 
-// CreatePerms 新建菜单
+// CreatePerms 新建权限
 func CreatePerms() {
+	if config.Config.Debug {
+		fmt.Println(fmt.Sprintf("填充权限：%v", Seeds))
+	}
 	for _, m := range Seeds.Perms {
-		menu := &models.Permission{
+		perm := &models.Permission{
 			Model:       gorm.Model{CreatedAt: time.Now()},
 			Name:        m.Name,
 			DisplayName: m.DisplayName,
 			Description: m.Description,
 			Act:         m.Act,
 		}
-
-		if err := menu.CreatePermission(); err != nil {
-			panic(fmt.Sprintf("菜单填充错误：%v", err))
+		perm.GetPermissionByNameAct()
+		if perm.ID == 0 {
+			if err := perm.CreatePermission(); err != nil {
+				panic(fmt.Sprintf("权限填充错误：%v", err))
+			}
 		}
 	}
-
 }
 
 // CreateAdminRole 新建管理角色
@@ -82,16 +90,23 @@ func CreateAdminRole() {
 		Model:       gorm.Model{CreatedAt: time.Now()},
 	}
 
-	var permIds []uint
-	perms, _ := models.GetAllPermissions("", "", 1, 20)
-	for _, perm := range perms {
-		permIds = append(permIds, perm.ID)
+	role.GetRoleByName()
+	if role.ID == 0 {
+		var permIds []uint
+		perms, _ := models.GetAllPermissions("", "", 0, 0)
+		for _, perm := range perms {
+			permIds = append(permIds, perm.ID)
+		}
+
+		role.PermissionsIds = permIds
+		if config.Config.Debug {
+			fmt.Println(fmt.Sprintf("填充角色数据：%v", role))
+		}
+		if err := role.CreateRole(); err != nil {
+			panic(fmt.Sprintf("管理角色填充错误：%v", err))
+		}
 	}
 
-	role.PermissionsIds = permIds
-	if err := role.CreateRole(); err != nil {
-		panic(fmt.Sprintf("管理角色填充错误：%v", err))
-	}
 }
 
 // CreateAdminUser 新建管理员
@@ -102,9 +117,20 @@ func CreateAdminUser() {
 		Password: "123456",
 		Model:    gorm.Model{CreatedAt: time.Now()},
 	}
-
-	if err := admin.CreateUser(); err != nil {
-		panic(fmt.Sprintf("管理员填充错误：%v", err))
+	var roleIds []uint
+	roles, _ := models.GetAllRoles("", "", 0, 0)
+	for _, role := range roles {
+		roleIds = append(roleIds, role.ID)
+	}
+	admin.RoleIds = roleIds
+	if config.Config.Debug {
+		fmt.Println(fmt.Sprintf("填充管理员数据：%v", admin))
+	}
+	admin.GetUserByUsername()
+	if admin.ID == 0 {
+		if err := admin.CreateUser(); err != nil {
+			panic(fmt.Sprintf("管理员填充错误：%v", err))
+		}
 	}
 }
 
@@ -115,7 +141,6 @@ func CreateAdminUser() {
 */
 func AutoMigrates() {
 	sysinit.Db.DropTableIfExists("users", "permissions", "roles", "casbin_rule")
-
 	sysinit.Db.AutoMigrate(
 		&models.User{},
 		&models.Role{},

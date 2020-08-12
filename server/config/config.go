@@ -8,6 +8,7 @@ import (
 )
 
 var Config = struct {
+	Debug    bool   `default:"false" env:"Debug"`
 	HTTPS    bool   `default:"false" env:"HTTPS"`
 	Certpath string `default:"" env:"Certpath"`
 	Certkey  string `default:"" env:"Certkey"`

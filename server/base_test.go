@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"github.com/snowlyg/IrisAdminApi/server/controllers"
 	"github.com/snowlyg/IrisAdminApi/server/serve"
 	"net/http"
 	"os"
@@ -13,7 +12,6 @@ import (
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/snowlyg/IrisAdminApi/server/config"
 	"github.com/snowlyg/IrisAdminApi/server/models"
-	"github.com/snowlyg/IrisAdminApi/server/validates"
 )
 
 var (
@@ -25,7 +23,7 @@ var (
 func TestMain(m *testing.M) {
 	s := serve.NewServer(Asset, AssetNames, AssetInfo) // 初始化app
 	app = s.App
-	routes := controllers.GetRoutes(app.GetRoutesReadOnly())
+	routes := s.GetRoutes()
 	models.CreateSystemData(routes)
 
 	flag.Parse()

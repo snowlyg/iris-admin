@@ -22,11 +22,6 @@
 - 数据库字符格式不对，无法识别中文
 - 将数据库字符设置 utf8 字符集
 
-> 登录显示前端报错 405 Not Allowed：
- ```
-默认端口为 8081，如果修改了端口。需要下载 [IrisApiVueAdmin](https://github.com/snowlyg/IrisApiVueAdmin) 项目修改端口后覆盖前端代码
- ```
-
 > 启动报错 panic: reflect: call of reflect.Value.Bool on interface Value
 > 更新 github.com/snowlyg/gotransformer 包到最新版本
  ```

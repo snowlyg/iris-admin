@@ -189,7 +189,12 @@ func GetAllRoles(ctx iris.Context) {
 	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
 
-	roles := models.GetAllRoles(name, orderBy, offset, limit)
+	roles, err := models.GetAllRoles(name, orderBy, offset, limit)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, rolesTransform(roles), "操作成功"))

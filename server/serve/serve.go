@@ -2,8 +2,10 @@ package serve
 
 import (
 	"fmt"
+	"github.com/kataras/iris/v12/context"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/betacraft/yaag/yaag"
@@ -88,4 +90,55 @@ func (s *Server) NewApp() {
 	})
 
 	routes.App(s.App) //注册 app 路由
+}
+
+type PathName struct {
+	Name   string
+	Path   string
+	Method string
+}
+
+// 获取路由信息
+func (s *Server) GetRoutes() []*models.Permission {
+	var rrs []*models.Permission
+	names := getPathNames(s.App.GetRoutesReadOnly())
+	if config.Config.Debug {
+		fmt.Println(fmt.Sprintf("路由权限集合：%v", names))
+		fmt.Println(fmt.Sprintf("Iris App ：%v", s.App))
+	}
+	for _, pathName := range names {
+		if !isPermRoute(pathName.Name) {
+			rr := &models.Permission{Name: pathName.Path, DisplayName: pathName.Name, Description: pathName.Name, Act: pathName.Method}
+			rrs = append(rrs, rr)
+		}
+	}
+	return rrs
+}
+
+func getPathNames(routeReadOnly []context.RouteReadOnly) []*PathName {
+	var pns []*PathName
+	if config.Config.Debug {
+		fmt.Println(fmt.Sprintf("routeReadOnly：%v", routeReadOnly))
+	}
+	for _, s := range routeReadOnly {
+		pn := &PathName{
+			Name:   s.Name(),
+			Path:   s.Path(),
+			Method: s.Method(),
+		}
+		pns = append(pns, pn)
+	}
+
+	return pns
+}
+
+// 过滤非必要权限
+func isPermRoute(name string) bool {
+	exceptRouteName := []string{"OPTIONS", "GET", "POST", "HEAD", "PUT", "PATCH", "payload"}
+	for _, er := range exceptRouteName {
+		if strings.Contains(name, er) {
+			return true
+		}
+	}
+	return false
 }

@@ -153,15 +153,23 @@ air
 ---
 ##### 单元测试 
 > http test
+>
+> 
 
 ```shell script
- go test -v  //所有测试
+# 设置 GOTMPDIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd
+# 否则无法加载配置文件
+
+# 所有测试
+ go test -v ./...
  
- go test -run TestUserCreate -v //单个方法
+#单个方法
+ go test -run TestUserCreate -v 
 
+# 安装工具 gotest 增加测试输出数据颜色
+go get github.com/rakyll/gotest@latest
 
-// go get github.com/rakyll/gotest@latest 增加测试输出数据颜色
-
+# 测试
  gotest 
  
 ```

@@ -9,7 +9,7 @@ import (
 )
 
 func App(api *iris.Application) {
-	//api.Favicon("./static/favicons/favicon.ico")
+	//api.Favicon("./www/dist/favicon.ico")
 	api.UseRouter(middleware.CrsAuth())
 	app := api.Party("/").AllowMethods(iris.MethodOptions)
 	{

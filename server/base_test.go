@@ -2,8 +2,6 @@ package main
 
 import (
 	"flag"
-	"github.com/snowlyg/IrisAdminApi/server/seeder"
-	"github.com/snowlyg/IrisAdminApi/server/serve"
 	"net/http"
 	"os"
 	"testing"
@@ -13,6 +11,8 @@ import (
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/snowlyg/IrisAdminApi/server/config"
 	"github.com/snowlyg/IrisAdminApi/server/models"
+	"github.com/snowlyg/IrisAdminApi/server/seeder"
+	"github.com/snowlyg/IrisAdminApi/server/serve"
 )
 
 var (
@@ -22,7 +22,7 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-	s := serve.NewServer(Asset, AssetNames, AssetInfo) // 初始化app
+	s := serve.NewServer(AssetFile(), Asset, AssetNames) // 初始化app
 	app = s.App
 	seeder.Run()
 

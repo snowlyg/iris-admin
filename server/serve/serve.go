@@ -2,14 +2,14 @@ package serve
 
 import (
 	"fmt"
-	"github.com/kataras/iris/v12/context"
-	"os"
+	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/IrisAdminApi/server/config"
 	"github.com/snowlyg/IrisAdminApi/server/libs"
 	"github.com/snowlyg/IrisAdminApi/server/models"
@@ -19,18 +19,18 @@ import (
 
 type Server struct {
 	App        *iris.Application
+	AssetFile  http.FileSystem
 	Asset      func(name string) ([]byte, error)
 	AssetNames func() []string
-	AssetInfo  func(name string) (os.FileInfo, error)
 }
 
-func NewServer(assetFn func(name string) ([]byte, error), namesFn func() []string, assetInfo func(name string) (os.FileInfo, error)) *Server {
+func NewServer(assetFile http.FileSystem, asset func(name string) ([]byte, error), assetNames func() []string) *Server {
 	app := iris.Default()
 	return &Server{
 		App:        app,
-		Asset:      assetFn,
-		AssetNames: namesFn,
-		AssetInfo:  assetInfo,
+		AssetFile:  assetFile,
+		Asset:      asset,
+		AssetNames: assetNames,
 	}
 }
 
@@ -60,11 +60,7 @@ func (s *Server) NewApp() {
 	tmpl := iris.HTML(libs.WwwPath(), ".html").Binary(s.Asset, s.AssetNames)
 	s.App.RegisterView(tmpl)
 
-	//s.App.HandleDir("/", iris.Dir(libs.WwwPath()), iris.DirOptions{
-	//	Asset:      s.Asset,
-	//	AssetInfo:  s.AssetInfo,
-	//	AssetNames: s.AssetNames,
-	//})
+	s.App.HandleDir("/", iris.PrefixDir(libs.WwwPath(), s.AssetFile))
 
 	db := sysinit.Db
 	db.AutoMigrate(

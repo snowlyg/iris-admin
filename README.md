@@ -49,9 +49,32 @@
 [ERRORS](ERRORS.MD)
 
 
-#### 项目初始化
+1. 运行项目
+- 从地址 []() ，选择下载编译好的系统文件,
 
->拉取项目
+- 运行项目 
+
+```shell script
+# 安装
+./main install
+# 卸载
+./main uninstall
+# 启动
+./main start
+# 停止
+./main stop
+# 查看版本
+./main version
+# 数据填充
+./main seeder
+# 查看权限信息
+./main perms
+```
+
+
+#### 如果需要重新编译项目
+
+- 拉取项目
 
 ```shell script
 git clone https://github.com/snowlyg/IrisAdminApi.git
@@ -62,7 +85,7 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 
 ```
 
-##### 安装项目
+- 安装项目依赖
 
 >加载依赖管理包 (解决国内下载依赖太慢问题)
 >使用国内七牛云的 go module 镜像。
@@ -83,29 +106,47 @@ go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
 ```
 
-> 项目配置文件 `application.yml`
+> 修改配置文件 `application.yml` ,配置文件需要放置在运行程序的同级目录
 
 ```shell script
-cp application.yml.example application.yml
+cp application.example.yml application.yml
 ```
 
->运行项目 
+- 前端代码运行
+```shell script
+
+# 安装前端依赖
+npm i
+
+# 开发方式启动（开发时使用，会在修改代码后实时更新）
+npm run dev 
+
+# 打包前端代码（部署时使用）
+npm run build:prod  或者  npm run build:stage
+
+```
+
+- 生成二进制前端文件
+```shell script
+
+# 安装 go-bindata 工具
+go get -u github.com/go-bindata/go-bindata/v3/go-bindata
+
+# 生成二进制文件 bindata.go
+go generate 
+
+```
+
+- 运行项目,
+>推荐使用 air 或者 gowatch 等热编译工具,直接使用 go run main.go 方法运行，可能会出现配置文件无法加载的问题
 
 ```shell script
-# 安装
-main install
-# 卸载
-main uninstall
-# 启动
-main start
-# 停止
-main stop
-# 查看版本
-main version
-# 数据填充
-main seeder
-# 查看权限信息
-main perms
+
+# 安装工具 air     
+go get -u github.com/cosmtrek/air
+
+# 在 server 目录执行,可以通过 .air.conf 配置 air 工具
+air
 ```
 
 ---

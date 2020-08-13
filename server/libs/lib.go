@@ -46,7 +46,7 @@ func CWD() string {
 
 // 静态文件目录
 func StaticPath() string {
-	return filepath.Join(CWD(), "../server/www/dist/static")
+	return filepath.Join(CWD(), "../server/www/dist")
 }
 
 func WwwPath() string {

@@ -1,10 +1,9 @@
-//go:generate go-bindata  ./www/dist/...
+//go:generate go-bindata -prefix "assets" -fs  ./www/dist/...
 package main
 
 import (
 	"context"
 	"fmt"
-	"github.com/snowlyg/IrisAdminApi/server/seeder"
 	"log"
 	"os"
 	"time"
@@ -13,6 +12,7 @@ import (
 	logger "github.com/sirupsen/logrus"
 	"github.com/snowlyg/IrisAdminApi/server/config"
 	"github.com/snowlyg/IrisAdminApi/server/libs"
+	"github.com/snowlyg/IrisAdminApi/server/seeder"
 	"github.com/snowlyg/IrisAdminApi/server/serve"
 )
 
@@ -49,6 +49,7 @@ func (p *program) Start(s service.Service) error {
 	p.startIris()
 	return nil
 }
+
 func (p *program) run() {
 
 }
@@ -98,7 +99,7 @@ version: %s`, Version))
 		logger.Println(err)
 	}
 
-	opServer := serve.NewServer(Asset, AssetNames, AssetInfo)
+	opServer := serve.NewServer(AssetFile(), Asset, AssetNames)
 	opServer.NewApp()
 	prg.irisServer = opServer
 

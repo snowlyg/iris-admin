@@ -3,7 +3,7 @@ language: go
 install:
   - go env -w GO111MODULE=on
   - go env -w GOPROXY=https://goproxy.cn,direct
-  - go get -d -t -v -u ./... && go build -a -installsuffix cgo -ldflags "-w -s -X main.Version=master"
+  - go get -d -t -v -u ./... && go build
 
 go:
   - 1.14.x
@@ -12,6 +12,8 @@ os:
   - windows
   - linux
   - osx
+
+gobuild_args: -x -ldflags "-X main.VersionString v1.2.3"
 
 env:
   matrix:

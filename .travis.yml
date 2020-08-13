@@ -1,8 +1,8 @@
 language: go
 
+gobuild_args: -x -ldflags "-X main.VersionString v1.2.3"
+
 install:
-  - go env -w GO111MODULE=on
-  - go env -w GOPROXY=https://goproxy.cn,direct
   - go get -d -t -v -u ./... && go build
 
 go:
@@ -13,12 +13,13 @@ os:
   - linux
   - osx
 
-gobuild_args: -x -ldflags "-X main.VersionString v1.2.3"
 
 env:
   matrix:
     - GOARCH=amd64
     - GOARCH=386
+    - GO111MODULE=on
+    - GOPROXY=https://goproxy.cn,direct
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

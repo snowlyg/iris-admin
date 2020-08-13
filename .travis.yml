@@ -21,7 +21,7 @@ os:
   - osx
 
 env:
-  matrix:
+  global:
     - GOARCH=amd64
     - GOARCH=386
     - GO111MODULE=on

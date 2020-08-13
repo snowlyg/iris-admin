@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/gavv/httpexpect"
+	"github.com/iris-contrib/httpexpect/v2"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/snowlyg/IrisAdminApi/server/config"

@@ -1,6 +1,6 @@
 language: go
 
-gobuild_args: -x -ldflags "-X main.VersionString v1.2.3"
+gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
 before_install:
   - cd ./server
 
@@ -22,6 +22,10 @@ env:
     - GOARCH=386
     - GO111MODULE=on
     - GOPROXY=https://goproxy.cn,direct
+
+script:
+  - go vet ./...
+  - go test ./... -v -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

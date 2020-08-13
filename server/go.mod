@@ -24,18 +24,21 @@ require (
 	github.com/google/uuid v1.1.2-0.20200519141726-cb32006e483f
 	github.com/iris-contrib/formBinder v0.0.0-20190104093907-fbd5963f41e1 // indirect
 	github.com/iris-contrib/httpexpect v0.0.0-20180314041918-ebe99fcebbce // indirect
+	github.com/iris-contrib/httpexpect/v2 v2.0.5
 	github.com/iris-contrib/i18n v0.0.0-20171121225848-987a633949d0 // indirect
 	github.com/iris-contrib/middleware/casbin v0.0.0-20200810001613-32cf668f999f // indirect
 	github.com/iris-contrib/middleware/cors v0.0.0-20200810001613-32cf668f999f
 	github.com/iris-contrib/middleware/jwt v0.0.0-20200810001613-32cf668f999f
 	github.com/jameskeane/bcrypt v0.0.0-20120420032655-c3cd44c1e20f
 	github.com/jinzhu/configor v1.2.0
-	github.com/jinzhu/gorm v1.9.14
+	github.com/jinzhu/gorm v1.9.15
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kardianos/service v1.1.0
-	github.com/kataras/iris/v12 v12.1.9-0.20200812051831-0edf0affb0bd
+	github.com/kataras/iris/v12 v12.1.9-0.20200812215233-6ead1d21dadc
 	github.com/klauspost/cpuid v1.2.0 // indirect
+	github.com/lib/pq v1.8.0 // indirect
 	github.com/manveru/gobdd v0.0.0-20131210092515-f1a17fdd710b // indirect
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/mediocregopher/mediocre-go-lib v0.0.0-20181029021733-cb65787f37ed // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
@@ -43,7 +46,10 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/snowlyg/gotransformer v0.1.0
+	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	golang.org/x/sys v0.0.0-20200812155832-6a926be9bd1d // indirect
+	google.golang.org/appengine v1.6.6 // indirect
 	gopkg.in/fsnotify/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/gin-gonic/gin.v1 v1.3.0 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect

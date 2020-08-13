@@ -28,8 +28,9 @@ env:
     - GOPROXY=https://goproxy.cn,direct
 
 script:
+  - pwd
   - go vet ./...
-  -  go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
+  - go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

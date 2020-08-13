@@ -37,8 +37,8 @@ func MD5(str string) string {
 
 // 当前目录
 func CWD() string {
-	if os.Getenv("GOTMPDIR") != "" {
-		return os.Getenv("GOTMPDIR")
+	if os.Getenv("TRAVIS_BUILD_DIR") != "" {
+		return os.Getenv("TRAVIS_BUILD_DIR")
 	}
 
 	path, err := os.Executable()

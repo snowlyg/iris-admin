@@ -109,10 +109,6 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 > 修改配置文件 `application.yml` ,配置文件需要放置在运行程序的同级目录
 
-```shell script
-cp application.example.yml application.yml
-```
-
 - 前端代码运行
 ```shell script
 
@@ -157,7 +153,7 @@ air
 > 
 
 ```shell script
-# 设置 GOTMPDIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd
+# 设置 TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd
 # 否则无法加载配置文件
 
 # 所有测试

@@ -35,8 +35,6 @@ github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107 h1:1xCUqbLLqz3OCYzdx
 github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107/go.mod h1:o2l/Pkxm4WT1YKjbR1E8fsToXKDPCfY8GrmqATdIEb0=
 github.com/betacraft/yaag v1.0.1-0.20200719063524-47d781406108 h1:cpGu4RudyjjPCN/mX3HftcqRQ6M9RdKR0/9fkMB/cNI=
 github.com/betacraft/yaag v1.0.1-0.20200719063524-47d781406108/go.mod h1:g0I523MFAMM4iaIVC8BIflAEwcloqvLxuIRpF9FRP5s=
-github.com/brianvoe/gofakeit v1.2.0 h1:GGbzCqQx9ync4ObAUhRa3F/M73eL9VZL3X09WoTwphM=
-github.com/brianvoe/gofakeit v3.18.0+incompatible h1:wDOmHc9DLG4nRjUVVaxA+CEglKOW72Y5+4WNxUIkjM8=
 github.com/brianvoe/gofakeit/v5 v5.9.1 h1:uYNxmk4ocCTIq+y6O896JR8a6oZ42fzn2wc753punjc=
 github.com/brianvoe/gofakeit/v5 v5.9.1/go.mod h1:/ZENnKqX+XrN8SORLe/fu5lZDIo1tuPncWuRD+eyhSI=
 github.com/casbin/casbin/v2 v2.2.2/go.mod h1:XXtYGrs/0zlOsJMeRteEdVi/FsB0ph7KgNfjoCoJUD8=

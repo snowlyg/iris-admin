@@ -3,11 +3,9 @@ package serve
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/betacraft/yaag/yaag"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/IrisAdminApi/server/config"
@@ -72,17 +70,6 @@ func (s *Server) NewApp() {
 
 	iris.RegisterOnInterrupt(func() {
 		_ = db.Close()
-	})
-
-	docPath := filepath.Join(libs.WwwPath(), "apiDoc/index.html")
-	yaag.Init(&yaag.Config{ // <- IMPORTANT, init the middleware. //api 文档配置
-		On:       true,
-		DocTitle: "GoIrisApi",
-		DocPath:  docPath, //设置绝对路径
-		BaseUrls: map[string]string{
-			"Production": config.Config.Host,
-			"Staging":    "",
-		},
 	})
 
 	routes.App(s.App) //注册 app 路由

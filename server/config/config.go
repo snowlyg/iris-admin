@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 
 	"github.com/jinzhu/configor"
-	logger "github.com/sirupsen/logrus"
 	"github.com/snowlyg/IrisAdminApi/server/libs"
 )
 
@@ -15,7 +14,7 @@ var Config = struct {
 	HTTPS    bool   `default:"false" env:"HTTPS"`
 	Certpath string `default:"" env:"Certpath"`
 	Certkey  string `default:"" env:"Certkey"`
-	Port     uint   `default:"8085" env:"PORT"`
+	Port     int    `default:"8085" env:"PORT"`
 	Host     string `default:"127.0.0.1" env:"Host"`
 	Admin    struct {
 		UserName        string `env:"AdminUserName" default:"username"`
@@ -39,7 +38,7 @@ func init() {
 	configPath := filepath.Join(libs.CWD(), "application.yml")
 	fmt.Println(configPath)
 	if err := configor.Load(&Config, configPath); err != nil {
-		logger.Println("Load Config Error:%s ", err.Error())
+		panic(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
 	}
 
 }

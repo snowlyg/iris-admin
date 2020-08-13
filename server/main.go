@@ -27,14 +27,13 @@ func init() {
 }
 
 func (p *program) startIris() {
-	host := config.Config.Host
-	fmt.Println(fmt.Sprintf("host:%s", config.Config.Host))
+	host := fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)
 	if host != "" {
 		go func() {
 			logger.Println("HTTP-IRIS listen On ", host)
 			err := p.irisServer.Serve()
 			if err != nil {
-				logger.Println("HTTP-IRIS listen Err :", err)
+				panic(err)
 			}
 		}()
 	}
@@ -45,13 +44,11 @@ type program struct {
 }
 
 func (p *program) Start(s service.Service) error {
-	fmt.Println("start")
 	go p.run()
 	return nil
 }
 
 func (p *program) run() {
-	fmt.Println("run")
 	p.startIris()
 }
 
@@ -60,7 +57,6 @@ func (p *program) stopIris() (err error) {
 		err = fmt.Errorf("HTTP Server Not Found")
 		return
 	}
-
 	timeout := 5 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
@@ -94,10 +90,14 @@ func main() {
 
 version: %s`, Version))
 
+	if libs.IsPortInUse(config.Config.Port) {
+		panic(fmt.Sprintf("端口 %d 已被使用", config.Config.Port))
+	}
+
 	svcConfig := &service.Config{
-		Name:        "GoIrisApi",
-		DisplayName: "GoIrisApi",
-		Description: "go+web+iris 后台服务",
+		Name:        "GoIrisAdminApi",
+		DisplayName: "GoIrisAdminApi",
+		Description: "go+web+iris",
 	}
 
 	prg := &program{}

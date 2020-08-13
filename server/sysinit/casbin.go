@@ -33,7 +33,7 @@ func init() {
 
 	c, err := gormadapter.NewAdapter(config.Config.DB.Adapter, conn, true) // Your driver and data source.
 	if err != nil {
-		panic(fmt.Sprintf("NewAdapter 错误: %v", err))
+		panic(fmt.Sprintf("NewAdapter 错误: %v,Path: %s", err, conn))
 	}
 
 	casbinModelPath := filepath.Join(libs.CWD(), "rbac_model.conf")

@@ -37,8 +37,15 @@ func MD5(str string) string {
 
 // 当前目录
 func CWD() string {
-	wd, _ := os.Getwd()
-	return wd
+	if os.Getenv("GOTMPDIR") != "" {
+		return os.Getenv("GOTMPDIR")
+	}
+
+	path, err := os.Executable()
+	if err != nil {
+		return ""
+	}
+	return filepath.Dir(path)
 }
 
 func WwwPath() string {

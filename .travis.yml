@@ -28,7 +28,7 @@ env:
 
 script:
   - go vet ./...
-  - go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
+  - GOTMPDIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

@@ -21,6 +21,7 @@ os:
 
 env:
   global:
+    - GOTMPDIR=home/snowlyg/IrisAdminApi/cmd
     - GOARCH=amd64
     - GOARCH=386
     - GO111MODULE=on

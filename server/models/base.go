@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"github.com/snowlyg/IrisAdminApi/server/config"
 	"strconv"
 
 	"github.com/fatih/color"
@@ -44,14 +45,6 @@ func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 	return db
 }
 
-func DelAllData() {
-	sysinit.Db.Unscoped().Delete(&OauthToken{})
-	sysinit.Db.Unscoped().Delete(&Permission{})
-	sysinit.Db.Unscoped().Delete(&Role{})
-	sysinit.Db.Unscoped().Delete(&User{})
-	sysinit.Db.Exec("DELETE FROM casbin_rule;")
-}
-
 func Update(v, d interface{}) error {
 	if err := sysinit.Db.Model(v).Updates(d).Error; err != nil {
 		return err
@@ -74,5 +67,5 @@ func GetPermissionsForUser(uid uint) [][]string {
 }
 
 func DropTables() {
-	sysinit.Db.DropTable("users", "roles", "permissions", "oauth_tokens", "casbin_rule")
+	sysinit.Db.DropTable(config.Config.DB.Prefix+"users", config.Config.DB.Prefix+"roles", config.Config.DB.Prefix+"permissions", config.Config.DB.Prefix+"oauth_tokens", "casbin_rule")
 }

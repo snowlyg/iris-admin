@@ -1,3 +1,5 @@
+// +build test
+
 package main
 
 import (
@@ -23,6 +25,7 @@ var (
 //单元测试基境
 func TestMain(m *testing.M) {
 	s := serve.NewServer(AssetFile(), Asset, AssetNames) // 初始化app
+	s.NewApp()
 	app = s.App
 	seeder.Run()
 
@@ -38,83 +41,83 @@ func getHttpexpect(t *testing.T) *httpexpect.Expect {
 }
 
 // 单元测试 login 方法
-func login(t *testing.T, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
+func login(t *testing.T, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.POST("login").WithJSON(Object).
 		Expect().Status(StatusCode).
-		JSON().Object().Values().Contains(Status, Msg)
+		JSON().Object().Values().Contains(Code, Msg)
 
 	return
 }
 
 // 单元测试 create 方法
-func create(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
+func create(t *testing.T, url string, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	ob := e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
-	ob.Value("status").Equal(Status)
-	ob.Value("msg").Equal(Msg)
+	ob.Value("code").Equal(Code)
+	ob.Value("message").Equal(Msg)
 
 	return
 }
 
 // 单元测试 update 方法
-func update(t *testing.T, url string, Object interface{}, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
+func update(t *testing.T, url string, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
-	ob.Value("status").Equal(Status)
-	ob.Value("msg").Equal(Msg)
+	ob.Value("code").Equal(Code)
+	ob.Value("message").Equal(Msg)
 
 	return
 }
 
 // 单元测试 getOne 方法
-func getOne(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
+func getOne(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
-		JSON().Object().Values().Contains(Status, Msg)
+		JSON().Object().Values().Contains(Code, Msg)
 	return
 }
 
 // 单元测试 getOnAuth 方法
-func getOnAuth(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
+func getOnAuth(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.GET(url).
 		Expect().Status(StatusCode).
-		JSON().Object().Values().Contains(Status, Msg)
+		JSON().Object().Values().Contains(Code, Msg)
 	return
 }
 
 // 单元测试 bImport 方法
-func bImport(t *testing.T, url string, StatusCode int, Status bool, Msg string, _ map[string]interface{}) (e *httpexpect.Expect) {
+func bImport(t *testing.T, url string, StatusCode int, Code int, Msg string, _ map[string]interface{}) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		WithMultipart().
 		WithFile("file", "permissions.xlsx").
 		Expect().Status(StatusCode).
-		JSON().Object().Values().Contains(Status, Msg)
+		JSON().Object().Values().Contains(Code, Msg)
 
 	return
 }
 
 // 单元测试 getMore 方法
-func getMore(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
+func getMore(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
-		JSON().Object().Values().Contains(Status, Msg)
+		JSON().Object().Values().Contains(Code, Msg)
 
 	return
 }
 
 // 单元测试 delete 方法
-func delete(t *testing.T, url string, StatusCode int, Status bool, Msg string) (e *httpexpect.Expect) {
+func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.DELETE(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
-		JSON().Object().Values().Contains(Status, Msg)
+		JSON().Object().Values().Contains(Code, Msg)
 	return
 }
 
@@ -161,7 +164,7 @@ func GetOauthToken(e *httpexpect.Expect) string {
 		Expect().
 		Status(http.StatusOK).JSON().Object()
 
-	token = r.Value("data").Object().Value("access_token").String().Raw()
+	token = r.Value("data").Object().Value("token").String().Raw()
 
 	return token
 }

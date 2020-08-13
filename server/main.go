@@ -45,13 +45,11 @@ type program struct {
 
 func (p *program) Start(s service.Service) error {
 	go p.run()
-
-	p.startIris()
 	return nil
 }
 
 func (p *program) run() {
-
+	p.startIris()
 }
 
 func (p *program) stopIris() (err error) {
@@ -63,7 +61,7 @@ func (p *program) stopIris() (err error) {
 	timeout := 5 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	p.irisServer.App.Shutdown(ctx)
+	_ = p.irisServer.App.Shutdown(ctx)
 	return
 }
 

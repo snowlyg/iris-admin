@@ -1,3 +1,5 @@
+// +build test
+
 package main
 
 import (
@@ -9,7 +11,7 @@ import (
 
 // 后台账号列表
 func TestRoles(t *testing.T) {
-	getMore(t, "roles", iris.StatusOK, true, "操作成功")
+	getMore(t, "roles", iris.StatusOK, 200, "操作成功")
 }
 
 // 创建角色
@@ -20,7 +22,7 @@ func TestRoleCreate(t *testing.T) {
 		"description":  "create_description",
 	}
 
-	create(t, "roles", oj, iris.StatusOK, true, "操作成功")
+	create(t, "roles", oj, iris.StatusOK, 200, "操作成功")
 }
 
 // 更新角色
@@ -33,11 +35,11 @@ func TestRoleUpdate(t *testing.T) {
 	}
 
 	url := "roles/%d"
-	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, true, "操作成功")
+	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, 200, "操作成功")
 }
 
 // 删除角色
 func TestRoleDelete(t *testing.T) {
 	tr := CreateRole("tname2", "tdsiName2", "tdec2")
-	delete(t, fmt.Sprintf("roles/%d", tr.ID), iris.StatusOK, true, "删除成功")
+	delete(t, fmt.Sprintf("roles/%d", tr.ID), iris.StatusOK, 200, "删除成功")
 }

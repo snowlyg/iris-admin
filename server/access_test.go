@@ -1,3 +1,5 @@
+// +build test
+
 package main
 
 import (
@@ -13,7 +15,7 @@ func TestUserLoginSuccess(t *testing.T) {
 		"username": config.Config.Admin.UserName,
 		"password": config.Config.Admin.Pwd,
 	}
-	login(t, oj, iris.StatusOK, true, "登陆成功")
+	login(t, oj, iris.StatusOK, 200, "登陆成功")
 }
 
 // 输入不存在的用户名登陆
@@ -23,7 +25,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 		"password": config.Config.Admin.Pwd,
 	}
 
-	login(t, oj, iris.StatusOK, false, "用户不存在")
+	login(t, oj, iris.StatusOK, 400, "用户不存在")
 }
 
 // 输入错误的登陆密码
@@ -33,7 +35,7 @@ func TestUserLoginWithErrorPwd(t *testing.T) {
 		"username": config.Config.Admin.UserName,
 		"password": "admin",
 	}
-	login(t, oj, iris.StatusOK, false, "用户名或密码错误")
+	login(t, oj, iris.StatusOK, 400, "用户名或密码错误")
 }
 
 // 不输入用户名
@@ -43,7 +45,7 @@ func TestUserLoginWithNoUsername(t *testing.T) {
 		"username": "",
 		"password": "admin",
 	}
-	login(t, oj, iris.StatusOK, false, "用户名为必填字段")
+	login(t, oj, iris.StatusOK, 400, "用户名为必填字段")
 }
 
 // 不输入密码
@@ -53,7 +55,7 @@ func TestUserLoginWithNoPwd(t *testing.T) {
 		"username": "username",
 		"password": "",
 	}
-	login(t, oj, iris.StatusOK, false, "密码为必填字段")
+	login(t, oj, iris.StatusOK, 400, "密码为必填字段")
 }
 
 // 输入登陆密码格式错误
@@ -63,7 +65,7 @@ func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 		"password": "123",
 	}
 
-	login(t, oj, iris.StatusOK, false, "用户名或密码错误")
+	login(t, oj, iris.StatusOK, 400, "用户名或密码错误")
 }
 
 // 输入登陆密码格式错误
@@ -74,5 +76,5 @@ func TestUserLoginWithErrorFormtUserName(t *testing.T) {
 		"password": "123",
 	}
 
-	login(t, oj, iris.StatusOK, false, "用户不存在")
+	login(t, oj, iris.StatusOK, 400, "用户不存在")
 }

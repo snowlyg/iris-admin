@@ -1,10 +1,8 @@
 package controllers
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/server/libs"
@@ -148,60 +146,6 @@ func DeletePermission(ctx iris.Context) {
 	perm.DeletePermissionById()
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
-}
-
-/**
-* @api {post} /admin/permissions/import 导入权限
-* @apiName 导入权限
-* @apiGroup ImportPermission
-* @apiVersion 1.0.0
-* @apiDescription 导入权限
-* @apiSampleRequest /admin/permissions/import
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission null
- */
-func ImportPermission(ctx iris.Context) {
-
-	file, _, err := ctx.FormFile("file")
-	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, err.Error(), "导入失败"))
-		return
-	}
-
-	f, err := excelize.OpenReader(file)
-	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, err.Error(), "导入失败"))
-		return
-	}
-
-	// Excel 导入行数据转换
-	// 获取 Sheet1 上所有单元格
-	rows := f.GetRows("Sheet1")
-	titles := map[string]string{"0": "Name", "1": "DisplayName", "2": "Description", "3": "Act"}
-	num := 0
-	for roI, row := range rows {
-		if roI > 0 {
-			// 将数组  转成对应的 map
-			perm := new(models.Permission)
-			x := gf.NewXlxsTransform(perm, titles, row, "", time.RFC3339, nil)
-			err := x.XlxsTransformer()
-			if err != nil {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, err.Error(), "导入失败"))
-				return
-			}
-
-			perm.CreatePermission()
-			num++
-		}
-	}
-
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("成功导入%d项数据", num)))
 }
 
 /**

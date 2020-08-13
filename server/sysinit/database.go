@@ -36,7 +36,7 @@ func init() {
 	}
 
 	gorm.DefaultTableNameHandler = func(Db *gorm.DB, defaultTableName string) string {
-		return "iris_" + defaultTableName
+		return config.Config.DB.Prefix + defaultTableName
 	}
 
 	Db.DB().SetMaxIdleConns(10)

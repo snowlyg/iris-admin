@@ -23,6 +23,7 @@ var Config = struct {
 		RoleDisplayName string `env:"TenantRoleDisplayName" default:"超级管理员"`
 	}
 	DB struct {
+		Prefix   string `env:"DBPrefix" default:"iris_"`
 		Name     string `env:"DBName" default:"goirisadminapi"`
 		Adapter  string `env:"DBAdapter" default:"sqlite3"`
 		Host     string `env:"DBHost" default:"mysql"`

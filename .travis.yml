@@ -21,7 +21,6 @@ os:
 
 env:
   global:
-    - GOTMPDIR=$HOME/snowlyg/IrisAdminApi/cmd
     - GOARCH=amd64
     - GOARCH=386
     - GO111MODULE=on
@@ -29,7 +28,7 @@ env:
 
 script:
   - go vet ./...
-  - go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
+  - GOTMPDIR=$HOME/snowlyg/IrisAdminApi/cmd go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

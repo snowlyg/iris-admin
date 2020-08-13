@@ -32,7 +32,7 @@ func init() {
 	Fake.Rand = rand.New(rand.NewSource(42))
 	rand.Seed(time.Now().UnixNano())
 
-	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "../server/seeder/data", "*.yml"))
+	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "data", "*.yml"))
 	if config.Config.Debug {
 		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
 	}

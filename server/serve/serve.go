@@ -55,7 +55,7 @@ func (s *Server) Serve() error {
 }
 
 func (s *Server) NewApp() {
-	s.App.Logger().SetLevel("debug")
+	s.App.Logger().SetLevel(config.Config.LogLevel)
 
 	tmpl := iris.HTML(libs.WwwPath(), ".html").Binary(s.Asset, s.AssetNames)
 	s.App.RegisterView(tmpl)

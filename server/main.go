@@ -28,6 +28,7 @@ func init() {
 
 func (p *program) startIris() {
 	host := config.Config.Host
+	fmt.Println(fmt.Sprintf("host:%s", config.Config.Host))
 	if host != "" {
 		go func() {
 			logger.Println("HTTP-IRIS listen On ", host)
@@ -44,11 +45,13 @@ type program struct {
 }
 
 func (p *program) Start(s service.Service) error {
+	fmt.Println("start")
 	go p.run()
 	return nil
 }
 
 func (p *program) run() {
+	fmt.Println("run")
 	p.startIris()
 }
 
@@ -61,7 +64,10 @@ func (p *program) stopIris() (err error) {
 	timeout := 5 * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-	_ = p.irisServer.App.Shutdown(ctx)
+	err = p.irisServer.App.Shutdown(ctx)
+	if err != nil {
+		return err
+	}
 	return
 }
 
@@ -69,7 +75,10 @@ func (p *program) Stop(s service.Service) error {
 	defer logger.Println("退出服务")
 	defer f.Close()
 
-	p.stopIris()
+	err := p.stopIris()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 	return nil
 }
 
@@ -94,12 +103,15 @@ version: %s`, Version))
 	prg := &program{}
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		logger.Println(err)
+		panic(err)
 	}
 
-	opServer := serve.NewServer(AssetFile(), Asset, AssetNames)
-	opServer.NewApp()
-	prg.irisServer = opServer
+	irisServer := serve.NewServer(AssetFile(), Asset, AssetNames)
+	if irisServer == nil {
+		panic("Http 初始化失败")
+	}
+	irisServer.NewApp()
+	prg.irisServer = irisServer
 
 	if len(os.Args) == 2 {
 		if os.Args[1] == "version" {
@@ -125,13 +137,13 @@ version: %s`, Version))
 
 		err = service.Control(s, os.Args[1])
 		if err != nil {
-			logger.Fatal(err)
+			panic(err)
 		}
 		return
 	}
 
 	err = s.Run()
 	if err != nil {
-		logger.Println(err)
+		panic(err)
 	}
 }

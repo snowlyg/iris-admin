@@ -37,10 +37,6 @@ func MD5(str string) string {
 
 // 当前目录
 func CWD() string {
-	//path, err := os.Executable()
-	//if err != nil {
-	//	return ""
-	//}
 	wd, _ := os.Getwd()
 	return wd
 }

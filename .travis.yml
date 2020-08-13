@@ -1,6 +1,8 @@
 language: go
 
 gobuild_args: -x -ldflags "-X main.VersionString v1.2.3"
+before_install:
+  - cd ./server
 
 install:
   - go get -d -t -v -u ./... && go build

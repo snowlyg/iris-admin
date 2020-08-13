@@ -4,7 +4,6 @@ server/*.dll
 server/backend.exe
 server/backend.exe~
 server/backend
-server/application.yml
 server/.air.conf
 
 server/tmp/

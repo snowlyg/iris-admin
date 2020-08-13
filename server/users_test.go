@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/brianvoe/gofakeit/v5"
 	"github.com/kataras/iris/v12"
 )
 
@@ -14,13 +15,13 @@ func TestUsers(t *testing.T) {
 }
 
 func TestUserProfile(t *testing.T) {
-	getMore(t, "users/profile", iris.StatusOK, 200, "")
+	getMore(t, "profile", iris.StatusOK, 200, "")
 }
 
 func TestUserCreate(t *testing.T) {
 	tr := CreateRole("tname3", "tdsiName", "tdec")
 	oj := map[string]interface{}{
-		"username": "test_user",
+		"username": gofakeit.Name(),
 		"password": "password",
 		"name":     "name",
 		"role_ids": []uint{tr.ID},
@@ -32,7 +33,7 @@ func TestUserCreate(t *testing.T) {
 func TestUserUpdate(t *testing.T) {
 	tr := CreateRole("tname4", "tdsiName", "tdec")
 	oj := map[string]interface{}{
-		"username": "test_update_user",
+		"username": gofakeit.Name(),
 		"password": "update_name",
 		"name":     "update_name",
 		"role_ids": []uint{tr.ID},

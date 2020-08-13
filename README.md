@@ -50,7 +50,7 @@
 
 
 1. 运行项目
-- 从地址 []() ，选择下载编译好的系统文件,
+- 从地址 [https://github.com/snowlyg/IrisAdminApi/releases/tag/v0.3](https://github.com/snowlyg/IrisAdminApi/releases/tag/v0.3) ，选择下载编译好的系统文件,
 
 - 运行项目 
 

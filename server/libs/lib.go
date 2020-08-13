@@ -37,6 +37,7 @@ func MD5(str string) string {
 
 // 当前目录
 func CWD() string {
+	// 兼容 travis 集成测试
 	if os.Getenv("TRAVIS_BUILD_DIR") != "" {
 		return os.Getenv("TRAVIS_BUILD_DIR")
 	}

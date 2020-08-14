@@ -4,6 +4,8 @@ package main
 
 import (
 	"flag"
+	"github.com/iris-contrib/httpexpect/v2"
+	"github.com/kataras/iris/v12"
 	"net/http"
 	"os"
 	"testing"

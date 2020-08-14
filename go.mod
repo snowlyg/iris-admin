@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/Joker/hpp v1.0.0 // indirect
 	github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107
+	github.com/brianvoe/gofakeit/v5 v5.9.1
 	github.com/casbin/casbin/v2 v2.9.0
 	github.com/casbin/gorm-adapter/v2 v2.1.0
 	github.com/fatih/color v1.9.0
@@ -12,6 +13,7 @@ require (
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.3.0
+	github.com/iris-contrib/httpexpect/v2 v2.0.5
 	github.com/iris-contrib/middleware/cors v0.0.0-20200810001613-32cf668f999f
 	github.com/iris-contrib/middleware/jwt v0.0.0-20200810001613-32cf668f999f
 	github.com/jameskeane/bcrypt v0.0.0-20120420032655-c3cd44c1e20f

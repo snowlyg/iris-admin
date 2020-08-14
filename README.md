@@ -157,16 +157,16 @@ air
 # 否则无法加载配置文件
 
 # 所有测试
- go test -v ./...
+ go test -v ./... -tags test
  
 #单个方法
- go test -run TestUserCreate -v 
+ go test -run TestUserCreate -v  -tags test
 
 # 安装工具 gotest 增加测试输出数据颜色
 go get github.com/rakyll/gotest@latest
 
 # 测试
- gotest 
+ gotest  
  
 ```
 

@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/controllers"
 	"github.com/snowlyg/IrisAdminApi/middleware"
 	"github.com/snowlyg/IrisAdminApi/sysinit"

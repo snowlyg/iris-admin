@@ -4,7 +4,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/snowlyg/IrisAdminApi"
 	"log"
 	"os"
 	"time"
@@ -107,7 +106,7 @@ version: %s`, Version))
 		panic(err)
 	}
 
-	irisServer := serve.NewServer(IrisAdminApi.AssetFile(), IrisAdminApi.Asset, IrisAdminApi.AssetNames)
+	irisServer := serve.NewServer(AssetFile(), Asset, AssetNames)
 	if irisServer == nil {
 		panic("Http 初始化失败")
 	}

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/jinzhu/configor"
-	"github.com/snowlyg/IrisAdminApi//libs"
+	"github.com/snowlyg/IrisAdminApi/libs"
 )
 
 var Config = struct {

@@ -1,6 +1,6 @@
 // +build test
 
-package IrisAdminApi
+package main
 
 import (
 	"testing"

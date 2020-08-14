@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"fmt"
+	logger "github.com/sirupsen/logrus"
 	"github.com/snowlyg/IrisAdminApi/libs"
 	"math/rand"
 	"path/filepath"
@@ -37,7 +38,7 @@ func init() {
 		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
 	}
 	if err := configor.Load(&Seeds, filepaths...); err != nil {
-		panic(err)
+		logger.Println(err)
 	}
 }
 
@@ -75,7 +76,7 @@ func CreatePerms() {
 		perm.GetPermissionByNameAct()
 		if perm.ID == 0 {
 			if err := perm.CreatePermission(); err != nil {
-				panic(fmt.Sprintf("权限填充错误：%v", err))
+				logger.Println(fmt.Sprintf("权限填充错误：%v", err))
 			}
 		}
 	}
@@ -103,7 +104,7 @@ func CreateAdminRole() {
 			fmt.Println(fmt.Sprintf("填充角色数据：%v", role))
 		}
 		if err := role.CreateRole(); err != nil {
-			panic(fmt.Sprintf("管理角色填充错误：%v", err))
+			logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
 		}
 	}
 
@@ -131,7 +132,7 @@ func CreateAdminUser() {
 	admin.GetUserByUsername()
 	if admin.ID == 0 {
 		if err := admin.CreateUser(); err != nil {
-			panic(fmt.Sprintf("管理员填充错误：%v", err))
+			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
 		}
 	}
 }

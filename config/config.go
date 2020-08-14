@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	logger "github.com/sirupsen/logrus"
 	"path/filepath"
 
 	"github.com/jinzhu/configor"
@@ -38,7 +39,7 @@ func init() {
 	configPath := filepath.Join(libs.CWD(), "application.yml")
 	fmt.Println(configPath)
 	if err := configor.Load(&Config, configPath); err != nil {
-		panic(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
+		logger.Println(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
 	}
 
 }

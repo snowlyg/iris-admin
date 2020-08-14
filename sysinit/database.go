@@ -3,6 +3,7 @@ package sysinit
 import (
 	"errors"
 	"fmt"
+	logger "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -28,12 +29,12 @@ func init() {
 		fmt.Println(libs.DBFile())
 		conn = libs.DBFile()
 	} else {
-		panic(errors.New("not supported database adapter"))
+		logger.Println(errors.New("not supported database adapter"))
 	}
 
 	Db, err = gorm.Open(config.Config.DB.Adapter, conn)
 	if err != nil {
-		panic(err)
+		logger.Println(err)
 	}
 
 	gorm.DefaultTableNameHandler = func(Db *gorm.DB, defaultTableName string) string {

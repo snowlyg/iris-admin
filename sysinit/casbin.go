@@ -3,6 +3,7 @@ package sysinit
 import (
 	"errors"
 	"fmt"
+	logger "github.com/sirupsen/logrus"
 	"path/filepath"
 
 	"github.com/casbin/casbin/v2"
@@ -24,23 +25,23 @@ func init() {
 	} else if config.Config.DB.Adapter == "sqlite3" {
 		conn = libs.DBFile()
 	} else {
-		panic(errors.New("not supported database adapter"))
+		logger.Println(errors.New("not supported database adapter"))
 	}
 
 	if len(conn) == 0 {
-		panic(fmt.Sprintf("数据链接不可用: %s", conn))
+		logger.Println(fmt.Sprintf("数据链接不可用: %s", conn))
 	}
 
 	c, err := gormadapter.NewAdapter(config.Config.DB.Adapter, conn, true) // Your driver and data source.
 	if err != nil {
-		panic(fmt.Sprintf("NewAdapter 错误: %v,Path: %s", err, conn))
+		logger.Println(fmt.Sprintf("NewAdapter 错误: %v,Path: %s", err, conn))
 	}
 
 	casbinModelPath := filepath.Join(libs.CWD(), "rbac_model.conf")
 	fmt.Println(casbinModelPath)
 	Enforcer, err = casbin.NewEnforcer(casbinModelPath, c)
 	if err != nil {
-		panic(fmt.Sprintf("NewEnforcer 错误: %v", err))
+		logger.Println(fmt.Sprintf("NewEnforcer 错误: %v", err))
 	}
 
 	_ = Enforcer.LoadPolicy()

@@ -1,0 +1,12 @@
+loglevel: false
+debug: false
+https: false
+host: 127.0.0.1
+port: 8085
+db:
+  adapter: sqlite3 # mysql postgres sqlite3
+  host: mysql
+  port: 3306
+  name: goirisadminapi
+  user: root
+  password: 123456

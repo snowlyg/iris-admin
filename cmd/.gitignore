@@ -1,8 +1,6 @@
 *.dll
 *.db
-*.exe
-.air.conf
-coverage.txt
+air.log
 
 tmp/
 /logs/

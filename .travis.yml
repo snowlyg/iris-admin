@@ -5,8 +5,6 @@ cache:
     - $GOPATH/pkg/mod
 
 gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
-before_install:
-  - cd ./server
 
 install: true
 sudo: required

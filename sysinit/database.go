@@ -26,7 +26,6 @@ func init() {
 	} else if config.Config.DB.Adapter == "postgres" {
 		conn = fmt.Sprintf("postgres://%v:%v@%v/%v?sslmode=disable", config.Config.DB.User, config.Config.DB.Password, config.Config.DB.Host, config.Config.DB.Name)
 	} else if config.Config.DB.Adapter == "sqlite3" {
-		fmt.Println(libs.DBFile())
 		conn = libs.DBFile()
 	} else {
 		logger.Println(errors.New("not supported database adapter"))

@@ -90,10 +90,6 @@ func main() {
 
 version: %s`, Version))
 
-	if libs.IsPortInUse(config.Config.Port) {
-		panic(fmt.Sprintf("端口 %d 已被使用", config.Config.Port))
-	}
-
 	svcConfig := &service.Config{
 		Name:        "GoIrisAdminApi",
 		DisplayName: "GoIrisAdminApi",
@@ -133,6 +129,10 @@ version: %s`, Version))
 			}
 
 			return
+		} else if os.Args[1] == "start" {
+			if libs.IsPortInUse(config.Config.Port) {
+				panic(fmt.Sprintf("端口 %d 已被使用", config.Config.Port))
+			}
 		}
 
 		err = service.Control(s, os.Args[1])
@@ -140,6 +140,10 @@ version: %s`, Version))
 			panic(err)
 		}
 		return
+	}
+
+	if libs.IsPortInUse(config.Config.Port) {
+		panic(fmt.Sprintf("端口 %d 已被使用", config.Config.Port))
 	}
 
 	err = s.Run()

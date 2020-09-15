@@ -37,7 +37,6 @@ var Config = struct {
 
 func init() {
 	configPath := filepath.Join(libs.CWD(), "application.yml")
-	fmt.Println(configPath)
 	if err := configor.Load(&Config, configPath); err != nil {
 		logger.Println(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
 	}

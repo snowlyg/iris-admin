@@ -13,7 +13,7 @@ import (
 	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/libs"
 	"github.com/snowlyg/IrisAdminApi/seeder"
-	"github.com/snowlyg/IrisAdminApi/serve"
+	"github.com/snowlyg/IrisAdminApi/web_server"
 )
 
 var Version = "master"
@@ -40,7 +40,7 @@ func (p *program) startIris() {
 }
 
 type program struct {
-	irisServer *serve.Server
+	irisServer *web_server.Server
 }
 
 func (p *program) Start(s service.Service) error {
@@ -102,7 +102,7 @@ version: %s`, Version))
 		panic(err)
 	}
 
-	irisServer := serve.NewServer(AssetFile(), Asset, AssetNames)
+	irisServer := web_server.NewServer(AssetFile(), Asset, AssetNames)
 	if irisServer == nil {
 		panic("Http 初始化失败")
 	}

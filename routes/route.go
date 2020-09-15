@@ -15,10 +15,10 @@ func App(api *iris.Application) {
 			_ = ctx.View("index.html")
 		})
 
-		v1 := app.Party("/v1")
+		admin := app.Party("/v1")
 		{
-			v1.Post("/admin/login", controllers.UserLogin)
-			v1.PartyFunc("/admin", func(app iris.Party) {
+			admin.Post("/admin/login", controllers.UserLogin)
+			admin.PartyFunc("/admin", func(app iris.Party) {
 				casbinMiddleware := middleware.New(sysinit.Enforcer)               //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				app.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				app.Post("/logout", controllers.UserLogout).Name = "退出"

@@ -14,7 +14,7 @@ import (
 	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/models"
 	"github.com/snowlyg/IrisAdminApi/seeder"
-	"github.com/snowlyg/IrisAdminApi/serve"
+	"github.com/snowlyg/IrisAdminApi/web_server"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-	s := serve.NewServer(AssetFile(), Asset, AssetNames) // 初始化app
+	s := web_server.NewServer(AssetFile(), Asset, AssetNames) // 初始化app
 	s.NewApp()
 	app = s.App
 	seeder.Run()

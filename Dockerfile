@@ -1,15 +1,29 @@
 # Start from a Debian image with the latest version of Go installed
 # and a workspace (GOPATH) configured at /go.
-LABEL maintainer="snowlyg <569616226@qq.com>"
 
 FROM golang:1.14.1
+
+LABEL maintainer="snowlyg <569616226@qq.com>"
+
+ENV GO111MODULE on
+ENV GOPROXY https://goproxy.cn,direct
+
 # Copy the local package files to the container's workspace.
-ADD ./ /go/src/github.com/snowlyg/IrisAdminApi
+COPY ./config /go/src/github.com/snowlyg/IrisAdminApi/config
+COPY ./controllers /go/src/github.com/snowlyg/IrisAdminApi/controllers
+COPY ./libs /go/src/github.com/snowlyg/IrisAdminApi/libs
+COPY ./middleware  /go/src/github.com/snowlyg/IrisAdminApi/middleware
+COPY ./models  /go/src/github.com/snowlyg/IrisAdminApi/models
+COPY ./routes  /go/src/github.com/snowlyg/IrisAdminApi/routes
+COPY ./seeder  /go/src/github.com/snowlyg/IrisAdminApi/seeder
+COPY ./sysinit  /go/src/github.com/snowlyg/IrisAdminApi/sysinit
+COPY ./transformer  /go/src/github.com/snowlyg/IrisAdminApi/transformer
+COPY ./validates  /go/src/github.com/snowlyg/IrisAdminApi/validates
+COPY ./web_server  /go/src/github.com/snowlyg/IrisAdminApi/web_server
+COPY ./main.go  /go/src/github.com/snowlyg/IrisAdminApi/main.go
 
 #build the application
 RUN cd /go/src/github.com/snowlyg/IrisAdminApi && \
-     go env -w GO111MODULE=on && \
-     go env -w GOPROXY=https://goproxy.cn,direct && \
      go get -u github.com/go-bindata/go-bindata/v3/go-bindata && \
      go generate && \
      go build -o main

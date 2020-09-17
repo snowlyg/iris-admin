@@ -1,8 +1,8 @@
 # Start from a Debian image with the latest version of Go installed
 # and a workspace (GOPATH) configured at /go.
-LABEL maintainer="snowlyg <569616226@qq.com>"
 
-FROM golang:1.14.1
+FROM golang:1.14
+LABEL maintainer="snowlyg <569616226@qq.com>"
 # Copy the local package files to the container's workspace.
 ADD ./ /go/src/github.com/snowlyg/IrisAdminApi
 

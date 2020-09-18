@@ -21,6 +21,9 @@ COPY ./transformer  /go/src/github.com/snowlyg/IrisAdminApi/transformer
 COPY ./validates  /go/src/github.com/snowlyg/IrisAdminApi/validates
 COPY ./web_server  /go/src/github.com/snowlyg/IrisAdminApi/web_server
 COPY ./main.go  /go/src/github.com/snowlyg/IrisAdminApi/main.go
+COPY ./www/dist  /go/src/github.com/snowlyg/IrisAdminApi/www/dist
+COPY ./go.mod  /go/src/github.com/snowlyg/IrisAdminApi/go.mod
+COPY ./go.sum  /go/src/github.com/snowlyg/IrisAdminApi/go.sum
 
 #build the application
 RUN cd /go/src/github.com/snowlyg/IrisAdminApi && \

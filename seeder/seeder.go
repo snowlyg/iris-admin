@@ -94,7 +94,13 @@ func CreateAdminRole() {
 	role.GetRoleByName()
 	if role.ID == 0 {
 		var permIds []uint
-		perms, _ := models.GetAllPermissions("", "", 0, 0)
+		perms, err := models.GetAllPermissions("", "", 0, 0)
+		if config.Config.Debug {
+			if err != nil {
+				fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
+			}
+		}
+		fmt.Println(len(perms))
 		for _, perm := range perms {
 			permIds = append(permIds, perm.ID)
 		}
@@ -121,7 +127,13 @@ func CreateAdminUser() {
 		Model:    gorm.Model{CreatedAt: time.Now()},
 	}
 	var roleIds []uint
-	roles, _ := models.GetAllRoles("", "", 0, 0)
+	roles, err := models.GetAllRoles("", "", 0, 0)
+	if config.Config.Debug {
+		if err != nil {
+			fmt.Println(fmt.Sprintf("角色获取失败：%v", err))
+		}
+	}
+
 	for _, role := range roles {
 		roleIds = append(roleIds, role.ID)
 	}
@@ -143,11 +155,12 @@ func CreateAdminUser() {
 	sysinit.Db.AutoMigrate 重建数据表
 */
 func AutoMigrates() {
-	sysinit.Db.DropTableIfExists("users", "permissions", "roles", "casbin_rule")
+	sysinit.Db.DropTableIfExists("users", "permissions", "roles", "article", "casbin_rule")
 	sysinit.Db.AutoMigrate(
 		&models.User{},
 		&models.Role{},
 		&models.Permission{},
+		&models.Article{},
 		&gormadapter.CasbinRule{},
 	)
 }

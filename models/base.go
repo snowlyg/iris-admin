@@ -11,12 +11,6 @@ import (
 	"github.com/snowlyg/IrisAdminApi/sysinit"
 )
 
-func IsNotFound(err error) {
-	if ok := errors.Is(err, gorm.ErrRecordNotFound); !ok && err != nil {
-		color.Red(fmt.Sprintf("error :%v \n ", err))
-	}
-}
-
 /**
  * 获取列表
  * @method MGetAll
@@ -26,8 +20,8 @@ func IsNotFound(err error) {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
-	db := sysinit.Db
+func GetAll(model interface{}, string, orderBy string, offset, limit int) *gorm.DB {
+	db := sysinit.Db.Model(model)
 	if len(orderBy) > 0 {
 		db.Order(orderBy + "desc")
 	} else {
@@ -43,6 +37,12 @@ func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 		db.Limit(limit)
 	}
 	return db
+}
+
+func IsNotFound(err error) {
+	if ok := errors.Is(err, gorm.ErrRecordNotFound); !ok && err != nil {
+		color.Red(fmt.Sprintf("error :%v \n ", err))
+	}
 }
 
 func Update(v, d interface{}) error {
@@ -67,5 +67,5 @@ func GetPermissionsForUser(uid uint) [][]string {
 }
 
 func DropTables() {
-	sysinit.Db.DropTable(config.Config.DB.Prefix+"users", config.Config.DB.Prefix+"roles", config.Config.DB.Prefix+"permissions", config.Config.DB.Prefix+"oauth_tokens", "casbin_rule")
+	sysinit.Db.DropTable(config.Config.DB.Prefix+"users", config.Config.DB.Prefix+"roles", config.Config.DB.Prefix+"permissions", config.Config.DB.Prefix+"articles", config.Config.DB.Prefix+"oauth_tokens", "casbin_rule")
 }

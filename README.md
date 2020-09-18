@@ -171,6 +171,13 @@ go get github.com/rakyll/gotest@latest
  
 ```
 
+#### docker 运行
+```shell script
+docker build -t iris_admin_api:0.0.1 . # 构建
+
+docker run --name=irisadminapi -d -p 8085:8085 iris_admin_api:test -v ./cmd/data:./data -v ./cmd/application.yml:./application.yml -v ./cmd/rbac_model.conf:./rbac_model.conf # 运行
+```
+
 ---
 
 ##### 接口文档

@@ -64,7 +64,7 @@ func (u *User) DeleteUser() {
  */
 func GetAllUsers(name, orderBy string, offset, limit int) []*User {
 	var users []*User
-	q := GetAll(name, orderBy, offset, limit)
+	q := GetAll(&User{}, name, orderBy, offset, limit)
 	if err := q.Find(&users).Error; err != nil {
 		color.Red(fmt.Sprintf("GetAllUserErr:%s \n ", err))
 		return nil

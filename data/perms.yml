@@ -69,11 +69,6 @@ perms:
     description: "权限详情"
     act: "GET"
 
-  - name: "/v1/admin/permissions/import"
-    displayname: "导入权限"
-    description: "导入权限"
-    act: "POST"
-
   - name: "/v1/admin/permissions"
     displayname: "创建权限"
     description: "创建权限"
@@ -87,5 +82,30 @@ perms:
   - name: "/v1/admin/permissions/{id:uint}"
     displayname: "删除权限"
     description: "删除权限"
+    act: "DELETE"
+
+  - name: "/v1/admin/article"
+    displayname: "文章列表"
+    description: "文章列表"
+    act: "GET"
+
+  - name: "/v1/admin/article/{id:uint}"
+    displayname: "文章详情"
+    description: "文章详情"
+    act: "GET"
+
+  - name: "/v1/admin/article"
+    displayname: "创建文章"
+    description: "创建文章"
+    act: "POST"
+
+  - name: "/v1/admin/article/{id:uint}"
+    displayname: "编辑文章"
+    description: "编辑文章"
+    act: "PUT"
+
+  - name: "/v1/admin/article/{id:uint}"
+    displayname: "删除文章"
+    description: "删除文章"
     act: "DELETE"
 

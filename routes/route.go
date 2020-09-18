@@ -24,13 +24,20 @@ func App(api *iris.Application) {
 				app.Post("/logout", controllers.UserLogout).Name = "退出"
 				app.Get("/profile", controllers.GetProfile).Name = "个人信息"
 
+				app.PartyFunc("/article", func(roles iris.Party) {
+					roles.Get("/", controllers.GetAllArticles).Name = "文章列表"
+					roles.Get("/{id:uint}", controllers.GetArticle).Name = "文章详情"
+					roles.Post("/", controllers.CreateArticle).Name = "创建文章"
+					roles.Put("/{id:uint}", controllers.UpdateArticle).Name = "编辑文章"
+					roles.Delete("/{id:uint}", controllers.DeleteArticle).Name = "删除文章"
+				})
+
 				app.PartyFunc("/users", func(users iris.Party) {
 					users.Get("/", controllers.GetAllUsers).Name = "用户列表"
 					users.Get("/{id:uint}", controllers.GetUser).Name = "用户详情"
 					users.Post("/", controllers.CreateUser).Name = "创建用户"
 					users.Put("/{id:uint}", controllers.UpdateUser).Name = "编辑用户"
 					users.Delete("/{id:uint}", controllers.DeleteUser).Name = "删除用户"
-
 				})
 				app.PartyFunc("/roles", func(roles iris.Party) {
 					roles.Get("/", controllers.GetAllRoles).Name = "角色列表"

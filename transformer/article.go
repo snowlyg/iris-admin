@@ -10,6 +10,6 @@ type Article struct {
 	Content      string `json:"content"`
 	ContentShort string `json:"content_short"`
 	Status       string `json:"status"`
-	DisplayTime  string `json:"display_time"`
+	DisplayTime  string `gtf:"Time.2006-01-02 15:04:05" json:"display_at"`
 	CreatedAt    string `json:"created_at"`
 }

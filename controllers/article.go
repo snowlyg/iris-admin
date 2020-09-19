@@ -111,8 +111,6 @@ func UpdateArticle(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	dt := ctx.FormValue("display_time")
-	color.Yellow(fmt.Sprint(dt))
 	err := validates.Validate.Struct(*article)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)

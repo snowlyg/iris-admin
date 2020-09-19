@@ -28,7 +28,7 @@ func GetAll(model interface{}, string, orderBy string, offset, limit int) *gorm.
 		db.Order("created_at desc")
 	}
 	if len(string) > 0 {
-		db.Where("name LIKE  ?", "%"+string+"%")
+		db.Where("name LIKE ?", "%"+string+"%")
 	}
 	if offset > 0 {
 		db.Offset((offset - 1) * limit)

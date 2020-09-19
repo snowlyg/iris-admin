@@ -142,7 +142,7 @@ func UpdateUser(ctx iris.Context) {
 		return
 	}
 
-	user.UpdateUser(user)
+	user.UpdateUser(user.Password)
 	ctx.StatusCode(iris.StatusOK)
 	if user.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))
@@ -222,15 +222,17 @@ func userTransform(user *models.User) *transformer.User {
 
 	roleIds := models.GetRolesForUser(user.ID)
 	var ris []int
-	var roleName []string
 	for _, roleId := range roleIds {
 		ri, _ := strconv.Atoi(roleId)
 		ris = append(ris, ri)
-		role := models.NewRole(uint(ri), "")
-		role.GetRoleById()
-		roleName = append(roleName, role.Name)
-
 	}
+
+	roles := models.GetRolesByIds(ris)
+	var roleName []string
+	for _, role := range roles {
+		roleName = append(roleName, role.Name)
+	}
+
 	u.RoleIds = ris
 	u.RoleName = roleName
 	return u

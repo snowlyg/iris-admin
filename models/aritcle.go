@@ -5,17 +5,21 @@ import (
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"time"
 )
 
 type Article struct {
 	gorm.Model
 
-	Title      string `gorm:"not null;VARCHAR(256)" json:"title" validate:"required,gte=4,lte=50" comment:"标题"`
-	Author     string `gorm:"not null;VARCHAR(30)" json:"author" comment:"作者"`
-	Cover      string `gorm:"not null;VARCHAR(512)" json:"cover" comment:"封面"`
-	Source     string `gorm:"not null;VARCHAR(512)" json:"source" comment:"来源"`
-	IsOriginal bool   `gorm:"not null" json:"is_original" comment:"是否原创"`
-	Content    string `gorm:"not null;VARCHAR(2048)" json:"content" comment:"内容"`
+	Title        string    `gorm:"not null;default:'';VARCHAR(256)" json:"title" validate:"required,gte=4,lte=256" comment:"标题"`
+	ContentShort string    `gorm:"not null;default:'';VARCHAR(512)" json:"content_short" validate:"required,gte=6,lte=512" comment:"简介"`
+	Author       string    `gorm:"not null;default:'';VARCHAR(30)" json:"author" comment:"作者" validate:"required,gte=4,lte=30"`
+	ImageUri     string    `gorm:"not null;default:'';VARCHAR(2048)" json:"image_uri" comment:"封面" validate:"required"`
+	SourceUri    string    `gorm:"not null;default:'';VARCHAR(512)" json:"source_uri" comment:"来源" `
+	IsOriginal   bool      `gorm:"not null;default:true" json:"is_original" comment:"是否原创" validate:"required"`
+	Content      string    `gorm:"not null;default:'';VARCHAR(2048)" json:"content" comment:"内容" validate:"required,gte=6,lte=2048"`
+	Status       string    `gorm:"not null;default:'';VARCHAR(10)" json:"status" comment:"文章状态" validate:"required,gte=6,lte=10"`
+	DisplayTime  time.Time `json:"display_time" validate:"required,datetime"`
 }
 
 func NewArticle() *Article {
@@ -36,7 +40,7 @@ func (r *Article) GetArticleById(id uint) *Article {
  * 通过 id 删除角色
  * @method DeleteArticleById
  */
-func (r *Article) DeleteArticleById(id uint) *Article {
+func (r *Article) DeleteArticleById() *Article {
 	if err := sysinit.Db.Delete(r).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteArticleErr:%s \n", err))
 	}
@@ -79,6 +83,15 @@ func (r *Article) CreateArticle() error {
 		return err
 	}
 
+	return nil
+}
+
+func (r *Article) PaseTime(t string) error {
+	displayTime, err := time.Parse(time.RFC3339Nano, t)
+	if err != nil {
+		return err
+	}
+	r.DisplayTime = displayTime
 	return nil
 }
 

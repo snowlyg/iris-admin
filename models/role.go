@@ -40,6 +40,17 @@ func (r *Role) GetRoleById() {
 }
 
 /**
+ * 通过 id 获取 role 记录
+ * @method GetRoleById
+ * @param  {[type]}       role  *Role [description]
+ */
+func GetRolesByIds(ids []int) []*Role {
+	var roles []*Role
+	IsNotFound(sysinit.Db.Find(&roles, ids).Error)
+	return roles
+}
+
+/**
  * 通过 name 获取 role 记录
  * @method GetRoleByName
  * @param  {[type]}       role  *Role [description]
@@ -104,6 +115,8 @@ func addPerms(permIds []uint, role *Role) {
 				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
 			}
 		}
+	} else {
+		color.Yellow(fmt.Sprintf("没有角色：%s 权限为空 \n", role.Name))
 	}
 }
 
@@ -114,15 +127,15 @@ func addPerms(permIds []uint, role *Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (r *Role) UpdateRole(rj *Role) {
+func (r *Role) UpdateRole() error {
 
-	if err := Update(r, rj); err != nil {
-		color.Red(fmt.Sprintf("UpdatRoleErr:%s \n", err))
+	if err := Update(&Role{}, r); err != nil {
+		return err
 	}
 
 	addPerms(r.PermIds, r)
 
-	return
+	return nil
 }
 
 // 角色权限

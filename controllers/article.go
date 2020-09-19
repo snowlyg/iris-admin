@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"fmt"
+	"github.com/fatih/color"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -57,7 +59,7 @@ func CreateArticle(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-
+	color.Yellow(fmt.Sprint(article.DisplayTime))
 	err := validates.Validate.Struct(*article)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
@@ -109,7 +111,8 @@ func UpdateArticle(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-
+	dt := ctx.FormValue("display_time")
+	color.Yellow(fmt.Sprint(dt))
 	err := validates.Validate.Struct(*article)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
@@ -152,7 +155,7 @@ func DeleteArticle(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	article := models.NewArticle()
 	article.GetArticleById(id)
-	article.DeleteArticleById(id)
+	article.DeleteArticleById()
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))

@@ -133,10 +133,10 @@ func UpdateRole(ctx iris.Context) {
 		return
 	}
 
-	role.UpdateRole(role)
+	err = role.UpdateRole()
 	ctx.StatusCode(iris.StatusOK)
-	if role.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))

@@ -97,13 +97,14 @@ func (u *User) CreateUser() error {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (u *User) UpdateUser(uj *User) {
-	uj.Password = libs.HashPassword(uj.Password)
-	if err := Update(u, uj); err != nil {
-		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
+func (u *User) UpdateUser(password string) error {
+	u.Password = libs.HashPassword(password)
+	if err := Update(&User{}, u); err != nil {
+		return err
 	}
 
 	addRoles(u)
+	return nil
 }
 
 func addRoles(user *User) {

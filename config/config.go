@@ -10,7 +10,7 @@ import (
 )
 
 var Config = struct {
-	Debug    bool   `default:"false" env:"Debug"`
+	Debug    bool   `default:"true" env:"Debug"`
 	LogLevel string `default:"info" env:"Loglevel"`
 	HTTPS    bool   `default:"false" env:"HTTPS"`
 	Certpath string `default:"" env:"Certpath"`

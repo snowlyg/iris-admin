@@ -46,15 +46,12 @@ func Run() {
 
 	AutoMigrates()
 
-	fmt.Println(fmt.Sprintf("权限填充开始！！"))
 	CreatePerms()
 	fmt.Println(fmt.Sprintf("权限填充完成！！"))
 
-	fmt.Println(fmt.Sprintf("管理角色填充开始！！"))
 	CreateAdminRole()
 	fmt.Println(fmt.Sprintf("管理角色填充完成！！"))
 
-	fmt.Println(fmt.Sprintf("管理员填充开始！！"))
 	CreateAdminUser()
 	fmt.Println(fmt.Sprintf("管理员填充完成！！"))
 
@@ -91,37 +88,45 @@ func CreateAdminRole() {
 		Model:       gorm.Model{CreatedAt: time.Now()},
 	}
 
+	var permIds []uint
+	perms, err := models.GetAllPermissions("", "", 0, 0)
+	if config.Config.Debug {
+		if err != nil {
+			fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
+		}
+	}
+
+	for _, perm := range perms {
+		permIds = append(permIds, perm.ID)
+	}
+
+	role.PermIds = permIds
+
 	role.GetRoleByName()
 	if role.ID == 0 {
-		var permIds []uint
-		perms, err := models.GetAllPermissions("", "", 0, 0)
-		if config.Config.Debug {
-			if err != nil {
-				fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
-			}
-		}
-		fmt.Println(len(perms))
-		for _, perm := range perms {
-			permIds = append(permIds, perm.ID)
-		}
-
-		role.PermIds = permIds
-		if config.Config.Debug {
-			fmt.Println(fmt.Sprintf("填充角色数据：%v", role))
-		}
 		if err := role.CreateRole(); err != nil {
 			logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
 		}
+	} else {
+		if err := role.UpdateRole(); err != nil {
+			logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
+		}
+	}
+
+	if config.Config.Debug {
+		fmt.Println(fmt.Sprintf("填充角色数据：%v", role))
+		fmt.Println(fmt.Sprintf("填充角色权限：%v", permIds))
 	}
 
 }
 
 // CreateAdminUser 新建管理员
 func CreateAdminUser() {
+	password := "123456"
 	admin := &models.User{
 		Username: "username",
 		Name:     "超级管理员",
-		Password: "123456",
+		Password: password,
 		Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
 		Intro:    "超级弱鸡程序猿一枚！！！！",
 		Model:    gorm.Model{CreatedAt: time.Now()},
@@ -138,14 +143,19 @@ func CreateAdminUser() {
 		roleIds = append(roleIds, role.ID)
 	}
 	admin.RoleIds = roleIds
-	if config.Config.Debug {
-		fmt.Println(fmt.Sprintf("填充管理员数据：%v", admin))
-	}
 	admin.GetUserByUsername()
 	if admin.ID == 0 {
 		if err := admin.CreateUser(); err != nil {
 			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
 		}
+	} else {
+		if err := admin.UpdateUser(password); err != nil {
+			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
+		}
+	}
+
+	if config.Config.Debug {
+		fmt.Println(fmt.Sprintf("填充管理员数据：%v", admin))
 	}
 }
 
@@ -155,7 +165,7 @@ func CreateAdminUser() {
 	sysinit.Db.AutoMigrate 重建数据表
 */
 func AutoMigrates() {
-	sysinit.Db.DropTableIfExists("users", "permissions", "roles", "article", "casbin_rule")
+	sysinit.Db.DropTableIfExists(config.Config.DB.Prefix+"users", config.Config.DB.Prefix+"permissions", config.Config.DB.Prefix+"roles", config.Config.DB.Prefix+"article", config.Config.DB.Prefix+"casbin_rule", config.Config.DB.Prefix+"auth_token")
 	sysinit.Db.AutoMigrate(
 		&models.User{},
 		&models.Role{},

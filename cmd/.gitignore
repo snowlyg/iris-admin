@@ -1,8 +1,6 @@
-*.dll
-*.db
-air.log
-
-tmp/
-/logs/
-/.idea/
-
+*
+!main
+!main_lin
+!main_mac
+!main.exe
+!.gitignore

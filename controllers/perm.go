@@ -96,7 +96,7 @@ func CreatePermission(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdatePermission(ctx iris.Context) {
-	aul := new(validates.PermissionRequest)
+	aul := new(models.Permission)
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)

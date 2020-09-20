@@ -6,6 +6,10 @@ cache:
 
 gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
 
+before_install:
+  - go get -u github.com/go-bindata/go-bindata/v3/go-bindata
+  - go generate
+
 install: true
 sudo: required
 
@@ -25,7 +29,6 @@ env:
     - GOPROXY=https://goproxy.cn,direct
 
 script:
-  - pwd
   - go vet ./...
   - go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
 

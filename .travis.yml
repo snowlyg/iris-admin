@@ -7,6 +7,8 @@ cache:
 gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
 
 before_install:
+  - npm i
+  - npm run build:stage
   - go get -u github.com/go-bindata/go-bindata/v3/go-bindata
   - go generate
 

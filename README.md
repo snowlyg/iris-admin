@@ -172,10 +172,13 @@ go get github.com/rakyll/gotest@latest
 ```
 
 #### docker 运行
+可以使用 docker-compose 脚本 [https://github.com/snowlyg/dnmp](https://github.com/snowlyg/dnmp)
+
+手工构建启动镜像
 ```shell script
 docker build -t iris_admin_api:0.0.1 . # 构建
 
-docker run --name=irisadminapi -d -p 8085:8085 iris_admin_api:test -v ./cmd/data:./data -v ./cmd/application.yml:./application.yml -v ./cmd/rbac_model.conf:./rbac_model.conf # 运行
+docker run --name=irisadminapi -d -p 8085:80 iris_admin_api:test  # 运行
 ```
 
 ---
@@ -186,7 +189,7 @@ docker run --name=irisadminapi -d -p 8085:8085 iris_admin_api:test -v ./cmd/data
 ---
 
 #### 登录项目
-- http://localhost:8085
+- http://localhost:80
 
 #### 感谢 
 

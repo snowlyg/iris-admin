@@ -2,7 +2,7 @@ loglevel: info
 debug: true
 https: false
 host: 127.0.0.1
-port: 8085
+port: 80
 db:
   adapter: sqlite3 # mysql postgres sqlite3
   host: 127.0.0.1

@@ -67,5 +67,5 @@ func GetPermissionsForUser(uid uint) [][]string {
 }
 
 func DropTables() {
-	sysinit.Db.DropTable(config.Config.DB.Prefix+"users", config.Config.DB.Prefix+"roles", config.Config.DB.Prefix+"permissions", config.Config.DB.Prefix+"articles", config.Config.DB.Prefix+"oauth_tokens", "casbin_rule")
+	sysinit.Db.DropTableIfExists(config.Config.DB.Prefix+"users", config.Config.DB.Prefix+"roles", config.Config.DB.Prefix+"permissions", config.Config.DB.Prefix+"articles", config.Config.DB.Prefix+"oauth_tokens", "casbin_rule")
 }

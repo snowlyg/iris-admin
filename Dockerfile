@@ -35,4 +35,4 @@ RUN cd /go/src/github.com/snowlyg/IrisAdminApi && \
 ENTRYPOINT /go/src/github.com/snowlyg/IrisAdminApi/main
 
 # Document that the service listens on port 8085
-EXPOSE 8085
+EXPOSE 80

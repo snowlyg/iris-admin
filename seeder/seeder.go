@@ -165,12 +165,13 @@ func CreateAdminUser() {
 	sysinit.Db.AutoMigrate 重建数据表
 */
 func AutoMigrates() {
-	sysinit.Db.DropTableIfExists(config.Config.DB.Prefix+"users", config.Config.DB.Prefix+"permissions", config.Config.DB.Prefix+"roles", config.Config.DB.Prefix+"article", config.Config.DB.Prefix+"casbin_rule", config.Config.DB.Prefix+"auth_token")
+	models.DropTables()
 	sysinit.Db.AutoMigrate(
 		&models.User{},
 		&models.Role{},
 		&models.Permission{},
 		&models.Article{},
+		&models.OauthToken{},
 		&gormadapter.CasbinRule{},
 	)
 }

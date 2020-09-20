@@ -24,6 +24,8 @@ COPY ./main.go /go/src/github.com/snowlyg/IrisAdminApi/main.go
 COPY ./bindata.go /go/src/github.com/snowlyg/IrisAdminApi/bindata.go
 COPY ./application.yml /go/src/github.com/snowlyg/IrisAdminApi/application.yml
 COPY ./rbac_model.conf /go/src/github.com/snowlyg/IrisAdminApi/rbac_model.conf
+COPY ./go.mod /go/src/github.com/snowlyg/IrisAdminApi/go.mod
+COPY ./go.sum /go/src/github.com/snowlyg/IrisAdminApi/go.sum
 
 #build the application
 RUN cd /go/src/github.com/snowlyg/IrisAdminApi && \

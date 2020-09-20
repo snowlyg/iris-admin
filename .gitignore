@@ -3,6 +3,7 @@
 *.exe
 .air.conf
 coverage.txt
+application.yml
 
 tmp/
 /logs/

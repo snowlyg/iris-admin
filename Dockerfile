@@ -29,7 +29,7 @@ COPY ./go.sum /go/src/github.com/snowlyg/IrisAdminApi/go.sum
 
 #build the application
 RUN cd /go/src/github.com/snowlyg/IrisAdminApi && \
-     go build -a -installsuffix cgo -ldflags "-X main.Version master" -o main
+     go build  -o main
 
 # Run the command by default when the container starts.
 ENTRYPOINT /go/src/github.com/snowlyg/IrisAdminApi/main

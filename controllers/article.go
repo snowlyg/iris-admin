@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"fmt"
-	"github.com/fatih/color"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -59,7 +57,7 @@ func CreateArticle(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	color.Yellow(fmt.Sprint(article.DisplayTime))
+
 	err := validates.Validate.Struct(*article)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
@@ -105,12 +103,15 @@ func CreateArticle(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateArticle(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+
 	article := new(models.Article)
 	if err := ctx.ReadJSON(article); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
+
 	err := validates.Validate.Struct(*article)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
@@ -125,15 +126,14 @@ func UpdateArticle(ctx iris.Context) {
 
 	id, _ := ctx.Params().GetUint("id")
 	article.ID = id
-	article.UpdateArticle(article)
-	ctx.StatusCode(iris.StatusOK)
-	if article.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
-		return
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
+	err = article.UpdateArticle()
+
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
+	_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
+	return
 
 }
 
@@ -189,13 +189,20 @@ func GetAllArticles(ctx iris.Context) {
 	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count}, "操作成功"))
 }
 
-func articlesTransform(articles []*models.Article) []*transformer.Article {
-	var rs []*transformer.Article
+func articlesTransform(articles []*models.Article) []*transformer.ArticleList {
+	var rs []*transformer.ArticleList
 	for _, article := range articles {
-		r := articleTransform(article)
+		r := articleListTransform(article)
 		rs = append(rs, r)
 	}
 	return rs
+}
+
+func articleListTransform(article *models.Article) *transformer.ArticleList {
+	r := &transformer.ArticleList{}
+	g := gf.NewTransform(r, article, time.RFC3339)
+	_ = g.Transformer()
+	return r
 }
 
 func articleTransform(article *models.Article) *transformer.Article {

@@ -7,6 +7,7 @@ ENV  GO111MODULE=on
 ENV  GOPROXY=https://goproxy.cn,direct
 
 LABEL maintainer="snowlyg <569616226@qq.com>"
+
 # Copy the local package files to the container's workspace.
 COPY ./config /go/src/github.com/snowlyg/IrisAdminApi/config
 COPY ./controllers /go/src/github.com/snowlyg/IrisAdminApi/controllers

@@ -26,12 +26,12 @@ var Config = struct {
 	}
 	DB struct {
 		Prefix   string `env:"DBPrefix" default:"iris_"`
-		Name     string `env:"DBName" default:"goirisadminapi"`
-		Adapter  string `env:"DBAdapter" default:"sqlite3"`
-		Host     string `env:"DBHost" default:"mysql"`
+		Name     string `env:"DBName" default:"goirisapi"`
+		Adapter  string `env:"DBAdapter" default:"mysql"`
+		Host     string `env:"DBHost" default:"127.0.0.1"`
 		Port     string `env:"DBPort" default:"3306"`
 		User     string `env:"DBUser" default:"root"`
-		Password string `env:"DBPassword" default:"123456"`
+		Password string `env:"DBPassword" default:""`
 	}
 }{}
 

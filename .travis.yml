@@ -5,6 +5,12 @@ cache:
     - $GOPATH/pkg/mod
 
 gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
+services:
+  - mysql
+  - sqlite3
+
+before_install:
+  - mysql -e 'CREATE DATABASE goirisapi;'
 
 install: true
 sudo: required

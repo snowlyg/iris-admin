@@ -5,12 +5,9 @@ cache:
     - $GOPATH/pkg/mod
 
 gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
-services:
-  - mysql
-  - sqlite3
 
 before_install:
-  - mysql -e 'CREATE DATABASE goirisapi;'
+  - cp $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.example.yml $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.yml
 
 install: true
 sudo: required

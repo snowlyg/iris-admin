@@ -13,9 +13,9 @@ import (
 type Role struct {
 	gorm.Model
 
-	Name        string `gorm:"unique;not null VARCHAR(191)" json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
-	DisplayName string `gorm:"VARCHAR(191)" json:"display_name" comment:"显示名称"`
-	Description string `gorm:"VARCHAR(191)" json:"description" comment:"描述"`
+	Name        string `gorm:"unique;not null; size:191" json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
+	DisplayName string `gorm:"size:191" json:"display_name" comment:"显示名称"`
+	Description string `gorm:"size:191" json:"description" comment:"描述"`
 	PermIds     []uint `gorm:"-" json:"perm_ids" comment:"权限id"`
 }
 

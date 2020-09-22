@@ -34,7 +34,7 @@ func init() {
 	Fake.Rand = rand.New(rand.NewSource(42))
 	rand.Seed(time.Now().UnixNano())
 
-	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "data", "*.yml"))
+	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "seeder", "data", "*.yml"))
 	if config.Config.Debug {
 		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
 	}
@@ -44,18 +44,13 @@ func init() {
 }
 
 func Run() {
-
 	AutoMigrates()
-
 	CreatePerms()
 	fmt.Println(fmt.Sprintf("权限填充完成！！"))
-
 	CreateAdminRole()
 	fmt.Println(fmt.Sprintf("管理角色填充完成！！"))
-
 	CreateAdminUser()
 	fmt.Println(fmt.Sprintf("管理员填充完成！！"))
-
 }
 
 // CreatePerms 新建权限

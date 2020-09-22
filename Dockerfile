@@ -15,7 +15,6 @@ COPY ./libs /go/src/github.com/snowlyg/IrisAdminApi/libs
 COPY ./middleware /go/src/github.com/snowlyg/IrisAdminApi/middleware
 COPY ./models /go/src/github.com/snowlyg/IrisAdminApi/models
 COPY ./routes /go/src/github.com/snowlyg/IrisAdminApi/routes
-COPY ./data /go/src/github.com/snowlyg/IrisAdminApi/data
 COPY ./seeder /go/src/github.com/snowlyg/IrisAdminApi/seeder
 COPY ./sysinit /go/src/github.com/snowlyg/IrisAdminApi/sysinit
 COPY ./transformer /go/src/github.com/snowlyg/IrisAdminApi/transformer

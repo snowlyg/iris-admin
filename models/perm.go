@@ -11,10 +11,10 @@ import (
 
 type Permission struct {
 	gorm.Model
-	Name        string `gorm:"not null VARCHAR(191)" json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
-	DisplayName string `gorm:"VARCHAR(191)" json:"display_name" comment:"显示名称"`
-	Description string `gorm:"VARCHAR(191)" json:"description" comment:"描述"`
-	Act         string `gorm:"VARCHAR(191)" json:"act" comment:"Act"`
+	Name        string `gorm:"not null size:191" json:"name" validate:"required,gte=4,lte=50" comment:"名称"`
+	DisplayName string `gorm:"size:191" json:"display_name" comment:"显示名称"`
+	Description string `gorm:"size:191" json:"description" comment:"描述"`
+	Act         string `gorm:"size:191" json:"act" comment:"Act"`
 }
 
 func NewPermission(id uint, name, act string) *Permission {

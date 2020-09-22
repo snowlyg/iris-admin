@@ -16,11 +16,11 @@ import (
 type User struct {
 	gorm.Model
 
-	Name     string `gorm:"not null VARCHAR(50)" json:"username" validate:"required,gte=2,lte=50" comment:"用户名"`
-	Username string `gorm:"unique;VARCHAR(150)" json:"password" validate:"required"  comment:"密码"`
-	Password string `gorm:"not null VARCHAR(50)" json:"name" validate:"required,gte=2,lte=50"  comment:"名称"`
-	Intro    string `gorm:"not null VARCHAR(500)" json:"introduction" comment:"简介"`
-	Avatar   string `gorm:"not null VARCHAR(500)" json:"avatar"  comment:"头像"`
+	Name     string `gorm:"not null; size:50" json:"username" validate:"required,gte=2,lte=50" comment:"用户名"`
+	Username string `gorm:"unique;size:15" json:"password" validate:"required"  comment:"密码"`
+	Password string `gorm:"not null; size:50" json:"name" validate:"required,gte=2,lte=50"  comment:"名称"`
+	Intro    string `gorm:"not null; size:50" json:"introduction" comment:"简介"`
+	Avatar   string `gorm:"not null; size:50" json:"avatar"  comment:"头像"`
 	RoleIds  []uint `gorm:"-" json:"role_ids"  validate:"required" comment:"角色"`
 }
 

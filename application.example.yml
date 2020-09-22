@@ -3,6 +3,11 @@ debug: true
 https: false
 host: 127.0.0.1
 port: 80
+admin:
+  user_name: username
+  role_name: rolename
+  name: name
+  password: password
 db:
   adapter: sqlite3 # mysql postgres sqlite3
   host: 127.0.0.1

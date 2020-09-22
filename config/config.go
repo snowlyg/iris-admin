@@ -38,8 +38,13 @@ var Config = struct {
 
 func init() {
 	configPath := filepath.Join(libs.CWD(), "application.yml")
+	fmt.Println(fmt.Sprintf("配置YML文件路径：%v", configPath))
 	if err := configor.Load(&Config, configPath); err != nil {
 		logger.Println(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
+	}
+
+	if Config.Debug {
+		fmt.Println(fmt.Sprintf("配置项：%v", Config))
 	}
 
 }

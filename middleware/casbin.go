@@ -46,7 +46,10 @@ type Casbin struct {
 func (c *Casbin) Check(r *http.Request, userId string) bool {
 	method := r.Method
 	path := r.URL.Path
-	fmt.Println(path)
-	ok, _ := c.enforcer.Enforce(userId, path, method)
+	ok, err := c.enforcer.Enforce(userId, path, method)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("验证权限报错：%v", err.Error()))
+		return false
+	}
 	return ok
 }

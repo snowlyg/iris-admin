@@ -24,15 +24,16 @@ COPY ./main.go  /go/src/github.com/snowlyg/IrisAdminApi/main.go
 COPY ./www/dist  /go/src/github.com/snowlyg/IrisAdminApi/www/dist
 COPY ./go.mod  /go/src/github.com/snowlyg/IrisAdminApi/go.mod
 COPY ./go.sum  /go/src/github.com/snowlyg/IrisAdminApi/go.sum
+COPY ./data  /go/src/github.com/snowlyg/IrisAdminApi/data
+COPY ./application.yml  /go/src/github.com/snowlyg/IrisAdminApi/application.yml
+COPY ./rbac_model.conf  /go/src/github.com/snowlyg/IrisAdminApi/rbac_model.conf
 
 #build the application
 RUN cd /go/src/github.com/snowlyg/IrisAdminApi && \
-     go get -u github.com/go-bindata/go-bindata/v3/go-bindata && \
-     go generate && \
      go build -o main
 
 # Run the command by default when the container starts.
 ENTRYPOINT /go/src/github.com/snowlyg/IrisAdminApi/main
 
 # Document that the service listens on port 8085
-EXPOSE 8085
+EXPOSE 80

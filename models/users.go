@@ -47,10 +47,11 @@ func (u *User) GetUserById() {
  * 通过 id 删除用户
  * @method DeleteUserById
  */
-func (u *User) DeleteUser() {
+func (u *User) DeleteUser() error {
 	if err := sysinit.Db.Delete(u).Error; err != nil {
-		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
+		return err
 	}
+	return nil
 }
 
 /**
@@ -97,13 +98,14 @@ func (u *User) CreateUser() error {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (u *User) UpdateUser(uj *User) {
-	uj.Password = libs.HashPassword(uj.Password)
-	if err := Update(u, uj); err != nil {
-		color.Red(fmt.Sprintf("UpdateUserErr:%s \n ", err))
+func (u *User) UpdateUser() error {
+	u.Password = libs.HashPassword(u.Password)
+	if err := Update(&User{}, u); err != nil {
+		return err
 	}
 
 	addRoles(u)
+	return nil
 }
 
 func addRoles(user *User) {

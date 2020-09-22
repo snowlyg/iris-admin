@@ -7,7 +7,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
-	"github.com/snowlyg/IrisAdminApi/validates"
 )
 
 type Permission struct {
@@ -96,8 +95,8 @@ func (p *Permission) CreatePermission() error {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (p *Permission) UpdatePermission(pj *validates.PermissionRequest) error {
-	if err := Update(p, pj); err != nil {
+func (p *Permission) UpdatePermission() error {
+	if err := Update(&Permission{}, p); err != nil {
 		return err
 	}
 	return nil

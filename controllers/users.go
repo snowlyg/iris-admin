@@ -68,10 +68,9 @@ func GetUser(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateUser(ctx iris.Context) {
-
+	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
 	if err := ctx.ReadJSON(user); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -81,21 +80,20 @@ func CreateUser(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
 	}
 
-	user.CreateUser()
-	ctx.StatusCode(iris.StatusOK)
+	if err := user.CreateUser(); err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+	}
+
 	if user.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))
-		return
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
-		return
 	}
 
 }
@@ -115,10 +113,9 @@ func CreateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateUser(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
-
 	if err := ctx.ReadJSON(user); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
@@ -127,7 +124,6 @@ func UpdateUser(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
@@ -137,20 +133,16 @@ func UpdateUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	user.ID = id
 	if user.Username == "username" {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员"))
 		return
 	}
 
-	user.UpdateUser(user)
-	ctx.StatusCode(iris.StatusOK)
-	if user.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))
-		return
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
+	if err := user.UpdateUser(); err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
+
+	_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
 
 }
 
@@ -167,18 +159,19 @@ func UpdateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func DeleteUser(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-
 	user := models.NewUser(id, "")
 	if user.Username == "username" {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, "不能删除管理员"))
 		return
 	}
 
-	user.DeleteUser()
+	if err := user.DeleteUser(); err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
 
-	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }
 

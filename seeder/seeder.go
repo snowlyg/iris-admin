@@ -45,16 +45,10 @@ func init() {
 func Run() {
 
 	AutoMigrates()
-
-	fmt.Println(fmt.Sprintf("权限填充开始！！"))
 	CreatePerms()
 	fmt.Println(fmt.Sprintf("权限填充完成！！"))
-
-	fmt.Println(fmt.Sprintf("管理角色填充开始！！"))
 	CreateAdminRole()
 	fmt.Println(fmt.Sprintf("管理角色填充完成！！"))
-
-	fmt.Println(fmt.Sprintf("管理员填充开始！！"))
 	CreateAdminUser()
 	fmt.Println(fmt.Sprintf("管理员填充完成！！"))
 
@@ -143,11 +137,12 @@ func CreateAdminUser() {
 	sysinit.Db.AutoMigrate 重建数据表
 */
 func AutoMigrates() {
-	sysinit.Db.DropTableIfExists("users", "permissions", "roles", "casbin_rule")
+	models.DropTables()
 	sysinit.Db.AutoMigrate(
 		&models.User{},
 		&models.Role{},
 		&models.Permission{},
+		&models.OauthToken{},
 		&gormadapter.CasbinRule{},
 	)
 }

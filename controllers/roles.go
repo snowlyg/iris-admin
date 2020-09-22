@@ -29,10 +29,10 @@ func GetRole(ctx iris.Context) {
 	role := models.NewRole(id, "")
 	role.GetRoleById()
 
-	ctx.StatusCode(iris.StatusOK)
-
 	rr := roleTransform(role)
 	rr.Perms = permsTransform(role.RolePermisions())
+
+	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
 }
 
@@ -53,10 +53,10 @@ func GetRole(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateRole(ctx iris.Context) {
-	role := new(models.Role)
+	ctx.StatusCode(iris.StatusOK)
 
+	role := new(models.Role)
 	if err := ctx.ReadJSON(role); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -66,7 +66,6 @@ func CreateRole(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
@@ -78,7 +77,7 @@ func CreateRole(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	ctx.StatusCode(iris.StatusOK)
+
 	if role.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 		return
@@ -106,9 +105,10 @@ func CreateRole(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateRole(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+
 	role := new(models.Role)
 	if err := ctx.ReadJSON(role); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -118,7 +118,6 @@ func UpdateRole(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
@@ -128,21 +127,17 @@ func UpdateRole(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	role.ID = id
 	if role.Name == "admin" {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员角色"))
 		return
 	}
 
-	role.UpdateRole(role)
-	ctx.StatusCode(iris.StatusOK)
-	if role.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
-		return
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
+	if err := role.UpdateRole(); err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
+	_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
+	return
 }
 
 /**
@@ -158,18 +153,19 @@ func UpdateRole(ctx iris.Context) {
 * @apiPermission null
  */
 func DeleteRole(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
+
 	id, _ := ctx.Params().GetUint("id")
 	role := models.NewRole(id, "")
 	role.GetRoleById()
 	if role.Name == "admin" {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(200, nil, "不能删除管理员角色"))
 		return
 	}
 
 	role.DeleteRoleById()
 
-	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }
 
@@ -186,6 +182,8 @@ func DeleteRole(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllRoles(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+
 	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	name := ctx.FormValue("name")
@@ -193,12 +191,10 @@ func GetAllRoles(ctx iris.Context) {
 
 	roles, err := models.GetAllRoles(name, orderBy, offset, limit)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, rolesTransform(roles), "操作成功"))
 }
 

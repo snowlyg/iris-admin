@@ -14,10 +14,10 @@ type Article struct {
 	Title        string    `gorm:"not null;default:'';type:varchar(256)" json:"title" validate:"required,gte=4,lte=256" comment:"标题"`
 	ContentShort string    `gorm:"not null;default:'';type:varchar(512)" json:"content_short" validate:"required,gte=6,lte=512" comment:"简介"`
 	Author       string    `gorm:"not null;default:'';type:varchar(30)" json:"author" comment:"作者" validate:"required,gte=4,lte=30"`
-	ImageUri     string    `gorm:"not null;default:'';type:text" json:"image_uri" comment:"封面" validate:"required"`
+	ImageUri     string    `gorm:"type:text" json:"image_uri" comment:"封面" validate:"required"`
 	SourceUri    string    `gorm:"not null;default:'';type:varchar(512)" json:"source_uri" comment:"来源"`
 	IsOriginal   bool      `gorm:"not null;default:true;type:tinyint(1)" json:"is_original" comment:"是否原创" validate:""`
-	Content      string    `gorm:"not null;default:'';type:text" json:"content" comment:"内容" validate:"required,gte=6"`
+	Content      string    `gorm:"type:text" json:"content" comment:"内容" validate:"required,gte=6"`
 	Status       string    `gorm:"not null;default:'';type:varchar(10)" json:"status" comment:"文章状态" validate:"required,gte=1,lte=10"`
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
 }

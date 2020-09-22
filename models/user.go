@@ -20,7 +20,7 @@ type User struct {
 	Username string `gorm:"unique;not null;type:varchar(60)" json:"username" validate:"required,gte=2,lte=50"  comment:"名称"`
 	Password string `gorm:"type:varchar(100)" json:"password" validate:"required"  comment:"密码"`
 	Intro    string `gorm:"not null; type:varchar(512)" json:"introduction" comment:"简介"`
-	Avatar   string `gorm:"not null;type:text" json:"avatar"  comment:"头像"`
+	Avatar   string `gorm:"type:text" json:"avatar"  comment:"头像"`
 	RoleIds  []uint `gorm:"-" json:"role_ids"  validate:"required" comment:"角色"`
 }
 

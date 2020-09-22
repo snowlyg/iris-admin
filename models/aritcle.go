@@ -12,7 +12,7 @@ type Article struct {
 	gorm.Model
 
 	Title        string    `gorm:"not null;default:'';type:varchar(256)" json:"title" validate:"required,gte=4,lte=256" comment:"标题"`
-	ContentShort string    `gorm:"not null;default:'';type:varchar(512" json:"content_short" validate:"required,gte=6,lte=512" comment:"简介"`
+	ContentShort string    `gorm:"not null;default:'';type:varchar(512)" json:"content_short" validate:"required,gte=6,lte=512" comment:"简介"`
 	Author       string    `gorm:"not null;default:'';type:varchar(30)" json:"author" comment:"作者" validate:"required,gte=4,lte=30"`
 	ImageUri     string    `gorm:"not null;default:'';type:text" json:"image_uri" comment:"封面" validate:"required"`
 	SourceUri    string    `gorm:"not null;default:'';type:varchar(512)" json:"source_uri" comment:"来源"`

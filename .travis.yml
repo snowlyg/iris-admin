@@ -25,7 +25,6 @@ env:
     - GOPROXY=https://goproxy.cn,direct
 
 script:
-  - pwd
   - go vet ./...
   - go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
 

@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	logger "github.com/sirupsen/logrus"
 	"path/filepath"
+
+	logger "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/configor"
 	"github.com/snowlyg/IrisAdminApi/libs"

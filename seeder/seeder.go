@@ -2,11 +2,12 @@ package seeder
 
 import (
 	"fmt"
-	logger "github.com/sirupsen/logrus"
-	"github.com/snowlyg/IrisAdminApi/libs"
 	"math/rand"
 	"path/filepath"
 	"time"
+
+	logger "github.com/sirupsen/logrus"
+	"github.com/snowlyg/IrisAdminApi/libs"
 
 	"github.com/azumads/faker"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
@@ -122,10 +123,10 @@ func CreateAdminRole() {
 
 // CreateAdminUser 新建管理员
 func CreateAdminUser() {
-	password := "123456"
+	password := config.Config.Admin.Pwd
 	admin := &models.User{
-		Username: "username",
-		Name:     "超级管理员",
+		Username: config.Config.Admin.UserName,
+		Name:     config.Config.Admin.Name,
 		Password: password,
 		Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
 		Intro:    "超级弱鸡程序猿一枚！！！！",

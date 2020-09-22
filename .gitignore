@@ -8,5 +8,3 @@ tmp/
 /logs/
 /.idea/
 
-bindata.go
-

@@ -8,10 +8,10 @@ import (
 type OauthToken struct {
 	gorm.Model
 
-	Token     string `gorm:"not null default '' comment('Token') size:191"`
-	UserId    uint   `gorm:"not null default '' comment('UserId') size:191"`
-	Secret    string `gorm:"not null default '' comment('Secret') isze:191"`
-	ExpressIn int64  `gorm:"not null default 0 comment('是否是标准库') size:20"`
+	Token     string `gorm:"not null default '' comment('Token') stype:varchar(191)"`
+	UserId    uint   `gorm:"not null default '' comment('UserId') stype:varchar(191)"`
+	Secret    string `gorm:"not null default '' comment('Secret') type:varchar(191)"`
+	ExpressIn int64  `gorm:"not null default 0 comment('是否是标准库') stype:varchar(20)"`
 	Revoked   bool
 }
 

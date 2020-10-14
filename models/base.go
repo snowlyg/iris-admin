@@ -39,10 +39,11 @@ func GetAll(model interface{}, string, orderBy string, offset, limit int) *gorm.
 	return db
 }
 
-func IsNotFound(err error) {
+func IsNotFound(err error) error {
 	if ok := errors.Is(err, gorm.ErrRecordNotFound); !ok && err != nil {
-		color.Red(fmt.Sprintf("error :%v \n ", err))
+		return err
 	}
+	return nil
 }
 
 func Update(v, d interface{}) error {

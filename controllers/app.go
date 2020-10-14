@@ -48,8 +48,11 @@ func UserLogin(ctx iris.Context) {
 	ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
 	ctx.StatusCode(iris.StatusOK)
 
-	user := models.NewUser(0, aul.Username)
-	user.GetUserByUsername()
+	user, err := models.GetUserByUsername(aul.Username)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
 
 	response, code, msg := user.CheckLogin(aul.Password)
 

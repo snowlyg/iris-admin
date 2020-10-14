@@ -3,7 +3,10 @@ package controllers
 import (
 	"fmt"
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/IrisAdminApi/config"
+	"github.com/snowlyg/IrisAdminApi/libs"
 	"path/filepath"
+	"strings"
 )
 
 /**
@@ -22,20 +25,28 @@ func UploadFile(ctx iris.Context) {
 	f, fh, err := ctx.FormFile("uploadfile")
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		ctx.HTML("Error while uploading: <b>" + err.Error() + "</b>")
 		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error while uploading: %s", err.Error())))
 		return
 	}
 	defer f.Close()
 
-	path := filepath.Join("./uploads", fh.Filename)
+	fns := strings.Split(fh.Filename, ".")
+	if len(fns) != 2 {
+		ctx.StatusCode(iris.StatusInternalServerError)
+		_, _ = ctx.JSON(ApiResource(400, nil, "Error while uploading: 请上传正确的文件"))
+		return
+	}
+
+	filename := fmt.Sprintf("%s.%s", libs.MD5(fns[0]), fns[1])
+	path := filepath.Join("./uploads/images", filename)
 	_, err = ctx.SaveFormFile(fh, path)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error while uploading: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error while SaveFormFile: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, path, "操作成功"))
+	imageUrl := fmt.Sprintf("http://%s:%d/%s", config.Config.Host, config.Config.Port, path)
+	_, _ = ctx.JSON(ApiResource(200, imageUrl, "操作成功"))
 }

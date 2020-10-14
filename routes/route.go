@@ -14,6 +14,7 @@ func App(api *iris.Application) {
 	api.UseRouter(middleware.CrsAuth())
 	app := api.Party("/").AllowMethods(iris.MethodOptions)
 	{
+		app.HandleDir("/uploads", iris.Dir("./uploads"))
 		if config.Config.Bindata {
 			app.Get("/", func(ctx iris.Context) { // 首页模块
 				_ = ctx.View("index.html")

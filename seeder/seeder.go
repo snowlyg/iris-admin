@@ -118,29 +118,33 @@ func CreateAdminRole() {
 
 // CreateAdminUser 新建管理员
 func CreateAdminUser() {
-	password := config.Config.Admin.Pwd
-	admin := &models.User{
-		Username: config.Config.Admin.UserName,
-		Name:     config.Config.Admin.Name,
-		Password: password,
-		Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
-		Intro:    "超级弱鸡程序猿一枚！！！！",
-		Model:    gorm.Model{CreatedAt: time.Now()},
-	}
-	var roleIds []uint
-	roles, err := models.GetAllRoles("", "", 0, 0)
-	if config.Config.Debug {
-		if err != nil {
-			fmt.Println(fmt.Sprintf("角色获取失败：%v", err))
-		}
-	}
 
-	for _, role := range roles {
-		roleIds = append(roleIds, role.ID)
+	admin, err := models.GetUserByUsername(config.Config.Admin.UserName)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("Get admin error：%v", err))
 	}
-	admin.RoleIds = roleIds
-	admin.GetUserByUsername()
+	password := config.Config.Admin.Pwd
 	if admin.ID == 0 {
+		admin = &models.User{
+			Username: config.Config.Admin.UserName,
+			Name:     config.Config.Admin.Name,
+			Password: password,
+			Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
+			Intro:    "超级弱鸡程序猿一枚！！！！",
+			Model:    gorm.Model{CreatedAt: time.Now()},
+		}
+		var roleIds []uint
+		roles, err := models.GetAllRoles("", "", 0, 0)
+		if config.Config.Debug {
+			if err != nil {
+				fmt.Println(fmt.Sprintf("角色获取失败：%v", err))
+			}
+		}
+
+		for _, role := range roles {
+			roleIds = append(roleIds, role.ID)
+		}
+		admin.RoleIds = roleIds
 		if err := admin.CreateUser(); err != nil {
 			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
 		}

@@ -35,8 +35,12 @@ func NewUser(id uint, username string) *User {
 	}
 }
 
-func (u *User) GetUserByUsername() {
-	IsNotFound(sysinit.Db.Where("username = ?", u.Username).First(u).Error)
+func GetUserByUsername(username string) (*User, error) {
+	user := new(User)
+	if err := IsNotFound(sysinit.Db.Where("username = ?", username).First(user).Error); err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (u *User) GetUserById() {

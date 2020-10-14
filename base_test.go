@@ -24,7 +24,7 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-	s := web_server.NewServer(AssetFile(), Asset, AssetNames) // 初始化app
+	s := web_server.NewServer(AssetFile()) // 初始化app
 	s.NewApp()
 	app = s.App
 	seeder.Run()

@@ -109,3 +109,8 @@ perms:
     description: "删除文章"
     act: "DELETE"
 
+  - name: "/v1/admin/upload_file"
+    displayname: "上传文件"
+    description: "上传文件"
+    act: "POST"
+

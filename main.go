@@ -102,7 +102,7 @@ version: %s`, Version))
 		panic(err)
 	}
 
-	irisServer := web_server.NewServer(AssetFile(), Asset, AssetNames)
+	irisServer := web_server.NewServer(AssetFile())
 	if irisServer == nil {
 		panic("Http 初始化失败")
 	}

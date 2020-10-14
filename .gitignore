@@ -1,6 +1,7 @@
 *.dll
 *.db
 *.exe
+*.log
 .air.conf
 coverage.txt
 application.yml
@@ -8,5 +9,7 @@ application.yml
 tmp/
 /logs/
 /.idea/
+
+main
 
 

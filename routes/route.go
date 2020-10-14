@@ -2,18 +2,23 @@ package routes
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/controllers"
 	"github.com/snowlyg/IrisAdminApi/middleware"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
 )
 
+const maxSize = 5 << 20 // 5MB
+
 func App(api *iris.Application) {
 	api.UseRouter(middleware.CrsAuth())
 	app := api.Party("/").AllowMethods(iris.MethodOptions)
 	{
-		app.Get("/", func(ctx iris.Context) { // 首页模块
-			_ = ctx.View("index.html")
-		})
+		if config.Config.Bindata {
+			app.Get("/", func(ctx iris.Context) { // 首页模块
+				_ = ctx.View("index.html")
+			})
+		}
 
 		v1 := app.Party("/v1")
 		{
@@ -27,7 +32,7 @@ func App(api *iris.Application) {
 				admin.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				admin.Post("/logout", controllers.UserLogout).Name = "退出"
 				admin.Get("/profile", controllers.GetProfile).Name = "个人信息"
-
+				admin.Post("/upload_file", iris.LimitRequestBodySize(maxSize+1<<20), controllers.UploadFile).Name = "上传文件"
 				admin.PartyFunc("/article", func(aritcle iris.Party) {
 					aritcle.Get("/", controllers.GetAllArticles).Name = "文章列表"
 					aritcle.Get("/{id:uint}", controllers.GetArticle).Name = "文章详情"

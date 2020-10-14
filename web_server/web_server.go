@@ -9,26 +9,21 @@ import (
 
 	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/IrisAdminApi/config"
-	"github.com/snowlyg/IrisAdminApi/libs"
 	"github.com/snowlyg/IrisAdminApi/models"
 	"github.com/snowlyg/IrisAdminApi/routes"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
 )
 
 type Server struct {
-	App        *iris.Application
-	AssetFile  http.FileSystem
-	Asset      func(name string) ([]byte, error)
-	AssetNames func() []string
+	App       *iris.Application
+	AssetFile http.FileSystem
 }
 
-func NewServer(assetFile http.FileSystem, asset func(name string) ([]byte, error), assetNames func() []string) *Server {
+func NewServer(assetFile http.FileSystem) *Server {
 	app := iris.Default()
 	return &Server{
-		App:        app,
-		AssetFile:  assetFile,
-		Asset:      asset,
-		AssetNames: assetNames,
+		App:       app,
+		AssetFile: assetFile,
 	}
 }
 
@@ -55,10 +50,9 @@ func (s *Server) Serve() error {
 func (s *Server) NewApp() {
 	s.App.Logger().SetLevel(config.Config.LogLevel)
 
-	tmpl := iris.HTML(libs.WwwPath(), ".html").Binary(s.Asset, s.AssetNames)
-	s.App.RegisterView(tmpl)
-
-	s.App.HandleDir("/", iris.PrefixDir(libs.WwwPath(), s.AssetFile))
+	if config.Config.Bindata {
+		s.App.RegisterView(iris.Blocks(s.AssetFile, ".html"))
+	}
 
 	db := sysinit.Db
 	db.AutoMigrate(

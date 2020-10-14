@@ -11,8 +11,9 @@ import (
 )
 
 var Config = struct {
-	Debug    bool   `default:"true" env:"Debug"`
 	LogLevel string `default:"info" env:"Loglevel"`
+	Bindata  bool   `default:"true" env:"Bindata"`
+	Debug    bool   `default:"true" env:"Debug"`
 	HTTPS    bool   `default:"false" env:"HTTPS"`
 	Certpath string `default:"" env:"Certpath"`
 	Certkey  string `default:"" env:"Certkey"`

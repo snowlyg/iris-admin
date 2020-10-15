@@ -17,7 +17,7 @@ func App(api *iris.Application) {
 		app.HandleDir("/uploads", iris.Dir("./uploads"))
 		if config.Config.Bindata {
 			app.Get("/", func(ctx iris.Context) { // 首页模块
-				_ = ctx.View("index.html")
+				_ = ctx.View("index")
 			})
 		}
 

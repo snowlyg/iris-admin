@@ -9,6 +9,7 @@ require (
 	github.com/casbin/casbin/v2 v2.9.0
 	github.com/casbin/gorm-adapter/v2 v2.1.0
 	github.com/fatih/color v1.9.0
+	github.com/go-bindata/go-bindata/v3 v3.1.3 // indirect
 	github.com/go-check/check v1.0.0-20180628173108-788fd7840127 // indirect
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
@@ -22,6 +23,7 @@ require (
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kardianos/service v1.1.0
 	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201012125253-8e51a296b968
+	github.com/kisielk/errcheck v1.4.0 // indirect
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/manveru/gobdd v0.0.0-20131210092515-f1a17fdd710b // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
@@ -34,6 +36,8 @@ require (
 	github.com/snowlyg/gotransformer v0.1.0
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
+	golang.org/x/tools v0.0.0-20201014231627-1610a49f37af // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	gopkg.in/ini.v1 v1.61.0
 )

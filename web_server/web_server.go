@@ -52,6 +52,7 @@ func (s *Server) NewApp() {
 
 	if config.Config.Bindata {
 		s.App.RegisterView(iris.Blocks(s.AssetFile, ".html"))
+		s.App.HandleDir("/", s.AssetFile)
 	}
 
 	db := sysinit.Db

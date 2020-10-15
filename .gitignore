@@ -6,7 +6,8 @@
 coverage.txt
 application.yml
 
-tmp/
+/tmp/
+/views/
 /logs/
 /.idea/
 

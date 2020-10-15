@@ -6,6 +6,7 @@
 coverage.txt
 application.yml
 
+/cmd/
 /tmp/
 /views/
 /logs/

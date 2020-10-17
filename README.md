@@ -34,9 +34,9 @@
 
 #### 项目开发过程详解
 
-1.[Iris-go 项目登陆 API 构建细节实现过程](https://learnku.com/articles/39551)
+1.[Iris-go 项目登陆 API 构建细节实现过程](https://www.snowlyg.com/#/detail/1)
 
-2.[iris + casbin 从陌生到学会使用的过程](https://learnku.com/articles/41416)
+2.[iris + casbin 从陌生到学会使用的过程](https://www.snowlyg.com/#/detail/2)
 
 ---
 

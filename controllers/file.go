@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/libs"
+	"github.com/snowlyg/IrisAdminApi/models"
 	"path/filepath"
 	"strings"
 )
@@ -38,8 +39,9 @@ func UploadFile(ctx iris.Context) {
 	}
 
 	filename := fmt.Sprintf("%s.%s", libs.MD5(fns[0]), fns[1])
-	path := filepath.Join("./uploads/images", filename)
-	_, err = ctx.SaveFormFile(fh, path)
+	path := filepath.Join(libs.CWD(), "uploads", "images")
+	err = libs.EnsureDir(path)
+	_, err = ctx.SaveFormFile(fh, filepath.Join(path, filename))
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error while SaveFormFile: %s", err.Error())))
@@ -47,6 +49,15 @@ func UploadFile(ctx iris.Context) {
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	imageUrl := fmt.Sprintf("http://%s:%d/%s", config.Config.Host, config.Config.Port, path)
+
+	imageHost := fmt.Sprintf("http://%s:%d", ctx.Domain(), config.Config.Port)
+	configByKey, err := models.GetConfigByName("imageHost")
+	if err == nil {
+		imageHost = configByKey.Value
+	} else {
+		fmt.Println(err.Error())
+	}
+
+	imageUrl := fmt.Sprintf("%s/%s", imageHost, filepath.Join("uploads", "images", filename))
 	_, _ = ctx.JSON(ApiResource(200, imageUrl, "操作成功"))
 }

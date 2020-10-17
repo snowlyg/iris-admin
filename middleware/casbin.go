@@ -47,8 +47,9 @@ func (c *Casbin) Check(r *http.Request, userId string) bool {
 	method := r.Method
 	path := r.URL.Path
 	ok, err := c.enforcer.Enforce(userId, path, method)
+	fmt.Println()
 	if err != nil {
-		fmt.Println(fmt.Sprintf("验证权限报错：%v", err.Error()))
+		fmt.Println(fmt.Sprintf("验证权限报错：%v;%s-%s-%s", err.Error(), userId, path, method))
 		return false
 	}
 	return ok

@@ -114,3 +114,28 @@ perms:
     description: "上传文件"
     act: "POST"
 
+  - name: "/v1/admin/configs"
+    displayname: "系统配置列表"
+    description: "系统配置列表"
+    act: "GET"
+
+  - name: "/v1/admin/configs/{id:uint}"
+    displayname: "系统配置详情"
+    description: "系统配置详情"
+    act: "GET"
+
+  - name: "/v1/admin/configs"
+    displayname: "创建系统配置"
+    description: "创建系统配置"
+    act: "POST"
+
+  - name: "/v1/admin/configs/{id:uint}"
+    displayname: "编辑系统配置"
+    description: "编辑系统配置"
+    act: "PUT"
+
+  - name: "/v1/admin/configs/{id:uint}"
+    displayname: "删除系统配置"
+    description: "删除系统配置"
+    act: "DELETE"
+

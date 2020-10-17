@@ -4,8 +4,10 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/controllers"
+	"github.com/snowlyg/IrisAdminApi/libs"
 	"github.com/snowlyg/IrisAdminApi/middleware"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"path/filepath"
 )
 
 const maxSize = 5 << 20 // 5MB
@@ -14,7 +16,7 @@ func App(api *iris.Application) {
 	api.UseRouter(middleware.CrsAuth())
 	app := api.Party("/").AllowMethods(iris.MethodOptions)
 	{
-		app.HandleDir("/uploads", iris.Dir("./uploads"))
+		app.HandleDir("/uploads", iris.Dir(filepath.Join(libs.CWD(), "uploads")))
 		if config.Config.Bindata {
 			app.Get("/", func(ctx iris.Context) { // 首页模块
 				_ = ctx.View("index")
@@ -66,6 +68,13 @@ func App(api *iris.Application) {
 					permissions.Post("/", controllers.CreatePermission).Name = "创建权限"
 					permissions.Put("/{id:uint}", controllers.UpdatePermission).Name = "编辑权限"
 					permissions.Delete("/{id:uint}", controllers.DeletePermission).Name = "删除权限"
+				})
+				admin.PartyFunc("/configs", func(configs iris.Party) {
+					configs.Get("/", controllers.GetAllConfigs).Name = "系统配置列表"
+					configs.Get("/{id:uint}", controllers.GetConfig).Name = "系统配置详情"
+					configs.Post("/", controllers.CreateConfig).Name = "创建系统配置"
+					configs.Put("/{id:uint}", controllers.UpdateConfig).Name = "编辑系统配置"
+					configs.Delete("/{id:uint}", controllers.DeleteConfig).Name = "删除系统配置"
 				})
 			})
 		}

@@ -127,11 +127,6 @@ func UpdateRole(ctx iris.Context) {
 
 	id, _ := ctx.Params().GetUint("id")
 	role.ID = id
-	if role.Name == "admin" {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员角色"))
-		return
-	}
 
 	err = role.UpdateRole()
 	ctx.StatusCode(iris.StatusOK)

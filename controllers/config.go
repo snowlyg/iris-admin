@@ -2,45 +2,44 @@ package controllers
 
 import (
 	"fmt"
-	"time"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/libs"
 	"github.com/snowlyg/IrisAdminApi/models"
-	"github.com/snowlyg/IrisAdminApi/transformer"
 	"github.com/snowlyg/IrisAdminApi/validates"
-	gf "github.com/snowlyg/gotransformer"
 )
 
 /**
-* @api {get} /admin/permissions/:id 根据id获取权限信息
+* @api {get} /admin/configs/:id 根据id获取权限信息
 * @apiName 根据id获取权限信息
-* @apiGroup Permissions
+* @apiGroup Configs
 * @apiVersion 1.0.0
 * @apiDescription 根据id获取权限信息
-* @apiSampleRequest /admin/permissions/:id
+* @apiSampleRequest /admin/configs/:id
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
 * @apiSuccess {String} data 返回数据
-* @apiPermission
+* @apiPermission null
  */
-func GetPermission(ctx iris.Context) {
-	id, _ := ctx.Params().GetUint("id")
-	perm := models.NewPermission(id, "", "")
-	perm.GetPermissionById()
-
+func GetConfig(ctx iris.Context) {
+	key := ctx.Params().GetString("key")
+	config, err := models.GetConfigByName(key)
+	if err != nil {
+		ctx.StatusCode(iris.StatusInternalServerError)
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		return
+	}
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, permTransform(perm), "操作成功"))
+	_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
 }
 
 /**
-* @api {post} /admin/permissions/ 新建权限
+* @api {post} /admin/configs/ 新建权限
 * @apiName 新建权限
-* @apiGroup Permissions
+* @apiGroup Configs
 * @apiVersion 1.0.0
 * @apiDescription 新建权限
-* @apiSampleRequest /admin/permissions/
+* @apiSampleRequest /admin/configs/
 * @apiParam {string} name 权限名
 * @apiParam {string} display_name
 * @apiParam {string} description
@@ -50,14 +49,14 @@ func GetPermission(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func CreatePermission(ctx iris.Context) {
-	perm := new(models.Permission)
-	if err := ctx.ReadJSON(perm); err != nil {
+func CreateConfig(ctx iris.Context) {
+	config := new(models.Config)
+	if err := ctx.ReadJSON(config); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	err := validates.Validate.Struct(*perm)
+	err := validates.Validate.Struct(*config)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
@@ -69,7 +68,7 @@ func CreatePermission(ctx iris.Context) {
 		}
 	}
 
-	err = perm.CreatePermission()
+	err = config.CreateConfig()
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
@@ -77,21 +76,21 @@ func CreatePermission(ctx iris.Context) {
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	if perm.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, perm, "操作失败"))
+	if config.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(400, config, "操作失败"))
 	} else {
-		_, _ = ctx.JSON(ApiResource(200, permTransform(perm), "操作成功"))
+		_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
 	}
 
 }
 
 /**
-* @api {post} /admin/permissions/:id/update 更新权限
+* @api {post} /admin/configs/:id/update 更新权限
 * @apiName 更新权限
-* @apiGroup Permissions
+* @apiGroup Configs
 * @apiVersion 1.0.0
 * @apiDescription 更新权限
-* @apiSampleRequest /admin/permissions/:id/update
+* @apiSampleRequest /admin/configs/:id/update
 * @apiParam {string} name 权限名
 * @apiParam {string} display_name
 * @apiParam {string} description
@@ -101,15 +100,15 @@ func CreatePermission(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func UpdatePermission(ctx iris.Context) {
-	aul := new(models.Permission)
+func UpdateConfig(ctx iris.Context) {
+	config := new(models.Config)
 
-	if err := ctx.ReadJSON(aul); err != nil {
+	if err := ctx.ReadJSON(config); err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	err := validates.Validate.Struct(*aul)
+	err := validates.Validate.Struct(*config)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
@@ -122,8 +121,8 @@ func UpdatePermission(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	perm := models.NewPermission(id, "", "")
-	err = perm.UpdatePermission(aul)
+	config.ID = id
+	err = config.UpdateConfig()
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
@@ -131,74 +130,59 @@ func UpdatePermission(ctx iris.Context) {
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	if perm.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, perm, "操作失败"))
+	if config.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(400, config, "操作失败"))
 	} else {
-		_, _ = ctx.JSON(ApiResource(200, permTransform(perm), "操作成功"))
+		_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
 	}
 
 }
 
 /**
-* @api {delete} /admin/permissions/:id/delete 删除权限
+* @api {delete} /admin/configs/:id/delete 删除权限
 * @apiName 删除权限
-* @apiGroup Permissions
+* @apiGroup Configs
 * @apiVersion 1.0.0
 * @apiDescription 删除权限
-* @apiSampleRequest /admin/permissions/:id/delete
+* @apiSampleRequest /admin/configs/:id/delete
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func DeletePermission(ctx iris.Context) {
+func DeleteConfig(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	perm := models.NewPermission(id, "", "")
-	perm.DeletePermissionById()
+	config := models.NewConfig()
+	config.ID = id
+	config.DeleteConfig()
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }
 
 /**
-* @api {get} /permissions 获取所有的权限
+* @api {get} /configs 获取所有的权限
 * @apiName 获取所有的权限
-* @apiGroup Permissions
+* @apiGroup Configs
 * @apiVersion 1.0.0
 * @apiDescription 获取所有的权限
-* @apiSampleRequest /permissions
+* @apiSampleRequest /configs
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
-func GetAllPermissions(ctx iris.Context) {
+func GetAllConfigs(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
 	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
 
-	permissions, err := models.GetAllPermissions(name, orderBy, offset, limit)
+	configs, err := models.GetAllConfigs(name, orderBy, offset, limit)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, permsTransform(permissions), "操作成功"))
-}
-
-func permsTransform(perms []*models.Permission) []*transformer.Permission {
-	var rs []*transformer.Permission
-	for _, perm := range perms {
-		r := permTransform(perm)
-		rs = append(rs, r)
-	}
-	return rs
-}
-
-func permTransform(perm *models.Permission) *transformer.Permission {
-	r := &transformer.Permission{}
-	g := gf.NewTransform(r, perm, time.RFC3339)
-	_ = g.Transformer()
-	return r
+	_, _ = ctx.JSON(ApiResource(200, configs, "操作成功"))
 }

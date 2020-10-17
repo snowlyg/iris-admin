@@ -62,6 +62,7 @@ func (s *Server) NewApp() {
 		&models.Role{},
 		&models.Permission{},
 		&models.Article{},
+		&models.Config{},
 	)
 
 	iris.RegisterOnInterrupt(func() {

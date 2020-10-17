@@ -19,6 +19,10 @@ func App(api *iris.Application) {
 			app.Get("/", func(ctx iris.Context) { // 首页模块
 				_ = ctx.View("index")
 			})
+
+			app.Get("/admin", func(ctx iris.Context) { // 首页模块
+				_ = ctx.View("index")
+			})
 		}
 
 		v1 := app.Party("/v1")

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/snowlyg/IrisAdminApi/config"
+	"net/http"
 	"strconv"
 
 	"github.com/fatih/color"
@@ -30,12 +31,7 @@ func GetAll(model interface{}, string, orderBy string, offset, limit int) *gorm.
 	if len(string) > 0 {
 		db.Where("name LIKE ?", "%"+string+"%")
 	}
-	if offset > 0 {
-		db.Offset((offset - 1) * limit)
-	}
-	if limit > 0 {
-		db.Limit(limit)
-	}
+
 	return db
 }
 
@@ -61,6 +57,26 @@ func GetRolesForUser(uid uint) []string {
 	}
 
 	return uids
+}
+
+func Paginate(r *http.Request) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		page, _ := strconv.Atoi(r.FormValue("offset"))
+		if page == 0 {
+			page = 1
+		}
+
+		pageSize, _ := strconv.Atoi(r.FormValue("limit"))
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 0:
+			pageSize = 10
+		}
+
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
 }
 
 func GetPermissionsForUser(uid uint) [][]string {

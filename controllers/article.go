@@ -177,7 +177,7 @@ func GetAllArticles(ctx iris.Context) {
 	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles(name, orderBy, offset, limit)
+	articles, count, err := models.GetAllArticles(ctx.Request(), name, orderBy, offset, limit)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -186,7 +186,7 @@ func GetAllArticles(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	transform := articlesTransform(articles)
-	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count}, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
 }
 
 func articlesTransform(articles []*models.Article) []*transformer.ArticleList {

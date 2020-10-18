@@ -24,6 +24,27 @@ import (
 * @apiSuccess {String} data 返回数据
 * @apiPermission
  */
+func GetPublishedArticle(ctx iris.Context) {
+	id, _ := ctx.Params().GetUint("id")
+	article := models.NewArticle().GetPublishedArticleById(id)
+	ctx.StatusCode(iris.StatusOK)
+
+	rr := articleTransform(article)
+	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
+}
+
+/**
+* @api {get} /admin/articles/:id 根据id获取文章信息
+* @apiName 根据id获取文章信息
+* @apiGroup Articles
+* @apiVersion 1.0.0
+* @apiDescription 根据id获取文章信息
+* @apiSampleRequest /articles/:id
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission
+ */
 func GetArticle(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	article := models.NewArticle().GetArticleById(id)

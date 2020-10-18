@@ -31,8 +31,18 @@ func NewArticle() *Article {
  * @method GetArticleById
  * @param  {[type]}       role  *Article [description]
  */
-func (r *Article) GetArticleById(id uint) *Article {
+func (r *Article) GetPublishedArticleById(id uint) *Article {
 	IsNotFound(sysinit.Db.Where("id = ?", id).Where("status = ?", "published").First(r).Error)
+	return r
+}
+
+/**
+ * 通过 id 获取 role 记录
+ * @method GetArticleById
+ * @param  {[type]}       role  *Article [description]
+ */
+func (r *Article) GetArticleById(id uint) *Article {
+	IsNotFound(sysinit.Db.Where("id = ?", id).First(r).Error)
 	return r
 }
 

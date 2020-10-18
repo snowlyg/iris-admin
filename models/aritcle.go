@@ -32,7 +32,7 @@ func NewArticle() *Article {
  * @param  {[type]}       role  *Article [description]
  */
 func (r *Article) GetArticleById(id uint) *Article {
-	IsNotFound(sysinit.Db.Where("id = ?", id).First(r).Error)
+	IsNotFound(sysinit.Db.Where("id = ?", id).Where("status = ?", "published").First(r).Error)
 	return r
 }
 
@@ -87,22 +87,6 @@ func (r *Article) CreateArticle() error {
 
 	return nil
 }
-
-//func addPerms(permIds []uint, role *Article) {
-//	if len(permIds) > 0 {
-//		roleId := strconv.FormatUint(uint64(role.ID), 10)
-//		if _, err := sysinit.Enforcer.DeletePermissionsForUser(roleId); err != nil {
-//			color.Red(fmt.Sprintf("AppendPermsErr:%s \n", err))
-//		}
-//		var perms []Permission
-//		sysinit.Db.Where("id in (?)", permIds).Find(&perms)
-//		for _, perm := range perms {
-//			if _, err := sysinit.Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
-//				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
-//			}
-//		}
-//	}
-//}
 
 /**
  * 更新

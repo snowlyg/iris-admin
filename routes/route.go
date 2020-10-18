@@ -30,7 +30,7 @@ func App(api *iris.Application) {
 		v1 := app.Party("/v1")
 		{
 			v1.PartyFunc("/article", func(aritcle iris.Party) {
-				aritcle.Get("/", controllers.GetAllArticles)
+				aritcle.Get("/", controllers.GetAllPublishedArticles)
 				aritcle.Get("/{id:uint}", controllers.GetArticle)
 			})
 			v1.Post("/admin/login", controllers.UserLogin)

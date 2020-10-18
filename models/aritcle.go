@@ -55,7 +55,7 @@ func (r *Article) DeleteArticleById() *Article {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllArticles(name, orderBy string, offset, limit int) ([]*Article, int64, error) {
+func GetAllArticles(name, orderBy, published string, offset, limit int) ([]*Article, int64, error) {
 	var articles []*Article
 	var count int64
 
@@ -63,8 +63,11 @@ func GetAllArticles(name, orderBy string, offset, limit int) ([]*Article, int64,
 	if err := getAll.Count(&count).Error; err != nil {
 		return nil, count, err
 	}
+	if len(published) > 0 {
+		getAll = getAll.Where("status = ?", "published")
+	}
 
-	if err := getAll.Scopes(Paginate(offset, limit)).Where("status = ?", "published").Find(&articles).Error; err != nil {
+	if err := getAll.Scopes(Paginate(offset, limit)).Find(&articles).Error; err != nil {
 		return nil, count, err
 	}
 

@@ -171,13 +171,43 @@ func DeleteArticle(ctx iris.Context) {
 * @apiSuccess {String} data 返回数据
 * @apiPermission null
  */
+func GetAllPublishedArticles(ctx iris.Context) {
+	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
+	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
+	searchStr := ctx.FormValue("searchStr")
+	orderBy := ctx.FormValue("orderBy")
+
+	articles, count, err := models.GetAllArticles(searchStr, orderBy, "published", offset, limit)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
+
+	ctx.StatusCode(iris.StatusOK)
+	transform := articlesTransform(articles)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+}
+
+/**
+* @api {get} /admin/articles 获取所有的文章
+* @apiName 获取所有的文章
+* @apiGroup Articles
+* @apiVersion 1.0.0
+* @apiDescription 获取所有的文章
+* @apiSampleRequest /admin/articles
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
 func GetAllArticles(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles(searchStr, orderBy, offset, limit)
+	articles, count, err := models.GetAllArticles(searchStr, orderBy, "", offset, limit)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

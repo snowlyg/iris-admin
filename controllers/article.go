@@ -174,10 +174,10 @@ func DeleteArticle(ctx iris.Context) {
 func GetAllArticles(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
-	name := ctx.FormValue("name")
+	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles(ctx.Request(), name, orderBy, offset, limit)
+	articles, count, err := models.GetAllArticles(searchStr, orderBy, offset, limit)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

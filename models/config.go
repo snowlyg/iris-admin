@@ -55,8 +55,8 @@ func (u *Config) DeleteConfig() {
  */
 func GetAllConfigs(name, orderBy string, offset, limit int) ([]*Config, error) {
 	var configs []*Config
-	q := GetAll(&Config{}, name, orderBy, offset, limit)
-	if err := q.Find(&configs).Error; err != nil {
+	q := GetAll(&Config{}, name, orderBy)
+	if err := q.Scopes(Paginate(offset, limit)).Find(&configs).Error; err != nil {
 		return nil, err
 	}
 	return configs, nil

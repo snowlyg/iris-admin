@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/snowlyg/IrisAdminApi/config"
-	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
@@ -21,17 +21,19 @@ import (
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAll(model interface{}, string, orderBy string, offset, limit int) *gorm.DB {
+func GetAll(model interface{}, str, orderBy string) *gorm.DB {
 	db := sysinit.Db.Model(model)
 	if len(orderBy) > 0 {
-		db.Order(orderBy + "desc")
+		db = db.Order(orderBy + " desc")
 	} else {
-		db.Order("created_at desc")
+		db = db.Order("created_at desc")
 	}
-	if len(string) > 0 {
-		db.Where("name LIKE ?", "%"+string+"%")
+	if len(str) > 0 {
+		sers := strings.Split(str, ":")
+		if len(sers) == 2 {
+			db = db.Where(fmt.Sprintf("%s LIKE ?", sers[0]), fmt.Sprintf("%%%s%%", sers[1]))
+		}
 	}
-
 	return db
 }
 
@@ -59,14 +61,12 @@ func GetRolesForUser(uid uint) []string {
 	return uids
 }
 
-func Paginate(r *http.Request) func(db *gorm.DB) *gorm.DB {
+func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		page, _ := strconv.Atoi(r.FormValue("offset"))
 		if page == 0 {
 			page = 1
 		}
 
-		pageSize, _ := strconv.Atoi(r.FormValue("limit"))
 		switch {
 		case pageSize > 100:
 			pageSize = 100

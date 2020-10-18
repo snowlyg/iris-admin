@@ -5,7 +5,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
-	"net/http"
 	"time"
 )
 
@@ -56,20 +55,18 @@ func (r *Article) DeleteArticleById() *Article {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllArticles(r *http.Request, name, orderBy string, offset, limit int) ([]*Article, int64, error) {
+func GetAllArticles(name, orderBy string, offset, limit int) ([]*Article, int64, error) {
 	var articles []*Article
 	var count int64
 
-	getAll := GetAll(&Article{}, name, orderBy, offset, limit)
+	getAll := GetAll(&Article{}, name, orderBy)
 	if err := getAll.Count(&count).Error; err != nil {
 		return nil, count, err
 	}
 
-	if err := getAll.Where("status = ?", "published").Find(&articles).Error; err != nil {
+	if err := getAll.Scopes(Paginate(offset, limit)).Where("status = ?", "published").Find(&articles).Error; err != nil {
 		return nil, count, err
 	}
-
-	sysinit.Db.Scopes(Paginate(r)).Find(&articles)
 
 	fmt.Println(fmt.Sprintf("offset:%d limit:%d", offset, limit))
 

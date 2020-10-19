@@ -240,8 +240,8 @@ func GetAllArticles(ctx iris.Context) {
 	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
 }
 
-func articlesTransform(articles []*models.Article) []*transformer.ArticleList {
-	var rs []*transformer.ArticleList
+func articlesTransform(articles []*models.Article) []*transformer.Article {
+	var rs []*transformer.Article
 	for _, article := range articles {
 		r := articleListTransform(article)
 		rs = append(rs, r)
@@ -249,8 +249,8 @@ func articlesTransform(articles []*models.Article) []*transformer.ArticleList {
 	return rs
 }
 
-func articleListTransform(article *models.Article) *transformer.ArticleList {
-	r := &transformer.ArticleList{}
+func articleListTransform(article *models.Article) *transformer.Article {
+	r := &transformer.Article{}
 	g := gf.NewTransform(r, article, time.RFC3339)
 	_ = g.Transformer()
 	return r

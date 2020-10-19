@@ -29,7 +29,7 @@ func GetPublishedArticle(ctx iris.Context) {
 	article := models.NewArticle().GetPublishedArticleById(id)
 	ctx.StatusCode(iris.StatusOK)
 
-	rr := articleTransform(article)
+	rr := articleListTransform(article)
 	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
 }
 

@@ -17,24 +17,9 @@ func App(api *iris.Application) {
 	app := api.Party("/").AllowMethods(iris.MethodOptions)
 	{
 		app.HandleDir("/uploads", iris.Dir(filepath.Join(libs.CWD(), "uploads")))
-		app.Macros().Get("string").RegisterFunc("isNotApi",
-			func() func(string) bool {
-				return func(paramValue string) bool {
-					if paramValue == "v1" {
-						return false
-					}
-
-					return true
-				}
-			})
-
 		if config.Config.Bindata {
 			app.Get("/", func(ctx iris.Context) { // 首页模块
 				_ = ctx.View("index")
-			})
-
-			app.Get("/{name:string isNotApi()}", func(ctx iris.Context) { // 首页模块
-				ctx.Redirect("/")
 			})
 		}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/snowlyg/IrisAdminApi/models"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 /**
@@ -38,7 +39,7 @@ func UploadFile(ctx iris.Context) {
 		return
 	}
 
-	filename := fmt.Sprintf("%s.%s", libs.MD5(fns[0]), fns[1])
+	filename := fmt.Sprintf("%s_%d.%s", libs.MD5(fns[0]), time.Now().Unix(), fns[1])
 	path := filepath.Join(libs.CWD(), "uploads", "images")
 	err = libs.EnsureDir(path)
 	_, err = ctx.SaveFormFile(fh, filepath.Join(path, filename))

@@ -16,6 +16,6 @@ CGO_ENABLED=1 GOOS=linux CC=/usr/local/gcc-4.8.1-for-linux64/bin/x86_64-pc-linux
 # 构建镜像
 sudo docker build -t irisadminapi:demo .
 # 启动容器
-docker run -d -p 8085:8085 -v ../application.yml:/go/src/github.com/snowlyg/IrisAdminApi/application.yml --name irisadminapi_demo risadminapi:demo
+docker run -d -p 8085:8085  --name irisadminapi_demo irisadminapi:demo
 
 exit 0

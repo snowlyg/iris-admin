@@ -42,6 +42,19 @@
 
 #### 更新日志
 
+> 最近跟新：增加 bindata 配置项 默认为 false ， 为 true 的时候开启 bindata 单文件模式;
+> 前端将会通过 bindata.go 文件集成到项目中。
+> 增加 build.sh 部署 docker 编译部署文件 。
+
+#### Docker 方式部署
+```bash
+ # 需要安装 docker 
+ # application.yml 配置 bindata 为 true
+ # application.yml 配置 host 为 0.0.0.0
+./build.sh
+
+```
+
 [UPDATE](UPDATE.MD)
 ---
 
@@ -119,10 +132,12 @@ npm i
 npm run dev 
 
 # 打包前端代码（部署时使用）
-npm run build:prod  或者  npm run build:stage
+npm run build:prod  
+#或者  
+npm run build:stage
 
 ```
-
+> 如果配置文件 bindata 设置为 true,为二进制模式需要将前端文件打包成二进制文件
 - 生成二进制前端文件
 ```shell script
 
@@ -154,7 +169,7 @@ air
 > 
 
 ```shell script
-# 设置环境变量 TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd
+# 设置环境变量 TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi
 # 否则无法加载配置文件
 
 # 所有测试

@@ -1,8 +1,0 @@
-*.dll
-*.db
-air.log
-
-tmp/
-/logs/
-/.idea/
-

@@ -33,9 +33,9 @@ func init() {
 	Fake.Rand = rand.New(rand.NewSource(42))
 	rand.Seed(time.Now().UnixNano())
 
-	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "data", "*.yml"))
+	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "seeder", "data", "*.yml"))
 	if config.Config.Debug {
-		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
+		logger.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
 	}
 	if err := configor.Load(&Seeds, filepaths...); err != nil {
 		logger.Println(err)
@@ -45,10 +45,13 @@ func init() {
 func Run() {
 
 	AutoMigrates()
+
 	CreatePerms()
 	fmt.Println(fmt.Sprintf("权限填充完成！！"))
+
 	CreateAdminRole()
 	fmt.Println(fmt.Sprintf("管理角色填充完成！！"))
+
 	CreateAdminUser()
 	fmt.Println(fmt.Sprintf("管理员填充完成！！"))
 
@@ -60,15 +63,15 @@ func CreatePerms() {
 		fmt.Println(fmt.Sprintf("填充权限：%v", Seeds))
 	}
 	for _, m := range Seeds.Perms {
-		perm := &models.Permission{
-			Model:       gorm.Model{CreatedAt: time.Now()},
-			Name:        m.Name,
-			DisplayName: m.DisplayName,
-			Description: m.Description,
-			Act:         m.Act,
-		}
-		perm.GetPermissionByNameAct()
-		if perm.ID == 0 {
+		perm, err := models.GetPermissionByNameAct(m.Name, m.Act)
+		if err != nil && perm.ID == 0 {
+			perm = &models.Permission{
+				Model:       gorm.Model{CreatedAt: time.Now()},
+				Name:        m.Name,
+				DisplayName: m.DisplayName,
+				Description: m.Description,
+				Act:         m.Act,
+			}
 			if err := perm.CreatePermission(); err != nil {
 				logger.Println(fmt.Sprintf("权限填充错误：%v", err))
 			}
@@ -78,15 +81,16 @@ func CreatePerms() {
 
 // CreateAdminRole 新建管理角色
 func CreateAdminRole() {
-	role := &models.Role{
-		Name:        config.Config.Admin.RoleName,
-		DisplayName: config.Config.Admin.RoleDisplayName,
-		Description: config.Config.Admin.RoleDisplayName,
-		Model:       gorm.Model{CreatedAt: time.Now()},
-	}
 
-	role.GetRoleByName()
-	if role.ID == 0 {
+	role, err := models.GetRoleByName(config.Config.Admin.RoleName)
+	if err != nil && role.ID == 0 {
+		role = &models.Role{
+			Name:        config.Config.Admin.RoleName,
+			DisplayName: config.Config.Admin.RoleDisplayName,
+			Description: config.Config.Admin.RoleDisplayName,
+			Model:       gorm.Model{CreatedAt: time.Now()},
+		}
+
 		var permIds []uint
 		perms, _ := models.GetAllPermissions("", "", 0, 0)
 		for _, perm := range perms {
@@ -106,28 +110,31 @@ func CreateAdminRole() {
 
 // CreateAdminUser 新建管理员
 func CreateAdminUser() {
-	admin := &models.User{
-		Username: "username",
-		Name:     "超级管理员",
-		Password: "123456",
-		Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
-		Intro:    "超级弱鸡程序猿一枚！！！！",
-		Model:    gorm.Model{CreatedAt: time.Now()},
-	}
-	var roleIds []uint
-	roles, _ := models.GetAllRoles("", "", 0, 0)
-	for _, role := range roles {
-		roleIds = append(roleIds, role.ID)
-	}
-	admin.RoleIds = roleIds
-	if config.Config.Debug {
-		fmt.Println(fmt.Sprintf("填充管理员数据：%v", admin))
-	}
-	admin.GetUserByUsername()
-	if admin.ID == 0 {
+
+	admin, err := models.GetUserByUsername("username")
+
+	if err != nil && admin.ID == 0 {
+		admin = &models.User{
+			Username: "username",
+			Name:     "超级管理员",
+			Password: "123456",
+			Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
+			Intro:    "超级弱鸡程序猿一枚！！！！",
+			Model:    gorm.Model{CreatedAt: time.Now()},
+		}
+		var roleIds []uint
+		roles, _ := models.GetAllRoles("", "", 0, 0)
+		for _, role := range roles {
+			roleIds = append(roleIds, role.ID)
+		}
+		admin.RoleIds = roleIds
 		if err := admin.CreateUser(); err != nil {
 			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
 		}
+	}
+
+	if config.Config.Debug {
+		fmt.Println(fmt.Sprintf("填充管理员数据：%v", admin))
 	}
 }
 

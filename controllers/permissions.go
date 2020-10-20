@@ -26,8 +26,12 @@ import (
  */
 func GetPermission(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	perm := models.NewPermission(id, "", "")
-	perm.GetPermissionById()
+	perm, err := models.GetPermissionById(id)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, permTransform(perm), "操作成功"))
@@ -74,9 +78,9 @@ func CreatePermission(ctx iris.Context) {
 	}
 
 	if perm.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, perm, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 	} else {
-		_, _ = ctx.JSON(ApiResource(200, perm, "操作成功"))
+		_, _ = ctx.JSON(ApiResource(200, permTransform(perm), "操作成功"))
 	}
 }
 
@@ -138,8 +142,12 @@ func UpdatePermission(ctx iris.Context) {
  */
 func DeletePermission(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	perm := models.NewPermission(id, "", "")
-	perm.DeletePermissionById()
+	err := models.DeletePermissionById(id)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }

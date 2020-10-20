@@ -19,14 +19,12 @@ type Role struct {
 	PermIds     []uint `gorm:"-" json:"perm_ids" comment:"权限id"`
 }
 
-func NewRole(id uint, name string) *Role {
+func NewRole() *Role {
 	return &Role{
 		Model: gorm.Model{
-			ID:        id,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Name: name,
 	}
 }
 
@@ -35,8 +33,13 @@ func NewRole(id uint, name string) *Role {
  * @method GetRoleById
  * @param  {[type]}       role  *Role [description]
  */
-func (r *Role) GetRoleById() {
-	IsNotFound(sysinit.Db.Where("id = ?", r.ID).First(r).Error)
+func GetRoleById(id uint) (*Role, error) {
+	r := NewRole()
+	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(r).Error)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 /**
@@ -44,18 +47,27 @@ func (r *Role) GetRoleById() {
  * @method GetRoleByName
  * @param  {[type]}       role  *Role [description]
  */
-func (r *Role) GetRoleByName() {
-	IsNotFound(sysinit.Db.Where("name = ?", r.Name).First(r).Error)
+func GetRoleByName(name string) (*Role, error) {
+	r := NewRole()
+	err := IsNotFound(sysinit.Db.Where("name = ?", name).First(r).Error)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 /**
  * 通过 id 删除角色
  * @method DeleteRoleById
  */
-func (r *Role) DeleteRoleById() {
+func DeleteRoleById(id uint) error {
+	r := NewRole()
+	r.ID = id
 	if err := sysinit.Db.Delete(r).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
+		return err
 	}
+	return nil
 }
 
 /**
@@ -131,9 +143,8 @@ func (r *Role) RolePermisions() []*Permission {
 	var ps []*Permission
 	for _, perm := range perms {
 		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {
-			p := NewPermission(0, perm[1], perm[2])
-			p.GetPermissionByNameAct()
-			if p.ID > 0 {
+			p, err := GetPermissionByNameAct(perm[1], perm[2])
+			if err == nil && p.ID > 0 {
 				ps = append(ps, p)
 			}
 		}

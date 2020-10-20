@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/controllers"
 	"github.com/snowlyg/IrisAdminApi/middleware"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
@@ -11,9 +12,12 @@ func App(api *iris.Application) {
 	api.UseRouter(middleware.CrsAuth())
 	app := api.Party("/").AllowMethods(iris.MethodOptions)
 	{
-		app.Get("/", func(ctx iris.Context) { // 首页模块
-			_ = ctx.View("index.html")
-		})
+		// 二进制模式 ， 启用项目入口
+		if config.Config.Bindata {
+			app.Get("/", func(ctx iris.Context) { // 首页模块
+				_ = ctx.View("index.html")
+			})
+		}
 
 		admin := app.Party("/v1")
 		{

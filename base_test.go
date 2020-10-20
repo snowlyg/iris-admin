@@ -1,5 +1,4 @@
 // +build test
-
 package main
 
 import (
@@ -24,6 +23,7 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
+	os.Setenv("TRAVIS_BUILD_DIR", "~/go/src/github.com/snowlyg/IrisAdminApi/cmd")
 	s := web_server.NewServer(AssetFile(), Asset, AssetNames) // 初始化app
 	s.NewApp()
 	app = s.App
@@ -36,13 +36,13 @@ func TestMain(m *testing.M) {
 	os.Exit(exitCode)
 }
 
-func getHttpexpect(t *testing.T) *httpexpect.Expect {
+func getHttpExpect(t *testing.T) *httpexpect.Expect {
 	return httptest.New(t, app, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/admin/"})
 }
 
 // 单元测试 login 方法
 func login(t *testing.T, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
+	e = getHttpExpect(t)
 	e.POST("login").WithJSON(Object).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Code, Msg)
@@ -52,7 +52,7 @@ func login(t *testing.T, Object interface{}, StatusCode int, Code int, Msg strin
 
 // 单元测试 create 方法
 func create(t *testing.T, url string, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
+	e = getHttpExpect(t)
 	ob := e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 	ob.Value("code").Equal(Code)
@@ -63,7 +63,7 @@ func create(t *testing.T, url string, Object interface{}, StatusCode int, Code i
 
 // 单元测试 update 方法
 func update(t *testing.T, url string, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
+	e = getHttpExpect(t)
 	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 	ob.Value("code").Equal(Code)
@@ -74,7 +74,7 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Code i
 
 // 单元测试 getOne 方法
 func getOne(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
+	e = getHttpExpect(t)
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Code, Msg)
@@ -83,7 +83,7 @@ func getOne(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 
 // 单元测试 getOnAuth 方法
 func getOnAuth(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
+	e = getHttpExpect(t)
 	e.GET(url).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Code, Msg)
@@ -92,7 +92,7 @@ func getOnAuth(t *testing.T, url string, StatusCode int, Code int, Msg string) (
 
 // 单元测试 bImport 方法
 func bImport(t *testing.T, url string, StatusCode int, Code int, Msg string, _ map[string]interface{}) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
+	e = getHttpExpect(t)
 	e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		WithMultipart().
 		WithFile("file", "permissions.xlsx").
@@ -104,7 +104,7 @@ func bImport(t *testing.T, url string, StatusCode int, Code int, Msg string, _ m
 
 // 单元测试 getMore 方法
 func getMore(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
+	e = getHttpExpect(t)
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Code, Msg)
@@ -114,7 +114,7 @@ func getMore(t *testing.T, url string, StatusCode int, Code int, Msg string) (e 
 
 // 单元测试 delete 方法
 func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
+	e = getHttpExpect(t)
 	e.DELETE(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Code, Msg)
@@ -122,13 +122,14 @@ func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 }
 
 func CreateRole(name, disName, dec string) *models.Role {
-	role := &models.Role{
-		Name:        name,
-		DisplayName: disName,
-		Description: dec,
-	}
-	role.GetRoleByName()
-	if role.ID == 0 {
+
+	role, err := models.GetRoleByName(name)
+	if err != nil && role.ID == 0 {
+		role := &models.Role{
+			Name:        name,
+			DisplayName: disName,
+			Description: dec,
+		}
 		role.CreateRole()
 	}
 	return role

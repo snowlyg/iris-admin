@@ -17,15 +17,12 @@ type Permission struct {
 	Act         string `gorm:"VARCHAR(191)" json:"act" comment:"Act"`
 }
 
-func NewPermission(id uint, name, act string) *Permission {
+func NewPermission() *Permission {
 	return &Permission{
 		Model: gorm.Model{
-			ID:        id,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Name: name,
-		Act:  act,
 	}
 }
 
@@ -34,8 +31,13 @@ func NewPermission(id uint, name, act string) *Permission {
  * @method GetPermissionById
  * @param  {[type]}       permission  *Permission [description]
  */
-func (p *Permission) GetPermissionById() {
-	IsNotFound(sysinit.Db.Where("id = ?", p.ID).First(p).Error)
+func GetPermissionById(id uint) (*Permission, error) {
+	p := NewPermission()
+	if err := IsNotFound(sysinit.Db.Where("id = ?", id).First(p).Error); err != nil {
+		return nil, err
+	}
+
+	return p, nil
 }
 
 /**
@@ -43,18 +45,27 @@ func (p *Permission) GetPermissionById() {
  * @method GetPermissionByName
  * @param  {[type]}       permission  *Permission [description]
  */
-func (p *Permission) GetPermissionByNameAct() {
-	IsNotFound(sysinit.Db.Where("name = ?", p.Name).Where("act = ?", p.Act).First(p).Error)
+func GetPermissionByNameAct(name, act string) (*Permission, error) {
+	p := NewPermission()
+	err := IsNotFound(sysinit.Db.Where("name = ?", name).Where("act = ?", act).First(p).Error)
+	if err != nil {
+		return nil, err
+	}
+	return p, nil
 }
 
 /**
  * 通过 id 删除权限
  * @method DeletePermissionById
  */
-func (p *Permission) DeletePermissionById() {
+func DeletePermissionById(id uint) error {
+	p := NewPermission()
+	p.ID = id
 	if err := sysinit.Db.Delete(p).Error; err != nil {
 		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
+		return err
 	}
+	return nil
 }
 
 /**

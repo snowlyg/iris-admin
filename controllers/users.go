@@ -26,8 +26,13 @@ import (
  */
 func GetProfile(ctx iris.Context) {
 	userId := ctx.Values().Get("auth_user_id").(uint)
-	user := models.NewUser(userId, "")
-	user.GetUserById()
+	user, err := models.GetUserById(userId)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
+
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, userTransform(user), ""))
 }
@@ -46,8 +51,12 @@ func GetProfile(ctx iris.Context) {
  */
 func GetUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	user := models.NewUser(id, "")
-	user.GetUserById()
+	user, err := models.GetUserById(id)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
@@ -161,13 +170,17 @@ func UpdateUser(ctx iris.Context) {
 func DeleteUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	user := models.NewUser(id, "")
+	user, err := models.GetUserById(id)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
 	if user.Username == "username" {
 		_, _ = ctx.JSON(ApiResource(400, nil, "不能删除管理员"))
 		return
 	}
 
-	if err := user.DeleteUser(); err != nil {
+	if err := models.DeleteUser(id); err != nil {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -219,9 +232,10 @@ func userTransform(user *models.User) *transformer.User {
 	for _, roleId := range roleIds {
 		ri, _ := strconv.Atoi(roleId)
 		ris = append(ris, ri)
-		role := models.NewRole(uint(ri), "")
-		role.GetRoleById()
-		roleName = append(roleName, role.Name)
+		role, err := models.GetRoleById(uint(ri))
+		if err == nil {
+			roleName = append(roleName, role.Name)
+		}
 
 	}
 	u.RoleIds = ris

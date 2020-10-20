@@ -24,30 +24,40 @@ type User struct {
 	RoleIds  []uint `gorm:"-" json:"role_ids"  validate:"required" comment:"角色"`
 }
 
-func NewUser(id uint, username string) *User {
+func NewUser() *User {
 	return &User{
 		Model: gorm.Model{
-			ID:        id,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Username: username,
 	}
 }
 
-func (u *User) GetUserByUsername() {
-	IsNotFound(sysinit.Db.Where("username = ?", u.Username).First(u).Error)
+func GetUserByUsername(username string) (*User, error) {
+	u := NewUser()
+	err := IsNotFound(sysinit.Db.Where("username = ?", username).First(u).Error)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
-func (u *User) GetUserById() {
-	IsNotFound(sysinit.Db.Where("id = ?", u.ID).First(u).Error)
+func GetUserById(id uint) (*User, error) {
+	u := NewUser()
+	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(u).Error)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
 /**
  * 通过 id 删除用户
  * @method DeleteUserById
  */
-func (u *User) DeleteUser() error {
+func DeleteUser(id uint) error {
+	u := NewUser()
+	u.ID = id
 	if err := sysinit.Db.Delete(u).Error; err != nil {
 		return err
 	}

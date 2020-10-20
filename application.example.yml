@@ -1,0 +1,13 @@
+bindata: false #二进制模式
+loglevel: debug  #日志级别 info debug
+debug: true #调试模式
+https: false #https
+host: 127.0.0.1
+port: 8085 #端口
+db:
+  adapter: sqlite3 # mysql postgres sqlite3 数据库类型
+  host: mysql # 数据库地址
+  port: 3306 #数据库端口
+  name: goirisadminapi #数据库名称
+  user: root #数据库用户名
+  password: 123456 #数据库密码

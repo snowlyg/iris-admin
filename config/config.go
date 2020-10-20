@@ -10,6 +10,7 @@ import (
 )
 
 var Config = struct {
+	Bindata  bool   `default:"false" env:"Bindata"`
 	Debug    bool   `default:"false" env:"Debug"`
 	LogLevel string `default:"info" env:"Loglevel"`
 	HTTPS    bool   `default:"false" env:"HTTPS"`
@@ -37,8 +38,11 @@ var Config = struct {
 
 func init() {
 	configPath := filepath.Join(libs.CWD(), "application.yml")
+
+	logger.Println(fmt.Sprintf("配置路径：%s", configPath))
 	if err := configor.Load(&Config, configPath); err != nil {
 		logger.Println(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
+	} else {
+		logger.Println(fmt.Sprintf("系统配置：%+v", Config))
 	}
-
 }

@@ -11,10 +11,13 @@ import (
 	"github.com/snowlyg/IrisAdminApi/sysinit"
 )
 
-func IsNotFound(err error) {
+func IsNotFound(err error) error {
 	if ok := errors.Is(err, gorm.ErrRecordNotFound); !ok && err != nil {
 		color.Red(fmt.Sprintf("error :%v \n ", err))
+		return err
 	}
+
+	return nil
 }
 
 /**
@@ -29,20 +32,33 @@ func IsNotFound(err error) {
 func GetAll(string, orderBy string, offset, limit int) *gorm.DB {
 	db := sysinit.Db
 	if len(orderBy) > 0 {
-		db.Order(orderBy + "desc")
+		db = db.Order(orderBy + "desc")
 	} else {
-		db.Order("created_at desc")
+		db = db.Order("created_at desc")
 	}
 	if len(string) > 0 {
-		db.Where("name LIKE  ?", "%"+string+"%")
+		db = db.Where("name LIKE  ?", "%"+string+"%")
 	}
-	if offset > 0 {
-		db.Offset((offset - 1) * limit)
-	}
-	if limit > 0 {
-		db.Limit(limit)
-	}
+	db = db.Scopes(Paginate(offset, limit))
 	return db
+}
+
+func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if page == 0 {
+			page = 1
+		}
+
+		switch {
+		case pageSize > 100:
+			pageSize = 100
+		case pageSize <= 0:
+			pageSize = 10
+		}
+
+		offset := (page - 1) * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
 }
 
 func Update(v, d interface{}) error {

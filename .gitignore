@@ -1,10 +1,16 @@
 *.dll
 *.db
 *.exe
+*.txt
+*.log
+application.yml
+
 .air.conf
-coverage.txt
 
 tmp/
 /logs/
 /.idea/
+
+main
+main_lin
 

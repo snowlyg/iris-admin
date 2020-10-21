@@ -18,7 +18,10 @@ func TestUserProfile(t *testing.T) {
 }
 
 func TestUserCreate(t *testing.T) {
-	tr := CreateRole("tname3", "tdsiName", "tdec")
+	tr, err := CreateRole("tname3", "tdsiName", "tdec")
+	if err != nil {
+		fmt.Print(err)
+	}
 	oj := map[string]interface{}{
 		"username": gofakeit.Name(),
 		"password": "password",
@@ -30,7 +33,10 @@ func TestUserCreate(t *testing.T) {
 }
 
 func TestUserUpdate(t *testing.T) {
-	tr := CreateRole("tname4", "tdsiName", "tdec")
+	tr, err := CreateRole("tname4", "tdsiName", "tdec")
+	if err != nil {
+		fmt.Print(err)
+	}
 	oj := map[string]interface{}{
 		"username": gofakeit.Name(),
 		"password": "update_name",

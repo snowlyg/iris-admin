@@ -26,10 +26,12 @@ import (
  */
 func GetRole(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	role := models.NewRole(id, "")
-	role.GetRoleById()
-
+	role, err := models.GetRoleById(id)
 	ctx.StatusCode(iris.StatusOK)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
 
 	rr := roleTransform(role)
 	rr.Perms = permsTransform(role.RolePermisions())
@@ -126,9 +128,7 @@ func UpdateRole(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	role.ID = id
-
-	err = role.UpdateRole()
+	err = models.UpdateRole(id, role)
 	ctx.StatusCode(iris.StatusOK)
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -153,18 +153,11 @@ func UpdateRole(ctx iris.Context) {
 * @apiPermission null
  */
 func DeleteRole(ctx iris.Context) {
-	id, _ := ctx.Params().GetUint("id")
-	role := models.NewRole(id, "")
-	role.GetRoleById()
-	if role.Name == "admin" {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, "不能删除管理员角色"))
-		return
-	}
-
-	role.DeleteRoleById()
-
 	ctx.StatusCode(iris.StatusOK)
+	id, _ := ctx.Params().GetUint("id")
+
+	models.DeleteRoleById(id)
+
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }
 

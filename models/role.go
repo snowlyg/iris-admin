@@ -19,14 +19,12 @@ type Role struct {
 	PermIds     []uint `gorm:"-" json:"perm_ids" comment:"权限id"`
 }
 
-func NewRole(id uint, name string) *Role {
+func NewRole() *Role {
 	return &Role{
 		Model: gorm.Model{
-			ID:        id,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Name: name,
 	}
 }
 
@@ -35,8 +33,13 @@ func NewRole(id uint, name string) *Role {
  * @method GetRoleById
  * @param  {[type]}       role  *Role [description]
  */
-func (r *Role) GetRoleById() {
-	IsNotFound(sysinit.Db.Where("id = ?", r.ID).First(r).Error)
+func GetRoleById(id uint) (*Role, error) {
+	r := NewRole()
+	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(r).Error)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 /**
@@ -44,10 +47,13 @@ func (r *Role) GetRoleById() {
  * @method GetRoleById
  * @param  {[type]}       role  *Role [description]
  */
-func GetRolesByIds(ids []int) []*Role {
+func GetRolesByIds(ids []int) ([]*Role, error) {
 	var roles []*Role
-	IsNotFound(sysinit.Db.Find(&roles, ids).Error)
-	return roles
+	err := IsNotFound(sysinit.Db.Find(&roles, ids).Error)
+	if err != nil {
+		return nil, err
+	}
+	return roles, nil
 }
 
 /**
@@ -55,18 +61,28 @@ func GetRolesByIds(ids []int) []*Role {
  * @method GetRoleByName
  * @param  {[type]}       role  *Role [description]
  */
-func (r *Role) GetRoleByName() {
-	IsNotFound(sysinit.Db.Where("name = ?", r.Name).First(r).Error)
+func GetRoleByName(name string) (*Role, error) {
+	r := NewRole()
+	err := IsNotFound(sysinit.Db.Where("name = ?", name).First(r).Error)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 /**
  * 通过 id 删除角色
  * @method DeleteRoleById
  */
-func (r *Role) DeleteRoleById() {
-	if err := sysinit.Db.Delete(r).Error; err != nil {
+func DeleteRoleById(id uint) error {
+	r, err := GetRoleById(id)
+	err = sysinit.Db.Delete(r).Error
+	if err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
+		return err
 	}
+
+	return nil
 }
 
 /**
@@ -127,13 +143,16 @@ func addPerms(permIds []uint, role *Role) {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (r *Role) UpdateRole() error {
-
-	if err := Update(&Role{}, r); err != nil {
+func UpdateRole(id uint, nr *Role) error {
+	r, err := GetRoleById(id)
+	if err != nil {
+		return nil
+	}
+	if err := Update(r, nr); err != nil {
 		return err
 	}
 
-	addPerms(r.PermIds, r)
+	addPerms(nr.PermIds, nr)
 
 	return nil
 }
@@ -144,9 +163,8 @@ func (r *Role) RolePermisions() []*Permission {
 	var ps []*Permission
 	for _, perm := range perms {
 		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {
-			p := NewPermission(0, perm[1], perm[2])
-			p.GetPermissionByNameAct()
-			if p.ID > 0 {
+			p, err := GetPermissionByNameAct(perm[1], perm[2])
+			if err == nil && p.ID > 0 {
 				ps = append(ps, p)
 			}
 		}

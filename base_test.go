@@ -121,17 +121,23 @@ func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 	return
 }
 
-func CreateRole(name, disName, dec string) *models.Role {
-	role := &models.Role{
-		Name:        name,
-		DisplayName: disName,
-		Description: dec,
+func CreateRole(name, disName, dec string) (*models.Role, error) {
+
+	role, err := models.GetRoleByName(name)
+	if err != nil {
+		return nil, err
 	}
-	role.GetRoleByName()
+
 	if role.ID == 0 {
+		role = &models.Role{
+			Name:        name,
+			DisplayName: disName,
+			Description: dec,
+		}
 		role.CreateRole()
 	}
-	return role
+
+	return role, nil
 
 }
 

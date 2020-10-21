@@ -152,8 +152,7 @@ func UpdateArticle(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	article.ID = id
-	err = article.UpdateArticle()
+	err = models.UpdateArticle(id, article)
 
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

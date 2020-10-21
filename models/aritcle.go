@@ -155,10 +155,14 @@ func (r *Article) getTagTypes() {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (r *Article) UpdateArticle() error {
+func UpdateArticle(id uint, nr *Article) error {
+	r, err := GetArticleById(id)
+	if err != nil {
+		return err
+	}
 	r.getTagTypes()
 	fmt.Println(fmt.Sprintf("article:%+v\n", r))
-	if err := Update(&Article{}, r); err != nil {
+	if err := Update(r, nr); err != nil {
 		return err
 	}
 

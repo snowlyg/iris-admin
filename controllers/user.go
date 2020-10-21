@@ -26,8 +26,11 @@ import (
  */
 func GetProfile(ctx iris.Context) {
 	userId := ctx.Values().Get("auth_user_id").(uint)
-	user := models.NewUser(userId, "")
-	user.GetUserById()
+	user, err := models.GetUserById(userId)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, userTransform(user), ""))
 }
@@ -46,9 +49,11 @@ func GetProfile(ctx iris.Context) {
  */
 func GetUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	user := models.NewUser(id, "")
-	user.GetUserById()
-
+	user, err := models.GetUserById(id)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
 }
@@ -135,23 +140,21 @@ func UpdateUser(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	user.ID = id
 	if user.Username == "username" {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员"))
 		return
 	}
 
-	user.UpdateUser(user.Password)
-	ctx.StatusCode(iris.StatusOK)
-	if user.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))
-		return
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
+	err = models.UpdateUserById(id, user)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-
+	ctx.StatusCode(iris.StatusOK)
+	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
+	return
 }
 
 /**
@@ -169,14 +172,12 @@ func UpdateUser(ctx iris.Context) {
 func DeleteUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 
-	user := models.NewUser(id, "")
-	if user.Username == "username" {
+	err := models.DeleteUser(id)
+	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, "不能删除管理员"))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-
-	user.DeleteUser()
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
@@ -227,13 +228,9 @@ func userTransform(user *models.User) *transformer.User {
 		ris = append(ris, ri)
 	}
 
-	roles := models.GetRolesByIds(ris)
-	var roleName []string
-	for _, role := range roles {
-		roleName = append(roleName, role.Name)
+	roles, err := models.GetRolesByIds(ris)
+	if err == nil {
+		u.Roles = rolesTransform(roles)
 	}
-
-	u.RoleIds = ris
-	u.RoleName = roleName
 	return u
 }

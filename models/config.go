@@ -19,7 +19,6 @@ type Config struct {
 func NewConfig() *Config {
 	return &Config{
 		Model: gorm.Model{
-			ID:        0,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
@@ -27,8 +26,16 @@ func NewConfig() *Config {
 }
 
 func GetConfigByName(name string) (*Config, error) {
-	config := new(Config)
+	config := NewConfig()
 	if err := sysinit.Db.Where("name = ?", name).First(config).Error; err != nil {
+		return nil, err
+	}
+	return config, nil
+}
+
+func GetConfigById(id uint) (*Config, error) {
+	config := NewConfig()
+	if err := sysinit.Db.Where("id = ?", id).First(config).Error; err != nil {
 		return nil, err
 	}
 	return config, nil
@@ -38,10 +45,16 @@ func GetConfigByName(name string) (*Config, error) {
  * 通过 id 删除
  * @method DeleteConfig
  */
-func (u *Config) DeleteConfig() {
+func DeleteConfig(id uint) error {
+	u, err := GetConfigById(id)
+	if err != nil {
+		return err
+	}
 	if err := sysinit.Db.Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteConfigByIdErr:%s \n ", err))
+		return err
 	}
+	return nil
 }
 
 /**
@@ -82,8 +95,12 @@ func (u *Config) CreateConfig() error {
  * @method UpdateConfig
  * @param  {[type]} kw string [description]
  */
-func (u *Config) UpdateConfig() error {
-	if err := Update(&Config{}, u); err != nil {
+func UpdateConfig(id uint, nu *Config) error {
+	u, err := GetConfigById(id)
+	if err != nil {
+		return err
+	}
+	if err := Update(u, nu); err != nil {
 		return err
 	}
 

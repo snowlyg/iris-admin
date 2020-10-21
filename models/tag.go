@@ -107,7 +107,11 @@ func (p *Tag) CreateTag() error {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (p *Tag) UpdateTag(pj *Tag) error {
+func UpdateTagById(id uint, pj *Tag) error {
+	p, err := GetUserById(id)
+	if err != nil {
+		return err
+	}
 	if err := Update(p, pj); err != nil {
 		return err
 	}

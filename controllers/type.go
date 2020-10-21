@@ -125,10 +125,10 @@ func UpdateType(ctx iris.Context) {
 
 	id, _ := ctx.Params().GetUint("id")
 	aul.ID = id
-	err = aul.UpdateType(aul)
+	err = models.UpdateTypeById(id, aul)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error update type: %s", err.Error())))
 		return
 	}
 

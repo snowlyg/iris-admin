@@ -57,17 +57,20 @@ func CreatePerms() {
 		fmt.Println(fmt.Sprintf("填充权限：%v", Seeds))
 	}
 	for _, m := range Seeds.Perms {
-		perm := &models.Permission{
-			Model:       gorm.Model{CreatedAt: time.Now()},
-			Name:        m.Name,
-			DisplayName: m.DisplayName,
-			Description: m.Description,
-			Act:         m.Act,
-		}
-		perm.GetPermissionByNameAct()
-		if perm.ID == 0 {
-			if err := perm.CreatePermission(); err != nil {
-				logger.Println(fmt.Sprintf("权限填充错误：%v", err))
+
+		perm, err := models.GetPermissionByNameAct(m.Name, m.Act)
+		if err == nil {
+			if perm.ID == 0 {
+				perm = &models.Permission{
+					Model:       gorm.Model{CreatedAt: time.Now()},
+					Name:        m.Name,
+					DisplayName: m.DisplayName,
+					Description: m.Description,
+					Act:         m.Act,
+				}
+				if err := perm.CreatePermission(); err != nil {
+					logger.Println(fmt.Sprintf("权限填充错误：%v", err))
+				}
 			}
 		}
 	}
@@ -75,41 +78,43 @@ func CreatePerms() {
 
 // CreateAdminRole 新建管理角色
 func CreateAdminRole() {
-	role := &models.Role{
-		Name:        config.Config.Admin.RoleName,
-		DisplayName: config.Config.Admin.RoleDisplayName,
-		Description: config.Config.Admin.RoleDisplayName,
-		Model:       gorm.Model{CreatedAt: time.Now()},
-	}
 
-	var permIds []uint
-	perms, err := models.GetAllPermissions("", "", -1, -1)
-	if config.Config.Debug {
-		if err != nil {
-			fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
+	role, err := models.GetRoleByName(config.Config.Admin.RoleName)
+	if err == nil {
+		if role.ID == 0 {
+			role = &models.Role{
+				Name:        config.Config.Admin.RoleName,
+				DisplayName: config.Config.Admin.RoleDisplayName,
+				Description: config.Config.Admin.RoleDisplayName,
+				Model:       gorm.Model{CreatedAt: time.Now()},
+			}
+
+			var permIds []uint
+			perms, err := models.GetAllPermissions("", "", -1, -1)
+			if config.Config.Debug {
+				if err != nil {
+					fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
+				}
+			}
+
+			for _, perm := range perms {
+				permIds = append(permIds, perm.ID)
+			}
+
+			role.PermIds = permIds
+
+			if err := role.CreateRole(); err != nil {
+				logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
+			}
+		} else {
+			if err := models.UpdateRole(role.ID, role); err != nil {
+				logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
+			}
 		}
 	}
-
-	for _, perm := range perms {
-		permIds = append(permIds, perm.ID)
-	}
-
-	role.PermIds = permIds
-
-	role.GetRoleByName()
-	if role.ID == 0 {
-		if err := role.CreateRole(); err != nil {
-			logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
-		}
-	} else {
-		if err := role.UpdateRole(); err != nil {
-			logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
-		}
-	}
-
 	if config.Config.Debug {
 		fmt.Println(fmt.Sprintf("填充角色数据：%v", role))
-		fmt.Println(fmt.Sprintf("填充角色权限：%v", permIds))
+		fmt.Println(fmt.Sprintf("填充角色权限：%v", role.PermIds))
 	}
 
 }
@@ -147,7 +152,7 @@ func CreateAdminUser() {
 			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
 		}
 	} else {
-		if err := admin.UpdateUser(password); err != nil {
+		if err := models.UpdateUserById(admin.ID, admin); err != nil {
 			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
 		}
 	}

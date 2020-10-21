@@ -121,8 +121,7 @@ func UpdateConfig(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	config.ID = id
-	err = config.UpdateConfig()
+	err = models.UpdateConfig(id, config)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
 		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
@@ -152,9 +151,12 @@ func UpdateConfig(ctx iris.Context) {
  */
 func DeleteConfig(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	config := models.NewConfig()
-	config.ID = id
-	config.DeleteConfig()
+	err := models.DeleteConfig(id)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }

@@ -106,8 +106,12 @@ func (p *Type) CreateType() error {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (p *Type) UpdateType(pj *Type) error {
-	if err := Update(p, pj); err != nil {
+func UpdateTypeById(id uint, np *Type) error {
+	p, err := GetTypeById(id)
+	if err != nil {
+		return err
+	}
+	if err := Update(p, np); err != nil {
 		return err
 	}
 	return nil

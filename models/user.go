@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -18,20 +19,18 @@ type User struct {
 
 	Name     string `gorm:"not null; type:varchar(60)" json:"name" validate:"required,gte=2,lte=50" comment:"用户名"`
 	Username string `gorm:"unique;not null;type:varchar(60)" json:"username" validate:"required,gte=2,lte=50"  comment:"名称"`
-	Password string `gorm:"type:varchar(100)" json:"password" validate:"required"  comment:"密码"`
+	Password string `gorm:"type:varchar(100)" json:"password"  comment:"密码"`
 	Intro    string `gorm:"not null; type:varchar(512)" json:"introduction" comment:"简介"`
 	Avatar   string `gorm:"type:longText" json:"avatar"  comment:"头像"`
 	RoleIds  []uint `gorm:"-" json:"role_ids"  validate:"required" comment:"角色"`
 }
 
-func NewUser(id uint, username string) *User {
+func NewUser() *User {
 	return &User{
 		Model: gorm.Model{
-			ID:        id,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Username: username,
 	}
 }
 
@@ -43,18 +42,33 @@ func GetUserByUsername(username string) (*User, error) {
 	return user, nil
 }
 
-func (u *User) GetUserById() {
-	IsNotFound(sysinit.Db.Where("id = ?", u.ID).First(u).Error)
+func GetUserById(id uint) (*User, error) {
+	u := NewUser()
+	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(u).Error)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
 
 /**
  * 通过 id 删除用户
  * @method DeleteUserById
  */
-func (u *User) DeleteUser() {
-	if err := sysinit.Db.Delete(u).Error; err != nil {
-		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
+func DeleteUser(id uint) error {
+	u, err := GetUserById(id)
+	if err != nil {
+		return err
 	}
+	if u.Username == "username" {
+		return errors.New("不能删除管理员")
+	}
+
+	if err := sysinit.Db.Delete(u, id).Error; err != nil {
+		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
+		return err
+	}
+	return nil
 }
 
 /**
@@ -101,9 +115,13 @@ func (u *User) CreateUser() error {
  * @param  {[type]} cp int    [description]
  * @param  {[type]} mp int    [description]
  */
-func (u *User) UpdateUser(password string) error {
-	u.Password = libs.HashPassword(password)
-	if err := Update(&User{}, u); err != nil {
+func UpdateUserById(id uint, nu *User) error {
+	u, err := GetUserById(id)
+	if err != nil {
+		return err
+	}
+	nu.Password = libs.HashPassword(nu.Password)
+	if err := Update(u, nu); err != nil {
 		return err
 	}
 

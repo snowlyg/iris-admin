@@ -42,7 +42,7 @@
 
 #### 更新日志
 
-> 最近跟新：增加 bindata 配置项 默认为 false ， 为 true 的时候开启 bindata 单文件模式;
+> 最近更新：增加 bindata 配置项 默认为 false ， 为 true 的时候开启 bindata 单文件模式;
 > 前端将会通过 bindata.go 文件集成到项目中。
 > 增加 build.sh 部署 docker 编译部署文件 。
 

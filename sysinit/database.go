@@ -42,7 +42,7 @@ func init() {
 	Db, err = gorm.Open(dialector, &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   config.Config.DB.Prefix, // 表名前缀，`User` 的表名应该是 `t_users`
-			SingularTable: true,                    // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
+			SingularTable: false,                   // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
 		},
 	})
 

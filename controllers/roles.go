@@ -128,13 +128,12 @@ func UpdateRole(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	role.ID = id
 	if role.Name == "admin" {
 		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员角色"))
 		return
 	}
 
-	if err := role.UpdateRole(); err != nil {
+	if err := models.UpdateRole(id, role); err != nil {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}

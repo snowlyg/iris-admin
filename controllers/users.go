@@ -100,9 +100,9 @@ func CreateUser(ctx iris.Context) {
 	}
 
 	if user.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 	} else {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
+		_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
 	}
 
 }
@@ -151,7 +151,7 @@ func UpdateUser(ctx iris.Context) {
 		return
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
 
 }
 
@@ -228,17 +228,17 @@ func userTransform(user *models.User) *transformer.User {
 
 	roleIds := models.GetRolesForUser(user.ID)
 	var ris []int
-	var roleName []string
+	var roles []*models.Role
 	for _, roleId := range roleIds {
 		ri, _ := strconv.Atoi(roleId)
 		ris = append(ris, ri)
 		role, err := models.GetRoleById(uint(ri))
 		if err == nil {
-			roleName = append(roleName, role.Name)
+			roles = append(roles, role)
 		}
 
 	}
 	u.RoleIds = ris
-	u.RoleName = roleName
+	u.Roles = rolesTransform(roles)
 	return u
 }

@@ -268,7 +268,8 @@ func articleTransform(article *models.Article) *transformer.Article {
 	}
 	r.TagNames = tagNames
 	if article.Type != nil {
-		r.Type = ttTransform(article.Type)
+		transform := ttTransform(article.Type)
+		r.Type = *transform
 	}
 	return r
 }

@@ -183,7 +183,7 @@ func DeleteRole(ctx iris.Context) {
 func GetAllRoles(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
-	name := ctx.FormValue("name")
+	name := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
 	roles, err := models.GetAllRoles(name, orderBy, offset, limit)

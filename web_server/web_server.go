@@ -11,7 +11,6 @@ import (
 	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/models"
 	"github.com/snowlyg/IrisAdminApi/routes"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
 )
 
 type Server struct {
@@ -55,19 +54,11 @@ func (s *Server) NewApp() {
 		s.App.HandleDir("/", s.AssetFile)
 	}
 
-	db := sysinit.Db
-	db.AutoMigrate(
-		&models.User{},
-		&models.OauthToken{},
-		&models.Role{},
-		&models.Permission{},
-		&models.Article{},
-		&models.Config{},
-	)
+	models.Migrate()
 
-	iris.RegisterOnInterrupt(func() {
-		_ = db.Close()
-	})
+	//iris.RegisterOnInterrupt(func() {
+	//	_ = sysinit.Db
+	//})
 
 	routes.App(s.App) //注册 app 路由
 }

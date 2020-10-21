@@ -3,13 +3,14 @@ package models
 import (
 	"errors"
 	"fmt"
+	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"github.com/snowlyg/IrisAdminApi/config"
 	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"gorm.io/gorm"
 )
 
 /**
@@ -21,7 +22,7 @@ import (
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAll(model interface{}, str, orderBy string) *gorm.DB {
+func GetAll(model interface{}, str, orderBy string, offset, limit int) *gorm.DB {
 	db := sysinit.Db.Model(model)
 	if len(orderBy) > 0 {
 		db = db.Order(orderBy + " desc")
@@ -34,6 +35,8 @@ func GetAll(model interface{}, str, orderBy string) *gorm.DB {
 			db = db.Where(fmt.Sprintf("%s LIKE ?", sers[0]), fmt.Sprintf("%%%s%%", sers[1]))
 		}
 	}
+
+	db = db.Scopes(Paginate(offset, limit))
 	return db
 }
 
@@ -70,11 +73,16 @@ func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 		switch {
 		case pageSize > 100:
 			pageSize = 100
-		case pageSize <= 0:
+		case pageSize < 0:
+			pageSize = -1
+		case pageSize == 0:
 			pageSize = 10
 		}
 
 		offset := (page - 1) * pageSize
+		if page < 0 {
+			offset = -1
+		}
 		return db.Offset(offset).Limit(pageSize)
 	}
 }
@@ -84,5 +92,29 @@ func GetPermissionsForUser(uid uint) [][]string {
 }
 
 func DropTables() {
-	sysinit.Db.DropTableIfExists(config.Config.DB.Prefix+"users", config.Config.DB.Prefix+"roles", config.Config.DB.Prefix+"permissions", config.Config.DB.Prefix+"articles", config.Config.DB.Prefix+"configs", config.Config.DB.Prefix+"oauth_tokens", "casbin_rule")
+	_ = sysinit.Db.Migrator().DropTable(
+		config.Config.DB.Prefix+"users",
+		config.Config.DB.Prefix+"roles",
+		config.Config.DB.Prefix+"permissions",
+		config.Config.DB.Prefix+"articles",
+		config.Config.DB.Prefix+"configs",
+		config.Config.DB.Prefix+"tags",
+		config.Config.DB.Prefix+"types",
+		config.Config.DB.Prefix+"article_tags",
+		config.Config.DB.Prefix+"oauth_tokens",
+		"casbin_rule")
+}
+
+func Migrate() {
+	sysinit.Db.AutoMigrate(
+		&User{},
+		&Role{},
+		&Permission{},
+		&Article{},
+		&OauthToken{},
+		&gormadapter.CasbinRule{},
+		&Config{},
+		&Tag{},
+		&Type{},
+	)
 }

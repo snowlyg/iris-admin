@@ -72,6 +72,20 @@ func App(api *iris.Application) {
 					configs.Put("/{id:uint}", controllers.UpdateConfig).Name = "编辑系统配置"
 					configs.Delete("/{id:uint}", controllers.DeleteConfig).Name = "删除系统配置"
 				})
+				admin.PartyFunc("/tags", func(tags iris.Party) {
+					tags.Get("/", controllers.GetAllTags).Name = "标签列表"
+					tags.Get("/{id:uint}", controllers.GetTag).Name = "标签详情"
+					tags.Post("/", controllers.CreateTag).Name = "创建标签"
+					tags.Put("/{id:uint}", controllers.UpdateTag).Name = "编辑标签"
+					tags.Delete("/{id:uint}", controllers.DeleteTag).Name = "删除标签"
+				})
+				admin.PartyFunc("/types", func(types iris.Party) {
+					types.Get("/", controllers.GetAllTypes).Name = "分类列表"
+					types.Get("/{id:uint}", controllers.GetType).Name = "分类详情"
+					types.Post("/", controllers.CreateType).Name = "创建分类"
+					types.Put("/{id:uint}", controllers.UpdateType).Name = "编辑分类"
+					types.Delete("/{id:uint}", controllers.DeleteType).Name = "删除分类"
+				})
 			})
 		}
 	}

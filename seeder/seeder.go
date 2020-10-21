@@ -10,12 +10,10 @@ import (
 	"github.com/snowlyg/IrisAdminApi/libs"
 
 	"github.com/azumads/faker"
-	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"github.com/jinzhu/configor"
-	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/models"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"gorm.io/gorm"
 )
 
 var Fake *faker.Faker
@@ -85,7 +83,7 @@ func CreateAdminRole() {
 	}
 
 	var permIds []uint
-	perms, err := models.GetAllPermissions("", "", 0, 0)
+	perms, err := models.GetAllPermissions("", "", -1, -1)
 	if config.Config.Debug {
 		if err != nil {
 			fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
@@ -134,7 +132,7 @@ func CreateAdminUser() {
 			Model:    gorm.Model{CreatedAt: time.Now()},
 		}
 		var roleIds []uint
-		roles, err := models.GetAllRoles("", "", 0, 0)
+		roles, err := models.GetAllRoles("", "", -1, -1)
 		if config.Config.Debug {
 			if err != nil {
 				fmt.Println(fmt.Sprintf("角色获取失败：%v", err))
@@ -166,12 +164,5 @@ func CreateAdminUser() {
 */
 func AutoMigrates() {
 	models.DropTables()
-	sysinit.Db.AutoMigrate(
-		&models.User{},
-		&models.Role{},
-		&models.Permission{},
-		&models.Article{},
-		&models.OauthToken{},
-		&gormadapter.CasbinRule{},
-	)
+	models.Migrate()
 }

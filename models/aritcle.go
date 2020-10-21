@@ -3,8 +3,9 @@ package models
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -20,6 +21,11 @@ type Article struct {
 	Content      string    `gorm:"type:longText" json:"content" comment:"内容" validate:"required,gte=6"`
 	Status       string    `gorm:"not null;default:'';type:varchar(10)" json:"status" comment:"文章状态" validate:"required,gte=1,lte=10"`
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
+
+	TypeID   int
+	Type     *Type
+	Tags     []*Tag   `gorm:"many2many:article_tags;"`
+	TagNames []string `gorm:"-" json:"tag_names"`
 }
 
 func NewArticle() *Article {
@@ -31,9 +37,13 @@ func NewArticle() *Article {
  * @method GetArticleById
  * @param  {[type]}       role  *Article [description]
  */
-func (r *Article) GetPublishedArticleById(id uint) *Article {
-	IsNotFound(sysinit.Db.Where("id = ?", id).Where("status = ?", "published").First(r).Error)
-	return r
+func GetPublishedArticleById(id uint) (*Article, error) {
+	r := NewArticle()
+	err := IsNotFound(sysinit.Db.Where("id = ?", id).Where("status = ?", "published").Preload(clause.Associations).First(r).Error)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 /**
@@ -41,20 +51,27 @@ func (r *Article) GetPublishedArticleById(id uint) *Article {
  * @method GetArticleById
  * @param  {[type]}       role  *Article [description]
  */
-func (r *Article) GetArticleById(id uint) *Article {
-	IsNotFound(sysinit.Db.Where("id = ?", id).First(r).Error)
-	return r
+func GetArticleById(id uint) (*Article, error) {
+	r := NewArticle()
+	err := IsNotFound(sysinit.Db.Where("id = ?", id).Preload(clause.Associations).First(r).Error)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 /**
  * 通过 id 删除角色
  * @method DeleteArticleById
  */
-func (r *Article) DeleteArticleById() *Article {
+func DeleteArticleById(id uint) error {
+	r := NewArticle()
+	r.ID = id
 	if err := sysinit.Db.Delete(r).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteArticleErr:%s \n", err))
+		return err
 	}
-	return r
+	return nil
 }
 
 /**
@@ -69,7 +86,7 @@ func GetAllArticles(name, orderBy, published string, offset, limit int) ([]*Arti
 	var articles []*Article
 	var count int64
 
-	getAll := GetAll(&Article{}, name, orderBy)
+	getAll := GetAll(&Article{}, name, orderBy, offset, limit)
 	if err := getAll.Count(&count).Error; err != nil {
 		return nil, count, err
 	}
@@ -77,11 +94,9 @@ func GetAllArticles(name, orderBy, published string, offset, limit int) ([]*Arti
 		getAll = getAll.Where("status = ?", "published")
 	}
 
-	if err := getAll.Scopes(Paginate(offset, limit)).Find(&articles).Error; err != nil {
+	if err := getAll.Preload("Tags").Find(&articles).Error; err != nil {
 		return nil, count, err
 	}
-
-	fmt.Println(fmt.Sprintf("offset:%d limit:%d", offset, limit))
 
 	return articles, count, nil
 }
@@ -94,11 +109,43 @@ func GetAllArticles(name, orderBy, published string, offset, limit int) ([]*Arti
  * @param  {[type]} mp int    [description]
  */
 func (r *Article) CreateArticle() error {
+	r.getTagTypes()
+
 	if err := sysinit.Db.Create(r).Error; err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (r *Article) getTagTypes() {
+
+	sysinit.Db.Model(r).Association("Tags").Clear()
+	if r.Type != nil && len(r.Type.Name) > 0 {
+		tt, err := GetTypeByName(r.Type.Name)
+		if err == nil && tt.ID > 0 {
+			r.Type = tt
+		}
+	}
+	if len(r.TagNames) > 0 {
+		var tags []*Tag
+		for _, tagName := range r.TagNames {
+			tag, err := GetTagByName(tagName)
+			if err == nil {
+				if tag.ID == 0 {
+					tag.Name = tagName
+					err := tag.CreateTag()
+					if err != nil {
+						fmt.Println(fmt.Sprintf("标签新建错误:%+v\n", err))
+					}
+				}
+				tags = append(tags, tag)
+			}
+		}
+
+		r.Tags = tags
+	}
+	fmt.Println(fmt.Sprintf("article:%+v\n", r))
 }
 
 /**
@@ -109,6 +156,8 @@ func (r *Article) CreateArticle() error {
  * @param  {[type]} mp int    [description]
  */
 func (r *Article) UpdateArticle() error {
+	r.getTagTypes()
+	fmt.Println(fmt.Sprintf("article:%+v\n", r))
 	if err := Update(&Article{}, r); err != nil {
 		return err
 	}

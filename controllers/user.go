@@ -197,7 +197,7 @@ func DeleteUser(ctx iris.Context) {
 func GetAllUsers(ctx iris.Context) {
 	offset := ctx.URLParamIntDefault("offset", 1)
 	limit := ctx.URLParamIntDefault("limit", 15)
-	name := ctx.URLParam("name")
+	name := ctx.URLParam("searchStr")
 	orderBy := ctx.URLParam("orderBy")
 
 	users := models.GetAllUsers(name, orderBy, offset, limit)

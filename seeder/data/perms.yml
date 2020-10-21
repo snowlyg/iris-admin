@@ -139,3 +139,53 @@ perms:
     description: "删除系统配置"
     act: "DELETE"
 
+  - name: "/v1/admin/tags"
+    displayname: "标签列表"
+    description: "标签列表"
+    act: "GET"
+
+  - name: "/v1/admin/tags/{id:uint}"
+    displayname: "标签详情"
+    description: "标签详情"
+    act: "GET"
+
+  - name: "/v1/admin/tags"
+    displayname: "创建标签"
+    description: "创建标签"
+    act: "POST"
+
+  - name: "/v1/admin/tags/{id:uint}"
+    displayname: "编辑标签"
+    description: "编辑标签"
+    act: "PUT"
+
+  - name: "/v1/admin/tags/{id:uint}"
+    displayname: "删除标签"
+    description: "删除标签"
+    act: "DELETE"
+
+  - name: "/v1/admin/types"
+    displayname: "分类列表"
+    description: "分类列表"
+    act: "GET"
+
+  - name: "/v1/admin/types/{id:uint}"
+    displayname: "分类详情"
+    description: "分类详情"
+    act: "GET"
+
+  - name: "/v1/admin/types"
+    displayname: "创建分类"
+    description: "创建分类"
+    act: "POST"
+
+  - name: "/v1/admin/types/{id:uint}"
+    displayname: "编辑分类"
+    description: "编辑分类"
+    act: "PUT"
+
+  - name: "/v1/admin/types/{id:uint}"
+    displayname: "删除分类"
+    description: "删除分类"
+    act: "DELETE"
+

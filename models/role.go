@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"gorm.io/gorm"
 )
 
 type Role struct {
@@ -79,7 +79,7 @@ func (r *Role) DeleteRoleById() {
  */
 func GetAllRoles(name, orderBy string, offset, limit int) ([]*Role, error) {
 	var roles []*Role
-	if err := GetAll(&Role{}, name, orderBy).Scopes(Paginate(offset, limit)).Find(&roles).Error; err != nil {
+	if err := GetAll(&Role{}, name, orderBy, offset, limit).Find(&roles).Error; err != nil {
 		return nil, err
 	}
 	return roles, nil

@@ -8,9 +8,9 @@ import (
 	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/jameskeane/bcrypt"
-	"github.com/jinzhu/gorm"
 	"github.com/snowlyg/IrisAdminApi/libs"
 	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -68,8 +68,8 @@ func (u *User) DeleteUser() {
  */
 func GetAllUsers(name, orderBy string, offset, limit int) []*User {
 	var users []*User
-	q := GetAll(&User{}, name, orderBy)
-	if err := q.Scopes(Paginate(offset, limit)).Find(&users).Error; err != nil {
+	q := GetAll(&User{}, name, orderBy, offset, limit)
+	if err := q.Find(&users).Error; err != nil {
 		color.Red(fmt.Sprintf("GetAllUserErr:%s \n ", err))
 		return nil
 	}

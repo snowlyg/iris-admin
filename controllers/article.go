@@ -25,11 +25,15 @@ import (
 * @apiPermission
  */
 func GetPublishedArticle(ctx iris.Context) {
-	id, _ := ctx.Params().GetUint("id")
-	article := models.NewArticle().GetPublishedArticleById(id)
 	ctx.StatusCode(iris.StatusOK)
+	id, _ := ctx.Params().GetUint("id")
+	article, err := models.GetPublishedArticleById(id)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
 
-	rr := articleListTransform(article)
+	rr := articleTransform(article)
 	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
 }
 
@@ -46,9 +50,13 @@ func GetPublishedArticle(ctx iris.Context) {
 * @apiPermission
  */
 func GetArticle(ctx iris.Context) {
-	id, _ := ctx.Params().GetUint("id")
-	article := models.NewArticle().GetArticleById(id)
 	ctx.StatusCode(iris.StatusOK)
+	id, _ := ctx.Params().GetUint("id")
+	article, err := models.GetArticleById(id)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
 
 	rr := articleTransform(article)
 	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
@@ -128,7 +136,6 @@ func UpdateArticle(ctx iris.Context) {
 
 	article := new(models.Article)
 	if err := ctx.ReadJSON(article); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -138,7 +145,6 @@ func UpdateArticle(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
@@ -172,9 +178,11 @@ func UpdateArticle(ctx iris.Context) {
  */
 func DeleteArticle(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	article := models.NewArticle()
-	article.GetArticleById(id)
-	article.DeleteArticleById()
+	err := models.DeleteArticleById(id)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+	}
 
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
@@ -243,22 +251,25 @@ func GetAllArticles(ctx iris.Context) {
 func articlesTransform(articles []*models.Article) []*transformer.Article {
 	var rs []*transformer.Article
 	for _, article := range articles {
-		r := articleListTransform(article)
+		r := articleTransform(article)
 		rs = append(rs, r)
 	}
 	return rs
-}
-
-func articleListTransform(article *models.Article) *transformer.Article {
-	r := &transformer.Article{}
-	g := gf.NewTransform(r, article, time.RFC3339)
-	_ = g.Transformer()
-	return r
 }
 
 func articleTransform(article *models.Article) *transformer.Article {
 	r := &transformer.Article{}
 	g := gf.NewTransform(r, article, time.RFC3339)
 	_ = g.Transformer()
+	var tagNames []string
+	if len(article.Tags) > 0 {
+		for _, tag := range article.Tags {
+			tagNames = append(tagNames, tag.Name)
+		}
+	}
+	r.TagNames = tagNames
+	if article.Type != nil {
+		r.Type = ttTransform(article.Type)
+	}
 	return r
 }

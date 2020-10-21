@@ -17,14 +17,13 @@ require (
 	github.com/iris-contrib/middleware/jwt v0.0.0-20200810001613-32cf668f999f
 	github.com/jameskeane/bcrypt v0.0.0-20120420032655-c3cd44c1e20f
 	github.com/jinzhu/configor v1.2.0
-	github.com/jinzhu/gorm v1.9.15
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kardianos/service v1.1.0
 	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201012125253-8e51a296b968
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/manveru/gobdd v0.0.0-20131210092515-f1a17fdd710b // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
-	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/sirupsen/logrus v1.6.0
@@ -34,4 +33,9 @@ require (
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/ini.v1 v1.61.0
+	gorm.io/driver/mysql v1.0.2
+	gorm.io/driver/postgres v1.0.4
+	gorm.io/driver/sqlite v1.1.3
+	gorm.io/gorm v1.20.4
+	gorm.io/plugin/dbresolver v1.0.1
 )

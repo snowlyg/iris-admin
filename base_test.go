@@ -4,6 +4,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/iris-contrib/httpexpect/v2"
 	"github.com/kataras/iris/v12"
 	"net/http"
@@ -125,27 +126,32 @@ func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 func CreateRole(name, disName, dec string) *models.Role {
 
 	role, err := models.GetRoleByName(name)
-	if err != nil && role.ID == 0 {
-		role := &models.Role{
+	if err == nil && role.ID == 0 {
+		role = &models.Role{
 			Name:        name,
 			DisplayName: disName,
 			Description: dec,
 		}
-		role.CreateRole()
+		err = role.CreateRole()
+		if err != nil {
+			fmt.Println(fmt.Sprintf("%+v 角色创建失败: %s", role, err.Error()))
+		}
 	}
+
 	return role
 
 }
 
 func CreateUser() *models.User {
-	user := &models.User{
-		Username: "TUsername",
-		Password: "TPassword",
-		Name:     "TName",
-		RoleIds:  []uint{},
-	}
 
-	if user.ID == 0 {
+	user, err := models.GetUserByUsername("TUsername")
+	if err == nil && user.ID == 0 {
+		user = &models.User{
+			Username: "TUsername",
+			Password: "TPassword",
+			Name:     "TName",
+			RoleIds:  []uint{},
+		}
 		_ = user.CreateUser()
 		return user
 	} else {

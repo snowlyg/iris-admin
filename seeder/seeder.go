@@ -59,12 +59,10 @@ func Run() {
 
 // CreatePerms 新建权限
 func CreatePerms() {
-	if config.Config.Debug {
-		fmt.Println(fmt.Sprintf("填充权限：%v", Seeds))
-	}
+
 	for _, m := range Seeds.Perms {
 		perm, err := models.GetPermissionByNameAct(m.Name, m.Act)
-		if err != nil && perm.ID == 0 {
+		if err == nil && perm.ID == 0 {
 			perm = &models.Permission{
 				Model:       gorm.Model{CreatedAt: time.Now()},
 				Name:        m.Name,
@@ -75,6 +73,9 @@ func CreatePerms() {
 			if err := perm.CreatePermission(); err != nil {
 				logger.Println(fmt.Sprintf("权限填充错误：%v", err))
 			}
+		}
+		if config.Config.Debug {
+			fmt.Println(fmt.Sprintf("填充权限：%v\n", perm))
 		}
 	}
 }
@@ -92,7 +93,7 @@ func CreateAdminRole() {
 		}
 
 		var permIds []uint
-		perms, _ := models.GetAllPermissions("", "", 0, 0)
+		perms, _ := models.GetAllPermissions("", "", -1, -1)
 		for _, perm := range perms {
 			permIds = append(permIds, perm.ID)
 		}
@@ -117,7 +118,7 @@ func CreateAdminUser() {
 		admin = &models.User{
 			Username: config.Config.Admin.UserName,
 			Name:     config.Config.Admin.Name,
-			Password: "123456",
+			Password: config.Config.Admin.Pwd,
 			Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
 			Intro:    "超级弱鸡程序猿一枚！！！！",
 			Model:    gorm.Model{CreatedAt: time.Now()},

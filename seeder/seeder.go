@@ -35,7 +35,7 @@ func init() {
 
 	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "seeder", "data", "*.yml"))
 	if config.Config.Debug {
-		logger.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
+		logger.Println(fmt.Sprintf("数据填充YML文件路径：%s\n", filepaths))
 	}
 	if err := configor.Load(&Seeds, filepaths...); err != nil {
 		logger.Println(err)
@@ -83,7 +83,7 @@ func CreatePerms() {
 func CreateAdminRole() {
 
 	role, err := models.GetRoleByName(config.Config.Admin.RoleName)
-	if err != nil && role.ID == 0 {
+	if err == nil && role.ID == 0 {
 		role = &models.Role{
 			Name:        config.Config.Admin.RoleName,
 			DisplayName: config.Config.Admin.RoleDisplayName,
@@ -111,12 +111,12 @@ func CreateAdminRole() {
 // CreateAdminUser 新建管理员
 func CreateAdminUser() {
 
-	admin, err := models.GetUserByUsername("username")
+	admin, err := models.GetUserByUsername(config.Config.Admin.UserName)
 
-	if err != nil && admin.ID == 0 {
+	if err == nil && admin.ID == 0 {
 		admin = &models.User{
-			Username: "username",
-			Name:     "超级管理员",
+			Username: config.Config.Admin.UserName,
+			Name:     config.Config.Admin.Name,
 			Password: "123456",
 			Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
 			Intro:    "超级弱鸡程序猿一枚！！！！",

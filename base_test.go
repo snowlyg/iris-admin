@@ -1,4 +1,5 @@
 // +build test
+
 package main
 
 import (
@@ -23,10 +24,10 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-	os.Setenv("TRAVIS_BUILD_DIR", "~/go/src/github.com/snowlyg/IrisAdminApi/cmd")
 	s := web_server.NewServer(AssetFile(), Asset, AssetNames) // 初始化app
 	s.NewApp()
 	app = s.App
+
 	seeder.Run()
 
 	flag.Parse()
@@ -37,7 +38,7 @@ func TestMain(m *testing.M) {
 }
 
 func getHttpExpect(t *testing.T) *httpexpect.Expect {
-	return httptest.New(t, app, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/admin/"})
+	return httptest.New(t, app, httptest.Configuration{Debug: true, URL: "http://127.0.0.1:8085/v1/admin/"})
 }
 
 // 单元测试 login 方法

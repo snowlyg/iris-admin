@@ -39,10 +39,10 @@ var Config = struct {
 func init() {
 	configPath := filepath.Join(libs.CWD(), "application.yml")
 
-	logger.Println(fmt.Sprintf("配置路径：%s", configPath))
+	logger.Println(fmt.Sprintf("配置路径：%s\n", configPath))
 	if err := configor.Load(&Config, configPath); err != nil {
-		logger.Println(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
+		logger.Println(fmt.Sprintf("Config Path:%s ,Error:%s\n", configPath, err.Error()))
 	} else {
-		logger.Println(fmt.Sprintf("系统配置：%+v", Config))
+		logger.Println(fmt.Sprintf("系统配置：%+v\n", Config))
 	}
 }

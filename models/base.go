@@ -16,21 +16,21 @@ import (
 /**
  * 获取列表
  * @method MGetAll
- * @param  {[type]} string string    [description]
+ * @param  {[type]} searchStr string    [description]
  * @param  {[type]} orderBy string    [description]
  * @param  {[type]} relation string    [description]
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAll(model interface{}, str, orderBy string, offset, limit int) *gorm.DB {
+func GetAll(model interface{}, searchStr, orderBy string, offset, limit int) *gorm.DB {
 	db := sysinit.Db.Model(model)
 	if len(orderBy) > 0 {
 		db = db.Order(orderBy + " desc")
 	} else {
 		db = db.Order("created_at desc")
 	}
-	if len(str) > 0 {
-		sers := strings.Split(str, ":")
+	if len(searchStr) > 0 {
+		sers := strings.Split(searchStr, ":")
 		if len(sers) == 2 {
 			db = db.Where(fmt.Sprintf("%s LIKE ?", sers[0]), fmt.Sprintf("%%%s%%", sers[1]))
 		}
@@ -48,7 +48,7 @@ func IsNotFound(err error) error {
 }
 
 func Update(v, d interface{}) error {
-	if err := sysinit.Db.Model(v).Updates(d).Error; err != nil {
+	if err := sysinit.Db.Model(v).Session(&gorm.Session{FullSaveAssociations: true}).Updates(d).Error; err != nil {
 		return err
 	}
 	return nil

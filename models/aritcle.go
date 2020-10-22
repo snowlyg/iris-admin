@@ -22,7 +22,7 @@ type Article struct {
 	Status       string    `gorm:"not null;default:'';type:varchar(10)" json:"status" comment:"文章状态" validate:"required,gte=1,lte=10"`
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
 
-	TypeID   int
+	TypeID   uint
 	Type     *Type
 	Tags     []*Tag   `gorm:"many2many:article_tags;"`
 	TagNames []string `gorm:"-" json:"tag_names"`
@@ -77,16 +77,16 @@ func DeleteArticleById(id uint) error {
 /**
  * 获取所有的角色
  * @method GetAllArticle
- * @param  {[type]} name string [description]
+ * @param  {[type]} searchStr string [description]
  * @param  {[type]} orderBy string [description]
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllArticles(name, orderBy, published string, offset, limit int) ([]*Article, int64, error) {
+func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId int) ([]*Article, int64, error) {
 	var articles []*Article
 	var count int64
 
-	getAll := GetAll(&Article{}, name, orderBy, offset, limit)
+	getAll := GetAll(&Article{}, searchStr, orderBy, offset, limit)
 	if err := getAll.Count(&count).Error; err != nil {
 		return nil, count, err
 	}
@@ -94,7 +94,23 @@ func GetAllArticles(name, orderBy, published string, offset, limit int) ([]*Arti
 		getAll = getAll.Where("status = ?", "published")
 	}
 
-	if err := getAll.Preload("Tags").Find(&articles).Error; err != nil {
+	if tagId > 0 {
+		var tagArticleIds []int64
+		tag, err := GetTagById(uint(tagId), true)
+		if err != nil {
+			return nil, count, err
+		}
+
+		for _, tagArticle := range tag.Articles {
+			if tagArticle.ID > 0 {
+				tagArticleIds = append(tagArticleIds, int64(tagArticle.ID))
+			}
+		}
+
+		getAll = getAll.Where("id IN ?", tagArticleIds)
+	}
+
+	if err := getAll.Preload(clause.Associations).Find(&articles).Error; err != nil {
 		return nil, count, err
 	}
 
@@ -119,14 +135,18 @@ func (r *Article) CreateArticle() error {
 }
 
 func (r *Article) getTagTypes() {
+	if err := sysinit.Db.Model(r).Association("Tags").Clear(); err != nil {
+		fmt.Println(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
+	}
 
-	sysinit.Db.Model(r).Association("Tags").Clear()
 	if r.Type != nil && len(r.Type.Name) > 0 {
 		tt, err := GetTypeByName(r.Type.Name)
 		if err == nil && tt.ID > 0 {
+			r.TypeID = tt.ID
 			r.Type = tt
 		}
 	}
+
 	if len(r.TagNames) > 0 {
 		var tags []*Tag
 		for _, tagName := range r.TagNames {
@@ -145,7 +165,6 @@ func (r *Article) getTagTypes() {
 
 		r.Tags = tags
 	}
-	fmt.Println(fmt.Sprintf("article:%+v\n", r))
 }
 
 /**
@@ -160,8 +179,8 @@ func UpdateArticle(id uint, nr *Article) error {
 	if err != nil {
 		return err
 	}
-	r.getTagTypes()
-	fmt.Println(fmt.Sprintf("article:%+v\n", r))
+	nr.getTagTypes()
+
 	if err := Update(r, nr); err != nil {
 		return err
 	}

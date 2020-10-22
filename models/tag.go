@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"gorm.io/gorm/clause"
 	"time"
 
 	"github.com/fatih/color"
@@ -30,9 +31,13 @@ func NewTag() *Tag {
  * @method GetTagById
  * @param  {[type]}       tag  *Tag [description]
  */
-func GetTagById(id uint) (*Tag, error) {
+func GetTagById(id uint, withRelation bool) (*Tag, error) {
 	t := NewTag()
-	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(t).Error)
+	get := sysinit.Db.Where("id = ?", id)
+	if withRelation {
+		get = get.Preload(clause.Associations)
+	}
+	err := IsNotFound(get.First(t).Error)
 	if err != nil {
 		return nil, err
 	}

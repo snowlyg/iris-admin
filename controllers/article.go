@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -202,10 +203,11 @@ func DeleteArticle(ctx iris.Context) {
 func GetAllPublishedArticles(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
+	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles(searchStr, orderBy, "published", offset, limit)
+	articles, count, err := models.GetAllArticles(searchStr, orderBy, "published", offset, limit, tagId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -232,10 +234,11 @@ func GetAllPublishedArticles(ctx iris.Context) {
 func GetAllArticles(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
+	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles(searchStr, orderBy, "", offset, limit)
+	articles, count, err := models.GetAllArticles(searchStr, orderBy, "", offset, limit, tagId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -267,6 +270,9 @@ func articleTransform(article *models.Article) *transformer.Article {
 		}
 	}
 	r.TagNames = tagNames
+
+	fmt.Println(fmt.Sprintf("type :%+v", article.Type))
+
 	if article.Type != nil {
 		transform := ttTransform(article.Type)
 		r.Type = *transform

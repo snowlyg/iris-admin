@@ -26,7 +26,7 @@ import (
  */
 func GetTag(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	tag, err := models.GetTagById(id)
+	tag, err := models.GetTagById(id, false)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

@@ -6,10 +6,12 @@ import (
 	"github.com/snowlyg/IrisAdminApi/sysinit"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"sync"
 	"time"
 )
 
 type Article struct {
+	sync.Mutex
 	gorm.Model
 
 	Title        string    `gorm:"not null;default:'';type:varchar(256)" json:"title" validate:"required,gte=4,lte=256" comment:"标题"`
@@ -21,6 +23,8 @@ type Article struct {
 	Content      string    `gorm:"type:longText" json:"content" comment:"内容" validate:"required,gte=6"`
 	Status       string    `gorm:"not null;default:'';type:varchar(10)" json:"status" comment:"文章状态" validate:"required,gte=1,lte=10"`
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
+	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
+	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
 
 	TypeID   uint
 	Type     *Type
@@ -43,6 +47,13 @@ func GetPublishedArticleById(id uint) (*Article, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	r.Lock()
+	defer r.Unlock()
+
+	r.Read = r.Read + 1
+	sysinit.Db.Save(r)
+
 	return r, nil
 }
 

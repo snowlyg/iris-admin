@@ -12,6 +12,8 @@ type Article struct {
 	Status       string   `json:"status"`
 	TagNames     []string `json:"tag_names"`
 	Type         Type     `json:"type"`
+	Like         int64    `json:"like"`
+	Read         int64    `json:"read"`
 	DisplayTime  string   `json:"display_time"`
 	DisplayAt    string   `time:"2006-01-02 15:04:05" name:"DisplayTime" json:"display_at"`
 	CreatedAt    string   `json:"created_at"`

@@ -47,14 +47,31 @@ func GetPublishedArticleById(id uint) (*Article, error) {
 	if err != nil {
 		return nil, err
 	}
+	return r, nil
+}
 
+func (r *Article) ReadArticle() error {
 	r.Lock()
 	defer r.Unlock()
 
-	r.Read = r.Read + 1
-	sysinit.Db.Save(r)
+	r.Read++
+	err := sysinit.Db.Save(r).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
-	return r, nil
+func (r *Article) LikeArticle() error {
+	r.Lock()
+	defer r.Unlock()
+
+	r.Like++
+	err := sysinit.Db.Save(r).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 /**

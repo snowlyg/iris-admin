@@ -34,6 +34,43 @@ func GetPublishedArticle(ctx iris.Context) {
 		return
 	}
 
+	err = article.ReadArticle()
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
+
+	rr := articleTransform(article)
+	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
+}
+
+/**
+* @api {get} /articles/like/:id 根据id点赞文章
+* @apiName 根据id点赞文章
+* @apiGroup Articles
+* @apiVersion 1.0.0
+* @apiDescription 根据id点赞文章
+* @apiSampleRequest /articles/like/:id
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission
+ */
+func GetPublishedArticleLike(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+	id, _ := ctx.Params().GetUint("id")
+	article, err := models.GetPublishedArticleById(id)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
+
+	err = article.LikeArticle()
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
+
 	rr := articleTransform(article)
 	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
 }

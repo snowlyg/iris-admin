@@ -28,6 +28,7 @@ func App(api *iris.Application) {
 			v1.PartyFunc("/article", func(aritcle iris.Party) {
 				aritcle.Get("/", controllers.GetAllPublishedArticles)
 				aritcle.Get("/{id:uint}", controllers.GetPublishedArticle)
+				aritcle.Get("/like/{id:uint}", controllers.GetPublishedArticleLike)
 			})
 			v1.PartyFunc("/types", func(articleType iris.Party) {
 				articleType.Get("/", controllers.GetAllTypes)

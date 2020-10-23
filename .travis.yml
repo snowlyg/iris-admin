@@ -12,6 +12,9 @@ before_install:
 install: true
 sudo: required
 
+services:
+  - redis-server
+
 go:
   - 1.15.x
 

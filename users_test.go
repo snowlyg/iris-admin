@@ -14,7 +14,7 @@ func TestUsers(t *testing.T) {
 }
 
 func TestUserProfile(t *testing.T) {
-	getMore(t, "profile", iris.StatusOK, 200, "")
+	getMore(t, "profile", iris.StatusOK, 200, "请求成功")
 }
 
 func TestUserCreate(t *testing.T) {

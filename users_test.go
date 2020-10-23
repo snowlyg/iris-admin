@@ -35,7 +35,7 @@ func TestUserCreate(t *testing.T) {
 func TestUserUpdate(t *testing.T) {
 	tr, err := CreateRole("tname4", "tdsiName", "tdec")
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 	}
 	oj := map[string]interface{}{
 		"username": gofakeit.Name(),

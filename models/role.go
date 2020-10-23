@@ -144,11 +144,7 @@ func addPerms(permIds []uint, role *Role) {
  * @param  {[type]} mp int    [description]
  */
 func UpdateRole(id uint, nr *Role) error {
-	r, err := GetRoleById(id)
-	if err != nil {
-		return nil
-	}
-	if err := Update(r, nr); err != nil {
+	if err := Update(&Role{}, nr, id); err != nil {
 		return err
 	}
 

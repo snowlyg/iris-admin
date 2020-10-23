@@ -46,8 +46,9 @@ func IsNotFound(err error) error {
 	return nil
 }
 
-func Update(v, d interface{}) error {
-	if err := libs.Db.Model(v).Session(&gorm.Session{FullSaveAssociations: true}).Updates(d).Error; err != nil {
+func Update(v, d interface{}, id uint) error {
+	if err := libs.Db.Model(v).Where("id = ?", id).Updates(d).Error; err != nil {
+		fmt.Println(fmt.Sprintf("Update %+v to %+v\n", v, d))
 		return err
 	}
 	return nil

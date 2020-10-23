@@ -119,16 +119,12 @@ func (u *User) CreateUser() error {
  * @param  {[type]} mp int    [description]
  */
 func UpdateUserById(id uint, nu *User) error {
-	u, err := GetUserById(id)
-	if err != nil {
-		return err
-	}
 	nu.Password = libs.HashPassword(nu.Password)
-	if err := Update(u, nu); err != nil {
+	if err := Update(&User{}, nu, id); err != nil {
 		return err
 	}
 
-	addRoles(u)
+	addRoles(nu)
 	return nil
 }
 

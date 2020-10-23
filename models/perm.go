@@ -109,11 +109,7 @@ func (p *Permission) CreatePermission() error {
  * @param  {[type]} mp int    [description]
  */
 func UpdatePermission(id uint, pj *Permission) error {
-	p, err := GetPermissionById(id)
-	if err != nil {
-		return err
-	}
-	if err := Update(p, pj); err != nil {
+	if err := Update(&Permission{}, pj, id); err != nil {
 		return err
 	}
 	return nil

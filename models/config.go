@@ -96,11 +96,8 @@ func (u *Config) CreateConfig() error {
  * @param  {[type]} kw string [description]
  */
 func UpdateConfig(id uint, nu *Config) error {
-	u, err := GetConfigById(id)
-	if err != nil {
-		return err
-	}
-	if err := Update(u, nu); err != nil {
+
+	if err := Update(&Config{}, nu, id); err != nil {
 		return err
 	}
 

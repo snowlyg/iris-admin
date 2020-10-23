@@ -203,13 +203,9 @@ func (r *Article) getTagTypes() {
  * @param  {[type]} mp int    [description]
  */
 func UpdateArticle(id uint, nr *Article) error {
-	r, err := GetArticleById(id)
-	if err != nil {
-		return err
-	}
 	nr.getTagTypes()
 
-	if err := Update(r, nr); err != nil {
+	if err := Update(&Article{}, nr, id); err != nil {
 		return err
 	}
 

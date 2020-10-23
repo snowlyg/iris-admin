@@ -56,4 +56,5 @@ func InitDb() {
 			SetMaxIdleConns(100).
 			SetMaxOpenConns(200),
 	)
+	Db.Session(&gorm.Session{FullSaveAssociations: true, AllowGlobalUpdate: false})
 }

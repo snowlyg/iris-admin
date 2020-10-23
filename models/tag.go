@@ -113,11 +113,7 @@ func (p *Tag) CreateTag() error {
  * @param  {[type]} mp int    [description]
  */
 func UpdateTagById(id uint, pj *Tag) error {
-	p, err := GetUserById(id)
-	if err != nil {
-		return err
-	}
-	if err := Update(p, pj); err != nil {
+	if err := Update(&Tag{}, pj, id); err != nil {
 		return err
 	}
 	return nil

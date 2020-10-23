@@ -7,7 +7,7 @@ cache:
 gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
 
 before_install:
-  - cp $GOPATH/src/github.com/snowlyg/blog/application.example.yml $GOPATH/src/github.com/snowlyg/blog/application.yml
+  - cp $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.example.yml $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.yml
 
 install: true
 sudo: required

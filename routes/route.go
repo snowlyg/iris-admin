@@ -2,10 +2,12 @@ package routes
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/blog/controllers"
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/blog/middleware"
 	"path/filepath"
+	"time"
 )
 
 const maxSize = 5 << 20 // 5MB
@@ -23,6 +25,8 @@ func App(api *iris.Application) {
 
 		v1 := app.Party("/v1")
 		{
+			limitV1 := rate.Limit(1, 5, rate.PurgeEvery(time.Minute, 5*time.Minute))
+			v1.Use(limitV1)
 			v1.PartyFunc("/article", func(aritcle iris.Party) {
 				aritcle.Get("/", controllers.GetAllPublishedArticles)
 				aritcle.Get("/{id:uint}", controllers.GetPublishedArticle)

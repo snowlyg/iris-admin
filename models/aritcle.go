@@ -6,6 +6,8 @@ import (
 	"github.com/snowlyg/blog/libs"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -25,6 +27,7 @@ type Article struct {
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
 	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
 	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
+	Ips          string    `gorm:"not null;default(0);type:varchar(1024)" json:"ips" comment:"ip 地址"`
 
 	TypeID   uint
 	Type     *Type
@@ -50,7 +53,25 @@ func GetPublishedArticleById(id uint) (*Article, error) {
 	return r, nil
 }
 
-func (r *Article) ReadArticle() error {
+func (r *Article) ReadArticle(rh *http.Request) error {
+	ip := r.Ips
+	ips := strings.Split(ip, ",")
+	publicIp := libs.ClientPublicIp(rh)
+	if !libs.InArrayS(ips, publicIp) {
+		r.Lock()
+		defer r.Unlock()
+
+		r.Read++
+		ips = append(ips, publicIp)
+		r.Ips = strings.Join(ips, ",")
+		err := libs.Db.Save(r).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func (r *Article) Addip() error {
 	r.Lock()
 	defer r.Unlock()
 

@@ -34,7 +34,7 @@ func GetPublishedArticle(ctx iris.Context) {
 		return
 	}
 
-	err = article.ReadArticle()
+	err = article.ReadArticle(ctx.Request())
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return

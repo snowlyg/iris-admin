@@ -11,10 +11,11 @@ import (
 	"testing"
 
 	"github.com/kataras/iris/v12/httptest"
-	"github.com/snowlyg/IrisAdminApi/config"
-	"github.com/snowlyg/IrisAdminApi/models"
-	"github.com/snowlyg/IrisAdminApi/seeder"
-	"github.com/snowlyg/IrisAdminApi/web_server"
+	"github.com/snowlyg/blog/models"
+	"github.com/snowlyg/blog/seeder"
+	"github.com/snowlyg/blog/web_server"
+
+	"github.com/snowlyg/blog/libs"
 )
 
 var (
@@ -163,8 +164,8 @@ func GetOauthToken(e *httpexpect.Expect) string {
 	}
 
 	oj := map[string]string{
-		"username": config.Config.Admin.UserName,
-		"password": config.Config.Admin.Pwd,
+		"username": libs.Config.Admin.UserName,
+		"password": libs.Config.Admin.Pwd,
 	}
 	r := e.POST("login").WithJSON(oj).
 		Expect().

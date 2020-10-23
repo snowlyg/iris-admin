@@ -1,13 +1,14 @@
 package controllers
 
 import (
+	"github.com/snowlyg/blog/libs"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/libs"
-	"github.com/snowlyg/IrisAdminApi/models"
-	"github.com/snowlyg/IrisAdminApi/validates"
+	"github.com/snowlyg/blog/models"
+	"github.com/snowlyg/blog/validates"
 )
 
 /**
@@ -74,11 +75,22 @@ func UserLogin(ctx iris.Context) {
 * @apiPermission null
  */
 func UserLogout(ctx iris.Context) {
-	aui := ctx.Values().GetString("auth_user_id")
-	uid := uint(libs.ParseInt(aui, 0))
-	models.UserAdminLogout(uid)
+	value := ctx.Values().Get("jwt").(*jwt.Token)
+	conn := libs.GetRedisClusterClient()
+	defer conn.Close()
+	sess, err := models.GetRedisSessionV2(conn, value.Raw)
+	if err != nil {
+		ctx.StatusCode(http.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+	}
+	if sess != nil {
+		if err := sess.DelUserTokenCache(conn, value.Raw); err != nil {
+			ctx.StatusCode(http.StatusOK)
+			_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		}
+		ctx.Application().Logger().Infof("%d 退出系统", sess.UserId)
+	}
 
-	ctx.Application().Logger().Infof("%d 退出系统", uid)
 	ctx.StatusCode(http.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "退出"))
 }

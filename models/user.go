@@ -9,8 +9,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/jameskeane/bcrypt"
-	"github.com/snowlyg/IrisAdminApi/libs"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"github.com/snowlyg/blog/libs"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +24,10 @@ type User struct {
 	RoleIds  []uint `gorm:"-" json:"role_ids"  validate:"required" comment:"角色"`
 }
 
+type Token struct {
+	Token string `json:"token"`
+}
+
 func NewUser() *User {
 	return &User{
 		Model: gorm.Model{
@@ -36,7 +39,7 @@ func NewUser() *User {
 
 func GetUserByUsername(username string) (*User, error) {
 	user := new(User)
-	if err := IsNotFound(sysinit.Db.Where("username = ?", username).First(user).Error); err != nil {
+	if err := IsNotFound(libs.Db.Where("username = ?", username).First(user).Error); err != nil {
 		return nil, err
 	}
 	return user, nil
@@ -44,7 +47,7 @@ func GetUserByUsername(username string) (*User, error) {
 
 func GetUserById(id uint) (*User, error) {
 	u := NewUser()
-	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(u).Error)
+	err := IsNotFound(libs.Db.Where("id = ?", id).First(u).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +67,7 @@ func DeleteUser(id uint) error {
 		return errors.New("不能删除管理员")
 	}
 
-	if err := sysinit.Db.Delete(u, id).Error; err != nil {
+	if err := libs.Db.Delete(u, id).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
 		return err
 	}
@@ -99,7 +102,7 @@ func GetAllUsers(name, orderBy string, offset, limit int) []*User {
  */
 func (u *User) CreateUser() error {
 	u.Password = libs.HashPassword(u.Password)
-	if err := sysinit.Db.Create(u).Error; err != nil {
+	if err := libs.Db.Create(u).Error; err != nil {
 		return err
 	}
 
@@ -132,13 +135,13 @@ func UpdateUserById(id uint, nu *User) error {
 func addRoles(user *User) {
 	if len(user.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
-		if _, err := sysinit.Enforcer.DeleteRolesForUser(userId); err != nil {
+		if _, err := libs.Enforcer.DeleteRolesForUser(userId); err != nil {
 			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 		}
 
 		for _, roleId := range user.RoleIds {
 			roleId := strconv.FormatUint(uint64(roleId), 10)
-			if _, err := sysinit.Enforcer.AddRoleForUser(userId, roleId); err != nil {
+			if _, err := libs.Enforcer.AddRoleForUser(userId, roleId); err != nil {
 				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 			}
 		}
@@ -162,30 +165,27 @@ func (u *User) CheckLogin(password string) (*Token, int64, string) {
 			})
 			tokenString, _ := token.SignedString([]byte("HS2JDFKhu7Y1av7b"))
 
-			oauthToken := new(OauthToken)
-			oauthToken.Token = tokenString
-			oauthToken.UserId = u.ID
-			oauthToken.Secret = "secret"
-			oauthToken.Revoked = false
-			oauthToken.ExpressIn = time.Now().Add(time.Hour * time.Duration(1)).Unix()
-			oauthToken.CreatedAt = time.Now()
+			rsv2 := RedisSessionV2{
+				UserId:       strconv.FormatUint(uint64(u.ID), 10),
+				LoginType:    LoginTypeWeb,
+				AuthType:     AuthPwd,
+				CreationDate: time.Now().Unix(),
+				Scope:        getUserScope("admin"),
+			}
+			conn := libs.GetRedisClusterClient()
+			defer conn.Close()
 
-			response := oauthToken.OauthTokenCreate()
+			if err := rsv2.ToCache(conn, tokenString); err != nil {
+				return nil, 400, err.Error()
+			}
 
-			return response, 200, "登陆成功"
+			if err := rsv2.SyncUserTokenCache(conn, tokenString); err != nil {
+				return nil, 400, err.Error()
+			}
+
+			return &Token{tokenString}, 200, "登陆成功"
 		} else {
 			return nil, 400, "用户名或密码错误"
 		}
 	}
-}
-
-/**
-* 用户退出登陆
-* @method UserAdminLogout
-* @param  {[type]} ids string [description]
- */
-func UserAdminLogout(userId uint) bool {
-	ot := OauthToken{}
-	ot.UpdateOauthTokenByUserId(userId)
-	return ot.Revoked
 }

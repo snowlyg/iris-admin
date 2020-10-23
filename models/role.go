@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"github.com/snowlyg/blog/libs"
 	"gorm.io/gorm"
 )
 
@@ -35,7 +35,7 @@ func NewRole() *Role {
  */
 func GetRoleById(id uint) (*Role, error) {
 	r := NewRole()
-	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(r).Error)
+	err := IsNotFound(libs.Db.Where("id = ?", id).First(r).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func GetRoleById(id uint) (*Role, error) {
  */
 func GetRolesByIds(ids []int) ([]*Role, error) {
 	var roles []*Role
-	err := IsNotFound(sysinit.Db.Find(&roles, ids).Error)
+	err := IsNotFound(libs.Db.Find(&roles, ids).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func GetRolesByIds(ids []int) ([]*Role, error) {
  */
 func GetRoleByName(name string) (*Role, error) {
 	r := NewRole()
-	err := IsNotFound(sysinit.Db.Where("name = ?", name).First(r).Error)
+	err := IsNotFound(libs.Db.Where("name = ?", name).First(r).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func GetRoleByName(name string) (*Role, error) {
  */
 func DeleteRoleById(id uint) error {
 	r, err := GetRoleById(id)
-	err = sysinit.Db.Delete(r).Error
+	err = libs.Db.Delete(r).Error
 	if err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 		return err
@@ -109,7 +109,7 @@ func GetAllRoles(name, orderBy string, offset, limit int) ([]*Role, error) {
  * @param  {[type]} mp int    [description]
  */
 func (r *Role) CreateRole() error {
-	if err := sysinit.Db.Create(r).Error; err != nil {
+	if err := libs.Db.Create(r).Error; err != nil {
 		return err
 	}
 
@@ -121,13 +121,13 @@ func (r *Role) CreateRole() error {
 func addPerms(permIds []uint, role *Role) {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
-		if _, err := sysinit.Enforcer.DeletePermissionsForUser(roleId); err != nil {
+		if _, err := libs.Enforcer.DeletePermissionsForUser(roleId); err != nil {
 			color.Red(fmt.Sprintf("AppendPermsErr:%s \n", err))
 		}
 		var perms []Permission
-		sysinit.Db.Where("id in (?)", permIds).Find(&perms)
+		libs.Db.Where("id in (?)", permIds).Find(&perms)
 		for _, perm := range perms {
-			if _, err := sysinit.Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
+			if _, err := libs.Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
 				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
 			}
 		}

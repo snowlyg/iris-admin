@@ -2,10 +2,10 @@ package models
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/libs"
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +31,7 @@ func NewType() *Type {
  */
 func GetTypeById(id uint) (*Type, error) {
 	t := NewType()
-	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(t).Error)
+	err := IsNotFound(libs.Db.Where("id = ?", id).First(t).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func GetTypeById(id uint) (*Type, error) {
  */
 func GetTypeByName(name string) (*Type, error) {
 	t := NewType()
-	err := IsNotFound(sysinit.Db.Where("name = ?", name).First(t).Error)
+	err := IsNotFound(libs.Db.Where("name = ?", name).First(t).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func GetTypeByName(name string) (*Type, error) {
 func DeleteTypeById(id uint) error {
 	t := NewType()
 	t.ID = id
-	if err := sysinit.Db.Delete(t).Error; err != nil {
+	if err := libs.Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteTypeByIdError:%s \n", err))
 		return err
 	}
@@ -93,7 +93,7 @@ func GetAllTypes(name, orderBy string, offset, limit int) ([]*Type, error) {
  * @param  {[type]} mp int    [description]
  */
 func (p *Type) CreateType() error {
-	if err := sysinit.Db.Create(p).Error; err != nil {
+	if err := libs.Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil

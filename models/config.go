@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"github.com/snowlyg/blog/libs"
 	"gorm.io/gorm"
 )
 
@@ -27,7 +27,7 @@ func NewConfig() *Config {
 
 func GetConfigByName(name string) (*Config, error) {
 	config := NewConfig()
-	if err := sysinit.Db.Where("name = ?", name).First(config).Error; err != nil {
+	if err := libs.Db.Where("name = ?", name).First(config).Error; err != nil {
 		return nil, err
 	}
 	return config, nil
@@ -35,7 +35,7 @@ func GetConfigByName(name string) (*Config, error) {
 
 func GetConfigById(id uint) (*Config, error) {
 	config := NewConfig()
-	if err := sysinit.Db.Where("id = ?", id).First(config).Error; err != nil {
+	if err := libs.Db.Where("id = ?", id).First(config).Error; err != nil {
 		return nil, err
 	}
 	return config, nil
@@ -50,7 +50,7 @@ func DeleteConfig(id uint) error {
 	if err != nil {
 		return err
 	}
-	if err := sysinit.Db.Delete(u).Error; err != nil {
+	if err := libs.Db.Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteConfigByIdErr:%s \n ", err))
 		return err
 	}
@@ -83,7 +83,7 @@ func GetAllConfigs(name, orderBy string, offset, limit int) ([]*Config, error) {
  * @param  {[type]} mp int    [description]
  */
 func (u *Config) CreateConfig() error {
-	if err := sysinit.Db.Create(u).Error; err != nil {
+	if err := libs.Db.Create(u).Error; err != nil {
 		return err
 	}
 

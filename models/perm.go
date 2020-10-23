@@ -2,10 +2,10 @@ package models
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/libs"
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +33,7 @@ func NewPermission() *Permission {
  */
 func GetPermissionById(id uint) (*Permission, error) {
 	p := NewPermission()
-	err := IsNotFound(sysinit.Db.Where("id = ?", id).First(p).Error)
+	err := IsNotFound(libs.Db.Where("id = ?", id).First(p).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func GetPermissionById(id uint) (*Permission, error) {
  */
 func GetPermissionByNameAct(name, act string) (*Permission, error) {
 	p := NewPermission()
-	err := IsNotFound(sysinit.Db.Where("name = ?", name).Where("act = ?", act).First(p).Error)
+	err := IsNotFound(libs.Db.Where("name = ?", name).Where("act = ?", act).First(p).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func DeletePermissionById(id uint) error {
 	if err != nil {
 		return err
 	}
-	if err := sysinit.Db.Delete(p).Error; err != nil {
+	if err := libs.Db.Delete(p).Error; err != nil {
 		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
 		return err
 	}
@@ -95,7 +95,7 @@ func GetAllPermissions(name, orderBy string, offset, limit int) ([]*Permission, 
  * @param  {[type]} mp int    [description]
  */
 func (p *Permission) CreatePermission() error {
-	if err := sysinit.Db.Create(p).Error; err != nil {
+	if err := libs.Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil

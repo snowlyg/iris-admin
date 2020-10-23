@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
+	"github.com/snowlyg/blog/libs"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"sync"
@@ -43,7 +43,7 @@ func NewArticle() *Article {
  */
 func GetPublishedArticleById(id uint) (*Article, error) {
 	r := NewArticle()
-	err := IsNotFound(sysinit.Db.Where("id = ?", id).Where("status = ?", "published").Preload(clause.Associations).First(r).Error)
+	err := IsNotFound(libs.Db.Where("id = ?", id).Where("status = ?", "published").Preload(clause.Associations).First(r).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (r *Article) ReadArticle() error {
 	defer r.Unlock()
 
 	r.Read++
-	err := sysinit.Db.Save(r).Error
+	err := libs.Db.Save(r).Error
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (r *Article) LikeArticle() error {
 	defer r.Unlock()
 
 	r.Like++
-	err := sysinit.Db.Save(r).Error
+	err := libs.Db.Save(r).Error
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (r *Article) LikeArticle() error {
  */
 func GetArticleById(id uint) (*Article, error) {
 	r := NewArticle()
-	err := IsNotFound(sysinit.Db.Where("id = ?", id).Preload(clause.Associations).First(r).Error)
+	err := IsNotFound(libs.Db.Where("id = ?", id).Preload(clause.Associations).First(r).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func GetArticleById(id uint) (*Article, error) {
 func DeleteArticleById(id uint) error {
 	r := NewArticle()
 	r.ID = id
-	if err := sysinit.Db.Delete(r).Error; err != nil {
+	if err := libs.Db.Delete(r).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteArticleErr:%s \n", err))
 		return err
 	}
@@ -155,7 +155,7 @@ func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId i
 func (r *Article) CreateArticle() error {
 	r.getTagTypes()
 
-	if err := sysinit.Db.Create(r).Error; err != nil {
+	if err := libs.Db.Create(r).Error; err != nil {
 		return err
 	}
 
@@ -163,7 +163,7 @@ func (r *Article) CreateArticle() error {
 }
 
 func (r *Article) getTagTypes() {
-	if err := sysinit.Db.Model(r).Association("Tags").Clear(); err != nil {
+	if err := libs.Db.Model(r).Association("Tags").Clear(); err != nil {
 		fmt.Println(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
 	}
 

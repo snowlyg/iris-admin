@@ -2,14 +2,12 @@ package middleware
 
 import (
 	"fmt"
-	"net/http"
-	"strconv"
-	"time"
-
 	"github.com/casbin/casbin/v2"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/models"
+	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/models"
+	"net/http"
 )
 
 func New(e *casbin.Enforcer) *Casbin {
@@ -18,19 +16,38 @@ func New(e *casbin.Enforcer) *Casbin {
 
 func (c *Casbin) ServeHTTP(ctx iris.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	token := models.OauthToken{}
-	token.GetOauthTokenByToken(value.Raw) //获取 access_token 信息
-	if token.Revoked || token.ExpressIn < time.Now().Unix() {
-		//_, _ = ctx.Writef("token 失效，请重新登录") // 输出到前端
+	//token := models.OauthToken{}
+	//token.GetOauthTokenByToken(value.Raw) //获取 access_token 信息
+	//if token.Revoked || token.ExpressIn < time.Now().Unix() {
+	//	//_, _ = ctx.Writef("token 失效，请重新登录") // 输出到前端
+	//	ctx.StatusCode(http.StatusUnauthorized)
+	//	ctx.StopExecution()
+	//	return
+	//} else if !c.Check(ctx.Request(), strconv.FormatUint(uint64(token.UserId), 10)) {
+	//	ctx.StatusCode(http.StatusForbidden) // Status Forbidden
+	//	ctx.StopExecution()
+	//	return
+	//} else {
+	//	ctx.Values().Set("auth_user_id", token.UserId)
+	//}
+
+	conn := libs.GetRedisClusterClient()
+	defer conn.Close()
+
+	sess, err := models.GetRedisSessionV2(conn, value.Raw)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("get %s redis session error : %s\n", value.Raw, err.Error()))
+		models.UserTokenExpired(value.Raw)
 		ctx.StatusCode(http.StatusUnauthorized)
 		ctx.StopExecution()
 		return
-	} else if !c.Check(ctx.Request(), strconv.FormatUint(uint64(token.UserId), 10)) {
-		ctx.StatusCode(http.StatusForbidden) // Status Forbidden
+	}
+	if sess == nil {
+		ctx.StatusCode(http.StatusUnauthorized)
 		ctx.StopExecution()
 		return
 	} else {
-		ctx.Values().Set("auth_user_id", token.UserId)
+		ctx.Values().Set("sess", sess)
 	}
 
 	ctx.Next()

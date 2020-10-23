@@ -1,14 +1,15 @@
 package controllers
 
 import (
+	"github.com/snowlyg/blog/libs"
 	"strconv"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/models"
-	"github.com/snowlyg/IrisAdminApi/transformer"
-	"github.com/snowlyg/IrisAdminApi/validates"
+	"github.com/snowlyg/blog/models"
+	"github.com/snowlyg/blog/transformer"
+	"github.com/snowlyg/blog/validates"
 	gf "github.com/snowlyg/gotransformer"
 )
 
@@ -25,14 +26,14 @@ import (
 * @apiPermission 登陆用户
  */
 func GetProfile(ctx iris.Context) {
-	userId := ctx.Values().Get("auth_user_id").(uint)
-	user, err := models.GetUserById(userId)
+	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
+	user, err := models.GetUserById(uint(libs.ParseInt(sess.UserId, 10)))
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, userTransform(user), ""))
+	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "请求成功"))
 }
 
 /**
@@ -73,10 +74,9 @@ func GetUser(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateUser(ctx iris.Context) {
-
+	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
 	if err := ctx.ReadJSON(user); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -86,20 +86,23 @@ func CreateUser(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
 	}
 
-	user.CreateUser()
-	ctx.StatusCode(iris.StatusOK)
+	err = user.CreateUser()
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
+
 	if user.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, user, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 		return
 	} else {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
+		_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
 		return
 	}
 

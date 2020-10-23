@@ -7,12 +7,11 @@ import (
 	"time"
 
 	logger "github.com/sirupsen/logrus"
-	"github.com/snowlyg/IrisAdminApi/libs"
+	"github.com/snowlyg/blog/libs"
 
 	"github.com/azumads/faker"
 	"github.com/jinzhu/configor"
-	"github.com/snowlyg/IrisAdminApi/config"
-	"github.com/snowlyg/IrisAdminApi/models"
+	"github.com/snowlyg/blog/models"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +32,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 
 	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "seeder", "data", "*.yml"))
-	if config.Config.Debug {
+	if libs.Config.Debug {
 		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
 	}
 	if err := configor.Load(&Seeds, filepaths...); err != nil {
@@ -53,7 +52,7 @@ func Run() {
 
 // CreatePerms 新建权限
 func CreatePerms() {
-	if config.Config.Debug {
+	if libs.Config.Debug {
 		fmt.Println(fmt.Sprintf("填充权限：%v", Seeds))
 	}
 	for _, m := range Seeds.Perms {
@@ -79,19 +78,19 @@ func CreatePerms() {
 // CreateAdminRole 新建管理角色
 func CreateAdminRole() {
 
-	role, err := models.GetRoleByName(config.Config.Admin.RoleName)
+	role, err := models.GetRoleByName(libs.Config.Admin.RoleName)
 	if err == nil {
 		if role.ID == 0 {
 			role = &models.Role{
-				Name:        config.Config.Admin.RoleName,
-				DisplayName: config.Config.Admin.RoleDisplayName,
-				Description: config.Config.Admin.RoleDisplayName,
+				Name:        libs.Config.Admin.RoleName,
+				DisplayName: libs.Config.Admin.RoleDisplayName,
+				Description: libs.Config.Admin.RoleDisplayName,
 				Model:       gorm.Model{CreatedAt: time.Now()},
 			}
 
 			var permIds []uint
 			perms, err := models.GetAllPermissions("", "", -1, -1)
-			if config.Config.Debug {
+			if libs.Config.Debug {
 				if err != nil {
 					fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
 				}
@@ -112,7 +111,7 @@ func CreateAdminRole() {
 			}
 		}
 	}
-	if config.Config.Debug {
+	if libs.Config.Debug {
 		fmt.Println(fmt.Sprintf("填充角色数据：%v", role))
 		fmt.Println(fmt.Sprintf("填充角色权限：%v", role.PermIds))
 	}
@@ -122,15 +121,15 @@ func CreateAdminRole() {
 // CreateAdminUser 新建管理员
 func CreateAdminUser() {
 
-	admin, err := models.GetUserByUsername(config.Config.Admin.UserName)
+	admin, err := models.GetUserByUsername(libs.Config.Admin.UserName)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Get admin error：%v", err))
 	}
-	password := config.Config.Admin.Pwd
+	password := libs.Config.Admin.Pwd
 	if admin.ID == 0 {
 		admin = &models.User{
-			Username: config.Config.Admin.UserName,
-			Name:     config.Config.Admin.Name,
+			Username: libs.Config.Admin.UserName,
+			Name:     libs.Config.Admin.Name,
 			Password: password,
 			Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
 			Intro:    "超级弱鸡程序猿一枚！！！！",
@@ -138,7 +137,7 @@ func CreateAdminUser() {
 		}
 		var roleIds []uint
 		roles, err := models.GetAllRoles("", "", -1, -1)
-		if config.Config.Debug {
+		if libs.Config.Debug {
 			if err != nil {
 				fmt.Println(fmt.Sprintf("角色获取失败：%v", err))
 			}
@@ -157,15 +156,15 @@ func CreateAdminUser() {
 		}
 	}
 
-	if config.Config.Debug {
+	if libs.Config.Debug {
 		fmt.Println(fmt.Sprintf("填充管理员数据：%v", admin))
 	}
 }
 
 /*
 	AutoMigrates 重置数据表
-	sysinit.Db.DropTableIfExists 删除存在数据表
-	sysinit.Db.AutoMigrate 重建数据表
+	libs.Db.DropTableIfExists 删除存在数据表
+	libs.Db.AutoMigrate 重建数据表
 */
 func AutoMigrates() {
 	models.DropTables()

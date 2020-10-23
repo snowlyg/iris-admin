@@ -2,11 +2,11 @@ package models
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/libs"
 	"gorm.io/gorm/clause"
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +33,7 @@ func NewTag() *Tag {
  */
 func GetTagById(id uint, withRelation bool) (*Tag, error) {
 	t := NewTag()
-	get := sysinit.Db.Where("id = ?", id)
+	get := libs.Db.Where("id = ?", id)
 	if withRelation {
 		get = get.Preload(clause.Associations)
 	}
@@ -52,7 +52,7 @@ func GetTagById(id uint, withRelation bool) (*Tag, error) {
  */
 func GetTagByName(name string) (*Tag, error) {
 	t := NewTag()
-	err := IsNotFound(sysinit.Db.Where("name = ?", name).First(t).Error)
+	err := IsNotFound(libs.Db.Where("name = ?", name).First(t).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func GetTagByName(name string) (*Tag, error) {
 func DeleteTagById(id uint) error {
 	t := NewTag()
 	t.ID = id
-	if err := sysinit.Db.Delete(t).Error; err != nil {
+	if err := libs.Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteTagByIdError:%s \n", err))
 		return err
 	}
@@ -99,7 +99,7 @@ func GetAllTags(name, orderBy string, offset, limit int) ([]*Tag, error) {
  * @param  {[type]} mp int    [description]
  */
 func (p *Tag) CreateTag() error {
-	if err := sysinit.Db.Create(p).Error; err != nil {
+	if err := libs.Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil

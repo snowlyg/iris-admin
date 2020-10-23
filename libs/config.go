@@ -1,13 +1,13 @@
-package config
+package libs
 
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	logger "github.com/sirupsen/logrus"
 
 	"github.com/jinzhu/configor"
-	"github.com/snowlyg/IrisAdminApi/libs"
 )
 
 var Config = struct {
@@ -35,17 +35,35 @@ var Config = struct {
 		User     string `env:"DBUser" default:"root"`
 		Password string `env:"DBPassword" default:""`
 	}
+	Redis struct {
+		Host string `env:"RedisHost" default:"127.0.0.1"`
+		Port string `env:"RedisPort" default:"6379"`
+		User string `env:"RedisUser" default:""`
+		Pwd  string `env:"RedisPwd" default:""`
+	}
 }{}
 
 func init() {
-	configPath := filepath.Join(libs.CWD(), "application.yml")
+	configPath := filepath.Join(CWD(), "application.yml")
 	fmt.Println(fmt.Sprintf("配置YML文件路径：%v", configPath))
 	if err := configor.Load(&Config, configPath); err != nil {
 		logger.Println(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
+		return
 	}
 
 	if Config.Debug {
 		fmt.Println(fmt.Sprintf("配置项：%v", Config))
 	}
+}
 
+func GetRedisUris() []string {
+	addrs := make([]string, 0, 0)
+	hosts := strings.Split(Config.Redis.Host, ";")
+	ports := strings.Split(Config.Redis.Port, ";")
+	for _, h := range hosts {
+		for _, p := range ports {
+			addrs = append(addrs, fmt.Sprintf("%s:%s", h, p))
+		}
+	}
+	return addrs
 }

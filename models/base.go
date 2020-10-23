@@ -4,12 +4,11 @@ import (
 	"errors"
 	"fmt"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
-	"github.com/snowlyg/IrisAdminApi/config"
+	"github.com/snowlyg/blog/libs"
 	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
 	"gorm.io/gorm"
 )
 
@@ -23,7 +22,7 @@ import (
  * @param  {[type]} limit int    [description]
  */
 func GetAll(model interface{}, searchStr, orderBy string, offset, limit int) *gorm.DB {
-	db := sysinit.Db.Model(model)
+	db := libs.Db.Model(model)
 	if len(orderBy) > 0 {
 		db = db.Order(orderBy + " desc")
 	} else {
@@ -48,14 +47,14 @@ func IsNotFound(err error) error {
 }
 
 func Update(v, d interface{}) error {
-	if err := sysinit.Db.Model(v).Session(&gorm.Session{FullSaveAssociations: true}).Updates(d).Error; err != nil {
+	if err := libs.Db.Model(v).Session(&gorm.Session{FullSaveAssociations: true}).Updates(d).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
 func GetRolesForUser(uid uint) []string {
-	uids, err := sysinit.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
+	uids, err := libs.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
 	if err != nil {
 		color.Red(fmt.Sprintf("GetRolesForUser 错误: %v", err))
 		return []string{}
@@ -88,30 +87,28 @@ func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 }
 
 func GetPermissionsForUser(uid uint) [][]string {
-	return sysinit.Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
+	return libs.Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
 }
 
 func DropTables() {
-	_ = sysinit.Db.Migrator().DropTable(
-		config.Config.DB.Prefix+"users",
-		config.Config.DB.Prefix+"roles",
-		config.Config.DB.Prefix+"permissions",
-		config.Config.DB.Prefix+"articles",
-		config.Config.DB.Prefix+"configs",
-		config.Config.DB.Prefix+"tags",
-		config.Config.DB.Prefix+"types",
-		config.Config.DB.Prefix+"article_tags",
-		config.Config.DB.Prefix+"oauth_tokens",
+	_ = libs.Db.Migrator().DropTable(
+		libs.Config.DB.Prefix+"users",
+		libs.Config.DB.Prefix+"roles",
+		libs.Config.DB.Prefix+"permissions",
+		libs.Config.DB.Prefix+"articles",
+		libs.Config.DB.Prefix+"configs",
+		libs.Config.DB.Prefix+"tags",
+		libs.Config.DB.Prefix+"types",
+		libs.Config.DB.Prefix+"article_tags",
 		"casbin_rule")
 }
 
 func Migrate() {
-	sysinit.Db.AutoMigrate(
+	libs.Db.AutoMigrate(
 		&User{},
 		&Role{},
 		&Permission{},
 		&Article{},
-		&OauthToken{},
 		&gormadapter.CasbinRule{},
 		&Config{},
 		&Tag{},

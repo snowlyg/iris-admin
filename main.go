@@ -10,10 +10,9 @@ import (
 
 	"github.com/kardianos/service"
 	logger "github.com/sirupsen/logrus"
-	"github.com/snowlyg/IrisAdminApi/config"
-	"github.com/snowlyg/IrisAdminApi/libs"
-	"github.com/snowlyg/IrisAdminApi/seeder"
-	"github.com/snowlyg/IrisAdminApi/web_server"
+	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/seeder"
+	"github.com/snowlyg/blog/web_server"
 )
 
 var Version = "master"
@@ -27,7 +26,7 @@ func init() {
 }
 
 func (p *program) startIris() {
-	host := fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)
+	host := fmt.Sprintf("%s:%d", libs.Config.Host, libs.Config.Port)
 	if host != "" {
 		go func() {
 			logger.Println("HTTP-IRIS listen On ", host)
@@ -130,8 +129,8 @@ version: %s`, Version))
 
 			return
 		} else if os.Args[1] == "start" {
-			if libs.IsPortInUse(config.Config.Port) {
-				panic(fmt.Sprintf("端口 %d 已被使用", config.Config.Port))
+			if libs.IsPortInUse(libs.Config.Port) {
+				panic(fmt.Sprintf("端口 %d 已被使用", libs.Config.Port))
 			}
 		}
 
@@ -142,8 +141,8 @@ version: %s`, Version))
 		return
 	}
 
-	if libs.IsPortInUse(config.Config.Port) {
-		panic(fmt.Sprintf("端口 %d 已被使用", config.Config.Port))
+	if libs.IsPortInUse(libs.Config.Port) {
+		panic(fmt.Sprintf("端口 %d 已被使用", libs.Config.Port))
 	}
 
 	err = s.Run()

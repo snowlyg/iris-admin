@@ -1,4 +1,4 @@
-module github.com/snowlyg/IrisAdminApi
+module github.com/snowlyg/blog
 
 go 1.14
 
@@ -12,6 +12,8 @@ require (
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.3.0
+	github.com/go-redis/redis/v8 v8.3.2 // indirect
+	github.com/gomodule/redigo v1.8.2
 	github.com/iris-contrib/httpexpect/v2 v2.0.5
 	github.com/iris-contrib/middleware/cors v0.0.0-20200810001613-32cf668f999f
 	github.com/iris-contrib/middleware/jwt v0.0.0-20200810001613-32cf668f999f
@@ -24,8 +26,10 @@ require (
 	github.com/manveru/gobdd v0.0.0-20131210092515-f1a17fdd710b // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
+	github.com/mna/redisc v1.1.7
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/snowlyg/gotransformer v0.1.0

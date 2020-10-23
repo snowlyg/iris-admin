@@ -3,9 +3,8 @@ package controllers
 import (
 	"fmt"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/config"
-	"github.com/snowlyg/IrisAdminApi/libs"
-	"github.com/snowlyg/IrisAdminApi/models"
+	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/models"
 	"path/filepath"
 	"strings"
 	"time"
@@ -51,7 +50,7 @@ func UploadFile(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 
-	imageHost := fmt.Sprintf("http://%s:%d", ctx.Domain(), config.Config.Port)
+	imageHost := fmt.Sprintf("http://%s:%d", ctx.Domain(), libs.Config.Port)
 	configByKey, err := models.GetConfigByName("imageHost")
 	if err == nil {
 		imageHost = configByKey.Value

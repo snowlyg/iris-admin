@@ -158,6 +158,10 @@ func (u *User) CheckLogin(password string) (*Token, int64, string) {
 	if u.ID == 0 {
 		return nil, 400, "用户不存在"
 	} else {
+		uid := strconv.FormatUint(uint64(u.ID), 10)
+		if isUserTokenOver(uid) {
+			return nil, 400, "以达到同时登录设备上限"
+		}
 		if ok := bcrypt.Match(password, u.Password); ok {
 			token := jwt.NewTokenWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 				"exp": time.Now().Add(time.Hour * time.Duration(1)).Unix(),
@@ -166,7 +170,7 @@ func (u *User) CheckLogin(password string) (*Token, int64, string) {
 			tokenString, _ := token.SignedString([]byte("HS2JDFKhu7Y1av7b"))
 
 			rsv2 := RedisSessionV2{
-				UserId:       strconv.FormatUint(uint64(u.ID), 10),
+				UserId:       uid,
 				LoginType:    LoginTypeWeb,
 				AuthType:     AuthPwd,
 				CreationDate: time.Now().Unix(),

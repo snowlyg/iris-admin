@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -307,8 +306,6 @@ func articleTransform(article *models.Article) *transformer.Article {
 		}
 	}
 	r.TagNames = tagNames
-
-	fmt.Println(fmt.Sprintf("type :%+v", article.Type))
 
 	if article.Type != nil {
 		transform := ttTransform(article.Type)

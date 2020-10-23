@@ -30,13 +30,13 @@ var Config = struct {
 		Prefix   string `env:"DBPrefix" default:"iris_"`
 		Name     string `env:"DBName" default:"goirisapi"`
 		Adapter  string `env:"DBAdapter" default:"mysql"`
-		Host     string `env:"DBHost" default:"127.0.0.1"`
+		Host     string `env:"DBHost" default:"localhost"`
 		Port     string `env:"DBPort" default:"3306"`
 		User     string `env:"DBUser" default:"root"`
 		Password string `env:"DBPassword" default:""`
 	}
 	Redis struct {
-		Host string `env:"RedisHost" default:"127.0.0.1"`
+		Host string `env:"RedisHost" default:"localhost"`
 		Port string `env:"RedisPort" default:"6379"`
 		User string `env:"RedisUser" default:""`
 		Pwd  string `env:"RedisPwd" default:""`

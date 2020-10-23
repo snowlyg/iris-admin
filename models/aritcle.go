@@ -57,6 +57,7 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 	ip := r.Ips
 	ips := strings.Split(ip, ",")
 	publicIp := libs.ClientPublicIp(rh)
+	fmt.Println(fmt.Sprintf("ClientPublicIp :%s", publicIp))
 	if !libs.InArrayS(ips, publicIp) {
 		r.Lock()
 		defer r.Unlock()

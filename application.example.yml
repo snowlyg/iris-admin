@@ -18,6 +18,6 @@ db:
   password: password
 redis:
   host: localhost
-  port: 3306
-  user: root
-  pwd: password
+  port: 6379
+  user:
+  pwd:

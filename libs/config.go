@@ -39,7 +39,7 @@ var Config = struct {
 		Host string `env:"RedisHost" default:"localhost"`
 		Port string `env:"RedisPort" default:"6379"`
 		User string `env:"RedisUser" default:""`
-		Pwd  string `env:"RedisPwd" default:""`
+		Pwd  string `env:"RedisPwd" default:"secret"`
 	}
 }{}
 

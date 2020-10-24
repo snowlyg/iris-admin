@@ -18,7 +18,6 @@ services:
 go:
   - 1.15.x
 os:
-  - windows
   - linux
 
 env:

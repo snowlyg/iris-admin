@@ -124,7 +124,7 @@ func CreateArticle(ctx iris.Context) {
 		return
 	}
 
-	err := validates.Validate.Struct(*article)
+	err := validates.Validate.Struct(article)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {

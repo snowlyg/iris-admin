@@ -10,12 +10,12 @@ import (
 )
 
 /**
-* @api {get} /admin/configs/:id 根据id获取权限信息
+* @api {get} /admin/configs/:key 根据id获取权限信息
 * @apiName 根据id获取权限信息
 * @apiGroup Configs
 * @apiVersion 1.0.0
 * @apiDescription 根据id获取权限信息
-* @apiSampleRequest /admin/configs/:id
+* @apiSampleRequest /admin/configs/:key
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
 * @apiSuccess {String} data 返回数据
@@ -25,8 +25,8 @@ func GetConfig(ctx iris.Context) {
 	key := ctx.Params().GetString("key")
 	config, err := models.GetConfigByName(key)
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error get %s config: %s", key, err.Error())))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)

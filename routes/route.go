@@ -32,6 +32,9 @@ func App(api *iris.Application) {
 				aritcle.Get("/{id:uint}", controllers.GetPublishedArticle)
 				aritcle.Get("/like/{id:uint}", controllers.GetPublishedArticleLike)
 			})
+			v1.PartyFunc("/configs", func(configs iris.Party) {
+				configs.Get("/{key:string}", controllers.GetConfig)
+			})
 			v1.PartyFunc("/types", func(articleType iris.Party) {
 				articleType.Get("/", controllers.GetAllTypes)
 			})
@@ -76,7 +79,7 @@ func App(api *iris.Application) {
 				})
 				admin.PartyFunc("/configs", func(configs iris.Party) {
 					configs.Get("/", controllers.GetAllConfigs).Name = "系统配置列表"
-					configs.Get("/{id:uint}", controllers.GetConfig).Name = "系统配置详情"
+					configs.Get("/{key:string}", controllers.GetConfig).Name = "系统配置详情"
 					configs.Post("/", controllers.CreateConfig).Name = "创建系统配置"
 					configs.Put("/{id:uint}", controllers.UpdateConfig).Name = "编辑系统配置"
 					configs.Delete("/{id:uint}", controllers.DeleteConfig).Name = "删除系统配置"

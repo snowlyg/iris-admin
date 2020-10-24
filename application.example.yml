@@ -17,7 +17,7 @@ db:
   user: root
   password: password
 redis:
-  host: localhost
+  host: 127.0.0.1
   port: 6379
   user:
   pwd:

@@ -134,12 +134,9 @@ func DeleteArticleById(id uint) error {
  */
 func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId int) ([]*Article, int64, error) {
 	var articles []*Article
-	var count int64
 
-	getAll := GetAll(&Article{}, searchStr, orderBy, offset, limit)
-	if err := getAll.Count(&count).Error; err != nil {
-		return nil, count, err
-	}
+	getAll, count := GetAll(&Article{}, searchStr, orderBy, offset, limit)
+
 	if len(published) > 0 {
 		getAll = getAll.Where("status = ?", "published")
 	}

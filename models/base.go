@@ -21,7 +21,8 @@ import (
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAll(model interface{}, searchStr, orderBy string, offset, limit int) *gorm.DB {
+func GetAll(model interface{}, searchStr, orderBy string, offset, limit int) (*gorm.DB, int64) {
+	var count int64
 	db := libs.Db.Model(model)
 	if len(orderBy) > 0 {
 		db = db.Order(orderBy + " desc")
@@ -35,8 +36,12 @@ func GetAll(model interface{}, searchStr, orderBy string, offset, limit int) *go
 		}
 	}
 
+	if err := db.Count(&count).Error; err != nil {
+		return nil, count
+	}
+
 	db = db.Scopes(Paginate(offset, limit))
-	return db
+	return db, count
 }
 
 func IsNotFound(err error) error {

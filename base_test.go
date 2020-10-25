@@ -6,15 +6,13 @@ import (
 	"flag"
 	"github.com/iris-contrib/httpexpect/v2"
 	"github.com/kataras/iris/v12"
-	"net/http"
-	"os"
-	"testing"
-	"time"
-
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/seeder"
 	"github.com/snowlyg/blog/web_server"
+	"net/http"
+	"os"
+	"testing"
 
 	"github.com/snowlyg/blog/libs"
 )
@@ -34,8 +32,7 @@ func TestMain(m *testing.M) {
 	flag.Parse()
 	exitCode := m.Run()
 
-	models.DropTables()         // 删除测试数据表，保持测试环境
-	time.Sleep(1 * time.Minute) // 暂停 5 秒钟,因为每秒只能执行一次请求
+	models.DropTables() // 删除测试数据表，保持测试环境
 	os.Exit(exitCode)
 }
 

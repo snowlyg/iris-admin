@@ -41,8 +41,9 @@ var Config = struct {
 		Pwd  string `env:"RedisPwd" default:""`
 	}
 	Limit struct {
-		Limit float64 `env:"LimitLimit" default:"1"`
-		Burst int     `env:"LimitBurst" default:"5"`
+		Disable bool    `env:"LimitDisable" default:"true"`
+		Limit   float64 `env:"LimitLimit" default:"1"`
+		Burst   int     `env:"LimitBurst" default:"5"`
 	}
 }{}
 

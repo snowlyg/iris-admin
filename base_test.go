@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/snowlyg/blog/models"
@@ -34,6 +35,7 @@ func TestMain(m *testing.M) {
 	exitCode := m.Run()
 
 	models.DropTables() // 删除测试数据表，保持测试环境
+	time.Sleep(time.Second)
 	os.Exit(exitCode)
 }
 

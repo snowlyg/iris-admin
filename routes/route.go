@@ -25,7 +25,7 @@ func App(api *iris.Application) {
 
 		v1 := app.Party("/v1")
 		{
-			limitV1 := rate.Limit(1, 5, rate.PurgeEvery(time.Minute, 5*time.Minute))
+			limitV1 := rate.Limit(libs.Config.Limit.Limit, libs.Config.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
 			v1.Use(limitV1)
 			v1.PartyFunc("/article", func(aritcle iris.Party) {
 				aritcle.Get("/", controllers.GetAllPublishedArticles)

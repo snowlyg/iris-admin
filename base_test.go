@@ -35,7 +35,7 @@ func TestMain(m *testing.M) {
 	exitCode := m.Run()
 
 	models.DropTables()         // 删除测试数据表，保持测试环境
-	time.Sleep(1 * time.Second) // 暂停 5 秒钟,因为每秒只能执行一次请求
+	time.Sleep(1 * time.Minute) // 暂停 5 秒钟,因为每秒只能执行一次请求
 	os.Exit(exitCode)
 }
 

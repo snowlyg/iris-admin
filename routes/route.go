@@ -101,6 +101,20 @@ func App(api *iris.Application) {
 					types.Put("/{id:uint}", controllers.UpdateType).Name = "编辑分类"
 					types.Delete("/{id:uint}", controllers.DeleteType).Name = "删除分类"
 				})
+				admin.PartyFunc("/docs", func(docs iris.Party) {
+					docs.Get("/", controllers.GetAllDocs).Name = "文档列表"
+					docs.Get("/{id:uint}", controllers.GetDoc).Name = "文档详情"
+					docs.Post("/", controllers.CreateDoc).Name = "创建文档"
+					docs.Put("/{id:uint}", controllers.UpdateDoc).Name = "编辑文档"
+					docs.Delete("/{id:uint}", controllers.DeleteDoc).Name = "删除文档"
+				})
+				admin.PartyFunc("/chapters", func(chapters iris.Party) {
+					chapters.Get("/", controllers.GetAllChapters).Name = "章节列表"
+					chapters.Get("/{id:uint}", controllers.GetChapter).Name = "章节详情"
+					chapters.Post("/", controllers.CreateChapter).Name = "创建章节"
+					chapters.Put("/{id:uint}", controllers.UpdateChapter).Name = "编辑章节"
+					chapters.Delete("/{id:uint}", controllers.DeleteChapter).Name = "删除章节"
+				})
 			})
 		}
 	}

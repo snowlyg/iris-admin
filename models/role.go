@@ -95,7 +95,7 @@ func DeleteRoleById(id uint) error {
  */
 func GetAllRoles(name, orderBy string, offset, limit int) ([]*Role, error) {
 	var roles []*Role
-	all, _ := GetAll(&Role{}, name, orderBy, offset, limit)
+	all := GetAll(&Role{}, name, orderBy, offset, limit)
 	if err := all.Find(&roles).Error; err != nil {
 		return nil, err
 	}

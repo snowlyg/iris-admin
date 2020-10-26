@@ -84,7 +84,7 @@ func DeleteTagById(id uint) error {
  */
 func GetAllTags(name, orderBy string, offset, limit int) ([]*Tag, error) {
 	var tags []*Tag
-	all, _ := GetAll(&Tag{}, name, orderBy, offset, limit)
+	all := GetAll(&Tag{}, name, orderBy, offset, limit)
 	if err := all.Find(&tags).Error; err != nil {
 		return nil, err
 	}

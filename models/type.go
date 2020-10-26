@@ -78,7 +78,7 @@ func DeleteTypeById(id uint) error {
  */
 func GetAllTypes(name, orderBy string, offset, limit int) ([]*Type, error) {
 	var types []*Type
-	all, _ := GetAll(&Type{}, name, orderBy, offset, limit)
+	all := GetAll(&Type{}, name, orderBy, offset, limit)
 	if err := all.Find(&types).Error; err != nil {
 		return nil, err
 	}

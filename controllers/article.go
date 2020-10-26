@@ -243,7 +243,7 @@ func GetAllPublishedArticles(ctx iris.Context) {
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles(searchStr, orderBy, "published", offset, limit, tagId)
+	articles, count, err := models.GetAllArticles("article", searchStr, orderBy, "published", offset, limit, tagId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -274,7 +274,7 @@ func GetAllArticles(ctx iris.Context) {
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles(searchStr, orderBy, "", offset, limit, tagId)
+	articles, count, err := models.GetAllArticles("all", searchStr, orderBy, "", offset, limit, tagId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -310,6 +310,10 @@ func articleTransform(article *models.Article) *transformer.Article {
 	if article.Type != nil {
 		transform := ttTransform(article.Type)
 		r.Type = *transform
+	}
+	if article.Chapter != nil {
+		transform := chapterTransform(article.Chapter)
+		r.Chapter = *transform
 	}
 	return r
 }

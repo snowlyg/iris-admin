@@ -24,15 +24,18 @@ type Article struct {
 	IsOriginal   bool      `gorm:"not null;default:true;type:tinyint(1)" json:"is_original" comment:"是否原创" validate:""`
 	Content      string    `gorm:"type:longText" json:"content" comment:"内容" validate:"required,gte=6"`
 	Status       string    `gorm:"not null;default:'';type:varchar(10)" json:"status" comment:"文章状态" validate:"required,gte=1,lte=10"`
+	IsDoc        string    `gorm:"not null;default:'';type:varchar(10)" json:"is_doc" comment:"是否为文档" `
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
 	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
 	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
 	Ips          string    `gorm:"not null;default(0);type:varchar(1024)" json:"ips" comment:"ip 地址"`
 
-	TypeID   uint
-	Type     *Type
-	Tags     []*Tag   `gorm:"many2many:article_tags;"`
-	TagNames []string `gorm:"-" json:"tag_names"`
+	TypeID    uint
+	Type      *Type
+	ChapterID uint
+	Chapter   *Chapter
+	Tags      []*Tag   `gorm:"many2many:article_tags;"`
+	TagNames  []string `gorm:"-" json:"tag_names"`
 }
 
 func NewArticle() *Article {
@@ -57,7 +60,6 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 	ip := r.Ips
 	ips := strings.Split(ip, ",")
 	publicIp := libs.ClientPublicIp(rh)
-	fmt.Println(fmt.Sprintf("ClientPublicIp :%s", publicIp))
 	if !libs.InArrayS(ips, publicIp) {
 		r.Lock()
 		defer r.Unlock()
@@ -103,7 +105,7 @@ func (r *Article) LikeArticle() error {
  */
 func GetArticleById(id uint) (*Article, error) {
 	r := NewArticle()
-	err := IsNotFound(libs.Db.Where("id = ?", id).Preload(clause.Associations).First(r).Error)
+	err := IsNotFound(libs.Db.Where("id = ?", id).Preload(clause.Associations).Preload("Chapter.Doc").First(r).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -132,11 +134,14 @@ func DeleteArticleById(id uint) error {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId int) ([]*Article, int64, error) {
+func GetAllArticles(isDoc, searchStr, orderBy, published string, offset, limit, tagId int) ([]*Article, int64, error) {
 	var articles []*Article
+	var count int64
+	getAll := GetAll(&Article{}, searchStr, orderBy, offset, limit)
 
-	getAll, count := GetAll(&Article{}, searchStr, orderBy, offset, limit)
-
+	if isDoc != "all" {
+		getAll = getAll.Where("is_doc = ?", isDoc)
+	}
 	if len(published) > 0 {
 		getAll = getAll.Where("status = ?", "published")
 	}
@@ -157,6 +162,10 @@ func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId i
 		getAll = getAll.Where("id IN ?", tagArticleIds)
 	}
 
+	if err := getAll.Count(&count).Error; err != nil {
+		return nil, count, err
+	}
+
 	if err := getAll.Preload(clause.Associations).Find(&articles).Error; err != nil {
 		return nil, count, err
 	}
@@ -172,7 +181,7 @@ func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId i
  * @param  {[type]} mp int    [description]
  */
 func (r *Article) CreateArticle() error {
-	r.getTagTypes()
+	r.getTagTypeChapters()
 
 	if err := libs.Db.Create(r).Error; err != nil {
 		return err
@@ -181,16 +190,31 @@ func (r *Article) CreateArticle() error {
 	return nil
 }
 
-func (r *Article) getTagTypes() {
+func (r *Article) getTagTypeChapters() {
 	if err := libs.Db.Model(r).Association("Tags").Clear(); err != nil {
 		fmt.Println(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
 	}
 
-	if r.Type != nil && len(r.Type.Name) > 0 {
-		tt, err := GetTypeByName(r.Type.Name)
-		if err == nil && tt.ID > 0 {
-			r.TypeID = tt.ID
-			r.Type = tt
+	r.IsDoc = "article"
+
+	if r.Type != nil {
+		if r.Type.ID > 0 {
+			tt, err := GetTypeById(r.Type.ID)
+			if err == nil && tt.ID > 0 {
+				r.TypeID = tt.ID
+				r.Type = tt
+			}
+		}
+	}
+
+	if r.Chapter != nil {
+		if r.Chapter.ID > 0 {
+			chapter, err := GetChapterById(r.Chapter.ID)
+			if err == nil && chapter.ID > 0 {
+				r.ChapterID = chapter.ID
+				r.Chapter = chapter
+				r.IsDoc = "doc"
+			}
 		}
 	}
 
@@ -222,7 +246,7 @@ func (r *Article) getTagTypes() {
  * @param  {[type]} mp int    [description]
  */
 func UpdateArticle(id uint, nr *Article) error {
-	nr.getTagTypes()
+	nr.getTagTypeChapters()
 
 	if err := Update(&Article{}, nr, id); err != nil {
 		return err

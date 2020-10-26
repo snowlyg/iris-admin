@@ -80,7 +80,7 @@ func DeletePermissionById(id uint) error {
  */
 func GetAllPermissions(name, orderBy string, offset, limit int) ([]*Permission, error) {
 	var permissions []*Permission
-	all, _ := GetAll(&Permission{}, name, orderBy, offset, limit)
+	all := GetAll(&Permission{}, name, orderBy, offset, limit)
 	if err := all.Find(&permissions).Error; err != nil {
 		return nil, err
 	}

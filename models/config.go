@@ -68,7 +68,7 @@ func DeleteConfig(id uint) error {
  */
 func GetAllConfigs(name, orderBy string, offset, limit int) ([]*Config, error) {
 	var configs []*Config
-	q, _ := GetAll(&Config{}, name, orderBy, offset, limit)
+	q := GetAll(&Config{}, name, orderBy, offset, limit)
 	if err := q.Find(&configs).Error; err != nil {
 		return nil, err
 	}

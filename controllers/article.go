@@ -240,10 +240,11 @@ func GetAllPublishedArticles(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
+	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles("article", searchStr, orderBy, "published", offset, limit, tagId)
+	articles, count, err := models.GetAllArticles("article", searchStr, orderBy, "published", offset, limit, tagId, typeId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -271,10 +272,11 @@ func GetAllArticles(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
+	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles("all", searchStr, orderBy, "", offset, limit, tagId)
+	articles, count, err := models.GetAllArticles("all", searchStr, orderBy, "", offset, limit, tagId, typeId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

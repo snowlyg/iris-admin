@@ -44,6 +44,9 @@ func App(api *iris.Application) {
 			v1.PartyFunc("/tags", func(articleTag iris.Party) {
 				articleTag.Get("/", controllers.GetAllTags)
 			})
+			v1.PartyFunc("/docs", func(docs iris.Party) {
+				docs.Get("/", controllers.GetAllDocs)
+			})
 			v1.Post("/admin/login", controllers.UserLogin)
 			v1.PartyFunc("/admin", func(admin iris.Party) {
 				casbinMiddleware := middleware.New(libs.Enforcer)                    //casbin for gorm                                                   // <- IMPORTANT, register the middleware.

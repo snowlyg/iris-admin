@@ -134,7 +134,7 @@ func DeleteArticleById(id uint) error {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllArticles(isDoc, searchStr, orderBy, published string, offset, limit, tagId int) ([]*Article, int64, error) {
+func GetAllArticles(isDoc, searchStr, orderBy, published string, offset, limit, tagId, typeId int) ([]*Article, int64, error) {
 	var articles []*Article
 	var count int64
 	getAll := GetAll(&Article{}, searchStr, orderBy, offset, limit)
@@ -144,6 +144,10 @@ func GetAllArticles(isDoc, searchStr, orderBy, published string, offset, limit, 
 	}
 	if len(published) > 0 {
 		getAll = getAll.Where("status = ?", "published")
+	}
+
+	if typeId > 0 {
+		getAll = getAll.Where("type_id = ?", typeId)
 	}
 
 	if tagId > 0 {

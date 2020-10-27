@@ -35,7 +35,6 @@ func GetAll(model interface{}, searchStr, orderBy string, offset, limit int) *go
 		}
 	}
 
-	db = db.Scopes(Paginate(offset, limit))
 	return db
 }
 

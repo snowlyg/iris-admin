@@ -184,6 +184,8 @@ func GetAllArticles(isDoc, searchStr, orderBy, published string, offset, limit, 
 		return nil, count, err
 	}
 
+	getAll = getAll.Scopes(Paginate(offset, limit))
+
 	if err := getAll.Preload(clause.Associations).Find(&articles).Error; err != nil {
 		return nil, count, err
 	}

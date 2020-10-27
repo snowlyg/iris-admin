@@ -95,7 +95,7 @@ func GetAllChapters(docId uint, name, orderBy string, offset, limit int) ([]*Cha
 func (p *Chapter) getDoc() {
 	if p.Doc != nil {
 		if p.Doc.ID > 0 {
-			doc, err := GetDocById(p.Doc.ID)
+			doc, err := GetDocById(p.Doc.ID, "")
 			if err == nil && doc.ID > 0 {
 				p.DocID = doc.ID
 				p.Doc = doc

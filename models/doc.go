@@ -29,9 +29,9 @@ func NewDoc() *Doc {
  * @method GetDocById
  * @param  {[type]}       type  *Doc [description]
  */
-func GetDocById(id uint) (*Doc, error) {
+func GetDocById(id uint, relation string) (*Doc, error) {
 	t := NewDoc()
-	err := IsNotFound(libs.Db.Where("id = ?", id).First(t).Error)
+	err := IsNotFound(libs.Db.Scopes(Relation(relation)).Where("id = ?", id).First(t).Error)
 	if err != nil {
 		return nil, err
 	}

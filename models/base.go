@@ -64,6 +64,18 @@ func GetRolesForUser(uid uint) []string {
 	return uids
 }
 
+func Relation(relation string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if len(relation) > 0 {
+			relations := strings.Split(relation, ";")
+			for _, re := range relations {
+				db = db.Preload(re)
+			}
+		}
+		return db
+	}
+}
+
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if page == 0 {

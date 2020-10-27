@@ -26,7 +26,8 @@ import (
  */
 func GetDoc(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	doc, err := models.GetDocById(id)
+	relation := ctx.FormValue("relation")
+	doc, err := models.GetDocById(id, relation)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -206,5 +207,9 @@ func docTransform(doc *models.Doc) *transformer.Doc {
 	r := &transformer.Doc{}
 	g := gf.NewTransform(r, doc, time.RFC3339)
 	_ = g.Transformer()
+	if doc.Chapters != nil {
+		transform := chaptersTransform(doc.Chapters)
+		r.Chapters = transform
+	}
 	return r
 }

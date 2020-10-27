@@ -46,6 +46,7 @@ func App(api *iris.Application) {
 			})
 			v1.PartyFunc("/docs", func(docs iris.Party) {
 				docs.Get("/", controllers.GetAllDocs)
+				docs.Get("/{id:uint}", controllers.GetDoc)
 			})
 			v1.Post("/admin/login", controllers.UserLogin)
 			v1.PartyFunc("/admin", func(admin iris.Party) {

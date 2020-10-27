@@ -54,6 +54,7 @@ func App(api *iris.Application) {
 				casbinMiddleware := middleware.New(libs.Enforcer)                    //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				admin.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				admin.Post("/logout", controllers.UserLogout).Name = "退出"
+				admin.Post("/expire", controllers.UserExpire).Name = "刷新 token"
 				admin.Get("/profile", controllers.GetProfile).Name = "个人信息"
 				admin.Post("/upload_file", iris.LimitRequestBodySize(maxSize+1<<20), controllers.UploadFile).Name = "上传文件"
 				admin.PartyFunc("/article", func(aritcle iris.Party) {

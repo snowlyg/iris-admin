@@ -94,3 +94,35 @@ func UserLogout(ctx iris.Context) {
 	ctx.StatusCode(http.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "退出"))
 }
+
+/**
+* @api {get} /expire 刷新token
+* @apiName 刷新token
+* @apiGroup Users
+* @apiVersion 1.0.0
+* @apiDescription 刷新token
+* @apiSampleRequest /expire
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
+func UserExpire(ctx iris.Context) {
+	value := ctx.Values().Get("jwt").(*jwt.Token)
+	conn := libs.GetRedisClusterClient()
+	defer conn.Close()
+	sess, err := models.GetRedisSessionV2(conn, value.Raw)
+	if err != nil {
+		ctx.StatusCode(http.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+	}
+	if sess != nil {
+		if err := sess.UpdateUserTokenCacheExpire(conn, value.Raw); err != nil {
+			ctx.StatusCode(http.StatusOK)
+			_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		}
+	}
+
+	ctx.StatusCode(http.StatusOK)
+	_, _ = ctx.JSON(ApiResource(200, nil, ""))
+}

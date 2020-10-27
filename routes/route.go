@@ -33,6 +33,7 @@ func App(api *iris.Application) {
 			v1.PartyFunc("/article", func(aritcle iris.Party) {
 				aritcle.Get("/", controllers.GetAllPublishedArticles)
 				aritcle.Get("/{id:uint}", controllers.GetPublishedArticle)
+				aritcle.Get("/{id:uint}/chapter", controllers.GetPublishedArticleByChapterId)
 				aritcle.Get("/like/{id:uint}", controllers.GetPublishedArticleLike)
 			})
 			v1.PartyFunc("/config/{key:string}", func(configs iris.Party) {

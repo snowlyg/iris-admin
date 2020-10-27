@@ -43,13 +43,27 @@ func NewArticle() *Article {
 }
 
 /**
- * 通过 id 获取 role 记录
+ * 通过 id 获取 article 记录
  * @method GetArticleById
- * @param  {[type]}       role  *Article [description]
+ * @param  {[type]}       article  *Article [description]
  */
 func GetPublishedArticleById(id uint) (*Article, error) {
 	r := NewArticle()
 	err := IsNotFound(libs.Db.Where("id = ?", id).Where("status = ?", "published").Preload(clause.Associations).First(r).Error)
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+/**
+ * 通过 id 获取 article 记录
+ * @method GetPublishedArticleByChapterId
+ * @param  {[type]}       article  *Article [description]
+ */
+func GetPublishedArticleByChapterId(id uint) (*Article, error) {
+	r := NewArticle()
+	err := IsNotFound(libs.Db.Where("chapter_id = ?", id).Where("status = ?", "published").Preload(clause.Associations).First(r).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -99,9 +113,9 @@ func (r *Article) LikeArticle() error {
 }
 
 /**
- * 通过 id 获取 role 记录
+ * 通过 id 获取 article 记录
  * @method GetArticleById
- * @param  {[type]}       role  *Article [description]
+ * @param  {[type]}       article  *Article [description]
  */
 func GetArticleById(id uint) (*Article, error) {
 	r := NewArticle()

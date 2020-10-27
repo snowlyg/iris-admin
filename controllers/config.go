@@ -26,7 +26,7 @@ func GetConfig(ctx iris.Context) {
 	config, err := models.GetConfigByName(key)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error get %s config: %s", key, err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error get %s config: %s", key, err.Error())))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
@@ -53,7 +53,7 @@ func CreateConfig(ctx iris.Context) {
 	config := new(models.Config)
 	if err := ctx.ReadJSON(config); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*config)
@@ -62,7 +62,7 @@ func CreateConfig(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -71,13 +71,13 @@ func CreateConfig(ctx iris.Context) {
 	err = config.CreateConfig()
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if config.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, config, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, config, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
 	}
@@ -105,7 +105,7 @@ func UpdateConfig(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(config); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*config)
@@ -114,7 +114,7 @@ func UpdateConfig(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -124,13 +124,13 @@ func UpdateConfig(ctx iris.Context) {
 	err = models.UpdateConfig(id, config)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if config.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, config, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, config, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
 	}
@@ -182,7 +182,7 @@ func GetAllConfigs(ctx iris.Context) {
 	configs, err := models.GetAllConfigs(name, orderBy, offset, limit)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)

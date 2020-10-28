@@ -76,14 +76,18 @@ func DeleteDocById(id uint) error {
  * @param  {[doc]} offset int    [description]
  * @param  {[doc]} limit int    [description]
  */
-func GetAllDocs(name, orderBy string, offset, limit int) ([]*Doc, error) {
+func GetAllDocs(name, orderBy string, offset, limit int) ([]*Doc, int64, error) {
 	var docs []*Doc
+	var count int64
 	all := GetAll(&Doc{}, name, orderBy, offset, limit)
+	if err := all.Count(&count).Error; err != nil {
+		return nil, count, err
+	}
 	if err := all.Find(&docs).Error; err != nil {
-		return nil, err
+		return nil, count, err
 	}
 
-	return docs, nil
+	return docs, count, nil
 }
 
 /**

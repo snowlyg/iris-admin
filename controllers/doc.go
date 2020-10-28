@@ -184,14 +184,16 @@ func GetAllDocs(ctx iris.Context) {
 	name := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	docs, err := models.GetAllDocs(name, orderBy, offset, limit)
+	docs, count, err := models.GetAllDocs(name, orderBy, offset, limit)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, docsTransform(docs), "操作成功"))
+	transform := docsTransform(docs)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+
 }
 
 func docsTransform(docs []*models.Doc) []*transformer.Doc {

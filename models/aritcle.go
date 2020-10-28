@@ -24,18 +24,15 @@ type Article struct {
 	IsOriginal   bool      `gorm:"not null;default:true;type:tinyint(1)" json:"is_original" comment:"是否原创" validate:""`
 	Content      string    `gorm:"type:longText" json:"content" comment:"内容" validate:"required,gte=6"`
 	Status       string    `gorm:"not null;default:'';type:varchar(10)" json:"status" comment:"文章状态" validate:"required,gte=1,lte=10"`
-	IsDoc        string    `gorm:"not null;default:'';type:varchar(10)" json:"is_doc" comment:"是否为文档" `
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
 	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
 	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
 	Ips          string    `gorm:"not null;default(0);type:varchar(1024)" json:"ips" comment:"ip 地址"`
 
-	TypeID    uint
-	Type      *Type
-	ChapterID uint
-	Chapter   *Chapter
-	Tags      []*Tag   `gorm:"many2many:article_tags;"`
-	TagNames  []string `gorm:"-" json:"tag_names"`
+	TypeID   uint
+	Type     *Type
+	Tags     []*Tag   `gorm:"many2many:article_tags;"`
+	TagNames []string `gorm:"-" json:"tag_names"`
 }
 
 func NewArticle() *Article {
@@ -50,20 +47,6 @@ func NewArticle() *Article {
 func GetPublishedArticleById(id uint) (*Article, error) {
 	r := NewArticle()
 	err := IsNotFound(libs.Db.Where("id = ?", id).Where("status = ?", "published").Preload(clause.Associations).First(r).Error)
-	if err != nil {
-		return nil, err
-	}
-	return r, nil
-}
-
-/**
- * 通过 id 获取 article 记录
- * @method GetPublishedArticleByChapterId
- * @param  {[type]}       article  *Article [description]
- */
-func GetPublishedArticleByChapterId(id uint) (*Article, error) {
-	r := NewArticle()
-	err := IsNotFound(libs.Db.Where("chapter_id = ?", id).Where("status = ?", "published").Preload(clause.Associations).First(r).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -88,6 +71,7 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 	}
 	return nil
 }
+
 func (r *Article) Addip() error {
 	r.Lock()
 	defer r.Unlock()
@@ -119,7 +103,7 @@ func (r *Article) LikeArticle() error {
  */
 func GetArticleById(id uint) (*Article, error) {
 	r := NewArticle()
-	err := IsNotFound(libs.Db.Where("id = ?", id).Preload(clause.Associations).Preload("Chapter.Doc").First(r).Error)
+	err := IsNotFound(libs.Db.Where("id = ?", id).Preload(clause.Associations).First(r).Error)
 	if err != nil {
 		return nil, err
 	}
@@ -148,14 +132,11 @@ func DeleteArticleById(id uint) error {
  * @param  {[type]} offset int    [description]
  * @param  {[type]} limit int    [description]
  */
-func GetAllArticles(isDoc, searchStr, orderBy, published string, offset, limit, tagId, typeId int) ([]*Article, int64, error) {
+func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId, typeId int) ([]*Article, int64, error) {
 	var articles []*Article
 	var count int64
 	getAll := GetAll(&Article{}, searchStr, orderBy, offset, limit)
 
-	if isDoc != "all" {
-		getAll = getAll.Where("is_doc = ?", isDoc)
-	}
 	if len(published) > 0 {
 		getAll = getAll.Where("status = ?", "published")
 	}
@@ -215,25 +196,12 @@ func (r *Article) getTagTypeChapters() {
 		fmt.Println(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
 	}
 
-	r.IsDoc = "article"
-
 	if r.Type != nil {
 		if r.Type.ID > 0 {
 			tt, err := GetTypeById(r.Type.ID)
 			if err == nil && tt.ID > 0 {
 				r.TypeID = tt.ID
 				r.Type = tt
-			}
-		}
-	}
-
-	if r.Chapter != nil {
-		if r.Chapter.ID > 0 {
-			chapter, err := GetChapterById(r.Chapter.ID)
-			if err == nil && chapter.ID > 0 {
-				r.ChapterID = chapter.ID
-				r.Chapter = chapter
-				r.IsDoc = "doc"
 			}
 		}
 	}

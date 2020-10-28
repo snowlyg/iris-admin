@@ -30,11 +30,10 @@ func App(api *iris.Application) {
 				limitV1 := rate.Limit(libs.Config.Limit.Limit, libs.Config.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
 				v1.Use(limitV1)
 			}
-			v1.PartyFunc("/article", func(aritcle iris.Party) {
-				aritcle.Get("/", controllers.GetAllPublishedArticles)
-				aritcle.Get("/{id:uint}", controllers.GetPublishedArticle)
-				aritcle.Get("/{id:uint}/chapter", controllers.GetPublishedArticleByChapterId)
-				aritcle.Get("/like/{id:uint}", controllers.GetPublishedArticleLike)
+			v1.PartyFunc("/article", func(article iris.Party) {
+				article.Get("/", controllers.GetAllPublishedArticles)
+				article.Get("/{id:uint}", controllers.GetPublishedArticle)
+				article.Get("/like/{id:uint}", controllers.GetPublishedArticleLike)
 			})
 			v1.PartyFunc("/config/{key:string}", func(configs iris.Party) {
 				configs.Get("/", controllers.GetConfig)
@@ -48,6 +47,11 @@ func App(api *iris.Application) {
 			v1.PartyFunc("/docs", func(docs iris.Party) {
 				docs.Get("/", controllers.GetAllDocs)
 				docs.Get("/{id:uint}", controllers.GetDoc)
+			})
+			v1.PartyFunc("/chapter", func(chapter iris.Party) {
+				chapter.Get("/", controllers.GetAllPublishedChapters)
+				chapter.Get("/{id:uint}", controllers.GetPublishedChapter)
+				chapter.Get("/like/{id:uint}", controllers.GetPublishedChapterLike)
 			})
 			v1.Post("/admin/login", controllers.UserLogin)
 			v1.PartyFunc("/admin", func(admin iris.Party) {

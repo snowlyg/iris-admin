@@ -12,7 +12,6 @@ type Article struct {
 	Status       string   `json:"status"`
 	TagNames     []string `json:"tag_names"`
 	Type         Type     `json:"type"`
-	Chapter      Chapter  `json:"chapter"`
 	Like         int64    `json:"like"`
 	Read         int64    `json:"read"`
 	DisplayTime  string   `json:"display_time"`

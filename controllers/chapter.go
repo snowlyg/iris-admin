@@ -14,6 +14,37 @@ import (
 )
 
 /**
+* @api {get} /chapters/:id 根据id获取文章信息
+* @apiName 根据id获取文章信息
+* @apiGroup Articles
+* @apiVersion 1.0.0
+* @apiDescription 根据id获取文章信息
+* @apiSampleRequest /chapters/:id
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission
+ */
+func GetPublishedChapter(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+	id, _ := ctx.Params().GetUint("id")
+	chapter, err := models.GetPublishedChapterById(id)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
+
+	err = chapter.ReadChapter(ctx.Request())
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
+
+	rr := chapterTransform(chapter)
+	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
+}
+
+/**
 * @api {get} /admin/chapters/:id 根据id获取分类信息
 * @apiName 根据id获取分类信息
 * @apiGroup Chapters
@@ -181,18 +212,80 @@ func GetAllChapters(ctx iris.Context) {
 	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
 	searchStr := ctx.FormValue("searchStr")
-	docId := uint(libs.ParseInt(ctx.URLParam("docId"), 0))
+	docId := libs.ParseInt(ctx.URLParam("docId"), 0)
 	orderBy := ctx.FormValue("orderBy")
-	fmt.Println(fmt.Sprintf("docId:%d", docId))
 
-	chapters, err := models.GetAllChapters(docId, searchStr, orderBy, offset, limit)
+	chapters, count, err := models.GetAllChapters(docId, "", searchStr, orderBy, offset, limit)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, chaptersTransform(chapters), "操作成功"))
+	transform := chaptersTransform(chapters)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+}
+
+/**
+* @api {get} /chapter/like/:id 根据id点赞文章
+* @apiName 根据id点赞文章
+* @apiGroup Chapter
+* @apiVersion 1.0.0
+* @apiDescription 根据id点赞文章
+* @apiSampleRequest /chapter/like/:id
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission
+ */
+func GetPublishedChapterLike(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+	id, _ := ctx.Params().GetUint("id")
+	chapter, err := models.GetPublishedChapterById(id)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
+
+	err = chapter.LikeChapter()
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		return
+	}
+
+	rr := chapterTransform(chapter)
+	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
+}
+
+/**
+* @api {get} /chapter 获取所有的文章
+* @apiName 获取所有的文章
+* @apiGroup Chapter
+* @apiVersion 1.0.0
+* @apiDescription 获取所有的文章
+* @apiSampleRequest /chapter
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
+func GetAllPublishedChapters(ctx iris.Context) {
+	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
+	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
+	docId := libs.ParseInt(ctx.FormValue("docId"), 0)
+	searchStr := ctx.FormValue("searchStr")
+	orderBy := ctx.FormValue("orderBy")
+
+	chapters, count, err := models.GetAllChapters(docId, searchStr, orderBy, "published", offset, limit)
+	if err != nil {
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
+
+	ctx.StatusCode(iris.StatusOK)
+	transform := chaptersTransform(chapters)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
 }
 
 func chaptersTransform(chapters []*models.Chapter) []*transformer.Chapter {

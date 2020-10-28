@@ -44,37 +44,6 @@ func GetPublishedArticle(ctx iris.Context) {
 }
 
 /**
-* @api {get} /articles/:id/chapter 根据id获取文章信息
-* @apiName 根据id获取文章信息
-* @apiGroup Articles
-* @apiVersion 1.0.0
-* @apiDescription 根据id获取文章信息
-* @apiSampleRequest /articles/:id/chapter
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission
- */
-func GetPublishedArticleByChapterId(ctx iris.Context) {
-	ctx.StatusCode(iris.StatusOK)
-	chapterId, _ := ctx.Params().GetUint("id")
-	article, err := models.GetPublishedArticleByChapterId(chapterId)
-	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
-		return
-	}
-
-	err = article.ReadArticle(ctx.Request())
-	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
-		return
-	}
-
-	rr := articleTransform(article)
-	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
-}
-
-/**
 * @api {get} /articles/like/:id 根据id点赞文章
 * @apiName 根据id点赞文章
 * @apiGroup Articles
@@ -275,7 +244,7 @@ func GetAllPublishedArticles(ctx iris.Context) {
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles("article", searchStr, orderBy, "published", offset, limit, tagId, typeId)
+	articles, count, err := models.GetAllArticles(searchStr, orderBy, "published", offset, limit, tagId, typeId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -307,7 +276,7 @@ func GetAllArticles(ctx iris.Context) {
 	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
 
-	articles, count, err := models.GetAllArticles("all", searchStr, orderBy, "", offset, limit, tagId, typeId)
+	articles, count, err := models.GetAllArticles(searchStr, orderBy, "", offset, limit, tagId, typeId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -343,10 +312,6 @@ func articleTransform(article *models.Article) *transformer.Article {
 	if article.Type != nil {
 		transform := ttTransform(article.Type)
 		r.Type = *transform
-	}
-	if article.Chapter != nil {
-		transform := chapterTransform(article.Chapter)
-		r.Chapter = *transform
 	}
 	return r
 }

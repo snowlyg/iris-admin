@@ -28,18 +28,14 @@ func NewRole() *Role {
 	}
 }
 
-/**
- * 通过 id 获取 role 记录
- * @method GetRoleById
- * @param  {[type]}       role  *Role [description]
- */
-func GetRoleById(id uint) (*Role, error) {
-	r := NewRole()
-	err := IsNotFound(libs.Db.Where("id = ?", id).First(r).Error)
-	if err != nil {
-		return nil, err
+// GetRole get role
+func GetRole(search *Search) (*Role, error) {
+	t := NewRole()
+	err := Found(search).First(t).Error
+	if !IsNotFound(err) {
+		return t, err
 	}
-	return r, nil
+	return t, nil
 }
 
 /**
@@ -47,36 +43,20 @@ func GetRoleById(id uint) (*Role, error) {
  * @method GetRoleById
  * @param  {[type]}       role  *Role [description]
  */
-func GetRolesByIds(ids []int) ([]*Role, error) {
-	var roles []*Role
-	err := IsNotFound(libs.Db.Find(&roles, ids).Error)
-	if err != nil {
-		return nil, err
-	}
-	return roles, nil
-}
+//func GetRolesByIds(ids []int) ([]*Role, error) {
+//	var roles []*Role
+//	err := IsNotFound(libs.Db.Find(&roles, ids).Error)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return roles, nil
+//}
 
-/**
- * 通过 name 获取 role 记录
- * @method GetRoleByName
- * @param  {[type]}       role  *Role [description]
- */
-func GetRoleByName(name string) (*Role, error) {
-	r := NewRole()
-	err := IsNotFound(libs.Db.Where("name = ?", name).First(r).Error)
-	if err != nil {
-		return nil, err
-	}
-	return r, nil
-}
-
-/**
- * 通过 id 删除角色
- * @method DeleteRoleById
- */
+// DeleteRoleById del role by id
 func DeleteRoleById(id uint) error {
-	r, err := GetRoleById(id)
-	err = libs.Db.Delete(r).Error
+	r := NewRole()
+	r.ID = id
+	err := libs.Db.Delete(r).Error
 	if err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 		return err
@@ -85,30 +65,23 @@ func DeleteRoleById(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的角色
- * @method GetAllRole
- * @param  {[type]} name string [description]
- * @param  {[type]} orderBy string [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func GetAllRoles(name, orderBy string, offset, limit int) ([]*Role, error) {
+// GetAllRoles get all roles
+func GetAllRoles(s *Search) ([]*Role, int64, error) {
 	var roles []*Role
-	all := GetAll(&Role{}, name, orderBy, offset, limit)
-	if err := all.Find(&roles).Error; err != nil {
-		return nil, err
+	var count int64
+	all := GetAll(&Role{}, s)
+	all = all.Scopes(Relation(s.Relations))
+	if err := all.Count(&count).Error; err != nil {
+		return nil, count, err
 	}
-	return roles, nil
+	all = all.Scopes(Paginate(s.Offset, s.Limit))
+	if err := all.Find(&roles).Error; err != nil {
+		return nil, count, err
+	}
+	return roles, count, nil
 }
 
-/**
- * 创建
- * @method CreateRole
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// CreateRole create role
 func (r *Role) CreateRole() error {
 	if err := libs.Db.Create(r).Error; err != nil {
 		return err
@@ -119,6 +92,7 @@ func (r *Role) CreateRole() error {
 	return nil
 }
 
+// addPerms add perms
 func addPerms(permIds []uint, role *Role) {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
@@ -137,13 +111,7 @@ func addPerms(permIds []uint, role *Role) {
 	}
 }
 
-/**
- * 更新
- * @method UpdateRole
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// UpdateRole update role
 func UpdateRole(id uint, nr *Role) error {
 	if err := Update(&Role{}, nr, id); err != nil {
 		return err
@@ -154,13 +122,27 @@ func UpdateRole(id uint, nr *Role) error {
 	return nil
 }
 
-// 角色权限
-func (r *Role) RolePermisions() []*Permission {
+// RolePermissions get role's permissions
+func (r *Role) RolePermissions() []*Permission {
 	perms := GetPermissionsForUser(r.ID)
 	var ps []*Permission
 	for _, perm := range perms {
 		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {
-			p, err := GetPermissionByNameAct(perm[1], perm[2])
+			s := &Search{
+				Fields: []*Filed{
+					{
+						Key:       "name",
+						Condition: "=",
+						Value:     perm[1],
+					},
+					{
+						Key:       "act",
+						Condition: "=",
+						Value:     perm[2],
+					},
+				},
+			}
+			p, err := GetPermission(s)
 			if err == nil && p.ID > 0 {
 				ps = append(ps, p)
 			}

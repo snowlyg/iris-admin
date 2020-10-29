@@ -51,7 +51,16 @@ func UploadFile(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 
 	imageHost := fmt.Sprintf("http://%s:%d", ctx.Domain(), libs.Config.Port)
-	configByKey, err := models.GetConfigByName("imageHost")
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "name",
+				Condition: "=",
+				Value:     "imageHost",
+			},
+		},
+	}
+	configByKey, err := models.GetConfig(s)
 	if err == nil {
 		imageHost = configByKey.Value
 	} else {

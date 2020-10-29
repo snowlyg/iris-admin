@@ -26,43 +26,20 @@ func NewPermission() *Permission {
 	}
 }
 
-/**
- * 通过 id 获取 permission 记录
- * @method GetPermissionById
- * @param  {[type]}       permission  *Permission [description]
- */
-func GetPermissionById(id uint) (*Permission, error) {
-	p := NewPermission()
-	err := IsNotFound(libs.Db.Where("id = ?", id).First(p).Error)
-	if err != nil {
-		return nil, err
+// GetPermission get permission
+func GetPermission(search *Search) (*Permission, error) {
+	t := NewPermission()
+	err := Found(search).First(t).Error
+	if !IsNotFound(err) {
+		return t, err
 	}
-	return p, nil
+	return t, nil
 }
 
-/**
- * 通过 name 获取 permission 记录
- * @method GetPermissionByName
- * @param  {[type]}       permission  *Permission [description]
- */
-func GetPermissionByNameAct(name, act string) (*Permission, error) {
-	p := NewPermission()
-	err := IsNotFound(libs.Db.Where("name = ?", name).Where("act = ?", act).First(p).Error)
-	if err != nil {
-		return nil, err
-	}
-	return p, nil
-}
-
-/**
- * 通过 id 删除权限
- * @method DeletePermissionById
- */
+// DeletePermissionById del permission by id
 func DeletePermissionById(id uint) error {
-	p, err := GetPermissionById(id)
-	if err != nil {
-		return err
-	}
+	p := NewPermission()
+	p.ID = id
 	if err := libs.Db.Delete(p).Error; err != nil {
 		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
 		return err
@@ -70,31 +47,28 @@ func DeletePermissionById(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的权限
- * @method GetAllPermissions
- * @param  {[type]} name string [description]
- * @param  {[type]} orderBy string [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func GetAllPermissions(name, orderBy string, offset, limit int) ([]*Permission, error) {
+// GetAllPermissions get all permissions
+func GetAllPermissions(s *Search) ([]*Permission, int64, error) {
 	var permissions []*Permission
-	all := GetAll(&Permission{}, name, orderBy, offset, limit)
-	if err := all.Find(&permissions).Error; err != nil {
-		return nil, err
+	var count int64
+	all := GetAll(&Permission{}, s)
+
+	all = all.Scopes(Relation(s.Relations))
+
+	if err := all.Count(&count).Error; err != nil {
+		return nil, count, err
 	}
 
-	return permissions, nil
+	all = all.Scopes(Paginate(s.Offset, s.Limit))
+
+	if err := all.Find(&permissions).Error; err != nil {
+		return nil, count, err
+	}
+
+	return permissions, count, nil
 }
 
-/**
- * 创建
- * @method CreatePermission
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// CreatePermission create permission
 func (p *Permission) CreatePermission() error {
 	if err := libs.Db.Create(p).Error; err != nil {
 		return err
@@ -102,13 +76,7 @@ func (p *Permission) CreatePermission() error {
 	return nil
 }
 
-/**
- * 更新
- * @method UpdatePermission
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// UpdatePermission update permission
 func UpdatePermission(id uint, pj *Permission) error {
 	if err := Update(&Permission{}, pj, id); err != nil {
 		return err

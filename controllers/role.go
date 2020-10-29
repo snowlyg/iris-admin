@@ -26,7 +26,16 @@ import (
  */
 func GetRole(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	role, err := models.GetRoleById(id)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
+		},
+	}
+	role, err := models.GetRole(s)
 	ctx.StatusCode(iris.StatusOK)
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
@@ -34,7 +43,7 @@ func GetRole(ctx iris.Context) {
 	}
 
 	rr := roleTransform(role)
-	rr.Perms = permsTransform(role.RolePermisions())
+	rr.Perms = permsTransform(role.RolePermissions())
 	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
 }
 
@@ -174,12 +183,15 @@ func DeleteRole(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllRoles(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
+	offset := libs.ParseInt(ctx.FormValue("page"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
-	name := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
-
-	roles, err := models.GetAllRoles(name, orderBy, offset, limit)
+	s := &models.Search{
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
+	roles, count, err := models.GetAllRoles(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -187,7 +199,8 @@ func GetAllRoles(ctx iris.Context) {
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, rolesTransform(roles), "操作成功"))
+	transform := rolesTransform(roles)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
 }
 
 func rolesTransform(roles []*models.Role) []*transformer.Role {
@@ -203,6 +216,6 @@ func roleTransform(role *models.Role) *transformer.Role {
 	r := &transformer.Role{}
 	g := gf.NewTransform(r, role, time.RFC3339)
 	_ = g.Transformer()
-	r.Perms = permsTransform(role.RolePermisions())
+	r.Perms = permsTransform(role.RolePermissions())
 	return r
 }

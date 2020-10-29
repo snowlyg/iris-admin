@@ -5,7 +5,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 	"net/http"
 	"strings"
 	"sync"
@@ -37,20 +36,6 @@ type Article struct {
 
 func NewArticle() *Article {
 	return &Article{}
-}
-
-/**
- * 通过 id 获取 article 记录
- * @method GetArticleById
- * @param  {[type]}       article  *Article [description]
- */
-func GetPublishedArticleById(id uint) (*Article, error) {
-	r := NewArticle()
-	err := IsNotFound(libs.Db.Where("id = ?", id).Where("status = ?", "published").Preload(clause.Associations).First(r).Error)
-	if err != nil {
-		return nil, err
-	}
-	return r, nil
 }
 
 func (r *Article) ReadArticle(rh *http.Request) error {
@@ -96,24 +81,17 @@ func (r *Article) LikeArticle() error {
 	return nil
 }
 
-/**
- * 通过 id 获取 article 记录
- * @method GetArticleById
- * @param  {[type]}       article  *Article [description]
- */
-func GetArticleById(id uint) (*Article, error) {
+// GetArticle 获取文章
+func GetArticle(search *Search) (*Article, error) {
 	r := NewArticle()
-	err := IsNotFound(libs.Db.Where("id = ?", id).Preload(clause.Associations).First(r).Error)
-	if err != nil {
-		return nil, err
+	err := Found(search).First(r).Error
+	if !IsNotFound(err) {
+		return r, err
 	}
 	return r, nil
 }
 
-/**
- * 通过 id 删除角色
- * @method DeleteArticleById
- */
+// DeleteArticleById 删除
 func DeleteArticleById(id uint) error {
 	r := NewArticle()
 	r.ID = id
@@ -124,30 +102,26 @@ func DeleteArticleById(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的角色
- * @method GetAllArticle
- * @param  {[type]} searchStr string [description]
- * @param  {[type]} orderBy string [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId, typeId int) ([]*Article, int64, error) {
+// GetAllArticles 获取集合
+func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
 	var articles []*Article
 	var count int64
-	getAll := GetAll(&Article{}, searchStr, orderBy, offset, limit)
+	getAll := GetAll(&Article{}, search)
 
-	if len(published) > 0 {
-		getAll = getAll.Where("status = ?", "published")
-	}
-
-	if typeId > 0 {
-		getAll = getAll.Where("type_id = ?", typeId)
-	}
-
+	// 多对多标签搜索
 	if tagId > 0 {
 		var tagArticleIds []int64
-		tag, err := GetTagById(uint(tagId), true)
+		s := &Search{
+			Fields: []*Filed{
+				{
+					Key:       "id",
+					Condition: "=",
+					Value:     tagId,
+				},
+			},
+			Relations: []string{"Articles"},
+		}
+		tag, err := GetTag(s)
 		if err != nil {
 			return nil, count, err
 		}
@@ -165,22 +139,16 @@ func GetAllArticles(searchStr, orderBy, published string, offset, limit, tagId, 
 		return nil, count, err
 	}
 
-	getAll = getAll.Scopes(Paginate(offset, limit))
+	getAll = getAll.Scopes(Paginate(search.Offset, search.Limit))
 
-	if err := getAll.Preload(clause.Associations).Find(&articles).Error; err != nil {
+	if err := getAll.Find(&articles).Error; err != nil {
 		return nil, count, err
 	}
 
 	return articles, count, nil
 }
 
-/**
- * 创建
- * @method CreateArticle
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// CreateArticle 创建
 func (r *Article) CreateArticle() error {
 	r.getTagTypeChapters()
 
@@ -191,14 +159,24 @@ func (r *Article) CreateArticle() error {
 	return nil
 }
 
+// getTagTypeChapters 获取关联数据
 func (r *Article) getTagTypeChapters() {
 	if err := libs.Db.Model(r).Association("Tags").Clear(); err != nil {
-		fmt.Println(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
+		color.Red(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
 	}
 
 	if r.Type != nil {
 		if r.Type.ID > 0 {
-			tt, err := GetTypeById(r.Type.ID)
+			s := &Search{
+				Fields: []*Filed{
+					{
+						Key:       "id",
+						Condition: "=",
+						Value:     r.Type.ID,
+					},
+				},
+			}
+			tt, err := GetType(s)
 			if err == nil && tt.ID > 0 {
 				r.TypeID = tt.ID
 				r.Type = tt
@@ -209,13 +187,22 @@ func (r *Article) getTagTypeChapters() {
 	if len(r.TagNames) > 0 {
 		var tags []*Tag
 		for _, tagName := range r.TagNames {
-			tag, err := GetTagByName(tagName)
+			s := &Search{
+				Fields: []*Filed{
+					{
+						Key:       "name",
+						Condition: "=",
+						Value:     tagName,
+					},
+				},
+			}
+			tag, err := GetTag(s)
 			if err == nil {
 				if tag.ID == 0 {
 					tag.Name = tagName
 					err := tag.CreateTag()
 					if err != nil {
-						fmt.Println(fmt.Sprintf("标签新建错误:%+v\n", err))
+						color.Red(fmt.Sprintf("标签新建错误:%+v\n", err))
 					}
 				}
 				tags = append(tags, tag)
@@ -225,16 +212,10 @@ func (r *Article) getTagTypeChapters() {
 		r.Tags = tags
 	}
 
-	fmt.Println(fmt.Sprintf("article:%+v", r))
+	color.Red(fmt.Sprintf("article:%+v", r))
 }
 
-/**
- * 更新
- * @method UpdateArticle
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// UpdateArticle 更新
 func UpdateArticle(id uint, nr *Article) error {
 	nr.getTagTypeChapters()
 

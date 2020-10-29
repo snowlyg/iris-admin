@@ -12,47 +12,66 @@ import (
 	"gorm.io/gorm"
 )
 
-/**
- * 获取列表
- * @method MGetAll
- * @param  {[type]} searchStr string    [description]
- * @param  {[type]} orderBy string    [description]
- * @param  {[type]} relation string    [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func GetAll(model interface{}, searchStr, orderBy string, offset, limit int) *gorm.DB {
+// Filed 查询字段结构体
+type Filed struct {
+	Condition string      `json:"condition"`
+	Key       string      `json:"key"`
+	Value     interface{} `json:"value"`
+}
+
+// Search 查询参数结构体
+type Search struct {
+	Fields    []*Filed `json:"fields"`
+	Relations []string `json:"relations"`
+	OrderBy   string   `json:"order_by"`
+	Sort      string   `json:"sort"`
+	Limit     int      `json:"limit"`
+	Offset    int      `json:"offset"`
+}
+
+// GetAll 批量查询
+func GetAll(model interface{}, s *Search) *gorm.DB {
 	db := libs.Db.Model(model)
-	if len(orderBy) > 0 {
-		db = db.Order(orderBy + " desc")
-	} else {
-		db = db.Order("created_at desc")
+	sort := "desc"
+	orderBy := "created_at"
+	if len(s.Sort) > 0 {
+		sort = s.Sort
 	}
-	if len(searchStr) > 0 {
-		sers := strings.Split(searchStr, ":")
-		if len(sers) == 2 {
-			db = db.Where(fmt.Sprintf("%s LIKE ?", sers[0]), fmt.Sprintf("%%%s%%", sers[1]))
-		}
+	if len(s.OrderBy) > 0 {
+		orderBy = s.OrderBy
 	}
+
+	db = db.Order(fmt.Sprintf("%s %s", orderBy, sort))
+
+	db.Scopes(FoundByWhere(s.Fields), Relation(s.Relations))
 
 	return db
 }
 
-func IsNotFound(err error) error {
-	if ok := errors.Is(err, gorm.ErrRecordNotFound); !ok && err != nil {
-		return err
-	}
-	return nil
+// Found 查询条件
+func Found(s *Search) *gorm.DB {
+	return libs.Db.Scopes(Relation(s.Relations), FoundByWhere(s.Fields))
 }
 
+// IsNotFound 判断是否是查询不存在错误
+func IsNotFound(err error) bool {
+	if ok := errors.Is(err, gorm.ErrRecordNotFound); ok {
+		color.Yellow("查询数据不存在")
+		return true
+	}
+	return false
+}
+
+// Update 更新
 func Update(v, d interface{}, id uint) error {
 	if err := libs.Db.Model(v).Where("id = ?", id).Updates(d).Error; err != nil {
-		fmt.Println(fmt.Sprintf("Update %+v to %+v\n", v, d))
+		color.Red(fmt.Sprintf("Update %+v to %+v\n", v, d))
 		return err
 	}
 	return nil
 }
 
+// GetRolesForUser 获取角色
 func GetRolesForUser(uid uint) []string {
 	uids, err := libs.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
 	if err != nil {
@@ -63,18 +82,89 @@ func GetRolesForUser(uid uint) []string {
 	return uids
 }
 
-func Relation(relation string) func(db *gorm.DB) *gorm.DB {
+// Relation 加载关联关系
+func Relation(relations []string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if len(relation) > 0 {
-			relations := strings.Split(relation, ";")
+		if len(relations) > 0 {
 			for _, re := range relations {
 				db = db.Preload(re)
+				color.Yellow(fmt.Sprintf("Preoad %s", re))
 			}
 		}
 		return db
 	}
 }
 
+// FoundByWhere 查询条件
+func FoundByWhere(fields []*Filed) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if len(fields) > 0 {
+			for _, field := range fields {
+				if field.Condition == "" {
+					field.Condition = "="
+				}
+				if value, ok := field.Value.(int); ok {
+					if value > 0 {
+						db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+					}
+				} else if value, ok := field.Value.(string); ok {
+					if len(value) > 0 {
+						db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+					}
+				} else if value, ok := field.Value.([]int); ok {
+					if len(value) > 0 {
+						db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+					}
+				} else if value, ok := field.Value.([]string); ok {
+					if len(value) > 0 {
+						db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+					}
+				}
+			}
+		}
+		return db
+	}
+}
+
+// GetRelations 转换前端获取关联关系为 []stirng
+func GetRelations(relation string) []string {
+	if len(relation) > 0 {
+		return strings.Split(relation, ";")
+	}
+	return nil
+}
+
+// GetSearche 转换前端查询关系为 *Filed
+func GetSearche(key, search string) *Filed {
+	if len(search) > 0 {
+		if strings.Contains(search, ":") {
+			searches := strings.Split(search, ":")
+			if len(searches) == 2 {
+				return &Filed{
+					Condition: searches[1],
+					Key:       key,
+					Value:     searches[0],
+				}
+
+			} else if len(searches) == 1 {
+				return &Filed{
+					Condition: "=",
+					Key:       key,
+					Value:     searches[0],
+				}
+			}
+		} else {
+			return &Filed{
+				Condition: "=",
+				Key:       key,
+				Value:     search,
+			}
+		}
+	}
+	return nil
+}
+
+// Paginate 分页
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if page == 0 {
@@ -98,10 +188,12 @@ func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+// GetPermissionsForUser 获取角色权限
 func GetPermissionsForUser(uid uint) [][]string {
 	return libs.Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
 }
 
+// DropTables 删除数据表
 func DropTables() {
 	_ = libs.Db.Migrator().DropTable(
 		libs.Config.DB.Prefix+"users",
@@ -115,8 +207,9 @@ func DropTables() {
 		"casbin_rule")
 }
 
+// Migrate 迁移数据表
 func Migrate() {
-	libs.Db.AutoMigrate(
+	err := libs.Db.AutoMigrate(
 		&User{},
 		&Role{},
 		&Permission{},
@@ -128,4 +221,8 @@ func Migrate() {
 		&Doc{},
 		&Chapter{},
 	)
+
+	if err != nil {
+		color.Yellow(fmt.Sprintf("初始化数据表错误 ：%+v", err))
+	}
 }

@@ -27,7 +27,16 @@ import (
  */
 func GetPermission(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	perm, err := models.GetPermissionById(id)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
+		},
+	}
+	perm, err := models.GetPermission(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
@@ -179,19 +188,24 @@ func DeletePermission(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllPermissions(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
+	offset := libs.ParseInt(ctx.URLParam("page"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
-	name := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
-
-	permissions, err := models.GetAllPermissions(name, orderBy, offset, limit)
+	s := &models.Search{
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
+	permissions, count, err := models.GetAllPermissions(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, permsTransform(permissions), "操作成功"))
+	transform := permsTransform(permissions)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+
 }
 
 func permsTransform(perms []*models.Permission) []*transformer.Permission {

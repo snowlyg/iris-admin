@@ -26,7 +26,16 @@ import (
  */
 func GetTag(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	tag, err := models.GetTagById(id, false)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
+		},
+	}
+	tag, err := models.GetTag(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -177,19 +186,24 @@ func DeleteTag(ctx iris.Context) {
 * @apiTag null
  */
 func GetAllTags(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
+	ctx.StatusCode(iris.StatusOK)
+	offset := libs.ParseInt(ctx.URLParam("page"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
-	name := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
-
-	tags, err := models.GetAllTags(name, orderBy, offset, limit)
+	s := &models.Search{
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
+	tags, count, err := models.GetAllTags(s)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
+
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, tagsTransform(tags), "操作成功"))
+	transform := tagsTransform(tags)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+
 }
 
 func tagsTransform(tags []*models.Tag) []*transformer.Tag {

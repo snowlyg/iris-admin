@@ -49,7 +49,17 @@ func UserLogin(ctx iris.Context) {
 	ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
 	ctx.StatusCode(iris.StatusOK)
 
-	user, err := models.GetUserByUsername(aul.Username)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "username",
+				Condition: "=",
+				Value:     aul.Username,
+			},
+		},
+	}
+
+	user, err := models.GetUser(s)
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return

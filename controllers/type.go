@@ -26,7 +26,16 @@ import (
  */
 func GetType(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	tt, err := models.GetTypeById(id)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
+		},
+	}
+	tt, err := models.GetType(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -178,19 +187,24 @@ func DeleteType(ctx iris.Context) {
 * @apiType null
  */
 func GetAllTypes(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
+	ctx.StatusCode(iris.StatusOK)
+	offset := libs.ParseInt(ctx.URLParam("page"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
-	name := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
-
-	tts, err := models.GetAllTypes(name, orderBy, offset, limit)
+	s := &models.Search{
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
+	tts, count, err := models.GetAllTypes(s)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+
 	}
 
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, ttsTransform(tts), "操作成功"))
+	transform := ttsTransform(tts)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+
 }
 
 func ttsTransform(tts []*models.Type) []*transformer.Type {

@@ -27,7 +27,17 @@ import (
  */
 func GetProfile(ctx iris.Context) {
 	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
-	user, err := models.GetUserById(uint(libs.ParseInt(sess.UserId, 10)))
+	id := uint(libs.ParseInt(sess.UserId, 10))
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
+		},
+	}
+	user, err := models.GetUser(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
@@ -50,7 +60,16 @@ func GetProfile(ctx iris.Context) {
  */
 func GetUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	user, err := models.GetUserById(id)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
+		},
+	}
+	user, err := models.GetUser(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
@@ -199,15 +218,24 @@ func DeleteUser(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllUsers(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	offset := ctx.URLParamIntDefault("offset", 1)
 	limit := ctx.URLParamIntDefault("limit", 15)
-	name := ctx.URLParam("searchStr")
 	orderBy := ctx.URLParam("orderBy")
+	s := &models.Search{
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
+	users, count, err := models.GetAllUsers(s)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
 
-	users := models.GetAllUsers(name, orderBy, offset, limit)
+	transform := usersTransform(users)
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
 
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, usersTransform(users), "操作成功"))
 }
 
 func usersTransform(users []*models.User) []*transformer.User {
@@ -230,8 +258,16 @@ func userTransform(user *models.User) *transformer.User {
 		ri, _ := strconv.Atoi(roleId)
 		ris = append(ris, ri)
 	}
-
-	roles, err := models.GetRolesByIds(ris)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "in",
+				Value:     ris,
+			},
+		},
+	}
+	roles, _, err := models.GetAllRoles(s)
 	if err == nil {
 		u.Roles = rolesTransform(roles)
 	}

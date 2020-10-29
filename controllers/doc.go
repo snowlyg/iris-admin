@@ -27,7 +27,17 @@ import (
 func GetDoc(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	relation := ctx.FormValue("relation")
-	doc, err := models.GetDocById(id, relation)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
+		},
+		Relations: models.GetRelations(relation),
+	}
+	doc, err := models.GetDoc(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -179,12 +189,16 @@ func DeleteDoc(ctx iris.Context) {
 * @apiDoc null
  */
 func GetAllDocs(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
+	offset := libs.ParseInt(ctx.URLParam("page"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
-	name := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
+	s := &models.Search{
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
 
-	docs, count, err := models.GetAllDocs(name, orderBy, offset, limit)
+	docs, count, err := models.GetAllDocs(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

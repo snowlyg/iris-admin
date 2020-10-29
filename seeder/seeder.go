@@ -56,8 +56,20 @@ func CreatePerms() {
 		fmt.Println(fmt.Sprintf("填充权限：%v", Seeds))
 	}
 	for _, m := range Seeds.Perms {
-
-		perm, err := models.GetPermissionByNameAct(m.Name, m.Act)
+		s := &models.Search{
+			Fields: []*models.Filed{
+				{
+					Key:       "name",
+					Condition: "=",
+					Value:     m.Name,
+				}, {
+					Key:       "act",
+					Condition: "=",
+					Value:     m.Act,
+				},
+			},
+		}
+		perm, err := models.GetPermission(s)
 		if err == nil {
 			if perm.ID == 0 {
 				perm = &models.Permission{
@@ -77,8 +89,16 @@ func CreatePerms() {
 
 // CreateAdminRole 新建管理角色
 func CreateAdminRole() {
-
-	role, err := models.GetRoleByName(libs.Config.Admin.RoleName)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "name",
+				Condition: "=",
+				Value:     libs.Config.Admin.RoleName,
+			},
+		},
+	}
+	role, err := models.GetRole(s)
 	if err == nil {
 		if role.ID == 0 {
 			role = &models.Role{
@@ -89,7 +109,8 @@ func CreateAdminRole() {
 			}
 
 			var permIds []uint
-			perms, err := models.GetAllPermissions("", "", -1, -1)
+			s := &models.Search{}
+			perms, _, err := models.GetAllPermissions(s)
 			if libs.Config.Debug {
 				if err != nil {
 					fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
@@ -120,8 +141,16 @@ func CreateAdminRole() {
 
 // CreateAdminUser 新建管理员
 func CreateAdminUser() {
-
-	admin, err := models.GetUserByUsername(libs.Config.Admin.UserName)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "name",
+				Condition: "=",
+				Value:     libs.Config.Admin.UserName,
+			},
+		},
+	}
+	admin, err := models.GetUser(s)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Get admin error：%v", err))
 	}
@@ -136,7 +165,8 @@ func CreateAdminUser() {
 			Model:    gorm.Model{CreatedAt: time.Now()},
 		}
 		var roleIds []uint
-		roles, err := models.GetAllRoles("", "", -1, -1)
+		s := &models.Search{}
+		roles, _, err := models.GetAllRoles(s)
 		if libs.Config.Debug {
 			if err != nil {
 				fmt.Println(fmt.Sprintf("角色获取失败：%v", err))

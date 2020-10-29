@@ -42,48 +42,29 @@ func NewChapter() *Chapter {
 	}
 }
 
-/**
- * 通过 id 获取 chapter 记录
- * @method GetChapterById
- * @param  {[chapter]}       chapter  *Chapter [description]
- */
-func GetChapterById(id uint) (*Chapter, error) {
+// GetChapter 获取
+func GetChapter(search *Search) (*Chapter, error) {
 	t := NewChapter()
-	err := IsNotFound(libs.Db.Where("id = ?", id).Preload("Doc").First(t).Error)
-	if err != nil {
-		return nil, err
+	err := Found(search).First(t).Error
+	if !IsNotFound(err) {
+		return t, err
 	}
-
 	return t, nil
 }
 
-/**
- * 通过 id 获取 chapter 记录
- * @method GetPublishedChapterById
- * @param  {[chapter]}       chapter  *Chapter [description]
- */
-func GetPublishedChapterById(id uint) (*Chapter, error) {
-	t := NewChapter()
-	err := IsNotFound(libs.Db.Where("id = ?", id).Preload("Doc").Where("status = ?", "published").First(t).Error)
-	if err != nil {
-		return nil, err
-	}
-
-	return t, nil
-}
-
-func (c *Chapter) ReadChapter(rh *http.Request) error {
-	ip := c.Ips
+// ReadChapter 增加阅读量
+func (p *Chapter) ReadChapter(rh *http.Request) error {
+	ip := p.Ips
 	ips := strings.Split(ip, ",")
 	publicIp := libs.ClientPublicIp(rh)
 	if !libs.InArrayS(ips, publicIp) {
-		c.Lock()
-		defer c.Unlock()
+		p.Lock()
+		defer p.Unlock()
 
-		c.Read++
+		p.Read++
 		ips = append(ips, publicIp)
-		c.Ips = strings.Join(ips, ",")
-		err := libs.Db.Save(c).Error
+		p.Ips = strings.Join(ips, ",")
+		err := libs.Db.Save(p).Error
 		if err != nil {
 			return err
 		}
@@ -91,37 +72,20 @@ func (c *Chapter) ReadChapter(rh *http.Request) error {
 	return nil
 }
 
-func (c *Chapter) LikeChapter() error {
-	c.Lock()
-	defer c.Unlock()
+// LikeChapter 点赞
+func (p *Chapter) LikeChapter() error {
+	p.Lock()
+	defer p.Unlock()
 
-	c.Like++
-	err := libs.Db.Save(c).Error
+	p.Like++
+	err := libs.Db.Save(p).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-/**
- * 通过 name 获取 chapter 记录
- * @method GetChapterByName
- * @param  {[chapter]}       chapter  *Chapter [description]
- */
-func GetChapterByName(name string) (*Chapter, error) {
-	t := NewChapter()
-	err := IsNotFound(libs.Db.Where("name = ?", name).Preload("Doc").First(t).Error)
-	if err != nil {
-		return nil, err
-	}
-
-	return t, nil
-}
-
-/**
- * 通过 id 删除权限
- * @method DeleteChapterById
- */
+// DeleteChapterById 删除
 func DeleteChapterById(id uint) error {
 	t := NewChapter()
 	t.ID = id
@@ -132,41 +96,39 @@ func DeleteChapterById(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的权限
- * @method GetAllChapters
- * @param  {[chapter]} name string [description]
- * @param  {[chapter]} orderBy string [description]
- * @param  {[chapter]} offset int    [description]
- * @param  {[chapter]} limit int    [description]
- */
-func GetAllChapters(docId int, published, name, orderBy string, offset, limit int) ([]*Chapter, int64, error) {
+// GetAllChapters
+func GetAllChapters(search *Search) ([]*Chapter, int64, error) {
 	var chapters []*Chapter
 	var count int64
-	all := GetAll(&Chapter{}, name, orderBy, offset, limit)
-	if len(published) > 0 {
-		all = all.Where("status = ?", "published")
-	}
-
-	if docId > 0 {
-		all = all.Where("doc_id = ? ", docId)
-	}
+	all := GetAll(&Chapter{}, search)
 
 	if err := all.Count(&count).Error; err != nil {
 		return nil, count, err
 	}
 
-	if err := all.Preload("Doc").Find(&chapters).Error; err != nil {
+	all = all.Scopes(Paginate(search.Offset, search.Limit))
+
+	if err := all.Find(&chapters).Error; err != nil {
 		return nil, count, err
 	}
 
 	return chapters, count, nil
 }
 
+// getDoc get doc
 func (p *Chapter) getDoc() {
 	if p.Doc != nil {
 		if p.Doc.ID > 0 {
-			doc, err := GetDocById(p.Doc.ID, "")
+			s := &Search{
+				Fields: []*Filed{
+					{
+						Key:       "id",
+						Condition: "=",
+						Value:     p.Doc.ID,
+					},
+				},
+			}
+			doc, err := GetDoc(s)
 			if err == nil && doc.ID > 0 {
 				p.DocID = doc.ID
 				p.Doc = doc
@@ -175,13 +137,7 @@ func (p *Chapter) getDoc() {
 	}
 }
 
-/**
- * 创建
- * @method CreateChapter
- * @param  {[chapter]} kw string [description]
- * @param  {[chapter]} cp int    [description]
- * @param  {[chapter]} mp int    [description]
- */
+// CreateChapter create chapter
 func (p *Chapter) CreateChapter() error {
 	p.getDoc()
 	if err := libs.Db.Create(p).Error; err != nil {
@@ -190,13 +146,7 @@ func (p *Chapter) CreateChapter() error {
 	return nil
 }
 
-/**
- * 更新
- * @method UpdateChapter
- * @param  {[chapter]} kw string [description]
- * @param  {[chapter]} cp int    [description]
- * @param  {[chapter]} mp int    [description]
- */
+// UpdateChapterById update chapter by id
 func UpdateChapterById(id uint, np *Chapter) error {
 	np.getDoc()
 	if err := Update(&Chapter{}, np, id); err != nil {

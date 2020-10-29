@@ -3,7 +3,6 @@ package models
 import (
 	"fmt"
 	"github.com/snowlyg/blog/libs"
-	"gorm.io/gorm/clause"
 	"time"
 
 	"github.com/fatih/color"
@@ -26,37 +25,13 @@ func NewTag() *Tag {
 	}
 }
 
-/**
- * 通过 id 获取 tag 记录
- * @method GetTagById
- * @param  {[type]}       tag  *Tag [description]
- */
-func GetTagById(id uint, withRelation bool) (*Tag, error) {
+// GetTag get tag
+func GetTag(s *Search) (*Tag, error) {
 	t := NewTag()
-	get := libs.Db.Where("id = ?", id)
-	if withRelation {
-		get = get.Preload(clause.Associations)
+	err := Found(s).First(t).Error
+	if !IsNotFound(err) {
+		return t, err
 	}
-	err := IsNotFound(get.First(t).Error)
-	if err != nil {
-		return nil, err
-	}
-
-	return t, nil
-}
-
-/**
- * 通过 name 获取 tag 记录
- * @method GetTagByName
- * @param  {[type]}       tag  *Tag [description]
- */
-func GetTagByName(name string) (*Tag, error) {
-	t := NewTag()
-	err := IsNotFound(libs.Db.Where("name = ?", name).First(t).Error)
-	if err != nil {
-		return nil, err
-	}
-
 	return t, nil
 }
 
@@ -74,31 +49,23 @@ func DeleteTagById(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的权限
- * @method GetAllTags
- * @param  {[type]} name string [description]
- * @param  {[type]} orderBy string [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func GetAllTags(name, orderBy string, offset, limit int) ([]*Tag, error) {
+// GetAllTags get all tags
+func GetAllTags(s *Search) ([]*Tag, int64, error) {
 	var tags []*Tag
-	all := GetAll(&Tag{}, name, orderBy, offset, limit)
+	var count int64
+	all := GetAll(&Tag{}, s)
+	if err := all.Count(&count).Error; err != nil {
+		return nil, count, err
+	}
+	all = all.Scopes(Paginate(s.Offset, s.Limit), Relation(s.Relations))
 	if err := all.Find(&tags).Error; err != nil {
-		return nil, err
+		return nil, count, err
 	}
 
-	return tags, nil
+	return tags, count, nil
 }
 
-/**
- * 创建
- * @method CreateTag
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// CreateTag create tag
 func (p *Tag) CreateTag() error {
 	if err := libs.Db.Create(p).Error; err != nil {
 		return err
@@ -106,13 +73,7 @@ func (p *Tag) CreateTag() error {
 	return nil
 }
 
-/**
- * 更新
- * @method UpdateTag
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// UpdateTagById update tag by id
 func UpdateTagById(id uint, pj *Tag) error {
 	if err := Update(&Tag{}, pj, id); err != nil {
 		return err

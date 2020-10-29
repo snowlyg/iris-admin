@@ -28,7 +28,22 @@ import (
 func GetPublishedChapter(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	chapter, err := models.GetPublishedChapterById(id)
+	relation := ctx.FormValue("relation")
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			}, {
+				Key:       "status",
+				Condition: "=",
+				Value:     "published",
+			},
+		},
+		Relations: models.GetRelations(relation),
+	}
+	chapter, err := models.GetChapter(s)
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
@@ -57,7 +72,16 @@ func GetPublishedChapter(ctx iris.Context) {
  */
 func GetChapter(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
-	chapter, err := models.GetChapterById(id)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
+		},
+	}
+	chapter, err := models.GetChapter(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -90,7 +114,7 @@ func CreateChapter(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	err := validates.Validate.Struct(*chapter)
+	err := validates.Validate.Struct(chapter)
 	if err != nil {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
@@ -209,13 +233,23 @@ func DeleteChapter(ctx iris.Context) {
 * @apiChapter null
  */
 func GetAllChapters(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
+	offset := libs.ParseInt(ctx.URLParam("page"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
-	searchStr := ctx.FormValue("searchStr")
 	docId := libs.ParseInt(ctx.URLParam("docId"), 0)
 	orderBy := ctx.FormValue("orderBy")
-
-	chapters, count, err := models.GetAllChapters(docId, "", searchStr, orderBy, offset, limit)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "doc_id",
+				Condition: "=",
+				Value:     docId,
+			},
+		},
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
+	chapters, count, err := models.GetAllChapters(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
@@ -241,7 +275,20 @@ func GetAllChapters(ctx iris.Context) {
 func GetPublishedChapterLike(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	chapter, err := models.GetPublishedChapterById(id)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			}, {
+				Key:       "status",
+				Condition: "=",
+				Value:     "published",
+			},
+		},
+	}
+	chapter, err := models.GetChapter(s)
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
@@ -270,13 +317,27 @@ func GetPublishedChapterLike(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllPublishedChapters(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.FormValue("offset"), 1)
+	offset := libs.ParseInt(ctx.FormValue("page"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	docId := libs.ParseInt(ctx.FormValue("docId"), 0)
-	searchStr := ctx.FormValue("searchStr")
 	orderBy := ctx.FormValue("orderBy")
-
-	chapters, count, err := models.GetAllChapters(docId, searchStr, orderBy, "published", offset, limit)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "doc_id",
+				Condition: "=",
+				Value:     docId,
+			}, {
+				Key:       "status",
+				Condition: "=",
+				Value:     "published",
+			},
+		},
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
+	chapters, count, err := models.GetAllChapters(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

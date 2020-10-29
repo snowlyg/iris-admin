@@ -23,7 +23,16 @@ import (
  */
 func GetConfig(ctx iris.Context) {
 	key := ctx.Params().GetString("key")
-	config, err := models.GetConfigByName(key)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "name",
+				Condition: "=",
+				Value:     key,
+			},
+		},
+	}
+	config, err := models.GetConfig(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error get %s config: %s", key, err.Error())))
@@ -174,12 +183,15 @@ func DeleteConfig(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllConfigs(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.URLParam("offset"), 1)
+	offset := libs.ParseInt(ctx.URLParam("page"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
-	name := ctx.FormValue("name")
 	orderBy := ctx.FormValue("orderBy")
-
-	configs, err := models.GetAllConfigs(name, orderBy, offset, limit)
+	s := &models.Search{
+		Offset:  offset,
+		Limit:   limit,
+		OrderBy: orderBy,
+	}
+	configs, err := models.GetAllConfigs(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

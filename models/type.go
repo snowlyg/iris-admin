@@ -24,33 +24,13 @@ func NewType() *Type {
 	}
 }
 
-/**
- * 通过 id 获取 type 记录
- * @method GetTypeById
- * @param  {[type]}       type  *Type [description]
- */
-func GetTypeById(id uint) (*Type, error) {
+// GetType get type
+func GetType(search *Search) (*Type, error) {
 	t := NewType()
-	err := IsNotFound(libs.Db.Where("id = ?", id).First(t).Error)
-	if err != nil {
-		return nil, err
+	err := Found(search).First(t).Error
+	if !IsNotFound(err) {
+		return t, err
 	}
-
-	return t, nil
-}
-
-/**
- * 通过 name 获取 type 记录
- * @method GetTypeByName
- * @param  {[type]}       type  *Type [description]
- */
-func GetTypeByName(name string) (*Type, error) {
-	t := NewType()
-	err := IsNotFound(libs.Db.Where("name = ?", name).First(t).Error)
-	if err != nil {
-		return nil, err
-	}
-
 	return t, nil
 }
 
@@ -68,31 +48,23 @@ func DeleteTypeById(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的权限
- * @method GetAllTypes
- * @param  {[type]} name string [description]
- * @param  {[type]} orderBy string [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func GetAllTypes(name, orderBy string, offset, limit int) ([]*Type, error) {
+// GetAllTypes get all types
+func GetAllTypes(s *Search) ([]*Type, int64, error) {
 	var types []*Type
-	all := GetAll(&Type{}, name, orderBy, offset, limit)
+	var count int64
+	all := GetAll(&Type{}, s)
+	if err := all.Count(&count).Error; err != nil {
+		return nil, count, err
+	}
+	all = all.Scopes(Paginate(s.Offset, s.Limit), Relation(s.Relations))
 	if err := all.Find(&types).Error; err != nil {
-		return nil, err
+		return nil, count, err
 	}
 
-	return types, nil
+	return types, count, nil
 }
 
-/**
- * 创建
- * @method CreateType
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// CreateType create type
 func (p *Type) CreateType() error {
 	if err := libs.Db.Create(p).Error; err != nil {
 		return err
@@ -100,13 +72,7 @@ func (p *Type) CreateType() error {
 	return nil
 }
 
-/**
- * 更新
- * @method UpdateType
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// UpdateTypeById update type by id
 func UpdateTypeById(id uint, np *Type) error {
 	if err := Update(&Type{}, np, id); err != nil {
 		return err

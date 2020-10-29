@@ -25,31 +25,21 @@ func NewConfig() *Config {
 	}
 }
 
-func GetConfigByName(name string) (*Config, error) {
-	config := NewConfig()
-	if err := libs.Db.Where("name = ?", name).First(config).Error; err != nil {
-		return nil, err
+// GetConfig get config
+func GetConfig(search *Search) (*Config, error) {
+	r := NewConfig()
+	err := Found(search).First(r).Error
+	if !IsNotFound(err) {
+		return r, err
 	}
-	return config, nil
+	return r, nil
 }
 
-func GetConfigById(id uint) (*Config, error) {
-	config := NewConfig()
-	if err := libs.Db.Where("id = ?", id).First(config).Error; err != nil {
-		return nil, err
-	}
-	return config, nil
-}
-
-/**
- * 通过 id 删除
- * @method DeleteConfig
- */
+// DeleteConfig del config
 func DeleteConfig(id uint) error {
-	u, err := GetConfigById(id)
-	if err != nil {
-		return err
-	}
+	u := NewConfig()
+	u.ID = id
+
 	if err := libs.Db.Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteConfigByIdErr:%s \n ", err))
 		return err
@@ -57,31 +47,18 @@ func DeleteConfig(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的账号
- * @method GetAllConfig
- * @param  {[type]} name string [description]
- * @param  {[type]} configname string [description]
- * @param  {[type]} orderBy string [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func GetAllConfigs(name, orderBy string, offset, limit int) ([]*Config, error) {
+// GetAllConfigs get all configs
+func GetAllConfigs(s *Search) ([]*Config, error) {
 	var configs []*Config
-	q := GetAll(&Config{}, name, orderBy, offset, limit)
+	q := GetAll(&Config{}, s)
+	q = q.Scopes(Relation(s.Relations))
 	if err := q.Find(&configs).Error; err != nil {
 		return nil, err
 	}
 	return configs, nil
 }
 
-/**
- * 创建
- * @method CreateConfig
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// CreateConfig create config
 func (u *Config) CreateConfig() error {
 	if err := libs.Db.Create(u).Error; err != nil {
 		return err
@@ -90,11 +67,7 @@ func (u *Config) CreateConfig() error {
 	return nil
 }
 
-/**
- * 更新
- * @method UpdateConfig
- * @param  {[type]} kw string [description]
- */
+// UpdateConfig update config
 func UpdateConfig(id uint, nu *Config) error {
 
 	if err := Update(&Config{}, nu, id); err != nil {

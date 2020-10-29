@@ -24,40 +24,17 @@ func NewDoc() *Doc {
 	}
 }
 
-/**
- * 通过 id 获取 type 记录
- * @method GetDocById
- * @param  {[type]}       type  *Doc [description]
- */
-func GetDocById(id uint, relation string) (*Doc, error) {
+// GetDoc get doc
+func GetDoc(search *Search) (*Doc, error) {
 	t := NewDoc()
-	err := IsNotFound(libs.Db.Scopes(Relation(relation)).Where("id = ?", id).First(t).Error)
-	if err != nil {
-		return nil, err
+	err := Found(search).First(t).Error
+	if !IsNotFound(err) {
+		return t, err
 	}
-
 	return t, nil
 }
 
-/**
- * 通过 name 获取 doc 记录
- * @method GetDocByName
- * @param  {[doc]}       doc  *Doc [description]
- */
-func GetDocByName(name string) (*Doc, error) {
-	t := NewDoc()
-	err := IsNotFound(libs.Db.Where("name = ?", name).First(t).Error)
-	if err != nil {
-		return nil, err
-	}
-
-	return t, nil
-}
-
-/**
- * 通过 id 删除权限
- * @method DeleteDocById
- */
+// DeleteDocById del doc by id
 func DeleteDocById(id uint) error {
 	t := NewDoc()
 	t.ID = id
@@ -68,21 +45,17 @@ func DeleteDocById(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的权限
- * @method GetAllDocs
- * @param  {[doc]} name string [description]
- * @param  {[doc]} orderBy string [description]
- * @param  {[doc]} offset int    [description]
- * @param  {[doc]} limit int    [description]
- */
-func GetAllDocs(name, orderBy string, offset, limit int) ([]*Doc, int64, error) {
+// GetAllDocs get all docs
+func GetAllDocs(s *Search) ([]*Doc, int64, error) {
 	var docs []*Doc
 	var count int64
-	all := GetAll(&Doc{}, name, orderBy, offset, limit)
+	all := GetAll(&Doc{}, s)
 	if err := all.Count(&count).Error; err != nil {
 		return nil, count, err
 	}
+
+	all = all.Scopes(Relation(s.Relations))
+
 	if err := all.Find(&docs).Error; err != nil {
 		return nil, count, err
 	}
@@ -90,13 +63,7 @@ func GetAllDocs(name, orderBy string, offset, limit int) ([]*Doc, int64, error) 
 	return docs, count, nil
 }
 
-/**
- * 创建
- * @method CreateDoc
- * @param  {[doc]} kw string [description]
- * @param  {[doc]} cp int    [description]
- * @param  {[doc]} mp int    [description]
- */
+// CreateDoc create doc
 func (p *Doc) CreateDoc() error {
 	if err := libs.Db.Create(p).Error; err != nil {
 		return err
@@ -104,13 +71,7 @@ func (p *Doc) CreateDoc() error {
 	return nil
 }
 
-/**
- * 更新
- * @method UpdateDoc
- * @param  {[doc]} kw string [description]
- * @param  {[doc]} cp int    [description]
- * @param  {[doc]} mp int    [description]
- */
+// UpdateDocById update doc by id
 func UpdateDocById(id uint, np *Doc) error {
 	if err := Update(&Doc{}, np, id); err != nil {
 		return err

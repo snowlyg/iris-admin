@@ -37,29 +37,24 @@ func NewUser() *User {
 	}
 }
 
-func GetUserByUsername(username string) (*User, error) {
-	user := new(User)
-	if err := IsNotFound(libs.Db.Where("username = ?", username).First(user).Error); err != nil {
-		return nil, err
+// GetUser get user
+func GetUser(search *Search) (*User, error) {
+	t := NewUser()
+	err := Found(search).First(t).Error
+	if !IsNotFound(err) {
+		return t, err
 	}
-	return user, nil
+	return t, nil
 }
 
-func GetUserById(id uint) (*User, error) {
-	u := NewUser()
-	err := IsNotFound(libs.Db.Where("id = ?", id).First(u).Error)
-	if err != nil {
-		return nil, err
-	}
-	return u, nil
-}
-
-/**
- * 通过 id 删除用户
- * @method DeleteUserById
- */
+// DeleteUser del user . if user's username is username ,can't del it.
 func DeleteUser(id uint) error {
-	u, err := GetUserById(id)
+	s := &Search{
+		Fields: []*Filed{
+			{Key: "id", Condition: "=", Value: id},
+		},
+	}
+	u, err := GetUser(s)
 	if err != nil {
 		return err
 	}
@@ -74,32 +69,23 @@ func DeleteUser(id uint) error {
 	return nil
 }
 
-/**
- * 获取所有的账号
- * @method GetAllUser
- * @param  {[type]} name string [description]
- * @param  {[type]} username string [description]
- * @param  {[type]} orderBy string [description]
- * @param  {[type]} offset int    [description]
- * @param  {[type]} limit int    [description]
- */
-func GetAllUsers(name, orderBy string, offset, limit int) []*User {
+// GetAllUsers get all users
+func GetAllUsers(s *Search) ([]*User, int64, error) {
 	var users []*User
-	q := GetAll(&User{}, name, orderBy, offset, limit)
+	var count int64
+	q := GetAll(&User{}, s)
+	if err := q.Count(&count).Error; err != nil {
+		return nil, count, err
+	}
+	q = q.Scopes(Paginate(s.Offset, s.Limit), Relation(s.Relations))
 	if err := q.Find(&users).Error; err != nil {
 		color.Red(fmt.Sprintf("GetAllUserErr:%s \n ", err))
-		return nil
+		return nil, count, err
 	}
-	return users
+	return users, count, nil
 }
 
-/**
- * 创建
- * @method CreateUser
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// CreateUser create user
 func (u *User) CreateUser() error {
 	u.Password = libs.HashPassword(u.Password)
 	if err := libs.Db.Create(u).Error; err != nil {
@@ -111,13 +97,7 @@ func (u *User) CreateUser() error {
 	return nil
 }
 
-/**
- * 更新
- * @method UpdateUser
- * @param  {[type]} kw string [description]
- * @param  {[type]} cp int    [description]
- * @param  {[type]} mp int    [description]
- */
+// UpdateUserById update user by id
 func UpdateUserById(id uint, nu *User) error {
 	nu.Password = libs.HashPassword(nu.Password)
 	if err := Update(&User{}, nu, id); err != nil {
@@ -128,6 +108,7 @@ func UpdateUserById(id uint, nu *User) error {
 	return nil
 }
 
+// addRoles add roles for user
 func addRoles(user *User) {
 	if len(user.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
@@ -144,12 +125,7 @@ func addRoles(user *User) {
 	}
 }
 
-/**
- * 判断用户是否登录
- * @method CheckLogin
- * @param  {[type]}  id       int    [description]
- * @param  {[type]}  password string [description]
- */
+// CheckLogin check login user
 func (u *User) CheckLogin(password string) (*Token, int64, string) {
 	if u.ID == 0 {
 		return nil, 400, "用户不存在"

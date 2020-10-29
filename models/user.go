@@ -51,7 +51,11 @@ func GetUser(search *Search) (*User, error) {
 func DeleteUser(id uint) error {
 	s := &Search{
 		Fields: []*Filed{
-			{Key: "id", Condition: "=", Value: id},
+			{
+				Key:       "id",
+				Condition: "=",
+				Value:     id,
+			},
 		},
 	}
 	u, err := GetUser(s)
@@ -59,7 +63,7 @@ func DeleteUser(id uint) error {
 		return err
 	}
 	if u.Username == "username" {
-		return errors.New("不能删除管理员")
+		return errors.New(fmt.Sprintf("不能删除管理员 : %s \n ", u.Username))
 	}
 
 	if err := libs.Db.Delete(u, id).Error; err != nil {

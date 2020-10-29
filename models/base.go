@@ -108,6 +108,10 @@ func FoundByWhere(fields []*Filed) func(db *gorm.DB) *gorm.DB {
 						if value > 0 {
 							db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
 						}
+					} else if value, ok := field.Value.(uint); ok {
+						if value > 0 {
+							db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+						}
 					} else if value, ok := field.Value.(string); ok {
 						if len(value) > 0 {
 							db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
@@ -120,6 +124,8 @@ func FoundByWhere(fields []*Filed) func(db *gorm.DB) *gorm.DB {
 						if len(value) > 0 {
 							db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
 						}
+					} else {
+						color.Red(fmt.Sprintf("未知数据类型：%+v", field.Value))
 					}
 				}
 			}

@@ -122,8 +122,16 @@ func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 }
 
 func CreateRole(name, disName, dec string) (*models.Role, error) {
-
-	role, err := models.GetRoleByName(name)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "name",
+				Condition: "=",
+				Value:     name,
+			},
+		},
+	}
+	role, err := models.GetRole(s)
 	if err != nil {
 		return nil, err
 	}
@@ -142,19 +150,27 @@ func CreateRole(name, disName, dec string) (*models.Role, error) {
 }
 
 func CreateUser() *models.User {
-	user := &models.User{
-		Username: "TUsername",
-		Password: "TPassword",
-		Name:     "TName",
-		RoleIds:  []uint{},
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "username",
+				Condition: "=",
+				Value:     "TUsername",
+			},
+		},
 	}
 
-	if user.ID == 0 {
+	user, err := models.GetUser(s)
+	if err == nil || user.ID > 0 {
+		user = &models.User{
+			Username: "TUsername",
+			Password: "TPassword",
+			Name:     "TName",
+			RoleIds:  []uint{},
+		}
 		_ = user.CreateUser()
-		return user
-	} else {
-		return user
 	}
+	return user
 }
 
 func GetOauthToken(e *httpexpect.Expect) string {

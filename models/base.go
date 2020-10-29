@@ -100,24 +100,26 @@ func FoundByWhere(fields []*Filed) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if len(fields) > 0 {
 			for _, field := range fields {
-				if field.Condition == "" {
-					field.Condition = "="
-				}
-				if value, ok := field.Value.(int); ok {
-					if value > 0 {
-						db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+				if field != nil {
+					if field.Condition == "" {
+						field.Condition = "="
 					}
-				} else if value, ok := field.Value.(string); ok {
-					if len(value) > 0 {
-						db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
-					}
-				} else if value, ok := field.Value.([]int); ok {
-					if len(value) > 0 {
-						db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
-					}
-				} else if value, ok := field.Value.([]string); ok {
-					if len(value) > 0 {
-						db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+					if value, ok := field.Value.(int); ok {
+						if value > 0 {
+							db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+						}
+					} else if value, ok := field.Value.(string); ok {
+						if len(value) > 0 {
+							db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+						}
+					} else if value, ok := field.Value.([]int); ok {
+						if len(value) > 0 {
+							db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+						}
+					} else if value, ok := field.Value.([]string); ok {
+						if len(value) > 0 {
+							db = db.Where(fmt.Sprintf("%s %s ?", field.Key, field.Condition), value)
+						}
 					}
 				}
 			}
@@ -140,10 +142,15 @@ func GetSearche(key, search string) *Filed {
 		if strings.Contains(search, ":") {
 			searches := strings.Split(search, ":")
 			if len(searches) == 2 {
+				value := searches[0]
+				if strings.ToLower(searches[1]) == "like" {
+					value = fmt.Sprintf("%%%s%%", searches[0])
+				}
+
 				return &Filed{
 					Condition: searches[1],
 					Key:       key,
-					Value:     searches[0],
+					Value:     value,
 				}
 
 			} else if len(searches) == 1 {

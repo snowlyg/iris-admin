@@ -27,6 +27,7 @@ import (
 func GetPublishedArticle(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
+	relation := ctx.FormValue("relation")
 	s := &models.Search{
 		Fields: []*models.Filed{
 			{
@@ -39,6 +40,7 @@ func GetPublishedArticle(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
+		Relations: models.GetRelations(relation),
 	}
 	article, err := models.GetArticle(s)
 	if err != nil {
@@ -71,6 +73,7 @@ func GetPublishedArticle(ctx iris.Context) {
 func GetPublishedArticleLike(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
+	relation := ctx.FormValue("relation")
 	s := &models.Search{
 		Fields: []*models.Filed{
 			{
@@ -83,6 +86,7 @@ func GetPublishedArticleLike(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
+		Relations: models.GetRelations(relation),
 	}
 	article, err := models.GetArticle(s)
 	if err != nil {
@@ -115,6 +119,7 @@ func GetPublishedArticleLike(ctx iris.Context) {
 func GetArticle(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
+	relation := ctx.FormValue("relation")
 	search := &models.Search{
 		Fields: []*models.Filed{
 			{
@@ -123,6 +128,7 @@ func GetArticle(ctx iris.Context) {
 				Condition: "=",
 			},
 		},
+		Relations: models.GetRelations(relation),
 	}
 	article, err := models.GetArticle(search)
 	if err != nil {
@@ -277,6 +283,8 @@ func GetAllPublishedArticles(ctx iris.Context) {
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
 	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
 	orderBy := ctx.FormValue("orderBy")
+	title := ctx.FormValue("title")
+	relation := ctx.FormValue("relation")
 
 	s := &models.Search{
 		Fields: []*models.Filed{
@@ -290,10 +298,13 @@ func GetAllPublishedArticles(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
-		OrderBy: orderBy,
-		Limit:   limit,
-		Offset:  offset,
+		OrderBy:   orderBy,
+		Limit:     limit,
+		Offset:    offset,
+		Relations: models.GetRelations(relation),
 	}
+
+	s.Fields = append(s.Fields, models.GetSearche("title", title))
 
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {

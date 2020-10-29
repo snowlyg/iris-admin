@@ -119,7 +119,11 @@ func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
 					Value:     tagId,
 				},
 			},
-			Relations: []string{"Articles"},
+			Relations: []*Relate{
+				{
+					Value: "Articles",
+				},
+			},
 		}
 		tag, err := GetTag(s)
 		if err != nil {

@@ -19,14 +19,19 @@ type Filed struct {
 	Value     interface{} `json:"value"`
 }
 
+type Relate struct {
+	Value string
+	Func  interface{}
+}
+
 // Search 查询参数结构体
 type Search struct {
-	Fields    []*Filed `json:"fields"`
-	Relations []string `json:"relations"`
-	OrderBy   string   `json:"order_by"`
-	Sort      string   `json:"sort"`
-	Limit     int      `json:"limit"`
-	Offset    int      `json:"offset"`
+	Fields    []*Filed  `json:"fields"`
+	Relations []*Relate `json:"relations"`
+	OrderBy   string    `json:"order_by"`
+	Sort      string    `json:"sort"`
+	Limit     int       `json:"limit"`
+	Offset    int       `json:"offset"`
 }
 
 // GetAll 批量查询
@@ -83,11 +88,17 @@ func GetRolesForUser(uid uint) []string {
 }
 
 // Relation 加载关联关系
-func Relation(relations []string) func(db *gorm.DB) *gorm.DB {
+func Relation(relates []*Relate) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		if len(relations) > 0 {
-			for _, re := range relations {
-				db = db.Preload(re)
+		if len(relates) > 0 {
+			for _, re := range relates {
+				if len(re.Value) > 0 {
+					if re.Func != nil {
+						db = db.Preload(re.Value, re.Func)
+					} else {
+						db = db.Preload(re.Value)
+					}
+				}
 				color.Yellow(fmt.Sprintf("Preoad %s", re))
 			}
 		}
@@ -134,12 +145,26 @@ func FoundByWhere(fields []*Filed) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-// GetRelations 转换前端获取关联关系为 []stirng
-func GetRelations(relation string) []string {
+// GetRelations 转换前端获取关联关系为 []*Relate
+func GetRelations(relation string, fs map[string]interface{}) []*Relate {
+	var relates []*Relate
 	if len(relation) > 0 {
-		return strings.Split(relation, ";")
+		res := strings.Split(relation, ";")
+		for _, re := range res {
+			relate := &Relate{
+				Value: re,
+			}
+			// 增加关联过滤
+			for key, f := range fs {
+				if key == "Chapters" {
+					relate.Func = f
+				}
+			}
+			relates = append(relates, relate)
+		}
+
 	}
-	return nil
+	return relates
 }
 
 // GetSearche 转换前端查询关系为 *Filed

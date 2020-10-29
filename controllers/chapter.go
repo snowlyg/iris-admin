@@ -41,7 +41,7 @@ func GetPublishedChapter(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
-		Relations: models.GetRelations(relation),
+		Relations: models.GetRelations(relation, nil),
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {
@@ -81,7 +81,7 @@ func GetChapter(ctx iris.Context) {
 				Value:     id,
 			},
 		},
-		Relations: models.GetRelations(relation),
+		Relations: models.GetRelations(relation, nil),
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {

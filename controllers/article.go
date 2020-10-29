@@ -40,7 +40,7 @@ func GetPublishedArticle(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
-		Relations: models.GetRelations(relation),
+		Relations: models.GetRelations(relation, nil),
 	}
 	article, err := models.GetArticle(s)
 	if err != nil {
@@ -86,7 +86,7 @@ func GetPublishedArticleLike(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
-		Relations: models.GetRelations(relation),
+		Relations: models.GetRelations(relation, nil),
 	}
 	article, err := models.GetArticle(s)
 	if err != nil {
@@ -128,7 +128,7 @@ func GetArticle(ctx iris.Context) {
 				Condition: "=",
 			},
 		},
-		Relations: models.GetRelations(relation),
+		Relations: models.GetRelations(relation, nil),
 	}
 	article, err := models.GetArticle(search)
 	if err != nil {
@@ -301,7 +301,7 @@ func GetAllPublishedArticles(ctx iris.Context) {
 		OrderBy:   orderBy,
 		Limit:     limit,
 		Offset:    offset,
-		Relations: models.GetRelations(relation),
+		Relations: models.GetRelations(relation, nil),
 	}
 
 	s.Fields = append(s.Fields, models.GetSearche("title", title))

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/relate"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -27,6 +28,7 @@ import (
 func GetDoc(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	relation := ctx.FormValue("relation")
+
 	s := &models.Search{
 		Fields: []*models.Filed{
 			{
@@ -35,8 +37,9 @@ func GetDoc(ctx iris.Context) {
 				Value:     id,
 			},
 		},
-		Relations: models.GetRelations(relation),
+		Relations: models.GetRelations(relation, relate.DocChapterRelate),
 	}
+
 	doc, err := models.GetDoc(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)

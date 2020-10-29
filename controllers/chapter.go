@@ -72,6 +72,7 @@ func GetPublishedChapter(ctx iris.Context) {
  */
 func GetChapter(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
+	relation := ctx.FormValue("relation")
 	s := &models.Search{
 		Fields: []*models.Filed{
 			{
@@ -80,6 +81,7 @@ func GetChapter(ctx iris.Context) {
 				Value:     id,
 			},
 		},
+		Relations: models.GetRelations(relation),
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {

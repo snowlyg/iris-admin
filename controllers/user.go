@@ -222,11 +222,13 @@ func GetAllUsers(ctx iris.Context) {
 	offset := ctx.URLParamIntDefault("offset", 1)
 	limit := ctx.URLParamIntDefault("limit", 15)
 	orderBy := ctx.URLParam("orderBy")
+	name := ctx.FormValue("name")
 	s := &models.Search{
 		Offset:  offset,
 		Limit:   limit,
 		OrderBy: orderBy,
 	}
+	s.Fields = append(s.Fields, models.GetSearche("name", name))
 	users, count, err := models.GetAllUsers(s)
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))

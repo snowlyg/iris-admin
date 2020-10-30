@@ -43,7 +43,7 @@ func GetDoc(ctx iris.Context) {
 	doc, err := models.GetDoc(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
@@ -70,7 +70,7 @@ func CreateDoc(ctx iris.Context) {
 	doc := new(models.Doc)
 	if err := ctx.ReadJSON(doc); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*doc)
@@ -79,7 +79,7 @@ func CreateDoc(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -88,13 +88,13 @@ func CreateDoc(ctx iris.Context) {
 	err = doc.CreateDoc()
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if doc.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, docTransform(doc), "操作成功"))
 	}
@@ -122,7 +122,7 @@ func UpdateDoc(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -131,7 +131,7 @@ func UpdateDoc(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -142,13 +142,13 @@ func UpdateDoc(ctx iris.Context) {
 	err = models.UpdateDocById(id, aul)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error update doc: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error update doc: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if aul.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, docTransform(aul), "操作成功"))
 	}
@@ -173,7 +173,7 @@ func DeleteDoc(ctx iris.Context) {
 	if err != nil {
 
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
@@ -204,7 +204,7 @@ func GetAllDocs(ctx iris.Context) {
 	docs, count, err := models.GetAllDocs(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)

@@ -38,7 +38,7 @@ func GetTag(ctx iris.Context) {
 	tag, err := models.GetTag(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
@@ -65,7 +65,7 @@ func CreateTag(ctx iris.Context) {
 	tag := new(models.Tag)
 	if err := ctx.ReadJSON(tag); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*tag)
@@ -74,7 +74,7 @@ func CreateTag(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -83,13 +83,13 @@ func CreateTag(ctx iris.Context) {
 	err = tag.CreateTag()
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if tag.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, tag, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, tag, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, tagTransform(tag), "操作成功"))
 	}
@@ -117,7 +117,7 @@ func UpdateTag(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -126,7 +126,7 @@ func UpdateTag(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -136,13 +136,13 @@ func UpdateTag(ctx iris.Context) {
 	err = models.UpdateTagById(id, aul)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if aul.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, tagTransform(aul), "操作成功"))
 	}
@@ -167,7 +167,7 @@ func DeleteTag(ctx iris.Context) {
 	if err != nil {
 
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
@@ -197,8 +197,13 @@ func GetAllTags(ctx iris.Context) {
 	}
 	tags, count, err := models.GetAllTags(s)
 	if err != nil {
+<<<<<<< HEAD
 
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+=======
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+>>>>>>> 52fb753b8ba36de8e98eb6e37ee8b86668c44ab2
 	}
 
 	transform := tagsTransform(tags)

@@ -38,7 +38,7 @@ func GetType(ctx iris.Context) {
 	tt, err := models.GetType(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
@@ -65,7 +65,7 @@ func CreateType(ctx iris.Context) {
 	tt := new(models.Type)
 	if err := ctx.ReadJSON(tt); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*tt)
@@ -74,7 +74,7 @@ func CreateType(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -83,13 +83,13 @@ func CreateType(ctx iris.Context) {
 	err = tt.CreateType()
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if tt.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, tt, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, tt, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, ttTransform(tt), "操作成功"))
 	}
@@ -117,7 +117,7 @@ func UpdateType(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -126,7 +126,7 @@ func UpdateType(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -137,13 +137,13 @@ func UpdateType(ctx iris.Context) {
 	err = models.UpdateTypeById(id, aul)
 	if err != nil {
 		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error update type: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error update type: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if aul.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, ttTransform(aul), "操作成功"))
 	}
@@ -168,7 +168,7 @@ func DeleteType(ctx iris.Context) {
 	if err != nil {
 
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
@@ -198,8 +198,13 @@ func GetAllTypes(ctx iris.Context) {
 	}
 	tts, count, err := models.GetAllTypes(s)
 	if err != nil {
+<<<<<<< HEAD
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 
+=======
+		ctx.StatusCode(iris.StatusOK)
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+>>>>>>> 52fb753b8ba36de8e98eb6e37ee8b86668c44ab2
 	}
 
 	transform := ttsTransform(tts)

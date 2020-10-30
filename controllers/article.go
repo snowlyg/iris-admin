@@ -161,7 +161,7 @@ func CreateArticle(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(article); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 
@@ -171,7 +171,7 @@ func CreateArticle(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -179,12 +179,12 @@ func CreateArticle(ctx iris.Context) {
 
 	err = article.CreateArticle()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
 	if article.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
 		return
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
@@ -214,7 +214,7 @@ func UpdateArticle(ctx iris.Context) {
 
 	article := new(models.Article)
 	if err := ctx.ReadJSON(article); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 
@@ -223,7 +223,7 @@ func UpdateArticle(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -233,7 +233,7 @@ func UpdateArticle(ctx iris.Context) {
 	err = models.UpdateArticle(id, article)
 
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
@@ -309,7 +309,7 @@ func GetAllPublishedArticles(ctx iris.Context) {
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 
@@ -353,7 +353,7 @@ func GetAllArticles(ctx iris.Context) {
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 

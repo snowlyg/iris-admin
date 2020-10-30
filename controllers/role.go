@@ -68,7 +68,7 @@ func CreateRole(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(role); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 
@@ -78,7 +78,7 @@ func CreateRole(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -86,12 +86,12 @@ func CreateRole(ctx iris.Context) {
 
 	err = role.CreateRole()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
 	if role.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
 		return
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
@@ -120,7 +120,7 @@ func UpdateRole(ctx iris.Context) {
 	role := new(models.Role)
 	if err := ctx.ReadJSON(role); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 
@@ -130,7 +130,7 @@ func UpdateRole(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(ApiResource(200, nil, e))
 				return
 			}
 		}
@@ -140,7 +140,7 @@ func UpdateRole(ctx iris.Context) {
 	err = models.UpdateRole(id, role)
 	ctx.StatusCode(iris.StatusOK)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
@@ -194,7 +194,7 @@ func GetAllRoles(ctx iris.Context) {
 	roles, count, err := models.GetAllRoles(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
 		return
 	}
 

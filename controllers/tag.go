@@ -197,13 +197,7 @@ func GetAllTags(ctx iris.Context) {
 	}
 	tags, count, err := models.GetAllTags(s)
 	if err != nil {
-<<<<<<< HEAD
-
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
-=======
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
->>>>>>> 52fb753b8ba36de8e98eb6e37ee8b86668c44ab2
 	}
 
 	transform := tagsTransform(tags)

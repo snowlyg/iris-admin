@@ -342,12 +342,8 @@ func GetAllPublishedChapters(ctx iris.Context) {
 	chapters, count, err := models.GetAllChapters(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-<<<<<<< HEAD
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
-=======
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
->>>>>>> 52fb753b8ba36de8e98eb6e37ee8b86668c44ab2
 	}
 
 	ctx.StatusCode(iris.StatusOK)

@@ -38,7 +38,7 @@ func GetTag(ctx iris.Context) {
 	tag, err := models.GetTag(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
@@ -65,7 +65,7 @@ func CreateTag(ctx iris.Context) {
 	tag := new(models.Tag)
 	if err := ctx.ReadJSON(tag); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*tag)
@@ -117,7 +117,7 @@ func UpdateTag(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -167,7 +167,7 @@ func DeleteTag(ctx iris.Context) {
 	if err != nil {
 
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))

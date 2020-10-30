@@ -30,7 +30,7 @@ func UserLogin(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -61,7 +61,7 @@ func UserLogin(ctx iris.Context) {
 
 	user, err := models.GetUser(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -91,12 +91,12 @@ func UserLogout(ctx iris.Context) {
 	sess, err := models.GetRedisSessionV2(conn, value.Raw)
 	if err != nil {
 		ctx.StatusCode(http.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 	if sess != nil {
 		if err := sess.DelUserTokenCache(conn, value.Raw); err != nil {
 			ctx.StatusCode(http.StatusOK)
-			_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+			_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		}
 		ctx.Application().Logger().Infof("%d 退出系统", sess.UserId)
 	}
@@ -124,12 +124,12 @@ func UserExpire(ctx iris.Context) {
 	sess, err := models.GetRedisSessionV2(conn, value.Raw)
 	if err != nil {
 		ctx.StatusCode(http.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 	if sess != nil {
 		if err := sess.UpdateUserTokenCacheExpire(conn, value.Raw); err != nil {
 			ctx.StatusCode(http.StatusOK)
-			_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+			_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		}
 	}
 

@@ -55,6 +55,7 @@ func GetAll(model interface{}, s *Search) *gorm.DB {
 
 // Found 查询条件
 func Found(s *Search) *gorm.DB {
+	color.Yellow(fmt.Sprintf("Searach :%+v", s))
 	return libs.Db.Scopes(Relation(s.Relations), FoundByWhere(s.Fields))
 }
 
@@ -156,7 +157,7 @@ func GetRelations(relation string, fs map[string]interface{}) []*Relate {
 			}
 			// 增加关联过滤
 			for key, f := range fs {
-				if key == "Chapters" {
+				if key == re {
 					relate.Func = f
 				}
 			}
@@ -164,6 +165,7 @@ func GetRelations(relation string, fs map[string]interface{}) []*Relate {
 		}
 
 	}
+	color.Yellow(fmt.Sprintf("relation :%s , relates:%+v", relation, relates))
 	return relates
 }
 

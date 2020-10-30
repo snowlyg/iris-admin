@@ -40,7 +40,7 @@ func GetProfile(ctx iris.Context) {
 	user, err := models.GetUser(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "请求成功"))
@@ -72,7 +72,7 @@ func GetUser(ctx iris.Context) {
 	user, err := models.GetUser(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
@@ -96,7 +96,7 @@ func CreateUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
 	if err := ctx.ReadJSON(user); err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -113,7 +113,7 @@ func CreateUser(ctx iris.Context) {
 
 	err = user.CreateUser()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -146,7 +146,7 @@ func UpdateUser(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(user); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	err := validates.Validate.Struct(*user)
@@ -171,7 +171,7 @@ func UpdateUser(ctx iris.Context) {
 	err = models.UpdateUserById(id, user)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
@@ -197,7 +197,7 @@ func DeleteUser(ctx iris.Context) {
 	err := models.DeleteUser(id)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 

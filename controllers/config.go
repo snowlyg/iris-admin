@@ -62,7 +62,7 @@ func CreateConfig(ctx iris.Context) {
 	config := new(models.Config)
 	if err := ctx.ReadJSON(config); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*config)
@@ -114,7 +114,7 @@ func UpdateConfig(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(config); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*config)
@@ -163,7 +163,7 @@ func DeleteConfig(ctx iris.Context) {
 	err := models.DeleteConfig(id)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
@@ -194,7 +194,7 @@ func GetAllConfigs(ctx iris.Context) {
 	configs, err := models.GetAllConfigs(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)

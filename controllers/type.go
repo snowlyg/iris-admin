@@ -38,7 +38,7 @@ func GetType(ctx iris.Context) {
 	tt, err := models.GetType(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
@@ -65,7 +65,7 @@ func CreateType(ctx iris.Context) {
 	tt := new(models.Type)
 	if err := ctx.ReadJSON(tt); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*tt)
@@ -117,7 +117,7 @@ func UpdateType(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -168,7 +168,7 @@ func DeleteType(ctx iris.Context) {
 	if err != nil {
 
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))

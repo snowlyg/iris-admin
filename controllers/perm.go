@@ -39,7 +39,7 @@ func GetPermission(ctx iris.Context) {
 	perm, err := models.GetPermission(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -67,7 +67,7 @@ func CreatePermission(ctx iris.Context) {
 	perm := new(models.Permission)
 	if err := ctx.ReadJSON(perm); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*perm)
@@ -119,7 +119,7 @@ func UpdatePermission(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -168,7 +168,7 @@ func DeletePermission(ctx iris.Context) {
 	err := models.DeletePermissionById(id)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
@@ -199,7 +199,7 @@ func GetAllPermissions(ctx iris.Context) {
 	permissions, count, err := models.GetAllPermissions(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)

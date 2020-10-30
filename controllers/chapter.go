@@ -45,13 +45,13 @@ func GetPublishedChapter(ctx iris.Context) {
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	err = chapter.ReadChapter(ctx.Request())
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -86,7 +86,7 @@ func GetChapter(ctx iris.Context) {
 	chapter, err := models.GetChapter(s)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
@@ -113,7 +113,7 @@ func CreateChapter(ctx iris.Context) {
 	chapter := new(models.Chapter)
 	if err := ctx.ReadJSON(chapter); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(chapter)
@@ -165,7 +165,7 @@ func UpdateChapter(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -216,7 +216,7 @@ func DeleteChapter(ctx iris.Context) {
 	if err != nil {
 
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
@@ -292,13 +292,13 @@ func GetPublishedChapterLike(ctx iris.Context) {
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	err = chapter.LikeChapter()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 

@@ -44,13 +44,13 @@ func GetPublishedArticle(ctx iris.Context) {
 	}
 	article, err := models.GetArticle(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	err = article.ReadArticle(ctx.Request())
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -90,13 +90,13 @@ func GetPublishedArticleLike(ctx iris.Context) {
 	}
 	article, err := models.GetArticle(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	err = article.LikeArticle()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -132,7 +132,7 @@ func GetArticle(ctx iris.Context) {
 	}
 	article, err := models.GetArticle(search)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -161,7 +161,7 @@ func CreateArticle(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(article); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -179,7 +179,7 @@ func CreateArticle(ctx iris.Context) {
 
 	err = article.CreateArticle()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
@@ -214,7 +214,7 @@ func UpdateArticle(ctx iris.Context) {
 
 	article := new(models.Article)
 	if err := ctx.ReadJSON(article); err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -233,7 +233,7 @@ func UpdateArticle(ctx iris.Context) {
 	err = models.UpdateArticle(id, article)
 
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
@@ -258,7 +258,7 @@ func DeleteArticle(ctx iris.Context) {
 	err := models.DeleteArticleById(id)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
 	ctx.StatusCode(iris.StatusOK)
@@ -309,7 +309,7 @@ func GetAllPublishedArticles(ctx iris.Context) {
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -353,7 +353,7 @@ func GetAllArticles(ctx iris.Context) {
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -372,6 +372,7 @@ func articlesTransform(articles []*models.Article) []*transformer.Article {
 }
 
 func articleTransform(article *models.Article) *transformer.Article {
+
 	r := &transformer.Article{}
 	g := gf.NewTransform(r, article, time.RFC3339)
 	_ = g.Transformer()
@@ -387,5 +388,6 @@ func articleTransform(article *models.Article) *transformer.Article {
 		transform := ttTransform(article.Type)
 		r.Type = *transform
 	}
+
 	return r
 }

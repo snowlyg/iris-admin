@@ -106,6 +106,7 @@ func DeleteArticleById(id uint) error {
 func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
 	var articles []*Article
 	var count int64
+
 	getAll := GetAll(&Article{}, search)
 
 	// 多对多标签搜索
@@ -149,26 +150,61 @@ func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
 		return nil, count, err
 	}
 
+	color.Yellow(fmt.Sprintf("Searach :%+v", search))
+
 	return articles, count, nil
 }
 
 // CreateArticle 创建
 func (r *Article) CreateArticle() error {
-	r.getTagTypeChapters()
+	r.getTypes()
 
 	if err := libs.Db.Create(r).Error; err != nil {
 		return err
 	}
 
+	r.addTags()
+
 	return nil
 }
 
-// getTagTypeChapters 获取关联数据
-func (r *Article) getTagTypeChapters() {
+func (r *Article) addTags() {
 	if err := libs.Db.Model(r).Association("Tags").Clear(); err != nil {
 		color.Red(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
 	}
+	if len(r.TagNames) > 0 {
+		var tags []*Tag
+		for _, tagName := range r.TagNames {
+			s := &Search{
+				Fields: []*Filed{
+					{
+						Key:       "name",
+						Condition: "=",
+						Value:     tagName,
+					},
+				},
+			}
+			tag, err := GetTag(s)
+			if err != nil || tag.ID == 0 {
+				tag = NewTag()
+				tag.Name = tagName
+				err := tag.CreateTag()
+				if err != nil {
+					color.Red(fmt.Sprintf("标签新建错误:%+v\n", err))
+				}
+			}
+			tags = append(tags, tag)
+		}
 
+		err := libs.Db.Model(r).Association("Tags").Append(tags)
+		if err != nil {
+			color.Red(fmt.Sprintf("标签添加错误:%+v\n tags:%+v", err, tags))
+		}
+	}
+}
+
+// getTypes 获取关联数据
+func (r *Article) getTypes() {
 	if r.Type != nil {
 		if r.Type.ID > 0 {
 			s := &Search{
@@ -188,44 +224,16 @@ func (r *Article) getTagTypeChapters() {
 		}
 	}
 
-	if len(r.TagNames) > 0 {
-		var tags []*Tag
-		for _, tagName := range r.TagNames {
-			s := &Search{
-				Fields: []*Filed{
-					{
-						Key:       "name",
-						Condition: "=",
-						Value:     tagName,
-					},
-				},
-			}
-			tag, err := GetTag(s)
-			if err == nil {
-				if tag.ID == 0 {
-					tag.Name = tagName
-					err := tag.CreateTag()
-					if err != nil {
-						color.Red(fmt.Sprintf("标签新建错误:%+v\n", err))
-					}
-				}
-				tags = append(tags, tag)
-			}
-		}
-
-		r.Tags = tags
-	}
-
-	color.Red(fmt.Sprintf("article:%+v", r))
 }
 
 // UpdateArticle 更新
 func UpdateArticle(id uint, nr *Article) error {
-	nr.getTagTypeChapters()
+	nr.getTypes()
 
 	if err := Update(&Article{}, nr, id); err != nil {
 		return err
 	}
 
+	nr.addTags()
 	return nil
 }

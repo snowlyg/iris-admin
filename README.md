@@ -12,7 +12,10 @@
 > 简单学习项目 ----写的挺烂，欢迎指点
 >
 #### 演示地址
-[http://irisadminapi.snowlyg.com](http://irisadminapi.snowlyg.com)
+[http://irisadminapi.snowlyg.com](https://irisadminapi.snowlyg.com)
+
+#### IRIS V12 中文文档
+[IRIS V12 中文文档m](https://www.snowlyg.com/chapter/1)
 
 账号/密码 ： username/123456
 

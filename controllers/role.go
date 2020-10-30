@@ -64,10 +64,11 @@ func GetRole(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateRole(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	role := new(models.Role)
 
 	if err := ctx.ReadJSON(role); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -77,8 +78,7 @@ func CreateRole(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -89,14 +89,12 @@ func CreateRole(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	ctx.StatusCode(iris.StatusOK)
 	if role.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
-		return
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 		return
 	}
+	_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
+	return
 
 }
 
@@ -117,9 +115,10 @@ func CreateRole(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateRole(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	role := new(models.Role)
 	if err := ctx.ReadJSON(role); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -129,8 +128,7 @@ func UpdateRole(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -138,14 +136,12 @@ func UpdateRole(ctx iris.Context) {
 
 	id, _ := ctx.Params().GetUint("id")
 	err = models.UpdateRole(id, role)
-	ctx.StatusCode(iris.StatusOK)
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
-		return
 	}
+	_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
+	return
 
 }
 
@@ -165,7 +161,11 @@ func DeleteRole(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 
-	models.DeleteRoleById(id)
+	err := models.DeleteRoleById(id)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
 
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }

@@ -64,9 +64,10 @@ func GetPermission(ctx iris.Context) {
 * @apiPermission null
  */
 func CreatePermission(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	perm := new(models.Permission)
 	if err := ctx.ReadJSON(perm); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -75,8 +76,7 @@ func CreatePermission(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -84,14 +84,13 @@ func CreatePermission(ctx iris.Context) {
 
 	err = perm.CreatePermission()
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
 		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if perm.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, perm, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(400, perm, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, permTransform(perm), "操作成功"))
 	}
@@ -115,10 +114,11 @@ func CreatePermission(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdatePermission(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	aul := new(models.Permission)
 
 	if err := ctx.ReadJSON(aul); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -127,8 +127,7 @@ func UpdatePermission(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -137,17 +136,15 @@ func UpdatePermission(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	err = models.UpdatePermission(id, aul)
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if aul.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, permTransform(aul), "操作成功"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 	}
+	_, _ = ctx.JSON(ApiResource(200, permTransform(aul), "操作成功"))
 
 }
 

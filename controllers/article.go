@@ -157,10 +157,10 @@ func GetArticle(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateArticle(ctx iris.Context) {
-	article := new(models.Article)
 
+	ctx.StatusCode(iris.StatusOK)
+	article := new(models.Article)
 	if err := ctx.ReadJSON(article); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -170,8 +170,7 @@ func CreateArticle(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -182,14 +181,11 @@ func CreateArticle(ctx iris.Context) {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	ctx.StatusCode(iris.StatusOK)
 	if article.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
-		return
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 		return
 	}
+	_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
 
 }
 
@@ -223,7 +219,7 @@ func UpdateArticle(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -254,14 +250,14 @@ func UpdateArticle(ctx iris.Context) {
 * @apiPermission null
  */
 func DeleteArticle(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 	err := models.DeleteArticleById(id)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }
 
@@ -278,6 +274,8 @@ func DeleteArticle(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllPublishedArticles(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	offset := libs.ParseInt(ctx.FormValue("page"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
@@ -308,12 +306,10 @@ func GetAllPublishedArticles(ctx iris.Context) {
 
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	transform := articlesTransform(articles)
 	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
 }
@@ -331,6 +327,8 @@ func GetAllPublishedArticles(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllArticles(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	offset := libs.ParseInt(ctx.FormValue("page"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
@@ -352,12 +350,10 @@ func GetAllArticles(ctx iris.Context) {
 
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	transform := articlesTransform(articles)
 	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
 }

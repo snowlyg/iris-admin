@@ -105,7 +105,7 @@ func CreateUser(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -118,7 +118,7 @@ func CreateUser(ctx iris.Context) {
 	}
 
 	if user.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 		return
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
@@ -155,7 +155,7 @@ func UpdateUser(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -164,7 +164,7 @@ func UpdateUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	if user.Username == "username" {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, "不能编辑管理员"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员"))
 		return
 	}
 

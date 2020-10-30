@@ -22,6 +22,8 @@ import (
 * @apiPermission null
  */
 func GetConfig(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	key := ctx.Params().GetString("key")
 	s := &models.Search{
 		Fields: []*models.Filed{
@@ -34,11 +36,9 @@ func GetConfig(ctx iris.Context) {
 	}
 	config, err := models.GetConfig(s)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error get %s config: %s", key, err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error get %s config: %s", key, err.Error())))
 		return
 	}
-	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
 }
 
@@ -59,9 +59,10 @@ func GetConfig(ctx iris.Context) {
 * @apiPermission null
  */
 func CreateConfig(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	config := new(models.Config)
 	if err := ctx.ReadJSON(config); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -70,8 +71,7 @@ func CreateConfig(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -79,17 +79,14 @@ func CreateConfig(ctx iris.Context) {
 
 	err = config.CreateConfig()
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	if config.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, config, "操作失败"))
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
+		_, _ = ctx.JSON(ApiResource(400, config, "操作失败"))
 	}
+	_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
 
 }
 
@@ -110,10 +107,11 @@ func CreateConfig(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateConfig(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	config := new(models.Config)
 
 	if err := ctx.ReadJSON(config); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -122,8 +120,7 @@ func UpdateConfig(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -132,17 +129,14 @@ func UpdateConfig(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	err = models.UpdateConfig(id, config)
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	if config.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, config, "操作失败"))
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
+		_, _ = ctx.JSON(ApiResource(400, config, "操作失败"))
 	}
+	_, _ = ctx.JSON(ApiResource(200, config, "操作成功"))
 
 }
 
@@ -159,14 +153,14 @@ func UpdateConfig(ctx iris.Context) {
 * @apiPermission null
  */
 func DeleteConfig(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 	err := models.DeleteConfig(id)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
-	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
 }
 
@@ -183,6 +177,8 @@ func DeleteConfig(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllConfigs(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	offset := libs.ParseInt(ctx.URLParam("page"), 1)
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
 	orderBy := ctx.FormValue("orderBy")
@@ -193,10 +189,7 @@ func GetAllConfigs(ctx iris.Context) {
 	}
 	configs, err := models.GetAllConfigs(s)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 	}
-
-	ctx.StatusCode(iris.StatusOK)
 	_, _ = ctx.JSON(ApiResource(200, configs, "操作成功"))
 }

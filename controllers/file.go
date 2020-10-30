@@ -23,18 +23,18 @@ import (
 * @apiPermission
  */
 func UploadFile(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	f, fh, err := ctx.FormFile("uploadfile")
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error while uploading: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error while uploading: %s", err.Error())))
 		return
 	}
 	defer f.Close()
 
 	fns := strings.Split(fh.Filename, ".")
 	if len(fns) != 2 {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(200, nil, "Error while uploading: 请上传正确的文件"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "Error while uploading: 请上传正确的文件"))
 		return
 	}
 
@@ -43,12 +43,9 @@ func UploadFile(ctx iris.Context) {
 	err = libs.EnsureDir(path)
 	_, err = ctx.SaveFormFile(fh, filepath.Join(path, filename))
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error while SaveFormFile: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error while SaveFormFile: %s", err.Error())))
 		return
 	}
-
-	ctx.StatusCode(iris.StatusOK)
 
 	imageHost := fmt.Sprintf("http://%s:%d", ctx.Domain(), libs.Config.Port)
 	s := &models.Search{

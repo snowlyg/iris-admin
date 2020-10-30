@@ -113,10 +113,11 @@ func CreateType(ctx iris.Context) {
 * @apiType null
  */
 func UpdateType(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
 	aul := new(models.Type)
 
 	if err := ctx.ReadJSON(aul); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -125,8 +126,7 @@ func UpdateType(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -136,14 +136,12 @@ func UpdateType(ctx iris.Context) {
 	aul.ID = id
 	err = models.UpdateTypeById(id, aul)
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error update type: %s", err.Error())))
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error update type: %s", err.Error())))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	if aul.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
 	} else {
 		_, _ = ctx.JSON(ApiResource(200, ttTransform(aul), "操作成功"))
 	}

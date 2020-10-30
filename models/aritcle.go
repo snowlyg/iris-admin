@@ -24,6 +24,7 @@ type Article struct {
 	Content      string    `gorm:"type:longText" json:"content" comment:"内容" validate:"required,gte=6"`
 	Status       string    `gorm:"not null;default:'';type:varchar(10)" json:"status" comment:"文章状态" validate:"required,gte=1,lte=10"`
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
+	Sort         int64     `gorm:"not null;default(0)" json:"sort" comment:"排序"`
 	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
 	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
 	Ips          string    `gorm:"not null;default(0);type:varchar(1024)" json:"ips" comment:"ip 地址"`

@@ -7,6 +7,7 @@ application.yml
 
 .air.conf
 
+views/
 tmp/
 /logs/
 /.idea/

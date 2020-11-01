@@ -1,4 +1,4 @@
-//go:generate go-bindata -prefix "assets" -fs  ./www/dist/...
+//go:generate go-bindata -prefix "./www/dist" -fs  ./www/dist/...
 package main
 
 import (
@@ -102,7 +102,7 @@ version: %s`, Version))
 		panic(err)
 	}
 
-	irisServer := web_server.NewServer(AssetFile(), Asset, AssetNames)
+	irisServer := web_server.NewServer(AssetFile())
 	if irisServer == nil {
 		panic("Http 初始化失败")
 	}

@@ -16,19 +16,15 @@ import (
 )
 
 type Server struct {
-	App        *iris.Application
-	AssetFile  http.FileSystem
-	Asset      func(name string) ([]byte, error)
-	AssetNames func() []string
+	App       *iris.Application
+	AssetFile http.FileSystem
 }
 
-func NewServer(assetFile http.FileSystem, asset func(name string) ([]byte, error), assetNames func() []string) *Server {
+func NewServer(assetFile http.FileSystem) *Server {
 	app := iris.Default()
 	return &Server{
-		App:        app,
-		AssetFile:  assetFile,
-		Asset:      asset,
-		AssetNames: assetNames,
+		App:       app,
+		AssetFile: assetFile,
 	}
 }
 
@@ -64,7 +60,7 @@ func (s *Server) NewApp() {
 		go generate 
 		等步骤，打包前端文件
 `)
-		s.App.RegisterView(iris.Blocks(s.AssetFile, ".html"))
+		s.App.RegisterView(iris.HTML(s.AssetFile, ".html"))
 		s.App.HandleDir("/", s.AssetFile)
 	}
 

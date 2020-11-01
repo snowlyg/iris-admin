@@ -3,6 +3,10 @@ perms:
     displayname: "退出"
     description: "退出"
     act: "POST"
+  - name: "/v1/admin/expire"
+    displayname: "刷新 token"
+    description: "刷新 token"
+    act: "GET"
 
   - name: "/v1/admin/profile"
     displayname: "个人信息"

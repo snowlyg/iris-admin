@@ -34,11 +34,16 @@ type Chapter struct {
 	Doc   *Doc
 }
 
+type MiniChapter struct {
+	Id   uint  `json:"id" validate:"required"`
+	Sort int64 `json:"sort" validate:"required"`
+}
+
 type SortChapter struct {
-	OldId   uint  `json:"old_id"`
-	OldSort int64 `json:"sold_sort"`
-	NewId   uint  `json:"new_id"`
-	NewSort int64 `json:"new_sort"`
+	OldId   uint  `json:"old_id" validate:"required"`
+	OldSort int64 `json:"old_sort" validate:"required"`
+	NewId   uint  `json:"new_id" validate:"required"`
+	NewSort int64 `json:"new_sort" validate:"required"`
 }
 
 func NewChapter() *Chapter {

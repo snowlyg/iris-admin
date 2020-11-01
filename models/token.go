@@ -195,7 +195,7 @@ func (r *RedisSessionV2) GetTokenExpire() time.Duration {
 
 func (r *RedisSessionV2) DelUserTokenCache(conn *libs.RedisCluster, token string) error {
 	sKey := ZXW_SESSION_USER_PREFIX + r.UserId
-	_, err := conn.Do("SERM", sKey, token)
+	_, err := conn.Do("SREM", sKey, token)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("conn.DelUserTokenCache1 error :%+v", err))
 		return err

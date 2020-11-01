@@ -186,8 +186,62 @@ func UpdateChapter(ctx iris.Context) {
 	}
 	if aul.ID == 0 {
 		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		return
 	}
 	_, _ = ctx.JSON(ApiResource(200, chapterTransform(aul), "操作成功"))
+
+}
+
+/**
+* @api {put} /admin/chapters/:id/set_sort 设置排序
+* @apiName 设置排序
+* @apiGroup Chapters
+* @apiVersion 1.0.0
+* @apiDescription 更新章节
+* @apiSampleRequest /admin/chapters/:id/set_sort
+* @apiParam {string} name 章节名
+* @apiParam {string} display_name
+* @apiParam {string} description
+* @apiParam {string} level
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiChapter null
+ */
+func SetChapterSort(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
+	aul := new(models.MiniChapter)
+
+	if err := ctx.ReadJSON(aul); err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
+	err := validates.Validate.Struct(*aul)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(validates.ValidateTrans) {
+			if len(e) > 0 {
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				return
+			}
+		}
+	}
+
+	id, _ := ctx.Params().GetUint("id")
+	chapter := models.NewChapter()
+	chapter.ID = aul.Id
+	chapter.Sort = aul.Sort
+	err = models.UpdateChapterById(id, chapter)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error update chapter: %s", err.Error())))
+		return
+	}
+	if chapter.ID == 0 {
+		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		return
+	}
+	_, _ = ctx.JSON(ApiResource(200, chapterTransform(chapter), "操作成功"))
 
 }
 

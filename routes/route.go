@@ -58,7 +58,7 @@ func App(api *iris.Application) {
 				casbinMiddleware := middleware.New(libs.Enforcer)                    //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				admin.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				admin.Post("/logout", controllers.UserLogout).Name = "退出"
-				admin.Post("/expire", controllers.UserExpire).Name = "刷新 token"
+				admin.Get("/expire", controllers.UserExpire).Name = "刷新 token"
 				admin.Get("/profile", controllers.GetProfile).Name = "个人信息"
 				admin.Post("/upload_file", iris.LimitRequestBodySize(maxSize+1<<20), controllers.UploadFile).Name = "上传文件"
 				admin.PartyFunc("/article", func(aritcle iris.Party) {
@@ -123,7 +123,7 @@ func App(api *iris.Application) {
 					chapters.Get("/{id:uint}", controllers.GetChapter).Name = "章节详情"
 					chapters.Post("/", controllers.CreateChapter).Name = "创建章节"
 					chapters.Put("/{id:uint}", controllers.UpdateChapter).Name = "编辑章节"
-					chapters.Put("/{id:uint}/set_sort", controllers.UpdateChapter).Name = "设置排序"
+					chapters.Put("/{id:uint}/set_sort", controllers.SetChapterSort).Name = "设置排序"
 					chapters.Put("/sort", controllers.SortChapter).Name = "排序章节"
 					chapters.Delete("/{id:uint}", controllers.DeleteChapter).Name = "删除章节"
 				})

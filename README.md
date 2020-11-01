@@ -15,7 +15,7 @@
 [http://irisadminapi.snowlyg.com](https://irisadminapi.snowlyg.com)
 
 #### IRIS V12 中文文档
-[IRIS V12 中文文档m](https://www.snowlyg.com/chapter/1)
+[IRIS V12 中文文档](https://www.snowlyg.com/chapter/1)
 
 账号/密码 ： username/123456
 

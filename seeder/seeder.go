@@ -132,7 +132,7 @@ func CreateAdminRole() {
 				Description: libs.Config.Admin.RoleDisplayName,
 				Model:       gorm.Model{CreatedAt: time.Now()},
 			}
-
+			role.PermIds = permIds
 			if err := role.CreateRole(); err != nil {
 				logger.Println(fmt.Sprintf("管理角色填充错误：%+v\n", err))
 			}
@@ -191,7 +191,7 @@ func CreateAdminUser() {
 			Intro:    "超级弱鸡程序猿一枚！！！！",
 			Model:    gorm.Model{CreatedAt: time.Now()},
 		}
-
+		admin.RoleIds = roleIds
 		if err := admin.CreateUser(); err != nil {
 			logger.Println(fmt.Sprintf("管理员填充错误：%+v\n", err))
 		}

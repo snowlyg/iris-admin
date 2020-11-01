@@ -66,8 +66,10 @@
 ./main stop
 # 查看版本
 ./main version
-# 数据填充
+# 清除数据，并重新填充
 ./main seeder
+# 修改 seeder/data/perms.yaml 后同步权限,
+./main sync_perms
 # 查看权限信息
 ./main perms
 ```

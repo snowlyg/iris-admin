@@ -60,11 +60,11 @@ func GetPublishedChapter(ctx iris.Context) {
 }
 
 /**
-* @api {get} /admin/chapters/:id 根据id获取分类信息
-* @apiName 根据id获取分类信息
+* @api {get} /admin/chapters/:id 根据id获取章节信息
+* @apiName 根据id获取章节信息
 * @apiGroup Chapters
 * @apiVersion 1.0.0
-* @apiDescription 根据id获取分类信息
+* @apiDescription 根据id获取章节信息
 * @apiSampleRequest /admin/chapters/:id
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
@@ -94,13 +94,13 @@ func GetChapter(ctx iris.Context) {
 }
 
 /**
-* @api {post} /admin/chapters/ 新建分类
-* @apiName 新建分类
+* @api {post} /admin/chapters/ 新建章节
+* @apiName 新建章节
 * @apiGroup Chapters
 * @apiVersion 1.0.0
-* @apiDescription 新建分类
+* @apiDescription 新建章节
 * @apiSampleRequest /admin/chapters/
-* @apiParam {string} name 分类名
+* @apiParam {string} name 章节名
 * @apiParam {string} display_name
 * @apiParam {string} description
 * @apiParam {string} level
@@ -142,13 +142,13 @@ func CreateChapter(ctx iris.Context) {
 }
 
 /**
-* @api {post} /admin/chapters/:id/update 更新分类
-* @apiName 更新分类
+* @api {put} /admin/chapters/:id 更新章节
+* @apiName 更新章节
 * @apiGroup Chapters
 * @apiVersion 1.0.0
-* @apiDescription 更新分类
-* @apiSampleRequest /admin/chapters/:id/update
-* @apiParam {string} name 分类名
+* @apiDescription 更新章节
+* @apiSampleRequest /admin/chapters/:id
+* @apiParam {string} name 章节名
 * @apiParam {string} display_name
 * @apiParam {string} description
 * @apiParam {string} level
@@ -192,11 +192,58 @@ func UpdateChapter(ctx iris.Context) {
 }
 
 /**
-* @api {delete} /admin/chapters/:id/delete 删除分类
-* @apiName 删除分类
+* @api {put} /admin/chapters/sort 排序章节
+* @apiName 排序章节
 * @apiGroup Chapters
 * @apiVersion 1.0.0
-* @apiDescription 删除分类
+* @apiDescription 排序章节
+* @apiSampleRequest /admin/chapters/sort
+* @apiParam {string} name 章节名
+* @apiParam {string} display_name
+* @apiParam {string} description
+* @apiParam {string} level
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiChapter null
+ */
+func SortChapter(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
+	sortChapter := &models.SortChapter{}
+
+	if err := ctx.ReadJSON(sortChapter); err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		return
+	}
+
+	err := validates.Validate.Struct(*sortChapter)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(validates.ValidateTrans) {
+			if len(e) > 0 {
+				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				return
+			}
+		}
+	}
+
+	err = models.Sort(sortChapter)
+	if err != nil {
+		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error update chapter: %s", err.Error())))
+		return
+	}
+
+	_, _ = ctx.JSON(ApiResource(200, nil, "操作成功"))
+
+}
+
+/**
+* @api {delete} /admin/chapters/:id/delete 删除章节
+* @apiName 删除章节
+* @apiGroup Chapters
+* @apiVersion 1.0.0
+* @apiDescription 删除章节
 * @apiSampleRequest /admin/chapters/:id/delete
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
@@ -215,11 +262,11 @@ func DeleteChapter(ctx iris.Context) {
 }
 
 /**
-* @api {get} /tts 获取所有的分类
-* @apiName 获取所有的分类
+* @api {get} /tts 获取所有的章节
+* @apiName 获取所有的章节
 * @apiGroup Chapters
 * @apiVersion 1.0.0
-* @apiDescription 获取所有的分类
+* @apiDescription 获取所有的章节
 * @apiSampleRequest /tts
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
@@ -233,6 +280,7 @@ func GetAllChapters(ctx iris.Context) {
 	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
 	docId := libs.ParseInt(ctx.URLParam("docId"), 0)
 	orderBy := ctx.FormValue("orderBy")
+	sort := ctx.FormValue("sort")
 	s := &models.Search{
 		Fields: []*models.Filed{
 			{
@@ -241,6 +289,7 @@ func GetAllChapters(ctx iris.Context) {
 				Value:     docId,
 			},
 		},
+		Sort:    sort,
 		Offset:  offset,
 		Limit:   limit,
 		OrderBy: orderBy,
@@ -311,35 +360,28 @@ func GetPublishedChapterLike(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllPublishedChapters(ctx iris.Context) {
-
 	ctx.StatusCode(iris.StatusOK)
-	offset := libs.ParseInt(ctx.FormValue("page"), 1)
-	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	docId := libs.ParseInt(ctx.FormValue("docId"), 0)
-	orderBy := ctx.FormValue("orderBy")
-	s := &models.Search{
-		Fields: []*models.Filed{
-			{
-				Key:       "doc_id",
-				Condition: "=",
-				Value:     docId,
-			}, {
-				Key:       "status",
-				Condition: "=",
-				Value:     "published",
-			},
+	s := GetCommonListSearch(ctx)
+	s.Fields = []*models.Filed{
+		{
+			Key:       "doc_id",
+			Condition: "=",
+			Value:     docId,
+		}, {
+			Key:       "status",
+			Condition: "=",
+			Value:     "published",
 		},
-		Offset:  offset,
-		Limit:   limit,
-		OrderBy: orderBy,
 	}
+
 	chapters, count, err := models.GetAllChapters(s)
 	if err != nil {
 		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
 		return
 	}
 	transform := chaptersTransform(chapters)
-	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": s.Limit}, "操作成功"))
 }
 
 func chaptersTransform(chapters []*models.Chapter) []*transformer.Chapter {

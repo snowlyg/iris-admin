@@ -28,9 +28,17 @@ type Chapter struct {
 	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
 	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
 	Ips          string    `gorm:"not null;default(0);type:varchar(1024)" json:"ips" comment:"ip 地址"`
+	Sort         int64     `gorm:"not null;default(0)" json:"sort" comment:"排序"`
 
 	DocID uint
 	Doc   *Doc
+}
+
+type SortChapter struct {
+	OldId   uint  `json:"old_id"`
+	OldSort int64 `json:"sold_sort"`
+	NewId   uint  `json:"new_id"`
+	NewSort int64 `json:"new_sort"`
 }
 
 func NewChapter() *Chapter {
@@ -152,5 +160,26 @@ func UpdateChapterById(id uint, np *Chapter) error {
 	if err := Update(&Chapter{}, np, id); err != nil {
 		return err
 	}
+	return nil
+}
+
+func Sort(sc *SortChapter) error {
+	err := libs.Db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&Chapter{}).Where("id = ?", sc.NewId).Update("sort", sc.NewSort).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(&Chapter{}).Where("id = ?", sc.OldId).Update("sort", sc.OldSort).Error; err != nil {
+			return err
+		}
+
+		// 返回 nil 提交事务
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

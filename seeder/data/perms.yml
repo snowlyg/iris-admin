@@ -189,3 +189,63 @@ perms:
     description: "删除分类"
     act: "DELETE"
 
+  - name: "/v1/admin/docs"
+    displayname: "文档列表"
+    description: "文档列表"
+    act: "GET"
+
+  - name: "/v1/admin/docs/{id:uint}"
+    displayname: "文档详情"
+    description: "文档详情"
+    act: "GET"
+
+  - name: "/v1/admin/docs"
+    displayname: "创建文档"
+    description: "创建文档"
+    act: "POST"
+
+  - name: "/v1/admin/docs/{id:uint}"
+    displayname: "编辑文档"
+    description: "编辑文档"
+    act: "PUT"
+
+  - name: "/v1/admin/docs/{id:uint}"
+    displayname: "删除文档"
+    description: "删除文档"
+    act: "DELETE"
+
+  - name: "/v1/admin/chapters"
+    displayname: "章节列表"
+    description: "章节列表"
+    act: "GET"
+
+  - name: "/v1/admin/chapters/{id:uint}"
+    displayname: "章节详情"
+    description: "章节详情"
+    act: "GET"
+
+  - name: "/v1/admin/chapters"
+    displayname: "创建章节"
+    description: "创建章节"
+    act: "POST"
+
+  - name: "/v1/admin/chapters/sort"
+    displayname: "排序章节"
+    description: "排序章节"
+    act: "PUT"
+
+  - name: "/v1/admin/chapters/{id:uint}/set_sort"
+    displayname: "设置排序"
+    description: "设置排序"
+    act: "PUT"
+
+  - name: "/v1/admin/chapters/{id:uint}"
+    displayname: "编辑章节"
+    description: "编辑章节"
+    act: "PUT"
+
+  - name: "/v1/admin/chapters/{id:uint}"
+    displayname: "删除章节"
+    description: "删除章节"
+    act: "DELETE"
+

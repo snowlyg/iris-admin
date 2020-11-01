@@ -33,7 +33,7 @@ func init() {
 
 	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "seeder", "data", "*.yml"))
 	if libs.Config.Debug {
-		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%v", filepaths))
+		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%+v\n", filepaths))
 	}
 	if err := configor.Load(&Seeds, filepaths...); err != nil {
 		logger.Println(err)
@@ -50,10 +50,18 @@ func Run() {
 	fmt.Println(fmt.Sprintf("管理员填充完成！！"))
 }
 
+func AddPerm() {
+	fmt.Println(fmt.Sprintf("开始填充权限！！"))
+	CreatePerms()
+	CreateAdminRole()
+	CreateAdminUser()
+	fmt.Println(fmt.Sprintf("权限填充完成！！"))
+}
+
 // CreatePerms 新建权限
 func CreatePerms() {
 	if libs.Config.Debug {
-		fmt.Println(fmt.Sprintf("填充权限：%v", Seeds))
+		fmt.Println(fmt.Sprintf("填充权限：%+v\n", Seeds))
 	}
 	for _, m := range Seeds.Perms {
 		s := &models.Search{
@@ -80,7 +88,7 @@ func CreatePerms() {
 					Act:         m.Act,
 				}
 				if err := perm.CreatePermission(); err != nil {
-					logger.Println(fmt.Sprintf("权限填充错误：%v", err))
+					logger.Println(fmt.Sprintf("权限填充错误：%+v\n", err))
 				}
 			}
 		}
@@ -99,6 +107,23 @@ func CreateAdminRole() {
 		},
 	}
 	role, err := models.GetRole(s)
+	var permIds []uint
+	ss := &models.Search{
+		Limit:  -1,
+		Offset: -1,
+	}
+	perms, _, err := models.GetAllPermissions(ss)
+	if libs.Config.Debug {
+		if err != nil {
+			fmt.Println(fmt.Sprintf("权限获取失败：%+v\n", err))
+		}
+	}
+
+	for _, perm := range perms {
+		permIds = append(permIds, perm.ID)
+	}
+	role.PermIds = permIds
+
 	if err == nil {
 		if role.ID == 0 {
 			role = &models.Role{
@@ -108,33 +133,18 @@ func CreateAdminRole() {
 				Model:       gorm.Model{CreatedAt: time.Now()},
 			}
 
-			var permIds []uint
-			s := &models.Search{}
-			perms, _, err := models.GetAllPermissions(s)
-			if libs.Config.Debug {
-				if err != nil {
-					fmt.Println(fmt.Sprintf("权限获取失败：%v", err))
-				}
-			}
-
-			for _, perm := range perms {
-				permIds = append(permIds, perm.ID)
-			}
-
-			role.PermIds = permIds
-
 			if err := role.CreateRole(); err != nil {
-				logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
+				logger.Println(fmt.Sprintf("管理角色填充错误：%+v\n", err))
 			}
 		} else {
 			if err := models.UpdateRole(role.ID, role); err != nil {
-				logger.Println(fmt.Sprintf("管理角色填充错误：%v", err))
+				logger.Println(fmt.Sprintf("管理角色填充错误：%+v\n", err))
 			}
 		}
 	}
 	if libs.Config.Debug {
-		fmt.Println(fmt.Sprintf("填充角色数据：%v", role))
-		fmt.Println(fmt.Sprintf("填充角色权限：%v", role.PermIds))
+		fmt.Println(fmt.Sprintf("填充角色数据：%+v\n", role))
+		fmt.Println(fmt.Sprintf("填充角色权限：%+v\n", role.PermIds))
 	}
 
 }
@@ -144,7 +154,7 @@ func CreateAdminUser() {
 	s := &models.Search{
 		Fields: []*models.Filed{
 			{
-				Key:       "name",
+				Key:       "username",
 				Condition: "=",
 				Value:     libs.Config.Admin.UserName,
 			},
@@ -152,42 +162,49 @@ func CreateAdminUser() {
 	}
 	admin, err := models.GetUser(s)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("Get admin error：%v", err))
+		fmt.Println(fmt.Sprintf("Get admin error：%+v\n", err))
 	}
-	password := libs.Config.Admin.Pwd
+
+	var roleIds []uint
+	ss := &models.Search{
+		Limit:  -1,
+		Offset: -1,
+	}
+	roles, _, err := models.GetAllRoles(ss)
+	if libs.Config.Debug {
+		if err != nil {
+			fmt.Println(fmt.Sprintf("角色获取失败：%+v\n", err))
+		}
+	}
+
+	for _, role := range roles {
+		roleIds = append(roleIds, role.ID)
+	}
+	admin.RoleIds = roleIds
+
 	if admin.ID == 0 {
 		admin = &models.User{
 			Username: libs.Config.Admin.UserName,
 			Name:     libs.Config.Admin.Name,
-			Password: password,
+			Password: libs.Config.Admin.Pwd,
 			Avatar:   "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIPbZRufW9zPiaGpfdXgU7icRL1licKEicYyOiace8QQsYVKvAgCrsJx1vggLAD2zJMeSXYcvMSkw9f4pw/132",
 			Intro:    "超级弱鸡程序猿一枚！！！！",
 			Model:    gorm.Model{CreatedAt: time.Now()},
 		}
-		var roleIds []uint
-		s := &models.Search{}
-		roles, _, err := models.GetAllRoles(s)
-		if libs.Config.Debug {
-			if err != nil {
-				fmt.Println(fmt.Sprintf("角色获取失败：%v", err))
-			}
-		}
 
-		for _, role := range roles {
-			roleIds = append(roleIds, role.ID)
-		}
-		admin.RoleIds = roleIds
 		if err := admin.CreateUser(); err != nil {
-			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
+			logger.Println(fmt.Sprintf("管理员填充错误：%+v\n", err))
 		}
 	} else {
+		admin.Password = libs.Config.Admin.Pwd
 		if err := models.UpdateUserById(admin.ID, admin); err != nil {
-			logger.Println(fmt.Sprintf("管理员填充错误：%v", err))
+			logger.Println(fmt.Sprintf("管理员填充错误：%+v\n", err))
 		}
 	}
 
 	if libs.Config.Debug {
-		fmt.Println(fmt.Sprintf("填充管理员数据：%v", admin))
+		fmt.Println(fmt.Sprintf("管理员密码：%s\n", libs.Config.Admin.Pwd))
+		fmt.Println(fmt.Sprintf("填充管理员数据：%+v", admin))
 	}
 }
 

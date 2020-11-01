@@ -103,7 +103,9 @@ func (u *User) CreateUser() error {
 
 // UpdateUserById update user by id
 func UpdateUserById(id uint, nu *User) error {
-	nu.Password = libs.HashPassword(nu.Password)
+	if len(nu.Password) > 0 {
+		nu.Password = libs.HashPassword(nu.Password)
+	}
 	if err := Update(&User{}, nu, id); err != nil {
 		return err
 	}

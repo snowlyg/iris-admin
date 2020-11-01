@@ -281,6 +281,7 @@ func GetAllPublishedArticles(ctx iris.Context) {
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
 	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
 	orderBy := ctx.FormValue("orderBy")
+	sort := ctx.FormValue("sort")
 	title := ctx.FormValue("title")
 	relation := ctx.FormValue("relation")
 
@@ -297,6 +298,7 @@ func GetAllPublishedArticles(ctx iris.Context) {
 			},
 		},
 		OrderBy:   orderBy,
+		Sort:      sort,
 		Limit:     limit,
 		Offset:    offset,
 		Relations: models.GetRelations(relation, nil),

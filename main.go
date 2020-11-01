@@ -115,6 +115,9 @@ version: %s`, Version))
 		} else if os.Args[1] == "seeder" {
 			seeder.Run()
 			return
+		} else if os.Args[1] == "sync_perms" {
+			seeder.AddPerm()
+			return
 		} else if os.Args[1] == "perms" {
 			fmt.Println("系统权限：")
 			fmt.Println()

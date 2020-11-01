@@ -55,7 +55,6 @@ func GetAll(model interface{}, s *Search) *gorm.DB {
 
 // Found 查询条件
 func Found(s *Search) *gorm.DB {
-	color.Yellow(fmt.Sprintf("Searach :%+v", s))
 	return libs.Db.Scopes(Relation(s.Relations), FoundByWhere(s.Fields))
 }
 

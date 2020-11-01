@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/IrisAdminApi/libs"
 	"net/http"
 	"strings"
 	"time"
@@ -65,9 +64,8 @@ func (s *Server) NewApp() {
 		go generate 
 		等步骤，打包前端文件
 `)
-		tmpl := iris.HTML(libs.WwwPath(), ".html").Binary(s.Asset, s.AssetNames)
-		s.App.RegisterView(tmpl)
-		s.App.HandleDir("/", iris.PrefixDir(libs.WwwPath(), s.AssetFile))
+		s.App.RegisterView(iris.Blocks(s.AssetFile, ".html"))
+		s.App.HandleDir("/", s.AssetFile)
 	}
 
 	db := sysinit.Db

@@ -2,6 +2,7 @@ package web_server
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/libs"
 	"net/http"
@@ -57,6 +58,13 @@ func (s *Server) NewApp() {
 
 	// 二进制模式 ， 绑定前端文件
 	if config.Config.Bindata {
+		color.Yellow(`开启二进制模式前，请执行
+		cd www
+		npm run build:stage
+		cd ..
+		go generate 
+		等步骤，打包前端文件
+`)
 		tmpl := iris.HTML(libs.WwwPath(), ".html").Binary(s.Asset, s.AssetNames)
 		s.App.RegisterView(tmpl)
 		s.App.HandleDir("/", iris.PrefixDir(libs.WwwPath(), s.AssetFile))

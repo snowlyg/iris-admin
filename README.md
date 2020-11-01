@@ -154,14 +154,15 @@ go generate
 
 - 运行项目,
 >推荐使用 air 或者 gowatch 等热编译工具,直接使用 `go run main.go bindata.go`  方法运行，可能会出现配置文件无法加载的问题
+
 >如果想使用 `go run main.go bindata.go` 命令运行, 设置环境变量 `TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi`
 
 ```shell script
 
-# 安装工具 air     
+# 安装工具 air    
 go get -u github.com/cosmtrek/air
-
-# 在 server 目录执行,可以通过 .air.conf 配置 air 工具
+# 不同系统下，配置会不一样。具体配置方法参考 air 说明
+cp .air.example.conf .air.conf
 air
 ```
 

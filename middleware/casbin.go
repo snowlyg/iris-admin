@@ -1,8 +1,10 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
 	"github.com/casbin/casbin/v2"
+	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
@@ -15,6 +17,7 @@ func New(e *casbin.Enforcer) *Casbin {
 }
 
 func (c *Casbin) ServeHTTP(ctx iris.Context) {
+	ctx.StatusCode(http.StatusOK)
 	value := ctx.Values().Get("jwt").(*jwt.Token)
 
 	conn := libs.GetRedisClusterClient()
@@ -23,20 +26,24 @@ func (c *Casbin) ServeHTTP(ctx iris.Context) {
 	sess, err := models.GetRedisSessionV2(conn, value.Raw)
 	if err != nil {
 		models.UserTokenExpired(value.Raw)
-		ctx.StatusCode(http.StatusUnauthorized)
+		_, _ = ctx.JSON(libs.ApiResource(401, nil, ""))
 		ctx.StopExecution()
 		return
 	}
 	if sess == nil {
-		ctx.StatusCode(http.StatusUnauthorized)
 		ctx.StopExecution()
-		return
-	} else if !c.Check(ctx.Request(), sess.UserId) {
-		ctx.StatusCode(http.StatusForbidden) // Status Forbidden
+		_, _ = ctx.JSON(libs.ApiResource(401, nil, ""))
 		ctx.StopExecution()
 		return
 	} else {
-		ctx.Values().Set("sess", sess)
+		check, err := c.Check(ctx.Request(), sess.UserId)
+		if !check {
+			_, _ = ctx.JSON(libs.ApiResource(403, nil, err.Error()))
+			ctx.StopExecution()
+			return
+		} else {
+			ctx.Values().Set("sess", sess)
+		}
 	}
 
 	ctx.Next()
@@ -49,13 +56,16 @@ type Casbin struct {
 
 // Check checks the username, request's method and path and
 // returns true if permission grandted otherwise false.
-func (c *Casbin) Check(r *http.Request, userId string) bool {
+func (c *Casbin) Check(r *http.Request, userId string) (bool, error) {
 	method := r.Method
 	path := r.URL.Path
 	ok, err := c.enforcer.Enforce(userId, path, method)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("验证权限报错：%v;%s-%s-%s", err.Error(), userId, path, method))
-		return false
+		color.Red("验证权限报错：%v;%s-%s-%s", err.Error(), userId, path, method)
+		return false, err
 	}
-	return ok
+	if !ok {
+		return ok, errors.New(fmt.Sprintf("你未拥有 %s:%s 操作权限", method, path))
+	}
+	return ok, nil
 }

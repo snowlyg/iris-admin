@@ -26,6 +26,7 @@ import (
 * @apiPermission 登陆用户
  */
 func GetProfile(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
 	id := uint(libs.ParseInt(sess.UserId, 10))
 	s := &models.Search{
@@ -39,11 +40,10 @@ func GetProfile(ctx iris.Context) {
 	}
 	user, err := models.GetUser(s)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "请求成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "请求成功"))
 }
 
 /**
@@ -59,6 +59,7 @@ func GetProfile(ctx iris.Context) {
 * @apiPermission 登陆用户
  */
 func GetUser(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 	s := &models.Search{
 		Fields: []*models.Filed{
@@ -71,11 +72,10 @@ func GetUser(ctx iris.Context) {
 	}
 	user, err := models.GetUser(s)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 }
 
 /**
@@ -96,7 +96,7 @@ func CreateUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
 	if err := ctx.ReadJSON(user); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -105,7 +105,7 @@ func CreateUser(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -113,17 +113,16 @@ func CreateUser(ctx iris.Context) {
 
 	err = user.CreateUser()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	if user.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
-		return
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
 		return
 	}
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
+	return
 
 }
 
@@ -142,11 +141,11 @@ func CreateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func UpdateUser(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
 
 	if err := ctx.ReadJSON(user); err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 	}
 
 	err := validates.Validate.Struct(*user)
@@ -154,8 +153,7 @@ func UpdateUser(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -163,19 +161,16 @@ func UpdateUser(ctx iris.Context) {
 
 	id, _ := ctx.Params().GetUint("id")
 	if user.Username == "username" {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "不能编辑管理员"))
 		return
 	}
 
 	err = models.UpdateUserById(id, user)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 	return
 }
 
@@ -192,17 +187,15 @@ func UpdateUser(ctx iris.Context) {
 * @apiPermission null
  */
 func DeleteUser(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 
 	err := models.DeleteUser(id)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
-
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, "删除成功"))
 }
 
 /**
@@ -219,24 +212,18 @@ func DeleteUser(ctx iris.Context) {
  */
 func GetAllUsers(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	offset := ctx.URLParamIntDefault("offset", 1)
-	limit := ctx.URLParamIntDefault("limit", 15)
-	orderBy := ctx.URLParam("orderBy")
+	s := GetCommonListSearch(ctx)
 	name := ctx.FormValue("name")
-	s := &models.Search{
-		Offset:  offset,
-		Limit:   limit,
-		OrderBy: orderBy,
-	}
+
 	s.Fields = append(s.Fields, models.GetSearche("name", name))
 	users, count, err := models.GetAllUsers(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	transform := usersTransform(users)
-	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": s.Limit}, "操作成功"))
 
 }
 

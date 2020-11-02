@@ -25,6 +25,7 @@ import (
 * @apiPermission
  */
 func GetRole(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 	s := &models.Search{
 		Fields: []*models.Filed{
@@ -36,15 +37,14 @@ func GetRole(ctx iris.Context) {
 		},
 	}
 	role, err := models.GetRole(s)
-	ctx.StatusCode(iris.StatusOK)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	rr := roleTransform(role)
 	rr.Perms = permsTransform(role.RolePermissions())
-	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, rr, "操作成功"))
 }
 
 /**
@@ -69,7 +69,7 @@ func CreateRole(ctx iris.Context) {
 	role := new(models.Role)
 
 	if err := ctx.ReadJSON(role); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -78,7 +78,7 @@ func CreateRole(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -86,15 +86,14 @@ func CreateRole(ctx iris.Context) {
 
 	err = role.CreateRole()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 	if role.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
 		return
 	}
-	_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
-	return
+	_, _ = ctx.JSON(libs.ApiResource(200, roleTransform(role), "操作成功"))
 
 }
 
@@ -119,7 +118,7 @@ func UpdateRole(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	role := new(models.Role)
 	if err := ctx.ReadJSON(role); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -128,7 +127,7 @@ func UpdateRole(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -137,11 +136,10 @@ func UpdateRole(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	err = models.UpdateRole(id, role)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
-	_, _ = ctx.JSON(ApiResource(200, roleTransform(role), "操作成功"))
-	return
+	_, _ = ctx.JSON(libs.ApiResource(200, roleTransform(role), "操作成功"))
 
 }
 
@@ -163,11 +161,11 @@ func DeleteRole(ctx iris.Context) {
 
 	err := models.DeleteRoleById(id)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, "删除成功"))
 }
 
 /**
@@ -183,24 +181,16 @@ func DeleteRole(ctx iris.Context) {
 * @apiPermission null
  */
 func GetAllRoles(ctx iris.Context) {
-	offset := libs.ParseInt(ctx.FormValue("page"), 1)
-	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
-	orderBy := ctx.FormValue("orderBy")
-	s := &models.Search{
-		Offset:  offset,
-		Limit:   limit,
-		OrderBy: orderBy,
-	}
+	ctx.StatusCode(iris.StatusOK)
+	s := GetCommonListSearch(ctx)
 	roles, count, err := models.GetAllRoles(s)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	transform := rolesTransform(roles)
-	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": s.Limit}, "操作成功"))
 }
 
 func rolesTransform(roles []*models.Role) []*transformer.Role {

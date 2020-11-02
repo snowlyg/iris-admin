@@ -44,18 +44,18 @@ func GetPublishedArticle(ctx iris.Context) {
 	}
 	article, err := models.GetArticle(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	err = article.ReadArticle(ctx.Request())
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	rr := articleTransform(article)
-	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, rr, "操作成功"))
 }
 
 /**
@@ -90,18 +90,18 @@ func GetPublishedArticleLike(ctx iris.Context) {
 	}
 	article, err := models.GetArticle(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	err = article.LikeArticle()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	rr := articleTransform(article)
-	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, rr, "操作成功"))
 }
 
 /**
@@ -132,12 +132,12 @@ func GetArticle(ctx iris.Context) {
 	}
 	article, err := models.GetArticle(search)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	rr := articleTransform(article)
-	_, _ = ctx.JSON(ApiResource(200, rr, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, rr, "操作成功"))
 }
 
 /**
@@ -161,7 +161,7 @@ func CreateArticle(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	article := new(models.Article)
 	if err := ctx.ReadJSON(article); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -170,7 +170,7 @@ func CreateArticle(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -178,14 +178,14 @@ func CreateArticle(ctx iris.Context) {
 
 	err = article.CreateArticle()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 	if article.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
 		return
 	}
-	_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, articleTransform(article), "操作成功"))
 
 }
 
@@ -210,7 +210,7 @@ func UpdateArticle(ctx iris.Context) {
 
 	article := new(models.Article)
 	if err := ctx.ReadJSON(article); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -219,7 +219,7 @@ func UpdateArticle(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -229,10 +229,10 @@ func UpdateArticle(ctx iris.Context) {
 	err = models.UpdateArticle(id, article)
 
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
-	_, _ = ctx.JSON(ApiResource(200, articleTransform(article), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, articleTransform(article), "操作成功"))
 	return
 
 }
@@ -255,10 +255,11 @@ func DeleteArticle(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	err := models.DeleteArticleById(id)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, "删除成功"))
 }
 
 /**
@@ -276,44 +277,31 @@ func DeleteArticle(ctx iris.Context) {
 func GetAllPublishedArticles(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
-	offset := libs.ParseInt(ctx.FormValue("page"), 1)
-	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
 	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
-	orderBy := ctx.FormValue("orderBy")
-	sort := ctx.FormValue("sort")
 	title := ctx.FormValue("title")
-	relation := ctx.FormValue("relation")
-
-	s := &models.Search{
-		Fields: []*models.Filed{
-			{
-				Key:       "type_id",
-				Condition: "=",
-				Value:     typeId,
-			}, {
-				Key:       "status",
-				Condition: "=",
-				Value:     "published",
-			},
+	s := GetCommonListSearch(ctx)
+	s.Fields = []*models.Filed{
+		{
+			Key:       "type_id",
+			Condition: "=",
+			Value:     typeId,
+		}, {
+			Key:       "status",
+			Condition: "=",
+			Value:     "published",
 		},
-		OrderBy:   orderBy,
-		Sort:      sort,
-		Limit:     limit,
-		Offset:    offset,
-		Relations: models.GetRelations(relation, nil),
 	}
-
 	s.Fields = append(s.Fields, models.GetSearche("title", title))
 
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	transform := articlesTransform(articles)
-	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": s.Limit}, "操作成功"))
 }
 
 /**
@@ -331,33 +319,25 @@ func GetAllPublishedArticles(ctx iris.Context) {
 func GetAllArticles(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
-	offset := libs.ParseInt(ctx.FormValue("page"), 1)
-	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
 	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
-	orderBy := ctx.FormValue("orderBy")
-
-	s := &models.Search{
-		Fields: []*models.Filed{
-			{
-				Key:       "type_id",
-				Condition: "=",
-				Value:     typeId,
-			},
+	s := GetCommonListSearch(ctx)
+	s.Fields = []*models.Filed{
+		{
+			Key:       "type_id",
+			Condition: "=",
+			Value:     typeId,
 		},
-		OrderBy: orderBy,
-		Limit:   limit,
-		Offset:  offset,
 	}
 
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	transform := articlesTransform(articles)
-	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": s.Limit}, "操作成功"))
 }
 
 func articlesTransform(articles []*models.Article) []*transformer.Article {

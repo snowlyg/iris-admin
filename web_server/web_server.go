@@ -50,7 +50,7 @@ func (s *Server) NewApp() {
 	s.App.Logger().SetLevel(libs.Config.LogLevel)
 
 	if libs.Config.Bindata {
-		s.App.RegisterView(iris.Blocks(s.AssetFile, ".html"))
+		s.App.RegisterView(iris.HTML(s.AssetFile, ".html"))
 		s.App.HandleDir("/", s.AssetFile)
 	}
 

@@ -39,10 +39,11 @@ func GetTag(ctx iris.Context) {
 	}
 	tag, err := models.GetTag(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, tagTransform(tag), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, tagTransform(tag), "操作成功"))
 }
 
 /**
@@ -66,7 +67,7 @@ func CreateTag(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	tag := new(models.Tag)
 	if err := ctx.ReadJSON(tag); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*tag)
@@ -74,7 +75,7 @@ func CreateTag(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -82,15 +83,15 @@ func CreateTag(ctx iris.Context) {
 
 	err = tag.CreateTag()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	if tag.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, tag, "操作失败"))
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, tagTransform(tag), "操作成功"))
+		_, _ = ctx.JSON(libs.ApiResource(400, tag, "操作失败"))
+		return
 	}
+	_, _ = ctx.JSON(libs.ApiResource(200, tagTransform(tag), "操作成功"))
 
 }
 
@@ -111,11 +112,11 @@ func CreateTag(ctx iris.Context) {
 * @apiTag null
  */
 func UpdateTag(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	aul := new(models.Tag)
 
 	if err := ctx.ReadJSON(aul); err != nil {
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -123,8 +124,7 @@ func UpdateTag(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(200, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -133,17 +133,15 @@ func UpdateTag(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	err = models.UpdateTagById(id, aul)
 	if err != nil {
-		ctx.StatusCode(iris.StatusInternalServerError)
-		_, _ = ctx.JSON(ApiResource(200, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
 	if aul.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(200, nil, "操作失败"))
-	} else {
-		_, _ = ctx.JSON(ApiResource(200, tagTransform(aul), "操作成功"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
+		return
 	}
+	_, _ = ctx.JSON(libs.ApiResource(200, tagTransform(aul), "操作成功"))
 
 }
 
@@ -160,15 +158,14 @@ func UpdateTag(ctx iris.Context) {
 * @apiTag null
  */
 func DeleteTag(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 	err := models.DeleteTagById(id)
 	if err != nil {
-
-		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
-	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, "删除成功"))
 }
 
 /**
@@ -185,21 +182,15 @@ func DeleteTag(ctx iris.Context) {
  */
 func GetAllTags(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	offset := libs.ParseInt(ctx.URLParam("page"), 1)
-	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
-	orderBy := ctx.FormValue("orderBy")
-	s := &models.Search{
-		Offset:  offset,
-		Limit:   limit,
-		OrderBy: orderBy,
-	}
+	s := GetCommonListSearch(ctx)
 	tags, count, err := models.GetAllTags(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
 
 	transform := tagsTransform(tags)
-	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": s.Limit}, "操作成功"))
 
 }
 

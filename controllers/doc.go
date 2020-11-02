@@ -44,10 +44,11 @@ func GetDoc(ctx iris.Context) {
 
 	doc, err := models.GetDoc(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, docTransform(doc), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, docTransform(doc), "操作成功"))
 }
 
 /**
@@ -71,7 +72,7 @@ func CreateDoc(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	doc := new(models.Doc)
 	if err := ctx.ReadJSON(doc); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*doc)
@@ -79,7 +80,7 @@ func CreateDoc(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -87,15 +88,16 @@ func CreateDoc(ctx iris.Context) {
 
 	err = doc.CreateDoc()
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if doc.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
+		return
 	}
-	_, _ = ctx.JSON(ApiResource(200, docTransform(doc), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, docTransform(doc), "操作成功"))
 
 }
 
@@ -116,12 +118,11 @@ func CreateDoc(ctx iris.Context) {
 * @apiDoc null
  */
 func UpdateDoc(ctx iris.Context) {
-
 	ctx.StatusCode(iris.StatusOK)
 	aul := new(models.Doc)
 
 	if err := ctx.ReadJSON(aul); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 	err := validates.Validate.Struct(*aul)
@@ -129,7 +130,7 @@ func UpdateDoc(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -139,15 +140,16 @@ func UpdateDoc(ctx iris.Context) {
 	aul.ID = id
 	err = models.UpdateDocById(id, aul)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, fmt.Sprintf("Error update doc: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error update doc: %s", err.Error())))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
 	if aul.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
+		return
 	}
-	_, _ = ctx.JSON(ApiResource(200, docTransform(aul), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, docTransform(aul), "操作成功"))
 
 }
 
@@ -169,9 +171,10 @@ func DeleteDoc(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	err := models.DeleteDocById(id)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
-	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, "删除成功"))
 }
 
 /**
@@ -189,21 +192,15 @@ func DeleteDoc(ctx iris.Context) {
 func GetAllDocs(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
-	offset := libs.ParseInt(ctx.URLParam("page"), 1)
-	limit := libs.ParseInt(ctx.URLParam("limit"), 20)
-	orderBy := ctx.FormValue("orderBy")
-	s := &models.Search{
-		Offset:  offset,
-		Limit:   limit,
-		OrderBy: orderBy,
-	}
+	s := GetCommonListSearch(ctx)
 
 	docs, count, err := models.GetAllDocs(s)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
 	}
 	transform := docsTransform(docs)
-	_, _ = ctx.JSON(ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": limit}, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": s.Limit}, "操作成功"))
 
 }
 

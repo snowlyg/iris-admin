@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/snowlyg/IrisAdminApi/libs"
 	"strconv"
 	"time"
 
@@ -29,12 +30,12 @@ func GetProfile(ctx iris.Context) {
 	user, err := models.GetUserById(userId)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(200, nil, err.Error()))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, userTransform(user), ""))
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), ""))
 }
 
 /**
@@ -54,12 +55,12 @@ func GetUser(ctx iris.Context) {
 	user, err := models.GetUserById(id)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(200, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(200, nil, err.Error()))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 }
 
 /**
@@ -80,7 +81,7 @@ func CreateUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
 	if err := ctx.ReadJSON(user); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -89,20 +90,20 @@ func CreateUser(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
 	}
 
 	if err := user.CreateUser(); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 	}
 
 	if user.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
 	} else {
-		_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
+		_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 	}
 
 }
@@ -125,7 +126,7 @@ func UpdateUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
 	if err := ctx.ReadJSON(user); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 	}
 
 	err := validates.Validate.Struct(*user)
@@ -133,7 +134,7 @@ func UpdateUser(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -142,16 +143,16 @@ func UpdateUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	user.ID = id
 	if user.Username == "username" {
-		_, _ = ctx.JSON(ApiResource(400, nil, "不能编辑管理员"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "不能编辑管理员"))
 		return
 	}
 
 	if err := user.UpdateUser(); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, userTransform(user), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 
 }
 
@@ -172,20 +173,20 @@ func DeleteUser(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	user, err := models.GetUserById(id)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 	if user.Username == "username" {
-		_, _ = ctx.JSON(ApiResource(400, nil, "不能删除管理员"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "不能删除管理员"))
 		return
 	}
 
 	if err := models.DeleteUser(id); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, "删除成功"))
 }
 
 /**
@@ -209,7 +210,7 @@ func GetAllUsers(ctx iris.Context) {
 	users := models.GetAllUsers(name, orderBy, offset, limit)
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, usersTransform(users), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, usersTransform(users), "操作成功"))
 }
 
 func usersTransform(users []*models.User) []*transformer.User {

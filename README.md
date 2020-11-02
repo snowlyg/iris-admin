@@ -54,7 +54,6 @@
  # 需要安装 docker 
  # application.yml 配置 bindata 为 true
  # application.yml 配置 host 为 0.0.0.0
- # application.yml 配置 port 为 80
 ./build.sh
 
 ```

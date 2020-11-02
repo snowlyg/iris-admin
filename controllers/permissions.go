@@ -29,12 +29,12 @@ func GetPermission(ctx iris.Context) {
 	perm, err := models.GetPermissionById(id)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, permTransform(perm), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, permTransform(perm), "操作成功"))
 }
 
 /**
@@ -57,7 +57,7 @@ func CreatePermission(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	perm := new(models.Permission)
 	if err := ctx.ReadJSON(perm); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -66,21 +66,21 @@ func CreatePermission(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
 	}
 
 	if err := perm.CreatePermission(); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	if perm.ID == 0 {
-		_, _ = ctx.JSON(ApiResource(400, nil, "操作失败"))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
 	} else {
-		_, _ = ctx.JSON(ApiResource(200, permTransform(perm), "操作成功"))
+		_, _ = ctx.JSON(libs.ApiResource(200, permTransform(perm), "操作成功"))
 	}
 }
 
@@ -104,7 +104,7 @@ func UpdatePermission(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	perm := new(models.Permission)
 	if err := ctx.ReadJSON(perm); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -113,7 +113,7 @@ func UpdatePermission(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -122,10 +122,10 @@ func UpdatePermission(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	perm.ID = id
 	if err := perm.UpdatePermission(); err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, perm, "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, perm, "操作成功"))
 }
 
 /**
@@ -145,11 +145,11 @@ func DeletePermission(ctx iris.Context) {
 	err := models.DeletePermissionById(id)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 	ctx.StatusCode(iris.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, nil, "删除成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, "删除成功"))
 }
 
 /**
@@ -173,10 +173,10 @@ func GetAllPermissions(ctx iris.Context) {
 
 	permissions, err := models.GetAllPermissions(name, orderBy, offset, limit)
 	if err != nil {
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 	}
 
-	_, _ = ctx.JSON(ApiResource(200, permsTransform(permissions), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, permsTransform(permissions), "操作成功"))
 }
 
 func permsTransform(perms []*models.Permission) []*transformer.Permission {

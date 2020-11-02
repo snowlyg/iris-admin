@@ -29,7 +29,7 @@ func UserLogin(ctx iris.Context) {
 
 	if err := ctx.ReadJSON(aul); err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
@@ -39,7 +39,7 @@ func UserLogin(ctx iris.Context) {
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
 				ctx.StatusCode(iris.StatusOK)
-				_, _ = ctx.JSON(ApiResource(400, nil, e))
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
 		}
@@ -51,13 +51,13 @@ func UserLogin(ctx iris.Context) {
 	user, err := models.GetUserByUsername(aul.Username)
 	if err != nil {
 		ctx.StatusCode(iris.StatusOK)
-		_, _ = ctx.JSON(ApiResource(400, nil, err.Error()))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
 	response, code, msg := user.CheckLogin(aul.Password)
 
-	_, _ = ctx.JSON(ApiResource(code, response, msg))
+	_, _ = ctx.JSON(libs.ApiResource(code, response, msg))
 	return
 
 }
@@ -81,5 +81,5 @@ func UserLogout(ctx iris.Context) {
 
 	ctx.Application().Logger().Infof("%d 退出系统", uid)
 	ctx.StatusCode(http.StatusOK)
-	_, _ = ctx.JSON(ApiResource(200, nil, "退出"))
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, "退出"))
 }

@@ -1,4 +1,4 @@
-bindata: false #二进制模式
+bindata: true #二进制模式
 loglevel: debug  #日志级别 info debug
 debug: true #调试模式
 https: false #https

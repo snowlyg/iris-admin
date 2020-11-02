@@ -1,5 +1,5 @@
 loglevel: info # 日志级别 info debug 等等
-binadata: false # 前后端分离 true,false
+bindata: false # 前后端分离 true,false
 debug: true # 调试模式
 https: false # https
 host: 127.0.0.1 # host 地址

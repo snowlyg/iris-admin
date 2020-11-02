@@ -83,7 +83,7 @@ func CreateTag(ctx iris.Context) {
 
 	err = tag.CreateTag()
 	if err != nil {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create tag: %s", err.Error())))
 		return
 	}
 
@@ -133,14 +133,10 @@ func UpdateTag(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	err = models.UpdateTagById(id, aul)
 	if err != nil {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error update tag: %s", err.Error())))
 		return
 	}
 
-	if aul.ID == 0 {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
-		return
-	}
 	_, _ = ctx.JSON(libs.ApiResource(200, tagTransform(aul), "操作成功"))
 
 }

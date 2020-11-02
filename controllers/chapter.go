@@ -131,7 +131,7 @@ func CreateChapter(ctx iris.Context) {
 
 	err = chapter.CreateChapter()
 	if err != nil {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create chapter: %s", err.Error())))
 		return
 	}
 
@@ -180,16 +180,12 @@ func UpdateChapter(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	aul.ID = id
 	err = models.UpdateChapterById(id, aul)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error update chapter: %s", err.Error())))
 		return
 	}
-	if aul.ID == 0 {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
-		return
-	}
+
 	_, _ = ctx.JSON(libs.ApiResource(200, chapterTransform(aul), "操作成功"))
 
 }

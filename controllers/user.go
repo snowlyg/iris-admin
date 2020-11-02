@@ -171,7 +171,6 @@ func UpdateUser(ctx iris.Context) {
 		return
 	}
 	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
-	return
 }
 
 /**

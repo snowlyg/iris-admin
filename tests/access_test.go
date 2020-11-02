@@ -1,6 +1,6 @@
-// +build test
+// +build test access api
 
-package main
+package tests
 
 import (
 	"github.com/kataras/iris/v12"

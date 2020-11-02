@@ -88,7 +88,7 @@ func CreateDoc(ctx iris.Context) {
 
 	err = doc.CreateDoc()
 	if err != nil {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create doc: %s", err.Error())))
 		return
 	}
 
@@ -137,18 +137,12 @@ func UpdateDoc(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	aul.ID = id
 	err = models.UpdateDocById(id, aul)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error update doc: %s", err.Error())))
 		return
 	}
 
-	ctx.StatusCode(iris.StatusOK)
-	if aul.ID == 0 {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
-		return
-	}
 	_, _ = ctx.JSON(libs.ApiResource(200, docTransform(aul), "操作成功"))
 
 }

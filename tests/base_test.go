@@ -1,6 +1,6 @@
-// +build test
+// +build test api tag access perm role user type doc chapter article
 
-package main
+package tests
 
 import (
 	"flag"
@@ -24,7 +24,7 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-	s := web_server.NewServer(AssetFile()) // 初始化app
+	s := web_server.NewServer(nil) // 初始化app
 	s.NewApp()
 	app = s.App
 	seeder.Run()
@@ -121,56 +121,81 @@ func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 	return
 }
 
-func CreateRole(name, disName, dec string) (*models.Role, error) {
-	s := &models.Search{
-		Fields: []*models.Filed{
-			{
-				Key:       "name",
-				Condition: "=",
-				Value:     name,
-			},
-		},
+func CreateDoc(name string) (*models.Doc, error) {
+	doc := &models.Doc{
+		Name: name,
 	}
-	role, err := models.GetRole(s)
+	err := doc.CreateDoc()
 	if err != nil {
-		return nil, err
+		return doc, err
+	}
+	return doc, nil
+}
+
+func CreateType(name string) (*models.Type, error) {
+	tt := &models.Type{
+		Name: name,
+	}
+	err := tt.CreateType()
+	if err != nil {
+		return tt, err
+	}
+	return tt, nil
+}
+
+func CreateTag(name string) (*models.Tag, error) {
+	tag := &models.Tag{
+		Name: name,
+	}
+	err := tag.CreateTag()
+	if err != nil {
+		return tag, err
+	}
+	return tag, nil
+}
+
+func CreatePermission(name, disName, dec string) (*models.Permission, error) {
+	perm := &models.Permission{
+		Name:        name,
+		DisplayName: disName,
+		Description: dec,
+	}
+	err := perm.CreatePermission()
+	if err != nil {
+		return perm, err
 	}
 
-	if role.ID == 0 {
-		role = &models.Role{
-			Name:        name,
-			DisplayName: disName,
-			Description: dec,
-		}
-		role.CreateRole()
-	}
-
-	return role, nil
+	return perm, nil
 
 }
 
-func CreateUser() *models.User {
-	s := &models.Search{
-		Fields: []*models.Filed{
-			{
-				Key:       "username",
-				Condition: "=",
-				Value:     "TUsername",
-			},
-		},
+func CreateRole(name, disName, dec string) (*models.Role, error) {
+	role := &models.Role{
+		Name:        name,
+		DisplayName: disName,
+		Description: dec,
+	}
+	err := role.CreateRole()
+	if err != nil {
+		return role, err
 	}
 
-	user, err := models.GetUser(s)
-	if err == nil || user.ID > 0 {
-		user = &models.User{
-			Username: "TUsername",
-			Password: "TPassword",
-			Name:     "TName",
-			RoleIds:  []uint{},
-		}
-		_ = user.CreateUser()
+	return role, nil
+}
+
+func CreateUser() (*models.User, error) {
+	user := &models.User{
+		Username: "TUsername",
+		Password: "TPassword",
+		Name:     "TName",
+		RoleIds:  []uint{},
 	}
-	return user
+	err := user.CreateUser()
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
 }
 
 func GetOauthToken(e *httpexpect.Expect) string {

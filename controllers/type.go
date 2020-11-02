@@ -81,7 +81,7 @@ func CreateType(ctx iris.Context) {
 
 	err = tt.CreateType()
 	if err != nil {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create type: %s", err.Error())))
 		return
 	}
 
@@ -130,17 +130,12 @@ func UpdateType(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	aul.ID = id
 	err = models.UpdateTypeById(id, aul)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error update type: %s", err.Error())))
 		return
 	}
 
-	if aul.ID == 0 {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
-		return
-	}
 	_, _ = ctx.JSON(libs.ApiResource(200, ttTransform(aul), "操作成功"))
 
 }

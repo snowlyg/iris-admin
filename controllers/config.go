@@ -79,7 +79,7 @@ func CreateConfig(ctx iris.Context) {
 
 	err = config.CreateConfig()
 	if err != nil {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create config: %s", err.Error())))
 		return
 	}
 
@@ -129,14 +129,10 @@ func UpdateConfig(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	err = models.UpdateConfig(id, config)
 	if err != nil {
-		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error update config: %s", err.Error())))
 		return
 	}
 
-	if config.ID == 0 {
-		_, _ = ctx.JSON(libs.ApiResource(400, config, "操作失败"))
-		return
-	}
 	_, _ = ctx.JSON(libs.ApiResource(200, config, "操作成功"))
 
 }

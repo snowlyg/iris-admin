@@ -1,6 +1,6 @@
-// +build test
+// +build test role api
 
-package main
+package tests
 
 import (
 	"fmt"

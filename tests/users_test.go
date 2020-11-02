@@ -1,6 +1,6 @@
-// +build test
+// +build test user api
 
-package main
+package tests
 
 import (
 	"fmt"
@@ -36,6 +36,7 @@ func TestUserUpdate(t *testing.T) {
 	tr, err := CreateRole("tname4", "tdsiName", "tdec")
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 	oj := map[string]interface{}{
 		"username": gofakeit.Name(),
@@ -44,11 +45,19 @@ func TestUserUpdate(t *testing.T) {
 		"role_ids": []uint{tr.ID},
 	}
 
-	tu := CreateUser()
+	tu, err := CreateUser()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	update(t, fmt.Sprintf("users/%d", tu.ID), oj, iris.StatusOK, 200, "操作成功")
 }
 
 func TestUserDelete(t *testing.T) {
-	tu := CreateUser()
+	tu, err := CreateUser()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	delete(t, fmt.Sprintf("users/%d", tu.ID), iris.StatusOK, 200, "删除成功")
 }

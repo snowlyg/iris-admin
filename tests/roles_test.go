@@ -4,7 +4,10 @@ package tests
 
 import (
 	"fmt"
+	"github.com/bxcodec/faker/v3"
+	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/blog/tests/mock"
 	"testing"
 )
 
@@ -15,34 +18,37 @@ func TestRoles(t *testing.T) {
 
 // 创建角色
 func TestRoleCreate(t *testing.T) {
-	oj := map[string]interface{}{
-		"name":         "create_role",
-		"display_name": "create_display_name",
-		"description":  "create_description",
+	m := mock.Role{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		color.Red("TestRoleCreate %+v", err)
+		return
 	}
-
-	create(t, "roles", oj, iris.StatusOK, 200, "操作成功")
+	create(t, "roles", m, iris.StatusOK, 200, "操作成功")
 }
 
 // 更新角色
 func TestRoleUpdate(t *testing.T) {
-	tr, err := CreateRole("tname1", "tdsiName1", "tdec1")
+	m := mock.Role{}
+	err := faker.FakeData(&m)
 	if err != nil {
-		fmt.Print(err)
+		color.Red("TestRoleUpdate %+v", err)
+		return
 	}
-	oj := map[string]interface{}{
-		"name":         "test_update_role",
-		"display_name": "update_display_name",
-		"description":  "update_description",
+
+	tr, err := CreateRole()
+	if err != nil {
+		color.Red("TestRoleUpdate %+v", err)
+		return
 	}
 
 	url := "roles/%d"
-	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, 200, "操作成功")
+	update(t, fmt.Sprintf(url, tr.ID), m, iris.StatusOK, 200, "操作成功")
 }
 
 // 删除角色
 func TestRoleDelete(t *testing.T) {
-	tr, err := CreateRole("tname2", "tdsiName2", "tdec2")
+	tr, err := CreateRole()
 	if err != nil {
 		fmt.Print(err)
 	}

@@ -4,6 +4,9 @@ package tests
 
 import (
 	"fmt"
+	"github.com/bxcodec/faker/v3"
+	"github.com/fatih/color"
+	"github.com/snowlyg/blog/tests/mock"
 	"testing"
 
 	"github.com/kataras/iris/v12"
@@ -14,29 +17,36 @@ func TestTags(t *testing.T) {
 }
 
 func TestTagCreate(t *testing.T) {
-	oj := map[string]interface{}{
-		"name": "create_role",
+	m := mock.Tag{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		color.Red("TestTagCreate %+v", err)
+		return
 	}
 
-	create(t, "tags", oj, iris.StatusOK, 200, "操作成功")
+	create(t, "tags", m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestTagUpdate(t *testing.T) {
-	tr, err := CreateTag("tname1")
+	m := mock.Tag{}
+	err := faker.FakeData(&m)
 	if err != nil {
-		fmt.Print(err)
+		color.Red("TestTagUpdate %+v", err)
 		return
 	}
-	oj := map[string]interface{}{
-		"name": "test_update_role",
+
+	tr, err := CreateTag()
+	if err != nil {
+		color.Red("TestTagUpdate %+v", err)
+		return
 	}
 
 	url := "tags/%d"
-	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, 200, "操作成功")
+	update(t, fmt.Sprintf(url, tr.ID), m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestTagDelete(t *testing.T) {
-	tr, err := CreateTag("tname2")
+	tr, err := CreateTag()
 	if err != nil {
 		fmt.Print(err)
 		return

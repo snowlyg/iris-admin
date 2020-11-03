@@ -6,6 +6,7 @@ require (
 	github.com/Joker/hpp v1.0.0 // indirect
 	github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107
 	github.com/brianvoe/gofakeit/v5 v5.9.1
+	github.com/bxcodec/faker/v3 v3.5.0
 	github.com/casbin/casbin/v2 v2.9.0
 	github.com/casbin/gorm-adapter/v2 v2.1.0
 	github.com/fatih/color v1.9.0

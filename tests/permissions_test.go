@@ -4,6 +4,9 @@ package tests
 
 import (
 	"fmt"
+	"github.com/bxcodec/faker/v3"
+	"github.com/fatih/color"
+	"github.com/snowlyg/blog/tests/mock"
 	"testing"
 
 	"github.com/kataras/iris/v12"
@@ -14,32 +17,35 @@ func TestPermissions(t *testing.T) {
 }
 
 func TestPermissionCreate(t *testing.T) {
-	oj := map[string]interface{}{
-		"name":         "create_role",
-		"display_name": "create_display_name",
-		"description":  "create_description",
+	m := mock.Permission{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		color.Red("TestPermissionCreate %+v", err)
+		return
 	}
 
-	create(t, "permissions", oj, iris.StatusOK, 200, "操作成功")
+	create(t, "permissions", m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestPermissionUpdate(t *testing.T) {
-	tr, err := CreatePermission("tname1", "tdsiName1", "tdec1")
+	m := mock.Permission{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		color.Red("TestPermissionUpdate %+v", err)
+		return
+	}
+
+	tr, err := CreatePermission()
 	if err != nil {
 		fmt.Print(err)
 	}
-	oj := map[string]interface{}{
-		"name":         "test_update_role",
-		"display_name": "update_display_name",
-		"description":  "update_description",
-	}
 
 	url := "permissions/%d"
-	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, 200, "操作成功")
+	update(t, fmt.Sprintf(url, tr.ID), m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestPermissionDelete(t *testing.T) {
-	tr, err := CreatePermission("tname2", "tdsiName2", "tdec2")
+	tr, err := CreatePermission()
 	if err != nil {
 		fmt.Print(err)
 	}

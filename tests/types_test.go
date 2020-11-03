@@ -4,6 +4,9 @@ package tests
 
 import (
 	"fmt"
+	"github.com/bxcodec/faker/v3"
+	"github.com/fatih/color"
+	"github.com/snowlyg/blog/tests/mock"
 	"testing"
 
 	"github.com/kataras/iris/v12"
@@ -14,29 +17,35 @@ func TestTypes(t *testing.T) {
 }
 
 func TestTypeCreate(t *testing.T) {
-	oj := map[string]interface{}{
-		"name": "create_role",
+	m := mock.Type{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		color.Red("TestTypeCreate %+v", err)
+		return
 	}
 
-	create(t, "types", oj, iris.StatusOK, 200, "操作成功")
+	create(t, "types", m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestTypeUpdate(t *testing.T) {
-	tr, err := CreateType("tname1")
+	tr, err := CreateType()
 	if err != nil {
-		fmt.Print(err)
+		color.Red("TestTypeUpdate %+v", err)
 		return
 	}
-	oj := map[string]interface{}{
-		"name": "test_update_role",
+	m := mock.Type{}
+	err = faker.FakeData(&m)
+	if err != nil {
+		color.Red("TestTypeUpdate %+v", err)
+		return
 	}
 
 	url := "types/%d"
-	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, 200, "操作成功")
+	update(t, fmt.Sprintf(url, tr.ID), m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestTypeDelete(t *testing.T) {
-	tr, err := CreateType("tname2")
+	tr, err := CreateType()
 	if err != nil {
 		fmt.Print(err)
 		return

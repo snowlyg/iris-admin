@@ -1,18 +1,21 @@
-// +build test api tag access perm role user type doc chapter article
+// +build test api tag access perm role user type doc chapter article expire config article
 
 package tests
 
 import (
 	"flag"
+	"github.com/bxcodec/faker/v3"
 	"github.com/iris-contrib/httpexpect/v2"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/seeder"
+	"github.com/snowlyg/blog/tests/mock"
 	"github.com/snowlyg/blog/web_server"
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/snowlyg/blog/libs"
 )
@@ -121,46 +124,140 @@ func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 	return
 }
 
-func CreateDoc(name string) (*models.Doc, error) {
-	doc := &models.Doc{
-		Name: name,
+func CreateArticle() (*models.Article, error) {
+	mock.CustomGenerator()
+	m := mock.Article{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
 	}
-	err := doc.CreateDoc()
+	article := &models.Article{
+		Title:        m.Title,
+		ContentShort: m.ContentShort,
+		Author:       m.Author,
+		ImageUri:     m.ImageUri,
+		SourceUri:    m.SourceUri,
+		IsOriginal:   m.IsOriginal,
+		Content:      m.ContentShort,
+		Status:       m.Status,
+		DisplayTime:  time.Now(),
+		Like:         m.Like,
+		Read:         m.Read,
+		Ips:          m.Ips,
+	}
+	err = article.CreateArticle()
+	if err != nil {
+		return article, err
+	}
+	return article, nil
+}
+func CreateChapter() (*models.Chapter, error) {
+	mock.CustomGenerator()
+	m := mock.Chapter{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
+	}
+	chapter := &models.Chapter{
+		Title:        m.Title,
+		ContentShort: m.ContentShort,
+		Author:       m.Author,
+		ImageUri:     m.ImageUri,
+		SourceUri:    m.SourceUri,
+		IsOriginal:   m.IsOriginal,
+		Content:      m.ContentShort,
+		Status:       m.Status,
+		DisplayTime:  time.Now(),
+		Like:         m.Like,
+		Read:         m.Read,
+		Ips:          m.Ips,
+		Sort:         m.Sort,
+	}
+	err = chapter.CreateChapter()
+	if err != nil {
+		return chapter, err
+	}
+	return chapter, nil
+}
+
+func CreateConfig() (*models.Config, error) {
+	m := mock.Config{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
+	}
+	config := &models.Config{
+		Name:  m.Name,
+		Value: m.Value,
+	}
+	err = config.CreateConfig()
+	if err != nil {
+		return config, err
+	}
+	return config, nil
+}
+
+func CreateDoc() (*models.Doc, error) {
+	m := mock.Doc{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
+	}
+	doc := &models.Doc{
+		Name: m.Name,
+	}
+	err = doc.CreateDoc()
 	if err != nil {
 		return doc, err
 	}
 	return doc, nil
 }
 
-func CreateType(name string) (*models.Type, error) {
-	tt := &models.Type{
-		Name: name,
+func CreateType() (*models.Type, error) {
+	m := mock.Type{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
 	}
-	err := tt.CreateType()
+	tt := &models.Type{
+		Name: m.Name,
+	}
+	err = tt.CreateType()
 	if err != nil {
 		return tt, err
 	}
 	return tt, nil
 }
 
-func CreateTag(name string) (*models.Tag, error) {
-	tag := &models.Tag{
-		Name: name,
+func CreateTag() (*models.Tag, error) {
+	m := mock.Tag{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
 	}
-	err := tag.CreateTag()
+	tag := &models.Tag{
+		Name: m.Name,
+	}
+	err = tag.CreateTag()
 	if err != nil {
 		return tag, err
 	}
 	return tag, nil
 }
 
-func CreatePermission(name, disName, dec string) (*models.Permission, error) {
-	perm := &models.Permission{
-		Name:        name,
-		DisplayName: disName,
-		Description: dec,
+func CreatePermission() (*models.Permission, error) {
+	m := mock.Permission{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
 	}
-	err := perm.CreatePermission()
+	perm := &models.Permission{
+		Name:        m.Name,
+		DisplayName: m.DisplayName,
+		Description: m.Description,
+		Act:         m.Act,
+	}
+	err = perm.CreatePermission()
 	if err != nil {
 		return perm, err
 	}
@@ -169,13 +266,18 @@ func CreatePermission(name, disName, dec string) (*models.Permission, error) {
 
 }
 
-func CreateRole(name, disName, dec string) (*models.Role, error) {
-	role := &models.Role{
-		Name:        name,
-		DisplayName: disName,
-		Description: dec,
+func CreateRole() (*models.Role, error) {
+	m := mock.Role{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
 	}
-	err := role.CreateRole()
+	role := &models.Role{
+		Name:        m.Name,
+		DisplayName: m.DisplayName,
+		Description: m.Description,
+	}
+	err = role.CreateRole()
 	if err != nil {
 		return role, err
 	}
@@ -184,13 +286,22 @@ func CreateRole(name, disName, dec string) (*models.Role, error) {
 }
 
 func CreateUser() (*models.User, error) {
-	user := &models.User{
-		Username: "TUsername",
-		Password: "TPassword",
-		Name:     "TName",
-		RoleIds:  []uint{},
+	r, err := CreateRole()
+	if err != nil {
+		return nil, err
 	}
-	err := user.CreateUser()
+	m := mock.User{}
+	err = faker.FakeData(&m)
+	if err != nil {
+		return nil, err
+	}
+	user := &models.User{
+		Username: m.Username,
+		Password: m.Password,
+		Name:     m.Name,
+		RoleIds:  []uint{r.ID},
+	}
+	err = user.CreateUser()
 	if err != nil {
 		return user, err
 	}

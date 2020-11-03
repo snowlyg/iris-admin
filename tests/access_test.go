@@ -70,11 +70,9 @@ func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 
 // 输入登陆密码格式错误
 func TestUserLoginWithErrorFormtUserName(t *testing.T) {
-
 	oj := map[string]string{
 		"username": "df",
 		"password": "123",
 	}
-
 	login(t, oj, iris.StatusOK, 400, "用户不存在")
 }

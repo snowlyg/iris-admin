@@ -4,8 +4,10 @@ package tests
 
 import (
 	"fmt"
-	"github.com/brianvoe/gofakeit/v5"
+	"github.com/bxcodec/faker/v3"
+	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/blog/tests/mock"
 	"testing"
 )
 
@@ -18,39 +20,31 @@ func TestUserProfile(t *testing.T) {
 }
 
 func TestUserCreate(t *testing.T) {
-	tr, err := CreateRole("tname3", "tdsiName", "tdec")
+	m := mock.User{}
+	err := faker.FakeData(&m)
 	if err != nil {
-		fmt.Print(err)
-	}
-	oj := map[string]interface{}{
-		"username": gofakeit.Name(),
-		"password": "password",
-		"name":     "name",
-		"role_ids": []uint{tr.ID},
+		color.Red("TestUserCreate %+v", err)
+		return
 	}
 
-	create(t, "users", oj, iris.StatusOK, 200, "操作成功")
+	create(t, "users", m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestUserUpdate(t *testing.T) {
-	tr, err := CreateRole("tname4", "tdsiName", "tdec")
+
+	m := mock.User{}
+	err := faker.FakeData(&m)
 	if err != nil {
-		fmt.Println(err)
+		color.Red("TestUserUpdate %+v", err)
 		return
-	}
-	oj := map[string]interface{}{
-		"username": gofakeit.Name(),
-		"password": "update_name",
-		"name":     "update_name",
-		"role_ids": []uint{tr.ID},
 	}
 
 	tu, err := CreateUser()
 	if err != nil {
-		fmt.Println(err)
+		color.Red("TestUserUpdate %+v", err)
 		return
 	}
-	update(t, fmt.Sprintf("users/%d", tu.ID), oj, iris.StatusOK, 200, "操作成功")
+	update(t, fmt.Sprintf("users/%d", tu.ID), m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestUserDelete(t *testing.T) {

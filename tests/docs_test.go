@@ -4,6 +4,9 @@ package tests
 
 import (
 	"fmt"
+	"github.com/bxcodec/faker/v3"
+	"github.com/fatih/color"
+	"github.com/snowlyg/blog/tests/mock"
 	"testing"
 
 	"github.com/kataras/iris/v12"
@@ -14,29 +17,35 @@ func TestDocs(t *testing.T) {
 }
 
 func TestDocCreate(t *testing.T) {
-	oj := map[string]interface{}{
-		"name": "create_role",
+	m := mock.Doc{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		color.Red("TestDocCreate %+v", err)
+		return
 	}
 
-	create(t, "docs", oj, iris.StatusOK, 200, "操作成功")
+	create(t, "docs", m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestDocUpdate(t *testing.T) {
-	tr, err := CreateDoc("tname1")
+	m := mock.Doc{}
+	err := faker.FakeData(&m)
 	if err != nil {
-		fmt.Print(err)
+		color.Red("TestDocUpdate %+v", err)
 		return
 	}
-	oj := map[string]interface{}{
-		"name": "test_update_role",
+	tr, err := CreateDoc()
+	if err != nil {
+		color.Red("TestDocUpdate %+v", err)
+		return
 	}
 
 	url := "docs/%d"
-	update(t, fmt.Sprintf(url, tr.ID), oj, iris.StatusOK, 200, "操作成功")
+	update(t, fmt.Sprintf(url, tr.ID), m, iris.StatusOK, 200, "操作成功")
 }
 
 func TestDocDelete(t *testing.T) {
-	tr, err := CreateDoc("tname2")
+	tr, err := CreateDoc()
 	if err != nil {
 		fmt.Print(err)
 		return

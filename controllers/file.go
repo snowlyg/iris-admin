@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/blog/models"
@@ -61,9 +62,28 @@ func UploadFile(ctx iris.Context) {
 	if err == nil {
 		imageHost = configByKey.Value
 	} else {
-		fmt.Println(err.Error())
+		color.Red(err.Error())
 	}
 
-	imageUrl := fmt.Sprintf("%s/%s", imageHost, filepath.Join("uploads", "images", filename))
-	_, _ = ctx.JSON(libs.ApiResource(200, imageUrl, "操作成功"))
+	qiniuKey := ""
+	path = filepath.Join("uploads", "images", filename)
+	if libs.Config.Qiniu.Enable {
+		key, hash, err := libs.Upload(path, filename)
+		if err != nil {
+			_, _ = ctx.JSON(libs.ApiResource(200, nil, err.Error()))
+			return
+		}
+
+		color.Yellow("key:%s,hash:%s", key, hash)
+		if key != "" {
+			qiniuKey = key
+		}
+	}
+
+	imageUrl := fmt.Sprintf("%s/%s", imageHost, path)
+	qiniuUrl := fmt.Sprintf("%s/%s", libs.Config.Qiniu.Host, qiniuKey)
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]string{
+		"local": imageUrl,
+		"qiniu": qiniuUrl,
+	}, "操作成功"))
 }

@@ -45,6 +45,13 @@ var Config = struct {
 		Limit   float64 `env:"LimitLimit" default:"1"`
 		Burst   int     `env:"LimitBurst" default:"5"`
 	}
+	Qiniu struct {
+		Enable    bool   `env:"QiniuEnable" default:"false"`
+		Host      string `env:"QiniuHost" default:""`
+		Accesskey string `env:"QiniuAccesskey" default:""`
+		Secretkey string `env:"QiniuSecretkey" default:""`
+		Bucket    string `env:"QiniuBucket" default:""`
+	}
 }{}
 
 func init() {

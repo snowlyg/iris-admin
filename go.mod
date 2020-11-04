@@ -5,7 +5,6 @@ go 1.14
 require (
 	github.com/Joker/hpp v1.0.0 // indirect
 	github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107
-	github.com/brianvoe/gofakeit/v5 v5.9.1
 	github.com/bxcodec/faker/v3 v3.5.0
 	github.com/casbin/casbin/v2 v2.9.0
 	github.com/casbin/gorm-adapter/v2 v2.1.0
@@ -33,6 +32,7 @@ require (
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.3 // indirect
 	github.com/pkg/errors v0.8.1
+	github.com/qiniu/api.v7/v7 v7.4.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/snowlyg/gotransformer v0.1.0

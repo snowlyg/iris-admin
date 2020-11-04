@@ -30,6 +30,7 @@ func App(api *iris.Application) {
 				limitV1 := rate.Limit(libs.Config.Limit.Limit, libs.Config.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
 				v1.Use(limitV1)
 			}
+			v1.Get("/profile", controllers.GetAdminInfo)
 			v1.PartyFunc("/article", func(article iris.Party) {
 				article.Get("/", controllers.GetAllPublishedArticles)
 				article.Get("/{id:uint}", controllers.GetPublishedArticle)

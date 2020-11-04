@@ -47,6 +47,37 @@ func GetProfile(ctx iris.Context) {
 }
 
 /**
+* @api {get} /profile 管理员信息
+* @apiName 管理员信息
+* @apiGroup Users
+* @apiVersion 1.0.0
+* @apiDescription 管理员信息
+* @apiSampleRequest /profile
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission 登陆用户
+ */
+func GetAdminInfo(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "username",
+				Condition: "=",
+				Value:     "username",
+			},
+		},
+	}
+	user, err := models.GetUser(s)
+	if err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
+	}
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]string{"avatar": user.Avatar}, "请求成功"))
+}
+
+/**
 * @api {get} /admin/change_avatar 修改头像
 * @apiName 修改头像
 * @apiGroup Users

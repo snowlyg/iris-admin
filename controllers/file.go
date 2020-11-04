@@ -68,7 +68,7 @@ func UploadFile(ctx iris.Context) {
 	qiniuKey := ""
 	path = filepath.Join("uploads", "images", filename)
 	if libs.Config.Qiniu.Enable {
-		key, hash, err := libs.Upload(path, filename)
+		key, hash, err := libs.Upload(filepath.Join(libs.CWD(), path), filename)
 		if err != nil {
 			_, _ = ctx.JSON(libs.ApiResource(200, nil, err.Error()))
 			return

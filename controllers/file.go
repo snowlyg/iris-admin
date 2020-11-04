@@ -65,7 +65,7 @@ func UploadFile(ctx iris.Context) {
 		color.Red(err.Error())
 	}
 
-	qiniuKey := ""
+	qiniuUrl := ""
 	path = filepath.Join("uploads", "images", filename)
 	if libs.Config.Qiniu.Enable {
 		key, hash, err := libs.Upload(filepath.Join(libs.CWD(), path), filename)
@@ -76,12 +76,11 @@ func UploadFile(ctx iris.Context) {
 
 		color.Yellow("key:%s,hash:%s", key, hash)
 		if key != "" {
-			qiniuKey = key
+			qiniuUrl = fmt.Sprintf("%s/%s", libs.Config.Qiniu.Host, key)
 		}
 	}
 
 	imageUrl := fmt.Sprintf("%s/%s", imageHost, path)
-	qiniuUrl := fmt.Sprintf("%s/%s", libs.Config.Qiniu.Host, qiniuKey)
 	_, _ = ctx.JSON(libs.ApiResource(200, map[string]string{
 		"local": imageUrl,
 		"qiniu": qiniuUrl,

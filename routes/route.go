@@ -60,6 +60,7 @@ func App(api *iris.Application) {
 				admin.Post("/logout", controllers.UserLogout).Name = "退出"
 				admin.Get("/expire", controllers.UserExpire).Name = "刷新 token"
 				admin.Get("/profile", controllers.GetProfile).Name = "个人信息"
+				admin.Put("/change_avatar", controllers.ChangeAvatar).Name = "修改头像"
 				admin.Post("/upload_file", iris.LimitRequestBodySize(maxSize+1<<20), controllers.UploadFile).Name = "上传文件"
 				admin.PartyFunc("/article", func(aritcle iris.Party) {
 					aritcle.Get("/", controllers.GetAllArticles).Name = "文章列表"
@@ -74,6 +75,7 @@ func App(api *iris.Application) {
 					users.Get("/{id:uint}", controllers.GetUser).Name = "用户详情"
 					users.Post("/", controllers.CreateUser).Name = "创建用户"
 					users.Put("/{id:uint}", controllers.UpdateUser).Name = "编辑用户"
+
 					users.Delete("/{id:uint}", controllers.DeleteUser).Name = "删除用户"
 				})
 				admin.PartyFunc("/roles", func(roles iris.Party) {

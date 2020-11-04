@@ -24,6 +24,10 @@ type User struct {
 	RoleIds  []uint `gorm:"-" json:"role_ids"  validate:"required" comment:"角色"`
 }
 
+type Avatar struct {
+	Avatar string `gorm:"type:longText" json:"avatar" validate:"required" comment:"头像"`
+}
+
 type Token struct {
 	Token string `json:"token"`
 }

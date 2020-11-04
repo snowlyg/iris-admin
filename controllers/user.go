@@ -14,12 +14,12 @@ import (
 )
 
 /**
-* @api {get} /admin/users/profile 获取登陆用户信息
+* @api {get} /admin/profile 获取登陆用户信息
 * @apiName 获取登陆用户信息
 * @apiGroup Users
 * @apiVersion 1.0.0
 * @apiDescription 获取登陆用户信息
-* @apiSampleRequest /admin/users/profile
+* @apiSampleRequest /admin/profile
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
 * @apiSuccess {String} data 返回数据
@@ -39,6 +39,51 @@ func GetProfile(ctx iris.Context) {
 		},
 	}
 	user, err := models.GetUser(s)
+	if err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
+	}
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "请求成功"))
+}
+
+/**
+* @api {get} /admin/change_avatar 修改头像
+* @apiName 修改头像
+* @apiGroup Users
+* @apiVersion 1.0.0
+* @apiDescription 修改头像
+* @apiSampleRequest /admin/change_avatar
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission 登陆用户
+ */
+func ChangeAvatar(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
+	id := uint(libs.ParseInt(sess.UserId, 10))
+
+	avatar := new(models.Avatar)
+	if err := ctx.ReadJSON(avatar); err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
+	}
+
+	err := validates.Validate.Struct(*avatar)
+	if err != nil {
+		errs := err.(validator.ValidationErrors)
+		for _, e := range errs.Translate(validates.ValidateTrans) {
+			if len(e) > 0 {
+				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
+				return
+			}
+		}
+	}
+
+	user := models.NewUser()
+	user.ID = id
+	user.Avatar = avatar.Avatar
+	err = models.UpdateUserById(id, user)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return

@@ -1,4 +1,4 @@
-// +build test api tag access perm role user type doc chapter article expire config article
+// +build test public api tag access perm role user type doc chapter article expire config article
 
 package tests
 
@@ -42,6 +42,9 @@ func TestMain(m *testing.M) {
 func getHttpexpect(t *testing.T) *httpexpect.Expect {
 	return httptest.New(t, app, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/admin/"})
 }
+func getPublicHttpexpect(t *testing.T) *httpexpect.Expect {
+	return httptest.New(t, app, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/"})
+}
 
 // 单元测试 login 方法
 func login(t *testing.T, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
@@ -84,6 +87,15 @@ func getOne(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 	return
 }
 
+// 单元测试 getOne 方法
+func getOnePublic(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
+	e = getPublicHttpexpect(t)
+	e.GET(url).
+		Expect().Status(StatusCode).
+		JSON().Object().Values().Contains(Code, Msg)
+	return
+}
+
 // 单元测试 getOnAuth 方法
 func getOnAuth(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
@@ -115,6 +127,16 @@ func getMore(t *testing.T, url string, StatusCode int, Code int, Msg string) (e 
 	return
 }
 
+// 单元测试 getPublicMore 方法
+func getPublicMore(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
+	e = getPublicHttpexpect(t)
+	e.GET(url).
+		Expect().Status(StatusCode).
+		JSON().Object().Values().Contains(Code, Msg)
+
+	return
+}
+
 // 单元测试 delete 方法
 func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
@@ -124,12 +146,15 @@ func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 	return
 }
 
-func CreateArticle() (*models.Article, error) {
+func CreateArticle(status string) (*models.Article, error) {
 	mock.CustomGenerator()
 	m := mock.Article{}
 	err := faker.FakeData(&m)
 	if err != nil {
 		return nil, err
+	}
+	if len(status) == 0 {
+		status = m.Status
 	}
 	article := &models.Article{
 		Title:        m.Title,
@@ -139,7 +164,7 @@ func CreateArticle() (*models.Article, error) {
 		SourceUri:    m.SourceUri,
 		IsOriginal:   m.IsOriginal,
 		Content:      m.ContentShort,
-		Status:       m.Status,
+		Status:       status,
 		DisplayTime:  time.Now(),
 		Like:         m.Like,
 		Read:         m.Read,
@@ -151,13 +176,18 @@ func CreateArticle() (*models.Article, error) {
 	}
 	return article, nil
 }
-func CreateChapter() (*models.Chapter, error) {
+func CreateChapter(status string) (*models.Chapter, error) {
 	mock.CustomGenerator()
 	m := mock.Chapter{}
 	err := faker.FakeData(&m)
 	if err != nil {
 		return nil, err
 	}
+
+	if len(status) == 0 {
+		status = m.Status
+	}
+
 	chapter := &models.Chapter{
 		Title:        m.Title,
 		ContentShort: m.ContentShort,
@@ -166,7 +196,7 @@ func CreateChapter() (*models.Chapter, error) {
 		SourceUri:    m.SourceUri,
 		IsOriginal:   m.IsOriginal,
 		Content:      m.ContentShort,
-		Status:       m.Status,
+		Status:       status,
 		DisplayTime:  time.Now(),
 		Like:         m.Like,
 		Read:         m.Read,

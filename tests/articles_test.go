@@ -29,7 +29,7 @@ func TestArticleCreate(t *testing.T) {
 }
 
 func TestArticleUpdate(t *testing.T) {
-	tr, err := CreateArticle()
+	tr, err := CreateArticle("")
 	if err != nil {
 		color.Red("TestArticleUpdate %+v", err)
 		return
@@ -45,7 +45,7 @@ func TestArticleUpdate(t *testing.T) {
 }
 
 func TestArticleDelete(t *testing.T) {
-	tr, err := CreateArticle()
+	tr, err := CreateArticle("")
 	if err != nil {
 		color.Red("TestArticleDelete %+v", err)
 		return

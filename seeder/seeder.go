@@ -2,6 +2,7 @@ package seeder
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"math/rand"
 	"path/filepath"
 	"time"
@@ -42,6 +43,9 @@ func init() {
 
 func Run() {
 	AutoMigrates()
+
+	CreateConfigs()
+	fmt.Println(fmt.Sprintf("系统设置填充完成！！"))
 	CreatePerms()
 	fmt.Println(fmt.Sprintf("权限填充完成！！"))
 	CreateAdminRole()
@@ -56,6 +60,48 @@ func AddPerm() {
 	CreateAdminRole()
 	CreateAdminUser()
 	fmt.Println(fmt.Sprintf("权限填充完成！！"))
+}
+
+// CreateConfigs 新建权限
+func CreateConfigs() {
+	configs := []*models.Config{
+		{
+			Name:  "imageHost",
+			Value: "https://www.snowlyg.com",
+		},
+		{
+			Name:  "beianhao",
+			Value: "",
+		},
+	}
+
+	if libs.Config.Debug {
+		color.Yellow(fmt.Sprintf("系统设置填充：%+v\n", configs))
+	}
+	for _, m := range configs {
+		s := &models.Search{
+			Fields: []*models.Filed{
+				{
+					Key:       "name",
+					Condition: "=",
+					Value:     m.Name,
+				},
+			},
+		}
+		perm, err := models.GetConfig(s)
+		if err == nil {
+			if perm.ID == 0 {
+				perm = &models.Config{
+					Model: gorm.Model{CreatedAt: time.Now()},
+					Name:  m.Name,
+					Value: m.Value,
+				}
+				if err := perm.CreateConfig(); err != nil {
+					color.Red("系统设置填充错误：%+v\n", err)
+				}
+			}
+		}
+	}
 }
 
 // CreatePerms 新建权限

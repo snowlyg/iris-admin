@@ -29,7 +29,7 @@ func TestChapterCreate(t *testing.T) {
 }
 
 func TestChapterUpdate(t *testing.T) {
-	tr, err := CreateChapter()
+	tr, err := CreateChapter("")
 	if err != nil {
 		color.Red("TestChapterUpdate %+v", err)
 		return
@@ -45,7 +45,7 @@ func TestChapterUpdate(t *testing.T) {
 }
 
 func TestChapterSetSort(t *testing.T) {
-	tr, err := CreateChapter()
+	tr, err := CreateChapter("")
 	if err != nil {
 		color.Red("TestChapterUpdate %+v", err)
 		return
@@ -56,12 +56,12 @@ func TestChapterSetSort(t *testing.T) {
 }
 
 func TestChapterChangeSort(t *testing.T) {
-	tr, err := CreateChapter()
+	tr, err := CreateChapter("")
 	if err != nil {
 		color.Red("TestChapterUpdate %+v", err)
 		return
 	}
-	tr2, err := CreateChapter()
+	tr2, err := CreateChapter("")
 	if err != nil {
 		color.Red("TestChapterUpdate %+v", err)
 		return
@@ -74,7 +74,7 @@ func TestChapterChangeSort(t *testing.T) {
 }
 
 func TestChapterDelete(t *testing.T) {
-	tr, err := CreateChapter()
+	tr, err := CreateChapter("")
 	if err != nil {
 		color.Red("TestChapterDelete %+v", err)
 		return

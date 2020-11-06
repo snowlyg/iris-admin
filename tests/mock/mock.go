@@ -1,4 +1,4 @@
-// +build test api tag access perm role user type doc chapter article expire config article
+// +build test public api tag access perm role user type doc chapter article expire config article
 
 package mock
 

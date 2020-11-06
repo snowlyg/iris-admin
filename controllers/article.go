@@ -13,7 +13,7 @@ import (
 )
 
 /**
-* @api {get} /articles/:id 根据id获取文章信息
+* @api {get} /article/:id 根据id获取文章信息
 * @apiName 根据id获取文章信息
 * @apiGroup Articles
 * @apiVersion 1.0.0
@@ -59,7 +59,7 @@ func GetPublishedArticle(ctx iris.Context) {
 }
 
 /**
-* @api {get} /articles/like/:id 根据id点赞文章
+* @api {get} /article/like/:id 根据id点赞文章
 * @apiName 根据id点赞文章
 * @apiGroup Articles
 * @apiVersion 1.0.0

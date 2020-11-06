@@ -54,8 +54,8 @@ func (s *Server) NewApp() {
 		s.App.HandleDir("/", s.AssetFile)
 	}
 
-	libs.InitCasbin()
 	libs.InitDb()
+	libs.InitCasbin()
 	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
 	models.Migrate()
 

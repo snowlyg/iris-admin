@@ -14,12 +14,12 @@ import (
 )
 
 /**
-* @api {get} /chapters/:id 根据id获取文章信息
+* @api {get} /chapter/:id 根据id获取文章信息
 * @apiName 根据id获取文章信息
-* @apiGroup Articles
+* @apiGroup Chapters
 * @apiVersion 1.0.0
 * @apiDescription 根据id获取文章信息
-* @apiSampleRequest /chapters/:id
+* @apiSampleRequest /chapter/:id
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
 * @apiSuccess {String} data 返回数据

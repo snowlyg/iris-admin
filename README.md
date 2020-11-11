@@ -35,11 +35,17 @@
  
 ---
 
+#### PHP 转 GO 新手问题汇总
+
+[PHP 转 GO 新手问题汇总](https://www.snowlyg.com/detail/14) 
+> 希望对初学者能有些帮助！！
+---
+
 #### 项目开发过程详解
 
-1.[Iris-go 项目登陆 API 构建细节实现过程](https://www.snowlyg.com/#/detail/1)
+1.[Iris-go 项目登陆 API 构建细节实现过程](https://www.snowlyg.com/detail/1)
 
-2.[iris + casbin 从陌生到学会使用的过程](https://www.snowlyg.com/#/detail/2)
+2.[iris + casbin 从陌生到学会使用的过程](https://www.snowlyg.com/detail/2)
 
 ---
 

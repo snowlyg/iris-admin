@@ -23,7 +23,7 @@ db:
 redis:
   host: localhost
   port: 6379
-  pwd: foobared
+  pwd: # foobared
 qiniu:
   enable: false
   host: http://your_host

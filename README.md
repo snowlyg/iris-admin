@@ -78,20 +78,16 @@
 - 运行项目 
 
 ```shell script
-# 安装
-./main install
-# 卸载
-./main uninstall
-# 启动
-./main start
-# 停止
-./main stop
-# 查看版本
-./main version
-# 数据填充
-./main seeder
-# 查看权限信息
-./main perms
+# 运行项目
+./main 
+
+# 可选参数
+-c 配置路径 , 配置文件的绝对路径
+-v 打印版本 ,true or false
+-s 填充数据，初次启动项目的时候填充基础数据 ,true or false
+-p 同步权限，默认 true 
+-r 打印路由列表 ,true or false
+
 ```
 
 
@@ -131,37 +127,16 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 > 修改配置文件 `application.yml` ,配置文件需要放置在运行程序的同级目录
 
-- 前端代码运行
-```shell script
+- 前端代码,次项目的前端代码已经移除。
+> 本项目主要是 go-iris 框架的简单使用案例。前端代码的引入增加了本项目的复杂性，不太适合新手学习。
 
-# 安装前端依赖
-npm i
-
-# 开发方式启动（开发时使用，会在修改代码后实时更新）
-npm run dev 
-
-# 打包前端代码（部署时使用）
-npm run build:prod  
-#或者  
-npm run build:stage
-
-```
-> 如果配置文件 bindata 设置为 true,为二进制模式需要将前端文件打包成二进制文件
-- 生成二进制前端文件
-```shell script
-
-# 安装 go-bindata 工具
-go get -u github.com/go-bindata/go-bindata/v3/go-bindata
-
-# 生成二进制文件 bindata.go
-go generate 
-
-```
 
 - 运行项目,
->推荐使用 air 或者 gowatch 等热编译工具,直接使用 `go run main.go bindata.go`  方法运行，可能会出现配置文件无法加载的问题
+>推荐使用 air 或者 gowatch 等热编译工具，直接使用 `go run main.go`  方法运行，可能会出现配置文件无法加载的问题
 
->如果想使用 `go run main.go bindata.go` 命令运行, 设置环境变量 `TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi`
+>如果想使用 `go run main.go` 命令运行：
+>可以设置环境变量 `TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi`
+>或者 `go run main.go -c ~/go/src/github.com/snowlyg/IrisAdminApi/application.yml`, 最后的参数是项目配置文件的绝对路径。
 
 ```shell script
 
@@ -180,13 +155,14 @@ air
 
 ```shell script
 # 设置环境变量 TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi
-# 否则无法加载配置文件
+# 否则无法加载配置文件,
+# 或者使用 -tc 指定测试配置文件路径
 
 # 所有测试
- go test -v ./... -tags test
+ go test -v ./... -tags test -tc ~/go/src/github.com/snowlyg/IrisAdminApi/application.test.yml
  
 #单个方法
- go test -run TestUserCreate -v  -tags test
+ go test -run TestUserCreate -v  -tags test -tc ~/go/src/github.com/snowlyg/IrisAdminApi/application.test.yml
 
 # 安装工具 gotest 增加测试输出数据颜色
 go get github.com/rakyll/gotest@latest

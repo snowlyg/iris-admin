@@ -2,83 +2,44 @@
 package main
 
 import (
-	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
-	"time"
 
-	"github.com/kardianos/service"
-	logger "github.com/sirupsen/logrus"
-	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/libs"
 	"github.com/snowlyg/IrisAdminApi/seeder"
 	"github.com/snowlyg/IrisAdminApi/web_server"
 )
 
+var ConfigPath = flag.String("c", "", "配置路径")
+var PrintVersion = flag.Bool("v", false, "打印版本号")
+var SeederData = flag.Bool("s", false, "填充基础数据")
+var SyncPerms = flag.Bool("p", true, "同步权限")
+var PrintRouter = flag.Bool("r", false, "打印路由列表")
 var Version = "master"
-var f *os.File
-
-func init() {
-	f, _ := os.OpenFile(fmt.Sprintf("%s/go_iris.log", libs.LogDir()), os.O_RDWR|os.O_CREATE|os.O_APPEND, os.ModePerm)
-	logger.SetFormatter(&logger.JSONFormatter{})
-	logger.SetOutput(f)
-	logger.SetLevel(logger.DebugLevel)
-}
-
-func (p *program) startIris() {
-	host := fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)
-	if host != "" {
-		go func() {
-			logger.Println("HTTP-IRIS listen On ", host)
-			err := p.irisServer.Serve()
-			if err != nil {
-				panic(err)
-			}
-		}()
-	}
-}
-
-type program struct {
-	irisServer *web_server.Server
-}
-
-func (p *program) Start(s service.Service) error {
-	go p.run()
-	return nil
-}
-
-func (p *program) run() {
-	p.startIris()
-}
-
-func (p *program) stopIris() (err error) {
-	if p.irisServer == nil {
-		err = fmt.Errorf("HTTP Server Not Found")
-		return
-	}
-	timeout := 5 * time.Second
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-	err = p.irisServer.App.Shutdown(ctx)
-	if err != nil {
-		return err
-	}
-	return
-}
-
-func (p *program) Stop(s service.Service) error {
-	defer logger.Println("退出服务")
-	defer f.Close()
-
-	err := p.stopIris()
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	return nil
-}
 
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "usage: %s [options] [command]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Commands:\n")
+		fmt.Fprintf(os.Stderr, "\n")
+		fmt.Fprintf(os.Stderr, "  -c <path>\n")
+		fmt.Fprintf(os.Stderr, "    设置配置文件路径\n")
+		fmt.Fprintf(os.Stderr, "  -v <true or false> 默认为: false\n")
+		fmt.Fprintf(os.Stderr, "    打印版本号\n")
+		fmt.Fprintf(os.Stderr, "  -s <true or false> 默认为: false\n")
+		fmt.Fprintf(os.Stderr, "    填充基础数据\n")
+		fmt.Fprintf(os.Stderr, "  -p <true or false> 默认为: true\n")
+		fmt.Fprintf(os.Stderr, "    同步权限\n")
+		fmt.Fprintf(os.Stderr, "  -r <true or false> 默认为: false\n")
+		fmt.Fprintf(os.Stderr, "    打印路由列表\n")
+		fmt.Fprintf(os.Stderr, "\n")
+		//flag.PrintDefaults()
+	}
+
+	flag.Parse()
+
 	log.Println(fmt.Sprintf(` 
 ============================================
    ___  ___ ___ ___ ___ ___   _   ___ ___ 
@@ -90,64 +51,51 @@ func main() {
 
 version: %s`, Version))
 
-	svcConfig := &service.Config{
-		Name:        "GoIrisAdminApi",
-		DisplayName: "GoIrisAdminApi",
-		Description: "go+web+iris",
-	}
+	libs.InitConfig(*ConfigPath)
 
-	prg := &program{}
-	s, err := service.New(prg, svcConfig)
-	if err != nil {
-		panic(err)
-	}
-
-	irisServer := web_server.NewServer(AssetFile())
+	//irisServer := web_server.NewServer(AssetFile()) 如果需要前端文件
+	irisServer := web_server.NewServer(nil)
 	if irisServer == nil {
 		panic("Http 初始化失败")
 	}
 	irisServer.NewApp()
-	prg.irisServer = irisServer
 
-	if len(os.Args) == 2 {
-		if os.Args[1] == "version" {
-			fmt.Println(fmt.Sprintf("版本号：%s", Version))
-			return
-		} else if os.Args[1] == "seeder" {
-			seeder.Run()
-			return
-		} else if os.Args[1] == "perms" {
-			fmt.Println("系统权限：")
+	if *PrintVersion {
+		fmt.Println(fmt.Sprintf("版本号：%s", Version))
+	}
+
+	if *SeederData {
+		fmt.Println("填充数据：")
+		fmt.Println()
+		seeder.Run()
+	}
+
+	if *SyncPerms {
+		fmt.Println("同步权限：")
+		fmt.Println()
+		seeder.AddPerm()
+	}
+
+	if *PrintRouter {
+		fmt.Println("系统权限：")
+		fmt.Println()
+		routes := irisServer.GetRoutes()
+		for _, route := range routes {
+			fmt.Println("+++++++++++++++")
+			fmt.Println(fmt.Sprintf("名称 ：%s ", route.DisplayName))
+			fmt.Println(fmt.Sprintf("路由地址 ：%s ", route.Name))
+			fmt.Println(fmt.Sprintf("请求方式 ：%s", route.Act))
 			fmt.Println()
-			routes := prg.irisServer.GetRoutes()
-			for _, route := range routes {
-				fmt.Println("+++++++++++++++")
-				fmt.Println(fmt.Sprintf("名称 ：%s ", route.DisplayName))
-				fmt.Println(fmt.Sprintf("路由地址 ：%s ", route.Name))
-				fmt.Println(fmt.Sprintf("请求方式 ：%s", route.Act))
-				fmt.Println()
-			}
-
-			return
-		} else if os.Args[1] == "start" {
-			if libs.IsPortInUse(config.Config.Port) {
-				panic(fmt.Sprintf("端口 %d 已被使用", config.Config.Port))
-			}
 		}
-
-		err = service.Control(s, os.Args[1])
-		if err != nil {
-			panic(err)
-		}
-		return
 	}
 
-	if libs.IsPortInUse(config.Config.Port) {
-		panic(fmt.Sprintf("端口 %d 已被使用", config.Config.Port))
+	if libs.IsPortInUse(libs.Config.Port) {
+		panic(fmt.Sprintf("端口 %d 已被使用", libs.Config.Port))
 	}
 
-	err = s.Run()
+	err := irisServer.Serve()
 	if err != nil {
 		panic(err)
 	}
+
 }

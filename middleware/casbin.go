@@ -3,16 +3,13 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/snowlyg/IrisAdminApi/libs"
-	"net/http"
-	"strconv"
-	"time"
-
 	"github.com/casbin/casbin/v2"
+	"github.com/fatih/color"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/IrisAdminApi/libs"
 	"github.com/snowlyg/IrisAdminApi/models"
+	"net/http"
 )
 
 func New(e *casbin.Enforcer) *Casbin {
@@ -22,21 +19,30 @@ func New(e *casbin.Enforcer) *Casbin {
 func (c *Casbin) ServeHTTP(ctx iris.Context) {
 	ctx.StatusCode(http.StatusOK)
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	token := models.OauthToken{}
-	token.GetOauthTokenByToken(value.Raw) //获取 access_token 信息
-	if token.Revoked || token.ExpressIn < time.Now().Unix() {
-		//_, _ = ctx.Writef("token 失效，请重新登录") // 输出到前端
+
+	conn := libs.GetRedisClusterClient()
+	defer conn.Close()
+
+	sess, err := models.GetRedisSessionV2(conn, value.Raw)
+	if err != nil {
+		models.UserTokenExpired(value.Raw)
+		_, _ = ctx.JSON(libs.ApiResource(401, nil, ""))
+		ctx.StopExecution()
+		return
+	}
+	if sess == nil {
+		ctx.StopExecution()
 		_, _ = ctx.JSON(libs.ApiResource(401, nil, ""))
 		ctx.StopExecution()
 		return
 	} else {
-		check, err := c.Check(ctx.Request(), strconv.FormatUint(uint64(token.UserId), 10))
+		check, err := c.Check(ctx.Request(), sess.UserId)
 		if !check {
-			_, _ = ctx.JSON(libs.ApiResource(401, nil, err.Error()))
+			_, _ = ctx.JSON(libs.ApiResource(403, nil, err.Error()))
 			ctx.StopExecution()
 			return
 		} else {
-			ctx.Values().Set("auth_user_id", token.UserId)
+			ctx.Values().Set("sess", sess)
 		}
 	}
 

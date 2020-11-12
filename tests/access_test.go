@@ -1,19 +1,19 @@
-// +build test
+// +build test access api
 
-package main
+package tests
 
 import (
 	"github.com/kataras/iris/v12"
 	"testing"
 
-	"github.com/snowlyg/IrisAdminApi/config"
+	"github.com/snowlyg/IrisAdminApi/libs"
 )
 
 // 登陆成功
 func TestUserLoginSuccess(t *testing.T) {
 	oj := map[string]string{
-		"username": config.Config.Admin.UserName,
-		"password": config.Config.Admin.Pwd,
+		"username": libs.Config.Admin.UserName,
+		"password": libs.Config.Admin.Pwd,
 	}
 	login(t, oj, iris.StatusOK, 200, "登陆成功")
 }
@@ -22,7 +22,7 @@ func TestUserLoginSuccess(t *testing.T) {
 func TestUserLoginWithErrorName(t *testing.T) {
 	oj := map[string]string{
 		"username": "err_user",
-		"password": config.Config.Admin.Pwd,
+		"password": libs.Config.Admin.Pwd,
 	}
 
 	login(t, oj, iris.StatusOK, 400, "用户不存在")
@@ -32,7 +32,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 func TestUserLoginWithErrorPwd(t *testing.T) {
 
 	oj := map[string]string{
-		"username": config.Config.Admin.UserName,
+		"username": libs.Config.Admin.UserName,
 		"password": "admin",
 	}
 	login(t, oj, iris.StatusOK, 400, "用户名或密码错误")
@@ -61,7 +61,7 @@ func TestUserLoginWithNoPwd(t *testing.T) {
 // 输入登陆密码格式错误
 func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 	oj := map[string]string{
-		"username": config.Config.Admin.UserName,
+		"username": libs.Config.Admin.UserName,
 		"password": "123",
 	}
 
@@ -70,11 +70,9 @@ func TestUserLoginWithErrorFormtPwd(t *testing.T) {
 
 // 输入登陆密码格式错误
 func TestUserLoginWithErrorFormtUserName(t *testing.T) {
-
 	oj := map[string]string{
 		"username": "df",
 		"password": "123",
 	}
-
 	login(t, oj, iris.StatusOK, 400, "用户不存在")
 }

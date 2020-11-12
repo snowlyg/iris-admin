@@ -1,9 +1,8 @@
 package controllers
 
 import (
-	"net/http"
-
 	"github.com/go-playground/validator/v10"
+	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/IrisAdminApi/libs"
 	"github.com/snowlyg/IrisAdminApi/models"
@@ -25,10 +24,10 @@ import (
 * @apiPermission null
  */
 func UserLogin(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
 	aul := new(validates.LoginRequest)
 
 	if err := ctx.ReadJSON(aul); err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -38,7 +37,6 @@ func UserLogin(ctx iris.Context) {
 		errs := err.(validator.ValidationErrors)
 		for _, e := range errs.Translate(validates.ValidateTrans) {
 			if len(e) > 0 {
-				ctx.StatusCode(iris.StatusOK)
 				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
 				return
 			}
@@ -46,11 +44,19 @@ func UserLogin(ctx iris.Context) {
 	}
 
 	ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
-	ctx.StatusCode(iris.StatusOK)
 
-	user, err := models.GetUserByUsername(aul.Username)
+	s := &models.Search{
+		Fields: []*models.Filed{
+			{
+				Key:       "username",
+				Condition: "=",
+				Value:     aul.Username,
+			},
+		},
+	}
+
+	user, err := models.GetUser(s)
 	if err != nil {
-		ctx.StatusCode(iris.StatusOK)
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
@@ -58,8 +64,6 @@ func UserLogin(ctx iris.Context) {
 	response, code, msg := user.CheckLogin(aul.Password)
 
 	_, _ = ctx.JSON(libs.ApiResource(code, response, msg))
-	return
-
 }
 
 /**
@@ -75,11 +79,56 @@ func UserLogin(ctx iris.Context) {
 * @apiPermission null
  */
 func UserLogout(ctx iris.Context) {
-	aui := ctx.Values().GetString("auth_user_id")
-	uid := uint(libs.ParseInt(aui, 0))
-	models.UserAdminLogout(uid)
 
-	ctx.Application().Logger().Infof("%d 退出系统", uid)
-	ctx.StatusCode(http.StatusOK)
+	ctx.StatusCode(iris.StatusOK)
+	value := ctx.Values().Get("jwt").(*jwt.Token)
+	conn := libs.GetRedisClusterClient()
+	defer conn.Close()
+	sess, err := models.GetRedisSessionV2(conn, value.Raw)
+	if err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
+	}
+	if sess != nil {
+		if err := sess.DelUserTokenCache(conn, value.Raw); err != nil {
+			_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+			return
+		}
+	}
+
+	ctx.Application().Logger().Infof("%d 退出系统", sess.UserId)
 	_, _ = ctx.JSON(libs.ApiResource(200, nil, "退出"))
+}
+
+/**
+* @api {get} /expire 刷新token
+* @apiName 刷新token
+* @apiGroup Users
+* @apiVersion 1.0.0
+* @apiDescription 刷新token
+* @apiSampleRequest /expire
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission null
+ */
+func UserExpire(ctx iris.Context) {
+
+	ctx.StatusCode(iris.StatusOK)
+	value := ctx.Values().Get("jwt").(*jwt.Token)
+	conn := libs.GetRedisClusterClient()
+	defer conn.Close()
+	sess, err := models.GetRedisSessionV2(conn, value.Raw)
+	if err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
+	}
+	if sess != nil {
+		if err := sess.UpdateUserTokenCacheExpire(conn, value.Raw); err != nil {
+			_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+			return
+		}
+	}
+
+	_, _ = ctx.JSON(libs.ApiResource(200, nil, ""))
 }

@@ -2,17 +2,15 @@ package web_server
 
 import (
 	"fmt"
-	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/IrisAdminApi/libs"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/kataras/iris/v12/context"
-	"github.com/snowlyg/IrisAdminApi/config"
 	"github.com/snowlyg/IrisAdminApi/models"
 	"github.com/snowlyg/IrisAdminApi/routes"
-	"github.com/snowlyg/IrisAdminApi/sysinit"
 )
 
 type Server struct {
@@ -29,14 +27,14 @@ func NewServer(assetFile http.FileSystem) *Server {
 }
 
 func (s *Server) Serve() error {
-	if config.Config.HTTPS {
-		host := fmt.Sprintf("%s:%d", config.Config.Host, 443)
-		if err := s.App.Run(iris.TLS(host, config.Config.Certpath, config.Config.Certkey)); err != nil {
+	if libs.Config.HTTPS {
+		host := fmt.Sprintf("%s:%d", libs.Config.Host, 443)
+		if err := s.App.Run(iris.TLS(host, libs.Config.Certpath, libs.Config.Certkey)); err != nil {
 			return err
 		}
 	} else {
 		if err := s.App.Run(
-			iris.Addr(fmt.Sprintf("%s:%d", config.Config.Host, config.Config.Port)),
+			iris.Addr(fmt.Sprintf("%s:%d", libs.Config.Host, libs.Config.Port)),
 			iris.WithoutServerError(iris.ErrServerClosed),
 			iris.WithOptimizations,
 			iris.WithTimeFormat(time.RFC3339),
@@ -49,32 +47,21 @@ func (s *Server) Serve() error {
 }
 
 func (s *Server) NewApp() {
-	s.App.Logger().SetLevel(config.Config.LogLevel)
+	s.App.Logger().SetLevel(libs.Config.LogLevel)
 
-	// 二进制模式 ， 绑定前端文件
-	if config.Config.Bindata {
-		color.Yellow(`开启二进制模式前，请执行
-		cd www
-		npm run build:stage
-		cd ..
-		go generate 
-		等步骤，打包前端文件
-`)
-		s.App.RegisterView(iris.HTML(s.AssetFile, ".html"))
-		s.App.HandleDir("/", s.AssetFile)
-	}
+	//if libs.Config.Bindata {
+	//	s.App.RegisterView(iris.HTML(s.AssetFile, ".html"))
+	//	s.App.HandleDir("/", s.AssetFile)
+	//}
 
-	db := sysinit.Db
-	db.AutoMigrate(
-		&models.User{},
-		&models.OauthToken{},
-		&models.Role{},
-		&models.Permission{},
-	)
+	libs.InitDb()
+	libs.InitCasbin()
+	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
+	models.Migrate()
 
-	iris.RegisterOnInterrupt(func() {
-		_ = db.Close()
-	})
+	//iris.RegisterOnInterrupt(func() {
+	//	_ = libs.Db
+	//})
 
 	routes.App(s.App) //注册 app 路由
 }
@@ -89,7 +76,7 @@ type PathName struct {
 func (s *Server) GetRoutes() []*models.Permission {
 	var rrs []*models.Permission
 	names := getPathNames(s.App.GetRoutesReadOnly())
-	if config.Config.Debug {
+	if libs.Config.Debug {
 		fmt.Println(fmt.Sprintf("路由权限集合：%v", names))
 		fmt.Println(fmt.Sprintf("Iris App ：%v", s.App))
 	}
@@ -104,7 +91,7 @@ func (s *Server) GetRoutes() []*models.Permission {
 
 func getPathNames(routeReadOnly []context.RouteReadOnly) []*PathName {
 	var pns []*PathName
-	if config.Config.Debug {
+	if libs.Config.Debug {
 		fmt.Println(fmt.Sprintf("routeReadOnly：%v", routeReadOnly))
 	}
 	for _, s := range routeReadOnly {

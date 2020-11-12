@@ -6,11 +6,15 @@ cache:
 
 gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
 
+services:
+  - redis-server
+
 install: true
 sudo: required
 
 go:
   - 1.14.x
+
 
 os:
   - windows

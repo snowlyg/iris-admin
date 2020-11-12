@@ -1,4 +1,4 @@
-// +build test public api tag access perm role user type doc chapter article expire config article
+// +build test public api tag access perm role user type doc chapter article expire config article dashboard
 
 package tests
 
@@ -21,18 +21,20 @@ import (
 )
 
 var (
-	app   *iris.Application
-	token string
+	ConfigPath = flag.String("tc", "", "配置路径")
+	app        *iris.Application
+	token      string
 )
 
 //单元测试基境
 func TestMain(m *testing.M) {
+	flag.Parse()
+	libs.InitConfig(*ConfigPath)
 	s := web_server.NewServer(nil) // 初始化app
 	s.NewApp()
 	app = s.App
 	seeder.Run()
 
-	flag.Parse()
 	exitCode := m.Run()
 
 	models.DropTables() // 删除测试数据表，保持测试环境

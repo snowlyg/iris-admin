@@ -7,7 +7,7 @@ cache:
 gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
 
 services:
-  - redis-server
+  - redis
 
 install: true
 sudo: required

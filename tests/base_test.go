@@ -19,15 +19,14 @@ import (
 )
 
 var (
-	ConfigPath = flag.String("tc", "", "配置路径")
-	app        *iris.Application
-	token      string
+	app   *iris.Application
+	token string
 )
 
 //单元测试基境
 func TestMain(m *testing.M) {
 	flag.Parse()
-	libs.InitConfig(*ConfigPath)
+	libs.InitConfig("")
 	s := web_server.NewServer(nil) // 初始化app
 	s.NewApp()
 	app = s.App

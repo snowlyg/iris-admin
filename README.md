@@ -159,10 +159,10 @@ air
 # 或者使用 -tc 指定测试配置文件路径
 
 # 所有测试
- go test -v ./... -tags test -tc ~/go/src/github.com/snowlyg/IrisAdminApi/application.test.yml
+ go test -v ./... -tags test 
  
 #单个方法
- go test -run TestUserCreate -v  -tags test -tc ~/go/src/github.com/snowlyg/IrisAdminApi/application.test.yml
+ go test -run TestUserCreate -v  -tags test 
 
 # 安装工具 gotest 增加测试输出数据颜色
 go get github.com/rakyll/gotest@latest

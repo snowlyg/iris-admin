@@ -8,7 +8,7 @@ gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
 
 before_install:
   - cp $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.example.yml $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.yml
-
+  - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass 'password'
 
 install: true
 sudo: required

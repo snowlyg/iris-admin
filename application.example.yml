@@ -1,6 +1,6 @@
-bindata: true #二进制模式
+bindata: false #二进制模式
 loglevel: debug  #日志级别 info debug
-debug: true #调试模式
+debug: false #调试模式
 https: false #https
 host: 127.0.0.1
 port: 8085 #端口
@@ -14,4 +14,4 @@ db:
 redis:
   host: localhost
   port: 6379
-  pwd: password  # foobared
+  # pwd: foobared

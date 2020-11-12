@@ -29,8 +29,8 @@ env:
     - GOPROXY=https://goproxy.cn,direct
 
 script:
-  - go vet ./...
-  - go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic
+  - go vet ./... -c $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.yml
+  - go test ./... -v -tags test -coverprofile=coverage.txt -covermode=atomic -c $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.yml
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

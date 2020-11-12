@@ -4,13 +4,16 @@ import (
 	"errors"
 	"fmt"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
+	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
+	"gorm.io/gorm"
 	"strconv"
 	"strings"
-
-	"github.com/fatih/color"
-	"gorm.io/gorm"
 )
+
+type SumRes struct {
+	Total int64 `json:"total"`
+}
 
 // Filed 查询字段结构体
 type Filed struct {

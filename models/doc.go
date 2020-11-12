@@ -24,6 +24,11 @@ func NewDoc() *Doc {
 	}
 }
 
+// GetDocTableName
+func GetDocTableName() string {
+	return fmt.Sprintf("%s%s", libs.Config.DB.Prefix, "docs")
+}
+
 // GetDoc get doc
 func GetDoc(search *Search) (*Doc, error) {
 	t := NewDoc()
@@ -32,6 +37,17 @@ func GetDoc(search *Search) (*Doc, error) {
 		return t, err
 	}
 	return t, nil
+}
+
+// GetDocCount get doc count
+func GetDocCount() (int64, error) {
+	var count int64
+	t := NewDoc()
+	err := libs.Db.Model(t).Count(&count).Error
+	if err != nil {
+		return count, err
+	}
+	return count, nil
 }
 
 // DeleteDocById del doc by id

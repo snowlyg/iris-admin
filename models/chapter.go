@@ -55,6 +55,21 @@ func NewChapter() *Chapter {
 	}
 }
 
+// GetChapterTableName
+func GetChapterTableName() string {
+	return fmt.Sprintf("%s%s", libs.Config.DB.Prefix, "chapters")
+}
+
+// GetDocReads 获取文章阅读量
+func GetDocReads() (*SumRes, error) {
+	var sumRes SumRes
+	err := libs.Db.Table(GetChapterTableName()).Select("sum(`read`) as total").Scan(&sumRes).Error
+	if err != nil {
+		return &sumRes, err
+	}
+	return &sumRes, nil
+}
+
 // GetChapter 获取
 func GetChapter(search *Search) (*Chapter, error) {
 	t := NewChapter()

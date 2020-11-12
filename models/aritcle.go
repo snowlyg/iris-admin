@@ -38,6 +38,11 @@ func NewArticle() *Article {
 	return &Article{}
 }
 
+// GetArticleTableName
+func GetArticleTableName() string {
+	return fmt.Sprintf("%s%s", libs.Config.DB.Prefix, "articles")
+}
+
 func (r *Article) ReadArticle(rh *http.Request) error {
 	ip := r.Ips
 	ips := strings.Split(ip, ",")
@@ -89,6 +94,27 @@ func GetArticle(search *Search) (*Article, error) {
 		return r, err
 	}
 	return r, nil
+}
+
+// GetArticleCount 获取文章数量
+func GetArticleCount() (int64, error) {
+	var count int64
+	r := NewArticle()
+	err := libs.Db.Model(r).Count(&count).Error
+	if err != nil {
+		return count, err
+	}
+	return count, nil
+}
+
+// GetArticleReads 获取文章阅读量
+func GetArticleReads() (*SumRes, error) {
+	var sr SumRes
+	err := libs.Db.Table(GetArticleTableName()).Select("sum(`read`) as total").Scan(&sr).Error
+	if err != nil {
+		return &sr, err
+	}
+	return &sr, nil
 }
 
 // DeleteArticleById 删除

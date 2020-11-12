@@ -62,6 +62,7 @@ func App(api *iris.Application) {
 				admin.Get("/expire", controllers.UserExpire).Name = "刷新 token"
 				admin.Get("/profile", controllers.GetProfile).Name = "个人信息"
 				admin.Put("/change_avatar", controllers.ChangeAvatar).Name = "修改头像"
+				admin.Get("/dashboard", controllers.Dashboard).Name = "数据统计"
 				admin.Post("/upload_file", iris.LimitRequestBodySize(maxSize+1<<20), controllers.UploadFile).Name = "上传文件"
 				admin.PartyFunc("/article", func(aritcle iris.Party) {
 					aritcle.Get("/", controllers.GetAllArticles).Name = "文章列表"

@@ -19,6 +19,11 @@ perms:
     description: "个人信息"
     act: "GET"
 
+  - name: "/v1/admin/dashboard"
+    displayname: "面板数据"
+    description: "面板数据"
+    act: "GET"
+
   - name: "/v1/admin/users"
     displayname: "用户列表"
     description: "用户列表"

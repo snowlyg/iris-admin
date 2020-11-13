@@ -70,8 +70,9 @@
 
 #### 问题总结
 
-[ERRORS](ERRORS.MD)
+[可能遇到的问题](ERRORS.MD)
 
+---
 
 1. 运行项目
 - 从地址 [https://github.com/snowlyg/IrisAdminApi/releases/tag/v0.5](https://github.com/snowlyg/IrisAdminApi/releases/tag/v0.5) ，选择下载编译好的系统文件,
@@ -91,6 +92,7 @@
 
 ```
 
+---
 
 #### 如果需要重新编译项目
 
@@ -125,14 +127,16 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
 ```
+---
 
 > 修改配置文件 `application.yml` ,配置文件需要放置在运行程序的同级目录
 
 - 前端代码,次项目的前端代码已经移除。
 > 本项目主要是 go-iris 框架的简单使用案例。前端代码的引入增加了本项目的复杂性，不太适合新手学习。
+---
 
 
-- 运行项目,
+- 运行项目
 >推荐使用 air 或者 gowatch 等热编译工具，直接使用 `go run main.go`  方法运行，可能会出现配置文件无法加载的问题
 
 >如果想使用 `go run main.go` 命令运行：
@@ -156,8 +160,7 @@ air
 
 ```shell script
 # 设置环境变量 TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi
-# 否则无法加载配置文件,
-# 或者使用 -tc 指定测试配置文件路径
+# 否则无法加载配置文件
 
 # 所有测试
  go test -v ./... -tags test 

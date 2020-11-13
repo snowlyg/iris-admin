@@ -22,6 +22,7 @@
 ###### `Iris-go` 学习交流 QQ 群 ：`676717248`
 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
 
+###### 微信交流群，请加微信号： snowlyg_china
 
 #### 项目介绍
 - `iris-go` 框架后台接口项目

@@ -4,6 +4,11 @@ debug: false #调试模式
 https: false #https
 host: 127.0.0.1
 port: 8085 #端口
+admin: # 管理员账号信息，用于数据填充
+  username: username
+  rolename: rolename
+  name: name
+  password: password
 db:
   adapter: sqlite3 # mysql postgres sqlite3 数据库类型
   host: mysql # 数据库地址

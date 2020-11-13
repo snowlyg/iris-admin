@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"time"
 
 	"github.com/fatih/color"
@@ -42,7 +42,7 @@ func GetTag(s *Search) (*Tag, error) {
 func DeleteTagById(id uint) error {
 	t := NewTag()
 	t.ID = id
-	if err := libs.Db.Delete(t).Error; err != nil {
+	if err := database.Singleton().Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteTagByIdError:%s \n", err))
 		return err
 	}
@@ -67,7 +67,7 @@ func GetAllTags(s *Search) ([]*Tag, int64, error) {
 
 // CreateTag create tag
 func (p *Tag) CreateTag() error {
-	if err := libs.Db.Create(p).Error; err != nil {
+	if err := database.Singleton().Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil

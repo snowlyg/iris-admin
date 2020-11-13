@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +40,7 @@ func DeleteConfig(id uint) error {
 	u := NewConfig()
 	u.ID = id
 
-	if err := libs.Db.Delete(u).Error; err != nil {
+	if err := database.Singleton().Db.Delete(u).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteConfigByIdErr:%s \n ", err))
 		return err
 	}
@@ -60,7 +60,7 @@ func GetAllConfigs(s *Search) ([]*Config, error) {
 
 // CreateConfig create config
 func (u *Config) CreateConfig() error {
-	if err := libs.Db.Create(u).Error; err != nil {
+	if err := database.Singleton().Db.Create(u).Error; err != nil {
 		return err
 	}
 

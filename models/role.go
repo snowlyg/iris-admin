@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"gorm.io/gorm"
 )
 
@@ -45,7 +45,7 @@ func GetRole(search *Search) (*Role, error) {
  */
 //func GetRolesByIds(ids []int) ([]*Role, error) {
 //	var roles []*Role
-//	err := IsNotFound(libs.Db.Find(&roles, ids).Error)
+//	err := IsNotFound(database.Singleton().Db.Find(&roles, ids).Error)
 //	if err != nil {
 //		return nil, err
 //	}
@@ -56,7 +56,7 @@ func GetRole(search *Search) (*Role, error) {
 func DeleteRoleById(id uint) error {
 	r := NewRole()
 	r.ID = id
-	err := libs.Db.Delete(r).Error
+	err := database.Singleton().Db.Delete(r).Error
 	if err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 		return err
@@ -83,7 +83,7 @@ func GetAllRoles(s *Search) ([]*Role, int64, error) {
 
 // CreateRole create role
 func (r *Role) CreateRole() error {
-	if err := libs.Db.Create(r).Error; err != nil {
+	if err := database.Singleton().Db.Create(r).Error; err != nil {
 		return err
 	}
 
@@ -96,13 +96,13 @@ func (r *Role) CreateRole() error {
 func addPerms(permIds []uint, role *Role) {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
-		if _, err := libs.Enforcer.DeletePermissionsForUser(roleId); err != nil {
+		if _, err := database.Singleton().Enforcer.DeletePermissionsForUser(roleId); err != nil {
 			color.Red(fmt.Sprintf("AppendPermsErr:%s \n", err))
 		}
 		var perms []Permission
-		libs.Db.Where("id in (?)", permIds).Find(&perms)
+		database.Singleton().Db.Where("id in (?)", permIds).Find(&perms)
 		for _, perm := range perms {
-			if _, err := libs.Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
+			if _, err := database.Singleton().Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
 				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
 			}
 		}

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"gorm.io/gorm"
 	"net/http"
 	"strings"
@@ -54,7 +55,7 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 		r.Read++
 		ips = append(ips, publicIp)
 		r.Ips = strings.Join(ips, ",")
-		err := libs.Db.Save(r).Error
+		err := database.Singleton().Db.Save(r).Error
 		if err != nil {
 			return err
 		}
@@ -67,7 +68,7 @@ func (r *Article) Addip() error {
 	defer r.Unlock()
 
 	r.Read++
-	err := libs.Db.Save(r).Error
+	err := database.Singleton().Db.Save(r).Error
 	if err != nil {
 		return err
 	}
@@ -79,7 +80,7 @@ func (r *Article) LikeArticle() error {
 	defer r.Unlock()
 
 	r.Like++
-	err := libs.Db.Save(r).Error
+	err := database.Singleton().Db.Save(r).Error
 	if err != nil {
 		return err
 	}
@@ -100,7 +101,7 @@ func GetArticle(search *Search) (*Article, error) {
 func GetArticleCount() (int64, error) {
 	var count int64
 	r := NewArticle()
-	err := libs.Db.Model(r).Count(&count).Error
+	err := database.Singleton().Db.Model(r).Count(&count).Error
 	if err != nil {
 		return count, err
 	}
@@ -110,7 +111,7 @@ func GetArticleCount() (int64, error) {
 // GetArticleReads 获取文章阅读量
 func GetArticleReads() (*SumRes, error) {
 	var sr SumRes
-	err := libs.Db.Table(GetArticleTableName()).Select("sum(`read`) as total").Scan(&sr).Error
+	err := database.Singleton().Db.Table(GetArticleTableName()).Select("sum(`read`) as total").Scan(&sr).Error
 	if err != nil {
 		return &sr, err
 	}
@@ -121,7 +122,7 @@ func GetArticleReads() (*SumRes, error) {
 func DeleteArticleById(id uint) error {
 	r := NewArticle()
 	r.ID = id
-	if err := libs.Db.Delete(r).Error; err != nil {
+	if err := database.Singleton().Db.Delete(r).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteArticleErr:%s \n", err))
 		return err
 	}
@@ -183,7 +184,7 @@ func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
 func (r *Article) CreateArticle() error {
 	r.getTypes()
 
-	if err := libs.Db.Create(r).Error; err != nil {
+	if err := database.Singleton().Db.Create(r).Error; err != nil {
 		return err
 	}
 
@@ -193,7 +194,7 @@ func (r *Article) CreateArticle() error {
 }
 
 func (r *Article) addTags() {
-	if err := libs.Db.Model(r).Association("Tags").Clear(); err != nil {
+	if err := database.Singleton().Db.Model(r).Association("Tags").Clear(); err != nil {
 		color.Red(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
 	}
 	if len(r.TagNames) > 0 {
@@ -220,7 +221,7 @@ func (r *Article) addTags() {
 			tags = append(tags, tag)
 		}
 
-		err := libs.Db.Model(r).Association("Tags").Append(tags)
+		err := database.Singleton().Db.Model(r).Association("Tags").Append(tags)
 		if err != nil {
 			color.Red(fmt.Sprintf("标签添加错误:%+v\n tags:%+v", err, tags))
 		}

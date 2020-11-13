@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"github.com/snowlyg/blog/libs/database"
 	"strconv"
 	"time"
 
@@ -70,7 +71,7 @@ func DeleteUser(id uint) error {
 		return errors.New(fmt.Sprintf("不能删除管理员 : %s \n ", u.Username))
 	}
 
-	if err := libs.Db.Delete(u, id).Error; err != nil {
+	if err := database.Singleton().Db.Delete(u, id).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
 		return err
 	}
@@ -96,7 +97,7 @@ func GetAllUsers(s *Search) ([]*User, int64, error) {
 // CreateUser create user
 func (u *User) CreateUser() error {
 	u.Password = libs.HashPassword(u.Password)
-	if err := libs.Db.Create(u).Error; err != nil {
+	if err := database.Singleton().Db.Create(u).Error; err != nil {
 		return err
 	}
 
@@ -122,13 +123,13 @@ func UpdateUserById(id uint, nu *User) error {
 func addRoles(user *User) {
 	if len(user.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
-		if _, err := libs.Enforcer.DeleteRolesForUser(userId); err != nil {
+		if _, err := database.Singleton().Enforcer.DeleteRolesForUser(userId); err != nil {
 			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 		}
 
 		for _, roleId := range user.RoleIds {
 			roleId := strconv.FormatUint(uint64(roleId), 10)
-			if _, err := libs.Enforcer.AddRoleForUser(userId, roleId); err != nil {
+			if _, err := database.Singleton().Enforcer.AddRoleForUser(userId, roleId); err != nil {
 				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 			}
 		}

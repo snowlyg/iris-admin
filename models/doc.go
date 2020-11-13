@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"time"
 
 	"github.com/fatih/color"
@@ -43,7 +44,7 @@ func GetDoc(search *Search) (*Doc, error) {
 func GetDocCount() (int64, error) {
 	var count int64
 	t := NewDoc()
-	err := libs.Db.Model(t).Count(&count).Error
+	err := database.Singleton().Db.Model(t).Count(&count).Error
 	if err != nil {
 		return count, err
 	}
@@ -54,7 +55,7 @@ func GetDocCount() (int64, error) {
 func DeleteDocById(id uint) error {
 	t := NewDoc()
 	t.ID = id
-	if err := libs.Db.Delete(t).Error; err != nil {
+	if err := database.Singleton().Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteDocByIdError:%s \n", err))
 		return err
 	}
@@ -81,7 +82,7 @@ func GetAllDocs(s *Search) ([]*Doc, int64, error) {
 
 // CreateDoc create doc
 func (p *Doc) CreateDoc() error {
-	if err := libs.Db.Create(p).Error; err != nil {
+	if err := database.Singleton().Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil

@@ -1,5 +1,4 @@
 loglevel: info # 日志级别 info debug 等等
-bindata: false # 前后端分离 true,false
 debug: true # 调试模式
 https: false # https
 host: 127.0.0.1 # host 地址
@@ -9,8 +8,8 @@ limit:
   limit: 2 # 每秒允许请求 1 次
   burst: 10 # 最高允许并发
 admin: # 管理员账号信息，用于数据填充
-  user_name: username
-  role_name: rolename
+  username: username
+  rolename: rolename
   name: name
   password: password
 db:

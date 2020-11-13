@@ -2,6 +2,7 @@
 *.db
 *.exe
 *.log
+*.out
 .air.conf
 coverage.txt
 application.yml

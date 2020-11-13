@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
-	"net/http"
 	"strings"
 	"time"
 
@@ -14,15 +13,13 @@ import (
 )
 
 type Server struct {
-	App       *iris.Application
-	AssetFile http.FileSystem
+	App *iris.Application
 }
 
-func NewServer(assetFile http.FileSystem) *Server {
+func NewServer() *Server {
 	app := iris.Default()
 	return &Server{
-		App:       app,
-		AssetFile: assetFile,
+		App: app,
 	}
 }
 
@@ -49,19 +46,8 @@ func (s *Server) Serve() error {
 func (s *Server) NewApp() {
 	s.App.Logger().SetLevel(libs.Config.LogLevel)
 
-	if libs.Config.Bindata {
-		s.App.RegisterView(iris.HTML(s.AssetFile, ".html"))
-		s.App.HandleDir("/", s.AssetFile)
-	}
-
-	libs.InitDb()
-	libs.InitCasbin()
 	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
 	models.Migrate()
-
-	//iris.RegisterOnInterrupt(func() {
-	//	_ = libs.Db
-	//})
 
 	routes.App(s.App) //注册 app 路由
 }

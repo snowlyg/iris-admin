@@ -12,7 +12,6 @@ import (
 
 var Config = struct {
 	LogLevel string `default:"info" env:"Loglevel"`
-	Bindata  bool   `default:"true" env:"Bindata"`
 	Debug    bool   `default:"true" env:"Debug"`
 	HTTPS    bool   `default:"false" env:"HTTPS"`
 	Certpath string `default:"" env:"Certpath"`

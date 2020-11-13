@@ -31,7 +31,6 @@ func (c *Casbin) ServeHTTP(ctx iris.Context) {
 		return
 	}
 	if sess == nil {
-		ctx.StopExecution()
 		_, _ = ctx.JSON(libs.ApiResource(401, nil, ""))
 		ctx.StopExecution()
 		return

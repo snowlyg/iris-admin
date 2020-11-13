@@ -3,7 +3,6 @@
 package tests
 
 import (
-	"flag"
 	"github.com/bxcodec/faker/v3"
 	"github.com/iris-contrib/httpexpect/v2"
 	"github.com/kataras/iris/v12"
@@ -27,9 +26,9 @@ var (
 
 //单元测试基境
 func TestMain(m *testing.M) {
-	flag.Parse()
+
 	libs.InitConfig("")
-	s := web_server.NewServer(nil) // 初始化app
+	s := web_server.NewServer() // 初始化app
 	s.NewApp()
 	app = s.App
 	seeder.Run()

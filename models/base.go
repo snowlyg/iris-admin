@@ -6,6 +6,7 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"gorm.io/gorm"
 	"strconv"
 	"strings"
@@ -39,7 +40,7 @@ type Search struct {
 
 // GetAll 批量查询
 func GetAll(model interface{}, s *Search) *gorm.DB {
-	db := libs.Db.Model(model)
+	db := database.Singleton().Db.Model(model)
 	sort := "desc"
 	orderBy := "created_at"
 	if len(s.Sort) > 0 {
@@ -58,7 +59,7 @@ func GetAll(model interface{}, s *Search) *gorm.DB {
 
 // Found 查询条件
 func Found(s *Search) *gorm.DB {
-	return libs.Db.Scopes(Relation(s.Relations), FoundByWhere(s.Fields))
+	return database.Singleton().Db.Scopes(Relation(s.Relations), FoundByWhere(s.Fields))
 }
 
 // IsNotFound 判断是否是查询不存在错误
@@ -72,7 +73,7 @@ func IsNotFound(err error) bool {
 
 // Update 更新
 func Update(v, d interface{}, id uint) error {
-	if err := libs.Db.Model(v).Where("id = ?", id).Updates(d).Error; err != nil {
+	if err := database.Singleton().Db.Model(v).Where("id = ?", id).Updates(d).Error; err != nil {
 		color.Red(fmt.Sprintf("Update %+v to %+v\n", v, d))
 		return err
 	}
@@ -81,7 +82,7 @@ func Update(v, d interface{}, id uint) error {
 
 // GetRolesForUser 获取角色
 func GetRolesForUser(uid uint) []string {
-	uids, err := libs.Enforcer.GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
+	uids, err := database.Singleton().Enforcer.GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
 	if err != nil {
 		color.Red(fmt.Sprintf("GetRolesForUser 错误: %v", err))
 		return []string{}
@@ -102,7 +103,9 @@ func Relation(relates []*Relate) func(db *gorm.DB) *gorm.DB {
 						db = db.Preload(re.Value)
 					}
 				}
-				color.Yellow(fmt.Sprintf("Preoad %s", re))
+				if libs.Config.Debug {
+					color.Yellow(fmt.Sprintf("Preoad %s", re))
+				}
 			}
 		}
 		return db
@@ -165,9 +168,10 @@ func GetRelations(relation string, fs map[string]interface{}) []*Relate {
 			}
 			relates = append(relates, relate)
 		}
-
 	}
-	color.Yellow(fmt.Sprintf("relation :%s , relates:%+v", relation, relates))
+	if libs.Config.Debug {
+		color.Yellow(fmt.Sprintf("relation :%s , relates:%+v", relation, relates))
+	}
 	return relates
 }
 
@@ -232,12 +236,12 @@ func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 
 // GetPermissionsForUser 获取角色权限
 func GetPermissionsForUser(uid uint) [][]string {
-	return libs.Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
+	return database.Singleton().Enforcer.GetPermissionsForUser(strconv.FormatUint(uint64(uid), 10))
 }
 
 // DropTables 删除数据表
 func DropTables() {
-	_ = libs.Db.Migrator().DropTable(
+	_ = database.Singleton().Db.Migrator().DropTable(
 		libs.Config.DB.Prefix+"users",
 		libs.Config.DB.Prefix+"roles",
 		libs.Config.DB.Prefix+"permissions",
@@ -251,7 +255,7 @@ func DropTables() {
 
 // Migrate 迁移数据表
 func Migrate() {
-	err := libs.Db.AutoMigrate(
+	err := database.Singleton().Db.AutoMigrate(
 		&User{},
 		&Role{},
 		&Permission{},

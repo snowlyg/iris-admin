@@ -129,20 +129,9 @@ npm run build:prod  或者  npm run build:stage
 
 ```
 
-- 生成二进制前端文件
-```shell script
-
-# 安装 go-bindata 工具
-go get -u github.com/go-bindata/go-bindata/v3/go-bindata
-
-# 生成二进制文件 bindata.go
-go generate 
-
-```
-
 - 运行项目,
->推荐使用 air 或者 gowatch 等热编译工具,直接使用 `go run main.go bindata.go`  方法运行，可能会出现配置文件无法加载的问题
->如果想使用 `go run main.go bindata.go` 命令运行, 设置环境变量 `TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd`
+>推荐使用 air 或者 gowatch 等热编译工具,直接使用 `go run main.go `  方法运行，可能会出现配置文件无法加载的问题
+>如果想使用 `go run main.go` 命令运行, 设置环境变量 `TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd`
 
 ```shell script
 
@@ -160,7 +149,7 @@ air
 > 
 
 ```shell script
-# 设置环境变量 TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd
+# 设置环境变量 TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi
 # 否则无法加载配置文件
 
 # 所有测试

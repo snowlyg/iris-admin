@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"time"
 
 	"github.com/fatih/color"
@@ -41,7 +41,7 @@ func GetType(search *Search) (*Type, error) {
 func DeleteTypeById(id uint) error {
 	t := NewType()
 	t.ID = id
-	if err := libs.Db.Delete(t).Error; err != nil {
+	if err := database.Singleton().Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteTypeByIdError:%s \n", err))
 		return err
 	}
@@ -66,7 +66,7 @@ func GetAllTypes(s *Search) ([]*Type, int64, error) {
 
 // CreateType create type
 func (p *Type) CreateType() error {
-	if err := libs.Db.Create(p).Error; err != nil {
+	if err := database.Singleton().Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil

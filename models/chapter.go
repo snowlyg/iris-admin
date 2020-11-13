@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"net/http"
 	"strings"
 	"sync"
@@ -63,7 +64,7 @@ func GetChapterTableName() string {
 // GetDocReads 获取文章阅读量
 func GetDocReads() (*SumRes, error) {
 	var sumRes SumRes
-	err := libs.Db.Table(GetChapterTableName()).Select("sum(`read`) as total").Scan(&sumRes).Error
+	err := database.Singleton().Db.Table(GetChapterTableName()).Select("sum(`read`) as total").Scan(&sumRes).Error
 	if err != nil {
 		return &sumRes, err
 	}
@@ -92,7 +93,7 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 		p.Read++
 		ips = append(ips, publicIp)
 		p.Ips = strings.Join(ips, ",")
-		err := libs.Db.Save(p).Error
+		err := database.Singleton().Db.Save(p).Error
 		if err != nil {
 			return err
 		}
@@ -106,7 +107,7 @@ func (p *Chapter) LikeChapter() error {
 	defer p.Unlock()
 
 	p.Like++
-	err := libs.Db.Save(p).Error
+	err := database.Singleton().Db.Save(p).Error
 	if err != nil {
 		return err
 	}
@@ -117,7 +118,7 @@ func (p *Chapter) LikeChapter() error {
 func DeleteChapterById(id uint) error {
 	t := NewChapter()
 	t.ID = id
-	if err := libs.Db.Delete(t).Error; err != nil {
+	if err := database.Singleton().Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteChapterByIdError:%s \n", err))
 		return err
 	}
@@ -168,7 +169,7 @@ func (p *Chapter) getDoc() {
 // CreateChapter create chapter
 func (p *Chapter) CreateChapter() error {
 	p.getDoc()
-	if err := libs.Db.Create(p).Error; err != nil {
+	if err := database.Singleton().Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil
@@ -184,7 +185,7 @@ func UpdateChapterById(id uint, np *Chapter) error {
 }
 
 func Sort(sc *SortChapter) error {
-	err := libs.Db.Transaction(func(tx *gorm.DB) error {
+	err := database.Singleton().Db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&Chapter{}).Where("id = ?", sc.NewId).Update("sort", sc.NewSort).Error; err != nil {
 			return err
 		}

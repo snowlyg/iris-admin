@@ -5,6 +5,7 @@ import (
 	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/blog/controllers"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/database"
 	"github.com/snowlyg/blog/middleware"
 	"path/filepath"
 	"time"
@@ -17,11 +18,6 @@ func App(api *iris.Application) {
 	app := api.Party("/").AllowMethods(iris.MethodOptions)
 	{
 		app.HandleDir("/uploads", iris.Dir(filepath.Join(libs.CWD(), "uploads")))
-		if libs.Config.Bindata {
-			app.Get("/", func(ctx iris.Context) { // 首页模块
-				_ = ctx.View("index")
-			})
-		}
 
 		v1 := app.Party("/v1")
 		{
@@ -56,7 +52,7 @@ func App(api *iris.Application) {
 			})
 			v1.Post("/admin/login", controllers.UserLogin)
 			v1.PartyFunc("/admin", func(admin iris.Party) {
-				casbinMiddleware := middleware.New(libs.Enforcer)                    //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
+				casbinMiddleware := middleware.New(database.Singleton().Enforcer)    //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
 				admin.Use(middleware.JwtHandler().Serve, casbinMiddleware.ServeHTTP) //登录验证
 				admin.Post("/logout", controllers.UserLogout).Name = "退出"
 				admin.Get("/expire", controllers.UserExpire).Name = "刷新 token"

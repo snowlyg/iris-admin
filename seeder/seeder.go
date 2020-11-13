@@ -256,8 +256,8 @@ func CreateAdminUser() {
 
 /*
 	AutoMigrates 重置数据表
-	libs.Db.DropTableIfExists 删除存在数据表
-	libs.Db.AutoMigrate 重建数据表
+	database.Singleton().Db.DropTableIfExists 删除存在数据表
+	database.Singleton().Db.AutoMigrate 重建数据表
 */
 func AutoMigrates() {
 	models.DropTables()

@@ -1,4 +1,3 @@
-//go:generate go-bindata -prefix "./views" -fs  ./views/...
 package main
 
 import (
@@ -53,7 +52,7 @@ version: %s`, Version))
 
 	libs.InitConfig(*ConfigPath)
 
-	irisServer := web_server.NewServer(AssetFile())
+	irisServer := web_server.NewServer()
 	if irisServer == nil {
 		panic("Http 初始化失败")
 	}

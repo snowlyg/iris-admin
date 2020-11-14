@@ -16,13 +16,9 @@
 
 ------
 
-
-
 ###### `Iris-go` 学习交流 QQ 群 ：`676717248`<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
 
 ###### 微信交流群，请加微信号： snowlyg_china
-
-
 
 ------
 
@@ -40,8 +36,6 @@
 
 ------
 
-
-
 #### 项目介绍
 
 - `iris-go` 框架后台接口项目
@@ -50,13 +44,12 @@
 - `cors` 跨域认证
 - 数据支持 `mysql`，`sqlite3` 配置; `sqlite3` 需要下载 `gcc`。  [gcc 下载地址](http://mingw-w64.org/doku.php/download)
 - 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
+- 使用了 [https://github.com/snowlyg/easygorm](https://github.com/snowlyg/easygorm) 
 - 使用 `casbin` 做权限控制, `server/config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
 
 
 
 ------
-
-
 
 #### Docker 方式部署
 

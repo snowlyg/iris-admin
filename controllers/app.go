@@ -5,6 +5,7 @@ import (
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/validates"
 )
@@ -25,6 +26,7 @@ import (
  */
 func UserLogin(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
+
 	aul := new(validates.LoginRequest)
 
 	if err := ctx.ReadJSON(aul); err != nil {
@@ -45,8 +47,8 @@ func UserLogin(ctx iris.Context) {
 
 	ctx.Application().Logger().Infof("%s 登录系统", aul.Username)
 
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "username",
 				Condition: "=",

@@ -3,6 +3,7 @@ package seeder
 import (
 	"fmt"
 	"github.com/fatih/color"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"math/rand"
 	"path/filepath"
 	"time"
@@ -79,8 +80,8 @@ func CreateConfigs() {
 		color.Yellow(fmt.Sprintf("系统设置填充：%+v\n", configs))
 	}
 	for _, m := range configs {
-		s := &models.Search{
-			Fields: []*models.Filed{
+		s := &easygorm.Search{
+			Fields: []*easygorm.Field{
 				{
 					Key:       "name",
 					Condition: "=",
@@ -110,8 +111,8 @@ func CreatePerms() {
 		fmt.Println(fmt.Sprintf("填充权限：%+v\n", Seeds))
 	}
 	for _, m := range Seeds.Perms {
-		s := &models.Search{
-			Fields: []*models.Filed{
+		s := &easygorm.Search{
+			Fields: []*easygorm.Field{
 				{
 					Key:       "name",
 					Condition: "=",
@@ -143,8 +144,8 @@ func CreatePerms() {
 
 // CreateAdminRole 新建管理角色
 func CreateAdminRole() {
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "name",
 				Condition: "=",
@@ -154,7 +155,7 @@ func CreateAdminRole() {
 	}
 	role, err := models.GetRole(s)
 	var permIds []uint
-	ss := &models.Search{
+	ss := &easygorm.Search{
 		Limit:  -1,
 		Offset: -1,
 	}
@@ -197,8 +198,8 @@ func CreateAdminRole() {
 
 // CreateAdminUser 新建管理员
 func CreateAdminUser() {
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "username",
 				Condition: "=",
@@ -212,7 +213,7 @@ func CreateAdminUser() {
 	}
 
 	var roleIds []uint
-	ss := &models.Search{
+	ss := &easygorm.Search{
 		Limit:  -1,
 		Offset: -1,
 	}
@@ -256,8 +257,8 @@ func CreateAdminUser() {
 
 /*
 	AutoMigrates 重置数据表
-	database.Singleton().Db.DropTableIfExists 删除存在数据表
-	database.Singleton().Db.AutoMigrate 重建数据表
+	easygorm.Egm.Db.DropTableIfExists 删除存在数据表
+	easygorm.Egm.Db.AutoMigrate 重建数据表
 */
 func AutoMigrates() {
 	models.DropTables()

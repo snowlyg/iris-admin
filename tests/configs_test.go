@@ -13,7 +13,7 @@ import (
 )
 
 func TestConfigs(t *testing.T) {
-	getMore(t, "configs", iris.StatusOK, 200, "操作成功")
+	getAll(t, "configs", iris.StatusOK, nil, 2)
 }
 
 func TestConfigCreate(t *testing.T) {

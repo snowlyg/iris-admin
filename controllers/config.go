@@ -5,12 +5,13 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/validates"
 )
 
 /**
-* @api {get} /admin/configs/:key 根据id获取权限信息
+* @api {get} /admin/configs/:key 根据key获取权限信息
 * @apiName 根据id获取权限信息
 * @apiGroup Configs
 * @apiVersion 1.0.0
@@ -25,8 +26,8 @@ func GetConfig(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	key := ctx.Params().GetString("key")
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "name",
 				Condition: "=",

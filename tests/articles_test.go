@@ -13,7 +13,54 @@ import (
 )
 
 func TestArticles(t *testing.T) {
-	getMore(t, "article", iris.StatusOK, 200, "操作成功")
+	_, err := CreateArticle("")
+	if err != nil {
+		color.Red("TestArticles %+v", err)
+		return
+	}
+	tr2, err := CreateArticle("")
+	if err != nil {
+		color.Red("TestArticles %+v", err)
+		return
+	}
+
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	more := &More{tr2.ID, 1, 1, 2}
+	getMore(t, "article", iris.StatusOK, obj, more)
+}
+
+func TestArticlesWithSortByAsc(t *testing.T) {
+	_, err := CreateArticle("")
+	if err != nil {
+		color.Red("TestArticles %+v", err)
+		return
+	}
+	_, err = CreateArticle("")
+	if err != nil {
+		color.Red("TestArticles %+v", err)
+		return
+	}
+
+	obj := map[string]interface{}{"limit": 1, "page": 1, "sort": "asc"}
+	more := &More{1, 1, 1, 4}
+	getMore(t, "article", iris.StatusOK, obj, more)
+}
+
+func TestArticlesWithNoPagination(t *testing.T) {
+	_, err := CreateArticle("")
+	if err != nil {
+		color.Red("TestArticles %+v", err)
+		return
+	}
+	_, err = CreateArticle("")
+	if err != nil {
+		color.Red("TestArticles %+v", err)
+		return
+	}
+
+	obj := map[string]interface{}{"limit": -1, "page": -1, "sort": "asc"}
+	more := &More{1, -1, 6, 6}
+	getMore(t, "article", iris.StatusOK, obj, more)
 }
 
 func TestArticleCreate(t *testing.T) {

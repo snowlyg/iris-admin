@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/libs/database"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"time"
 
 	"github.com/fatih/color"
@@ -26,9 +26,9 @@ func NewTag() *Tag {
 }
 
 // GetTag get tag
-func GetTag(s *Search) (*Tag, error) {
+func GetTag(s *easygorm.Search) (*Tag, error) {
 	t := NewTag()
-	err := Found(s).First(t).Error
+	err := easygorm.Found(s).First(t).Error
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -42,7 +42,7 @@ func GetTag(s *Search) (*Tag, error) {
 func DeleteTagById(id uint) error {
 	t := NewTag()
 	t.ID = id
-	if err := database.Singleton().Db.Delete(t).Error; err != nil {
+	if err := easygorm.Egm.Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteTagByIdError:%s \n", err))
 		return err
 	}
@@ -50,16 +50,14 @@ func DeleteTagById(id uint) error {
 }
 
 // GetAllTags get all tags
-func GetAllTags(s *Search) ([]*Tag, int64, error) {
+func GetAllTags(s *easygorm.Search) ([]*Tag, int64, error) {
 	var tags []*Tag
-	var count int64
-	all := GetAll(&Tag{}, s)
-	if err := all.Count(&count).Error; err != nil {
-		return nil, count, err
+	db, count, err := easygorm.Paginate(&Tag{}, s)
+	if err != nil {
+		return tags, count, err
 	}
-	all = all.Scopes(Paginate(s.Offset, s.Limit), Relation(s.Relations))
-	if err := all.Find(&tags).Error; err != nil {
-		return nil, count, err
+	if err := db.Find(&tags).Error; err != nil {
+		return tags, count, err
 	}
 
 	return tags, count, nil
@@ -67,7 +65,7 @@ func GetAllTags(s *Search) ([]*Tag, int64, error) {
 
 // CreateTag create tag
 func (p *Tag) CreateTag() error {
-	if err := database.Singleton().Db.Create(p).Error; err != nil {
+	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil
@@ -75,7 +73,7 @@ func (p *Tag) CreateTag() error {
 
 // UpdateTagById update tag by id
 func UpdateTagById(id uint, pj *Tag) error {
-	if err := Update(&Tag{}, pj, id); err != nil {
+	if err := easygorm.Update(&Tag{}, pj, id); err != nil {
 		return err
 	}
 	return nil

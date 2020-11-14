@@ -13,7 +13,25 @@ import (
 )
 
 func TestTags(t *testing.T) {
-	getMore(t, "tags", iris.StatusOK, 200, "操作成功")
+	tr, err := CreateTag()
+	if err != nil {
+		color.Red("TestTags %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	more := &More{tr.ID, 1, 1, 1}
+	getMore(t, "tags", iris.StatusOK, obj, more)
+}
+
+func TestTagsNoPagination(t *testing.T) {
+	tr, err := CreateTag()
+	if err != nil {
+		color.Red("TestTagsNoPagination %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": -1, "page": -1}
+	more := &More{tr.ID, -1, 2, 2}
+	getMore(t, "tags", iris.StatusOK, obj, more)
 }
 
 func TestTagCreate(t *testing.T) {

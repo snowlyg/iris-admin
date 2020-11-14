@@ -2,8 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/database"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"time"
 
 	"github.com/fatih/color"
@@ -25,15 +24,10 @@ func NewDoc() *Doc {
 	}
 }
 
-// GetDocTableName
-func GetDocTableName() string {
-	return fmt.Sprintf("%s%s", libs.Config.DB.Prefix, "docs")
-}
-
 // GetDoc get doc
-func GetDoc(search *Search) (*Doc, error) {
+func GetDoc(search *easygorm.Search) (*Doc, error) {
 	t := NewDoc()
-	err := Found(search).First(t).Error
+	err := easygorm.Found(search).First(t).Error
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -44,7 +38,7 @@ func GetDoc(search *Search) (*Doc, error) {
 func GetDocCount() (int64, error) {
 	var count int64
 	t := NewDoc()
-	err := database.Singleton().Db.Model(t).Count(&count).Error
+	err := easygorm.Egm.Db.Model(t).Count(&count).Error
 	if err != nil {
 		return count, err
 	}
@@ -55,7 +49,7 @@ func GetDocCount() (int64, error) {
 func DeleteDocById(id uint) error {
 	t := NewDoc()
 	t.ID = id
-	if err := database.Singleton().Db.Delete(t).Error; err != nil {
+	if err := easygorm.Egm.Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteDocByIdError:%s \n", err))
 		return err
 	}
@@ -63,18 +57,15 @@ func DeleteDocById(id uint) error {
 }
 
 // GetAllDocs get all docs
-func GetAllDocs(s *Search) ([]*Doc, int64, error) {
+func GetAllDocs(s *easygorm.Search) ([]*Doc, int64, error) {
 	var docs []*Doc
-	var count int64
-	all := GetAll(&Doc{}, s)
-	if err := all.Count(&count).Error; err != nil {
+	db, count, err := easygorm.Paginate(&Doc{}, s)
+	if err != nil {
 		return nil, count, err
 	}
 
-	all = all.Scopes(Relation(s.Relations))
-
-	if err := all.Find(&docs).Error; err != nil {
-		return nil, count, err
+	if err := db.Find(&docs).Error; err != nil {
+		return docs, count, err
 	}
 
 	return docs, count, nil
@@ -82,7 +73,7 @@ func GetAllDocs(s *Search) ([]*Doc, int64, error) {
 
 // CreateDoc create doc
 func (p *Doc) CreateDoc() error {
-	if err := database.Singleton().Db.Create(p).Error; err != nil {
+	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil
@@ -90,7 +81,7 @@ func (p *Doc) CreateDoc() error {
 
 // UpdateDocById update doc by id
 func UpdateDocById(id uint, np *Doc) error {
-	if err := Update(&Doc{}, np, id); err != nil {
+	if err := easygorm.Update(&Doc{}, np, id); err != nil {
 		return err
 	}
 	return nil

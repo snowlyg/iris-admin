@@ -13,7 +13,15 @@ import (
 )
 
 func TestPermissions(t *testing.T) {
-	getMore(t, "permissions", iris.StatusOK, 200, "操作成功")
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	more := &More{53, 1, 1, 53}
+	getMore(t, "permissions", iris.StatusOK, obj, more)
+}
+
+func TestPermissionsNoPagination(t *testing.T) {
+	obj := map[string]interface{}{"limit": -1, "page": -1}
+	more := &More{53, -1, 53, 53}
+	getMore(t, "permissions", iris.StatusOK, obj, more)
 }
 
 func TestPermissionCreate(t *testing.T) {

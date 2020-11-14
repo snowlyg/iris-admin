@@ -13,7 +13,25 @@ import (
 )
 
 func TestTypes(t *testing.T) {
-	getMore(t, "types", iris.StatusOK, 200, "操作成功")
+	tr, err := CreateType()
+	if err != nil {
+		color.Red("TestTypes %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	more := &More{tr.ID, 1, 1, 1}
+	getMore(t, "types", iris.StatusOK, obj, more)
+}
+
+func TestTypesNoPagination(t *testing.T) {
+	tr, err := CreateType()
+	if err != nil {
+		color.Red("TestTypes %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": -1, "page": -1}
+	more := &More{tr.ID, -1, 2, 2}
+	getMore(t, "types", iris.StatusOK, obj, more)
 }
 
 func TestTypeCreate(t *testing.T) {

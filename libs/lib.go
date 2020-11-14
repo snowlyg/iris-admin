@@ -49,10 +49,6 @@ func CWD() string {
 	return filepath.Dir(path)
 }
 
-func WwwPath() string {
-	return "./www/dist"
-}
-
 // 工作目录
 var workInDirLock sync.Mutex
 
@@ -60,7 +56,7 @@ func WorkInDir(f func(), dir string) {
 	wd, _ := os.Getwd()
 	workInDirLock.Lock()
 	defer workInDirLock.Unlock()
-	os.Chdir(dir)
+	_ = os.Chdir(dir)
 	defer os.Chdir(wd)
 	f()
 }
@@ -125,7 +121,7 @@ func DeepCopy(dst, src interface{}) error {
 	return gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(dst)
 }
 
-func IsPortInUse(port int) bool {
+func IsPortInUse(port int64) bool {
 	if conn, err := net.DialTimeout("tcp", net.JoinHostPort("", fmt.Sprintf("%d", port)), 3*time.Second); err == nil {
 		conn.Close()
 		return true

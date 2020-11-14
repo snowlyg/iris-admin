@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/snowlyg/blog/libs/easygorm"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -25,23 +26,16 @@ import (
 * @apiPermission
  */
 func GetPublishedArticle(ctx iris.Context) {
+
 	ctx.StatusCode(iris.StatusOK)
-	id, _ := ctx.Params().GetUint("id")
-	relation := ctx.FormValue("relation")
-	s := &models.Search{
-		Fields: []*models.Filed{
-			{
-				Key:       "id",
-				Condition: "=",
-				Value:     id,
-			}, {
-				Key:       "status",
-				Condition: "=",
-				Value:     "published",
-			},
-		},
-		Relations: models.GetRelations(relation, nil),
-	}
+	id := ctx.Params().GetString("id")
+
+	s := GetCommonSearch(ctx)
+	s.Fields = easygorm.GetFields(map[string]string{
+		"id":     id,
+		"status": "published",
+	})
+
 	article, err := models.GetArticle(s)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
@@ -72,22 +66,14 @@ func GetPublishedArticle(ctx iris.Context) {
  */
 func GetPublishedArticleLike(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	id, _ := ctx.Params().GetUint("id")
-	relation := ctx.FormValue("relation")
-	s := &models.Search{
-		Fields: []*models.Filed{
-			{
-				Key:       "id",
-				Condition: "=",
-				Value:     id,
-			}, {
-				Key:       "status",
-				Condition: "=",
-				Value:     "published",
-			},
-		},
-		Relations: models.GetRelations(relation, nil),
-	}
+	id := ctx.Params().GetString("id")
+
+	s := GetCommonSearch(ctx)
+	s.Fields = easygorm.GetFields(map[string]string{
+		"id":     id,
+		"status": "published",
+	})
+
 	article, err := models.GetArticle(s)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
@@ -120,15 +106,15 @@ func GetArticle(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 	relation := ctx.FormValue("relation")
-	search := &models.Search{
-		Fields: []*models.Filed{
+	search := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Value:     id,
 				Condition: "=",
 			},
 		},
-		Relations: models.GetRelations(relation, nil),
+		Relations: easygorm.GetRelations(relation, nil),
 	}
 	article, err := models.GetArticle(search)
 	if err != nil {
@@ -278,21 +264,15 @@ func GetAllPublishedArticles(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
-	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
+	typeId := ctx.FormValue("typeId")
 	title := ctx.FormValue("title")
+
 	s := GetCommonListSearch(ctx)
-	s.Fields = []*models.Filed{
-		{
-			Key:       "type_id",
-			Condition: "=",
-			Value:     typeId,
-		}, {
-			Key:       "status",
-			Condition: "=",
-			Value:     "published",
-		},
-	}
-	s.Fields = append(s.Fields, models.GetSearche("title", title))
+	s.Fields = easygorm.GetFields(map[string]string{
+		"title":   title,
+		"type_id": typeId,
+		"status":  "published",
+	})
 
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {
@@ -320,15 +300,12 @@ func GetAllArticles(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
-	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
+	typeId := ctx.FormValue("typeId")
+
 	s := GetCommonListSearch(ctx)
-	s.Fields = []*models.Filed{
-		{
-			Key:       "type_id",
-			Condition: "=",
-			Value:     typeId,
-		},
-	}
+	s.Fields = easygorm.GetFields(map[string]string{
+		"type_id": typeId,
+	})
 
 	articles, count, err := models.GetAllArticles(s, tagId)
 	if err != nil {

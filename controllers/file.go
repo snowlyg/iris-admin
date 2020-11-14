@@ -5,6 +5,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"github.com/snowlyg/blog/models"
 	"path/filepath"
 	"strings"
@@ -49,8 +50,8 @@ func UploadFile(ctx iris.Context) {
 	}
 
 	imageHost := fmt.Sprintf("http://%s:%d", ctx.Domain(), libs.Config.Port)
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "name",
 				Condition: "=",

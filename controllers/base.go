@@ -3,21 +3,33 @@ package controllers
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/models"
+	"github.com/snowlyg/blog/libs/easygorm"
 )
 
-func GetCommonListSearch(ctx iris.Context) *models.Search {
+func GetCommonListSearch(ctx iris.Context) *easygorm.Search {
 	offset := libs.ParseInt(ctx.FormValue("page"), 1)
 	limit := libs.ParseInt(ctx.FormValue("limit"), 20)
 	orderBy := ctx.FormValue("orderBy")
 	sort := ctx.FormValue("sort")
-
 	relation := ctx.FormValue("relation")
-	return &models.Search{
+
+	return &easygorm.Search{
 		Sort:      sort,
 		Offset:    offset,
 		Limit:     limit,
 		OrderBy:   orderBy,
-		Relations: models.GetRelations(relation, nil),
+		Relations: easygorm.GetRelations(relation, nil),
+	}
+}
+
+func GetCommonSearch(ctx iris.Context) *easygorm.Search {
+	orderBy := ctx.FormValue("orderBy")
+	sort := ctx.FormValue("sort")
+	relation := ctx.FormValue("relation")
+
+	return &easygorm.Search{
+		Sort:      sort,
+		OrderBy:   orderBy,
+		Relations: easygorm.GetRelations(relation, nil),
 	}
 }

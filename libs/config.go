@@ -16,7 +16,7 @@ var Config = struct {
 	HTTPS    bool   `default:"false" env:"HTTPS"`
 	Certpath string `default:"" env:"Certpath"`
 	Certkey  string `default:"" env:"Certkey"`
-	Port     int    `default:"8085" env:"PORT"`
+	Port     int64  `default:"8085" env:"PORT"`
 	Host     string `default:"127.0.0.1" env:"Host"`
 	Admin    struct {
 		UserName        string `env:"AdminUserName" default:"username"`
@@ -27,10 +27,10 @@ var Config = struct {
 	}
 	DB struct {
 		Prefix   string `env:"DBPrefix" default:"iris_"`
-		Name     string `env:"DBName" default:"goirisapi"`
+		Name     string `env:"DBName" default:"blog"`
 		Adapter  string `env:"DBAdapter" default:"mysql"`
 		Host     string `env:"DBHost" default:"localhost"`
-		Port     string `env:"DBPort" default:"3306"`
+		Port     int64  `env:"DBPort" default:"3306"`
 		User     string `env:"DBUser" default:"root"`
 		Password string `env:"DBPassword" default:""`
 	}

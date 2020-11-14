@@ -3,15 +3,20 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/snowlyg/blog/libs/easygorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"log"
 	"os"
+	"path/filepath"
 
+	"github.com/snowlyg/blog/app"
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/blog/seeder"
-	"github.com/snowlyg/blog/web_server"
 )
 
 var ConfigPath = flag.String("c", "", "配置路径")
+var CasbinConfigPath = flag.String("cmp", "", "casbin 模型规则配置文件路径")
 var PrintVersion = flag.Bool("v", false, "打印版本号")
 var SeederData = flag.Bool("s", false, "填充基础数据")
 var SyncPerms = flag.Bool("p", true, "同步权限")
@@ -25,6 +30,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "\n")
 		fmt.Fprintf(os.Stderr, "  -c <path>\n")
 		fmt.Fprintf(os.Stderr, "    设置配置文件路径\n")
+		fmt.Fprintf(os.Stderr, "  -cmp <path>\n")
+		fmt.Fprintf(os.Stderr, "    设置 casbin 模型规则配置文件路径\n")
 		fmt.Fprintf(os.Stderr, "  -v <true or false> 默认为: false\n")
 		fmt.Fprintf(os.Stderr, "    打印版本号\n")
 		fmt.Fprintf(os.Stderr, "  -s <true or false> 默认为: false\n")
@@ -37,6 +44,7 @@ func main() {
 		//flag.PrintDefaults()
 	}
 
+	// 解析参数
 	flag.Parse()
 
 	log.Println(fmt.Sprintf(` 
@@ -52,11 +60,32 @@ version: %s`, Version))
 
 	libs.InitConfig(*ConfigPath)
 
-	irisServer := web_server.NewServer()
+	// 初始化 easygorm 配置
+	casbinModelPath := filepath.Join(libs.CWD(), "rbac_model.conf")
+	if *CasbinConfigPath != "" {
+		casbinModelPath = *CasbinConfigPath
+	}
+	easygorm.Init(&easygorm.Config{
+		GormConfig: &gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				TablePrefix:   libs.Config.DB.Prefix, // 表名前缀，`User` 的表名应该是 `t_users`
+				SingularTable: false,                 // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
+			},
+		},
+		Adapter:         libs.Config.DB.Adapter,  // 类型
+		Name:            libs.Config.DB.Name,     // 数据库名称
+		Username:        libs.Config.DB.User,     // 用户名
+		Pwd:             libs.Config.DB.Password, // 密码
+		Host:            libs.Config.DB.Host,     // 地址
+		Port:            libs.Config.DB.Port,     // 端口
+		CasbinModelPath: casbinModelPath,         // casbin 模型规则路径
+		Debug:           libs.Config.Debug,
+	})
+
+	irisServer := app.NewServer()
 	if irisServer == nil {
 		panic("Http 初始化失败")
 	}
-	irisServer.NewApp()
 
 	if *PrintVersion {
 		fmt.Println(fmt.Sprintf("版本号：%s", Version))
@@ -88,10 +117,13 @@ version: %s`, Version))
 	}
 
 	if libs.IsPortInUse(libs.Config.Port) {
-		panic(fmt.Sprintf("端口 %d 已被使用", libs.Config.Port))
+		if !irisServer.Status {
+			panic(fmt.Sprintf("端口 %d 已被使用", libs.Config.Port))
+		}
+		irisServer.Stop() // 停止
 	}
 
-	err := irisServer.Serve()
+	err := irisServer.Start()
 	if err != nil {
 		panic(err)
 	}

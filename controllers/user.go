@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"strconv"
 	"time"
 
@@ -29,8 +30,8 @@ func GetProfile(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
 	id := uint(libs.ParseInt(sess.UserId, 10))
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Condition: "=",
@@ -43,7 +44,7 @@ func GetProfile(ctx iris.Context) {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
-	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "请求成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 }
 
 /**
@@ -60,8 +61,8 @@ func GetProfile(ctx iris.Context) {
  */
 func GetAdminInfo(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "username",
 				Condition: "=",
@@ -74,7 +75,7 @@ func GetAdminInfo(ctx iris.Context) {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
-	_, _ = ctx.JSON(libs.ApiResource(200, map[string]string{"avatar": user.Avatar}, "请求成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]string{"avatar": user.Avatar}, "操作成功"))
 }
 
 /**
@@ -119,7 +120,7 @@ func ChangeAvatar(ctx iris.Context) {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
-	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "请求成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 }
 
 /**
@@ -137,8 +138,8 @@ func ChangeAvatar(ctx iris.Context) {
 func GetUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Condition: "=",
@@ -290,7 +291,7 @@ func GetAllUsers(ctx iris.Context) {
 	s := GetCommonListSearch(ctx)
 	name := ctx.FormValue("name")
 
-	s.Fields = append(s.Fields, models.GetSearche("name", name))
+	s.Fields = append(s.Fields, easygorm.GetField("name", name))
 	users, count, err := models.GetAllUsers(s)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
@@ -316,14 +317,14 @@ func userTransform(user *models.User) *transformer.User {
 	g := gf.NewTransform(u, user, time.RFC3339)
 	_ = g.Transformer()
 
-	roleIds := models.GetRolesForUser(user.ID)
+	roleIds := easygorm.GetRolesForUser(user.ID)
 	var ris []int
 	for _, roleId := range roleIds {
 		ri, _ := strconv.Atoi(roleId)
 		ris = append(ris, ri)
 	}
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Condition: "in",

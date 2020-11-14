@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -28,8 +29,8 @@ func GetTag(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Condition: "=",

@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/libs/database"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"time"
 
 	"github.com/fatih/color"
@@ -27,9 +27,9 @@ func NewPermission() *Permission {
 }
 
 // GetPermission get permission
-func GetPermission(search *Search) (*Permission, error) {
+func GetPermission(search *easygorm.Search) (*Permission, error) {
 	t := NewPermission()
-	err := Found(search).First(t).Error
+	err := easygorm.First(t, search)
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -40,7 +40,7 @@ func GetPermission(search *Search) (*Permission, error) {
 func DeletePermissionById(id uint) error {
 	p := NewPermission()
 	p.ID = id
-	if err := database.Singleton().Db.Delete(p).Error; err != nil {
+	if err := easygorm.Egm.Db.Delete(p).Error; err != nil {
 		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
 		return err
 	}
@@ -48,21 +48,15 @@ func DeletePermissionById(id uint) error {
 }
 
 // GetAllPermissions get all permissions
-func GetAllPermissions(s *Search) ([]*Permission, int64, error) {
+func GetAllPermissions(s *easygorm.Search) ([]*Permission, int64, error) {
 	var permissions []*Permission
-	var count int64
-	all := GetAll(&Permission{}, s)
-
-	all = all.Scopes(Relation(s.Relations))
-
-	if err := all.Count(&count).Error; err != nil {
+	db, count, err := easygorm.Paginate(&Permission{}, s)
+	if err != nil {
 		return nil, count, err
 	}
 
-	all = all.Scopes(Paginate(s.Offset, s.Limit))
-
-	if err := all.Find(&permissions).Error; err != nil {
-		return nil, count, err
+	if err := db.Find(&permissions).Error; err != nil {
+		return permissions, count, err
 	}
 
 	return permissions, count, nil
@@ -70,7 +64,7 @@ func GetAllPermissions(s *Search) ([]*Permission, int64, error) {
 
 // CreatePermission create permission
 func (p *Permission) CreatePermission() error {
-	if err := database.Singleton().Db.Create(p).Error; err != nil {
+	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil
@@ -78,7 +72,7 @@ func (p *Permission) CreatePermission() error {
 
 // UpdatePermission update permission
 func UpdatePermission(id uint, pj *Permission) error {
-	if err := Update(&Permission{}, pj, id); err != nil {
+	if err := easygorm.Update(&Permission{}, pj, id); err != nil {
 		return err
 	}
 	return nil

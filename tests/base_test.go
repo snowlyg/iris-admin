@@ -7,12 +7,16 @@ import (
 	"github.com/iris-contrib/httpexpect/v2"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
+	"github.com/snowlyg/blog/app"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/seeder"
 	"github.com/snowlyg/blog/tests/mock"
-	"github.com/snowlyg/blog/web_server"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"net/http"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -20,17 +24,28 @@ import (
 )
 
 var (
-	app   *iris.Application
-	token string
+	application *iris.Application
+	token       string
 )
 
-//单元测试基境
+//基境
 func TestMain(m *testing.M) {
 
 	libs.InitConfig("")
-	s := web_server.NewServer() // 初始化app
-	s.NewApp()
-	app = s.App
+	easygorm.Init(&easygorm.Config{
+		GormConfig: &gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				TablePrefix:   "iris_", // 表名前缀，`User` 的表名应该是 `t_users`
+				SingularTable: false,   // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
+			},
+		},
+		Adapter:         "sqlite3", // 类型
+		Name:            "blog_test",
+		CasbinModelPath: filepath.Join(libs.CWD(), "rbac_model.conf"), // casbin 模型规则路径
+		Debug:           true,
+	})
+	s := app.NewServer() // 初始化app
+	application = s.App
 	seeder.Run()
 
 	exitCode := m.Run()
@@ -40,13 +55,13 @@ func TestMain(m *testing.M) {
 }
 
 func getHttpexpect(t *testing.T) *httpexpect.Expect {
-	return httptest.New(t, app, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/admin/"})
+	return httptest.New(t, application, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/admin/"})
 }
 func getPublicHttpexpect(t *testing.T) *httpexpect.Expect {
-	return httptest.New(t, app, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/"})
+	return httptest.New(t, application, httptest.Configuration{Debug: true, URL: "http://app.irisadminapi.com/v1/"})
 }
 
-// 单元测试 login 方法
+//  login 方法
 func login(t *testing.T, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.POST("login").WithJSON(Object).
@@ -56,7 +71,7 @@ func login(t *testing.T, Object interface{}, StatusCode int, Code int, Msg strin
 	return
 }
 
-// 单元测试 create 方法
+//  create 方法
 func create(t *testing.T, url string, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	ob := e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
@@ -67,7 +82,7 @@ func create(t *testing.T, url string, Object interface{}, StatusCode int, Code i
 	return
 }
 
-// 单元测试 update 方法
+//  update 方法
 func update(t *testing.T, url string, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
@@ -78,7 +93,7 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Code i
 	return
 }
 
-// 单元测试 getOne 方法
+//  getOne 方法
 func getOne(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
@@ -87,7 +102,7 @@ func getOne(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 	return
 }
 
-// 单元测试 getOne 方法
+//  getOne 方法
 func getOnePublic(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getPublicHttpexpect(t)
 	e.GET(url).
@@ -96,8 +111,8 @@ func getOnePublic(t *testing.T, url string, StatusCode int, Code int, Msg string
 	return
 }
 
-// 单元测试 getOnAuth 方法
-func getOnAuth(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
+//  getNoAuth 方法
+func getNoAuth(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.GET(url).
 		Expect().Status(StatusCode).
@@ -105,7 +120,7 @@ func getOnAuth(t *testing.T, url string, StatusCode int, Code int, Msg string) (
 	return
 }
 
-// 单元测试 bImport 方法
+//  bImport 方法
 func bImport(t *testing.T, url string, StatusCode int, Code int, Msg string, _ map[string]interface{}) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
@@ -117,17 +132,71 @@ func bImport(t *testing.T, url string, StatusCode int, Code int, Msg string, _ m
 	return
 }
 
-// 单元测试 getMore 方法
-func getMore(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
-	e = getHttpexpect(t)
-	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
-		Expect().Status(StatusCode).
-		JSON().Object().Values().Contains(Code, Msg)
-
-	return
+type More struct {
+	Id    uint
+	Limit int
+	Page  int
+	Total int64
 }
 
-// 单元测试 getPublicMore 方法
+//  getNoReturn 方法
+func getNoReturn(t *testing.T, url string, StatusCode int, obj interface{}) {
+	e := getHttpexpect(t)
+	o := e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+		WithQueryObject(obj).
+		Expect().Status(StatusCode).
+		JSON().Object()
+
+	o.Value("code").Equal(200)
+	o.Value("message").Equal("")
+	o.Value("data").Null()
+}
+
+//  getMore 方法
+func getMore(t *testing.T, url string, StatusCode int, obj interface{}, m *More) {
+	e := getHttpexpect(t)
+
+	o := e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+		WithQueryObject(obj).
+		Expect().Status(StatusCode).
+		JSON().Object()
+
+	o.Value("code").Equal(200)
+	o.Value("message").Equal("操作成功")
+	items := o.Value("data").Object().Value("items").Array()
+	items.Length().Equal(m.Page)
+	items.First().Object().Value("id").Equal(m.Id)
+	o.Value("data").Object().Value("limit").Equal(m.Limit)
+	o.Value("data").Object().Value("total").Equal(m.Total)
+}
+
+//  getAll 方法
+func getAll(t *testing.T, url string, StatusCode int, obj interface{}, total int64) {
+	e := getHttpexpect(t)
+	o := e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+		WithQueryObject(obj).
+		Expect().Status(StatusCode).
+		JSON().Object()
+
+	o.Value("code").Equal(200)
+	o.Value("message").Equal("操作成功")
+	o.Value("data").Array().Length().Equal(total)
+}
+
+//  getData 方法
+func getData(t *testing.T, url string, StatusCode int, obj interface{}, keys []interface{}) {
+	e := getHttpexpect(t)
+	o := e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+		WithQueryObject(obj).
+		Expect().Status(StatusCode).
+		JSON().Object()
+
+	o.Value("code").Equal(200)
+	o.Value("message").Equal("操作成功")
+	o.Value("data").Object().Keys().Contains(keys...)
+}
+
+//  getPublicMore 方法
 func getPublicMore(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getPublicHttpexpect(t)
 	e.GET(url).
@@ -137,7 +206,7 @@ func getPublicMore(t *testing.T, url string, StatusCode int, Code int, Msg strin
 	return
 }
 
-// 单元测试 delete 方法
+//  delete 方法
 func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
 	e.DELETE(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).

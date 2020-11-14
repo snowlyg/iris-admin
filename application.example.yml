@@ -1,4 +1,4 @@
-loglevel: info # 日志级别 info debug 等等
+loglevel: disable # 日志级别 info debug disable error fatal warn 等等
 debug: true # 调试模式
 https: false # https
 host: 127.0.0.1 # host 地址

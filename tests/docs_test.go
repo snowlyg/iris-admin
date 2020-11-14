@@ -13,7 +13,50 @@ import (
 )
 
 func TestDocs(t *testing.T) {
-	getMore(t, "docs", iris.StatusOK, 200, "操作成功")
+	_, err := CreateDoc()
+	if err != nil {
+		color.Red("TestDocUpdate %+v", err)
+		return
+	}
+	tr2, err := CreateDoc()
+	if err != nil {
+		color.Red("TestDocUpdate %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	more := &More{tr2.ID, 1, 1, 2}
+	getMore(t, "docs", iris.StatusOK, obj, more)
+}
+func TestDocsLimit(t *testing.T) {
+	_, err := CreateDoc()
+	if err != nil {
+		color.Red("TestDocUpdate %+v", err)
+		return
+	}
+	tr2, err := CreateDoc()
+	if err != nil {
+		color.Red("TestDocUpdate %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": 2, "page": 1}
+	more := &More{tr2.ID, 2, 2, 4}
+	getMore(t, "docs", iris.StatusOK, obj, more)
+}
+
+func TestDocsNoPagination(t *testing.T) {
+	_, err := CreateDoc()
+	if err != nil {
+		color.Red("TestDocUpdate %+v", err)
+		return
+	}
+	tr2, err := CreateDoc()
+	if err != nil {
+		color.Red("TestDocUpdate %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": -1, "page": -1}
+	more := &More{tr2.ID, -1, 6, 6}
+	getMore(t, "docs", iris.StatusOK, obj, more)
 }
 
 func TestDocCreate(t *testing.T) {

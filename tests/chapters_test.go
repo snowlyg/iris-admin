@@ -13,7 +13,25 @@ import (
 )
 
 func TestChapters(t *testing.T) {
-	getMore(t, "chapters", iris.StatusOK, 200, "操作成功")
+	tr, err := CreateChapter("")
+	if err != nil {
+		color.Red("TestChapterUpdate %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	more := &More{tr.ID, 1, 1, 1}
+	getMore(t, "chapters", iris.StatusOK, obj, more)
+}
+
+func TestChaptersNoPagination(t *testing.T) {
+	tr, err := CreateChapter("")
+	if err != nil {
+		color.Red("TestChapterUpdate %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": -1, "page": -1}
+	more := &More{tr.ID, -1, 2, 2}
+	getMore(t, "chapters", iris.StatusOK, obj, more)
 }
 
 func TestChapterCreate(t *testing.T) {

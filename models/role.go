@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/blog/libs/database"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"gorm.io/gorm"
 )
 
@@ -29,34 +29,20 @@ func NewRole() *Role {
 }
 
 // GetRole get role
-func GetRole(search *Search) (*Role, error) {
+func GetRole(search *easygorm.Search) (*Role, error) {
 	t := NewRole()
-	err := Found(search).First(t).Error
+	err := easygorm.Found(search).First(t).Error
 	if !IsNotFound(err) {
 		return t, err
 	}
 	return t, nil
 }
 
-/**
- * 通过 id 获取 role 记录
- * @method GetRoleById
- * @param  {[type]}       role  *Role [description]
- */
-//func GetRolesByIds(ids []int) ([]*Role, error) {
-//	var roles []*Role
-//	err := IsNotFound(database.Singleton().Db.Find(&roles, ids).Error)
-//	if err != nil {
-//		return nil, err
-//	}
-//	return roles, nil
-//}
-
 // DeleteRoleById del role by id
 func DeleteRoleById(id uint) error {
 	r := NewRole()
 	r.ID = id
-	err := database.Singleton().Db.Delete(r).Error
+	err := easygorm.Egm.Db.Delete(r).Error
 	if err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 		return err
@@ -66,24 +52,22 @@ func DeleteRoleById(id uint) error {
 }
 
 // GetAllRoles get all roles
-func GetAllRoles(s *Search) ([]*Role, int64, error) {
+func GetAllRoles(s *easygorm.Search) ([]*Role, int64, error) {
 	var roles []*Role
-	var count int64
-	all := GetAll(&Role{}, s)
-	all = all.Scopes(Relation(s.Relations))
-	if err := all.Count(&count).Error; err != nil {
+	db, count, err := easygorm.Paginate(&Role{}, s)
+	if err != nil {
 		return nil, count, err
 	}
-	all = all.Scopes(Paginate(s.Offset, s.Limit))
-	if err := all.Find(&roles).Error; err != nil {
-		return nil, count, err
+	if err := db.Find(&roles).Error; err != nil {
+		return roles, count, err
 	}
+
 	return roles, count, nil
 }
 
 // CreateRole create role
 func (r *Role) CreateRole() error {
-	if err := database.Singleton().Db.Create(r).Error; err != nil {
+	if err := easygorm.Egm.Db.Create(r).Error; err != nil {
 		return err
 	}
 
@@ -96,13 +80,13 @@ func (r *Role) CreateRole() error {
 func addPerms(permIds []uint, role *Role) {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
-		if _, err := database.Singleton().Enforcer.DeletePermissionsForUser(roleId); err != nil {
+		if _, err := easygorm.Egm.Enforcer.DeletePermissionsForUser(roleId); err != nil {
 			color.Red(fmt.Sprintf("AppendPermsErr:%s \n", err))
 		}
 		var perms []Permission
-		database.Singleton().Db.Where("id in (?)", permIds).Find(&perms)
+		easygorm.Egm.Db.Where("id in (?)", permIds).Find(&perms)
 		for _, perm := range perms {
-			if _, err := database.Singleton().Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
+			if _, err := easygorm.Egm.Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
 				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
 			}
 		}
@@ -113,7 +97,7 @@ func addPerms(permIds []uint, role *Role) {
 
 // UpdateRole update role
 func UpdateRole(id uint, nr *Role) error {
-	if err := Update(&Role{}, nr, id); err != nil {
+	if err := easygorm.Update(&Role{}, nr, id); err != nil {
 		return err
 	}
 
@@ -124,12 +108,12 @@ func UpdateRole(id uint, nr *Role) error {
 
 // RolePermissions get role's permissions
 func (r *Role) RolePermissions() []*Permission {
-	perms := GetPermissionsForUser(r.ID)
+	perms := easygorm.GetPermissionsForUser(r.ID)
 	var ps []*Permission
 	for _, perm := range perms {
 		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {
-			s := &Search{
-				Fields: []*Filed{
+			s := &easygorm.Search{
+				Fields: []*easygorm.Field{
 					{
 						Key:       "name",
 						Condition: "=",

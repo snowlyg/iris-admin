@@ -9,5 +9,7 @@ import (
 )
 
 func TestDashBoard(t *testing.T) {
-	getMore(t, "dashboard", iris.StatusOK, 200, "操作成功")
+	getData(t, "dashboard", iris.StatusOK, nil, []interface{}{
+		"articleVisitis", "articles", "docVisitis", "docs",
+	})
 }

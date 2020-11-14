@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/database"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"net/http"
 	"strings"
 	"sync"
@@ -62,9 +62,9 @@ func GetChapterTableName() string {
 }
 
 // GetDocReads 获取文章阅读量
-func GetDocReads() (*SumRes, error) {
-	var sumRes SumRes
-	err := database.Singleton().Db.Table(GetChapterTableName()).Select("sum(`read`) as total").Scan(&sumRes).Error
+func GetDocReads() (*easygorm.SumRes, error) {
+	var sumRes easygorm.SumRes
+	err := easygorm.Egm.Db.Table(GetChapterTableName()).Select("sum(`read`) as total").Scan(&sumRes).Error
 	if err != nil {
 		return &sumRes, err
 	}
@@ -72,9 +72,9 @@ func GetDocReads() (*SumRes, error) {
 }
 
 // GetChapter 获取
-func GetChapter(search *Search) (*Chapter, error) {
+func GetChapter(search *easygorm.Search) (*Chapter, error) {
 	t := NewChapter()
-	err := Found(search).First(t).Error
+	err := easygorm.Found(search).First(t).Error
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -93,7 +93,7 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 		p.Read++
 		ips = append(ips, publicIp)
 		p.Ips = strings.Join(ips, ",")
-		err := database.Singleton().Db.Save(p).Error
+		err := easygorm.Egm.Db.Save(p).Error
 		if err != nil {
 			return err
 		}
@@ -107,7 +107,7 @@ func (p *Chapter) LikeChapter() error {
 	defer p.Unlock()
 
 	p.Like++
-	err := database.Singleton().Db.Save(p).Error
+	err := easygorm.Egm.Db.Save(p).Error
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (p *Chapter) LikeChapter() error {
 func DeleteChapterById(id uint) error {
 	t := NewChapter()
 	t.ID = id
-	if err := database.Singleton().Db.Delete(t).Error; err != nil {
+	if err := easygorm.Egm.Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteChapterByIdError:%s \n", err))
 		return err
 	}
@@ -126,19 +126,15 @@ func DeleteChapterById(id uint) error {
 }
 
 // GetAllChapters
-func GetAllChapters(search *Search) ([]*Chapter, int64, error) {
+func GetAllChapters(search *easygorm.Search) ([]*Chapter, int64, error) {
 	var chapters []*Chapter
-	var count int64
-	all := GetAll(&Chapter{}, search)
-
-	if err := all.Count(&count).Error; err != nil {
+	db, count, err := easygorm.Paginate(&Chapter{}, search)
+	if err != nil {
 		return nil, count, err
 	}
 
-	all = all.Scopes(Paginate(search.Offset, search.Limit))
-
-	if err := all.Find(&chapters).Error; err != nil {
-		return nil, count, err
+	if err := db.Find(&chapters).Error; err != nil {
+		return chapters, count, err
 	}
 
 	return chapters, count, nil
@@ -148,8 +144,8 @@ func GetAllChapters(search *Search) ([]*Chapter, int64, error) {
 func (p *Chapter) getDoc() {
 	if p.Doc != nil {
 		if p.Doc.ID > 0 {
-			s := &Search{
-				Fields: []*Filed{
+			s := &easygorm.Search{
+				Fields: []*easygorm.Field{
 					{
 						Key:       "id",
 						Condition: "=",
@@ -169,7 +165,7 @@ func (p *Chapter) getDoc() {
 // CreateChapter create chapter
 func (p *Chapter) CreateChapter() error {
 	p.getDoc()
-	if err := database.Singleton().Db.Create(p).Error; err != nil {
+	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil
@@ -178,14 +174,14 @@ func (p *Chapter) CreateChapter() error {
 // UpdateChapterById update chapter by id
 func UpdateChapterById(id uint, np *Chapter) error {
 	np.getDoc()
-	if err := Update(&Chapter{}, np, id); err != nil {
+	if err := easygorm.Update(&Chapter{}, np, id); err != nil {
 		return err
 	}
 	return nil
 }
 
 func Sort(sc *SortChapter) error {
-	err := database.Singleton().Db.Transaction(func(tx *gorm.DB) error {
+	err := easygorm.Egm.Db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&Chapter{}).Where("id = ?", sc.NewId).Update("sort", sc.NewSort).Error; err != nil {
 			return err
 		}

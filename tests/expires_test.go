@@ -9,5 +9,5 @@ import (
 )
 
 func TestExpire(t *testing.T) {
-	getMore(t, "expire", iris.StatusOK, 200, "")
+	getNoReturn(t, "expire", iris.StatusOK, nil)
 }

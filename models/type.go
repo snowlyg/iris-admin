@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/libs/database"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"time"
 
 	"github.com/fatih/color"
@@ -25,10 +25,10 @@ func NewType() *Type {
 }
 
 // GetType get type
-func GetType(search *Search) (*Type, error) {
+func GetType(search *easygorm.Search) (*Type, error) {
 	t := NewType()
-	err := Found(search).First(t).Error
-	if !IsNotFound(err) {
+	err := easygorm.First(t, search)
+	if err != nil {
 		return t, err
 	}
 	return t, nil
@@ -41,7 +41,7 @@ func GetType(search *Search) (*Type, error) {
 func DeleteTypeById(id uint) error {
 	t := NewType()
 	t.ID = id
-	if err := database.Singleton().Db.Delete(t).Error; err != nil {
+	if err := easygorm.Egm.Db.Delete(t).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteTypeByIdError:%s \n", err))
 		return err
 	}
@@ -49,16 +49,14 @@ func DeleteTypeById(id uint) error {
 }
 
 // GetAllTypes get all types
-func GetAllTypes(s *Search) ([]*Type, int64, error) {
+func GetAllTypes(s *easygorm.Search) ([]*Type, int64, error) {
 	var types []*Type
-	var count int64
-	all := GetAll(&Type{}, s)
-	if err := all.Count(&count).Error; err != nil {
+	db, count, err := easygorm.Paginate(&Type{}, s)
+	if err != nil {
 		return nil, count, err
 	}
-	all = all.Scopes(Paginate(s.Offset, s.Limit), Relation(s.Relations))
-	if err := all.Find(&types).Error; err != nil {
-		return nil, count, err
+	if err := db.Find(&types).Error; err != nil {
+		return types, count, err
 	}
 
 	return types, count, nil
@@ -66,7 +64,7 @@ func GetAllTypes(s *Search) ([]*Type, int64, error) {
 
 // CreateType create type
 func (p *Type) CreateType() error {
-	if err := database.Singleton().Db.Create(p).Error; err != nil {
+	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
 		return err
 	}
 	return nil
@@ -74,7 +72,7 @@ func (p *Type) CreateType() error {
 
 // UpdateTypeById update type by id
 func UpdateTypeById(id uint, np *Type) error {
-	if err := Update(&Type{}, np, id); err != nil {
+	if err := easygorm.Update(&Type{}, np, id); err != nil {
 		return err
 	}
 	return nil

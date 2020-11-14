@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -29,8 +30,8 @@ func GetPublishedChapter(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 	relation := ctx.FormValue("relation")
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Condition: "=",
@@ -41,7 +42,7 @@ func GetPublishedChapter(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
-		Relations: models.GetRelations(relation, nil),
+		Relations: easygorm.GetRelations(relation, nil),
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {
@@ -75,15 +76,15 @@ func GetChapter(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 	relation := ctx.FormValue("relation")
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Condition: "=",
 				Value:     id,
 			},
 		},
-		Relations: models.GetRelations(relation, nil),
+		Relations: easygorm.GetRelations(relation, nil),
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {
@@ -331,7 +332,7 @@ func GetAllChapters(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	docId := libs.ParseInt(ctx.URLParam("docId"), 0)
 	s := GetCommonListSearch(ctx)
-	s.Fields = []*models.Filed{
+	s.Fields = []*easygorm.Field{
 		{
 			Key:       "doc_id",
 			Condition: "=",
@@ -364,8 +365,8 @@ func GetAllChapters(ctx iris.Context) {
 func GetPublishedChapterLike(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	s := &models.Search{
-		Fields: []*models.Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Condition: "=",
@@ -409,7 +410,7 @@ func GetAllPublishedChapters(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	docId := libs.ParseInt(ctx.FormValue("docId"), 0)
 	s := GetCommonListSearch(ctx)
-	s.Fields = []*models.Filed{
+	s.Fields = []*easygorm.Field{
 		{
 			Key:       "doc_id",
 			Condition: "=",

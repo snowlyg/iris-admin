@@ -1,29 +1,50 @@
-package web_server
+package app
 
 import (
+	stdContext "context"
 	"fmt"
-	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/blog/libs"
 	"strings"
 	"time"
 
+	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/routes"
 )
 
+// Server
 type Server struct {
-	App *iris.Application
+	App    *iris.Application
+	Status bool // 服务状态
 }
 
 func NewServer() *Server {
-	app := iris.Default()
+	app := iris.New()
+
+	app.Logger().SetLevel(libs.Config.LogLevel)                       //设置日志级别
+	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd) //初始化redis
+	models.Migrate()                                                  //初始化模型
+	routes.App(app)                                                   //注册 app 路由
+
+	// CTRL+C/CMD+C pressed or a unix kill command received
+	iris.RegisterOnInterrupt(func() {
+		db, err := easygorm.Egm.Db.DB()
+		if err != nil {
+			panic(err)
+		}
+		defer db.Close()
+	})
+
 	return &Server{
-		App: app,
+		App:    app,
+		Status: false,
 	}
 }
 
-func (s *Server) Serve() error {
+// Start
+func (s *Server) Start() error {
 	if libs.Config.HTTPS {
 		host := fmt.Sprintf("%s:%d", libs.Config.Host, 443)
 		if err := s.App.Run(iris.TLS(host, libs.Config.Certpath, libs.Config.Certkey)); err != nil {
@@ -39,19 +60,22 @@ func (s *Server) Serve() error {
 			return err
 		}
 	}
-
+	s.Status = true
 	return nil
 }
 
-func (s *Server) NewApp() {
-	s.App.Logger().SetLevel(libs.Config.LogLevel)
-
-	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
-	models.Migrate()
-
-	routes.App(s.App) //注册 app 路由
+// Start close the server at 3-6 seconds
+func (s *Server) Stop() {
+	go func() {
+		time.Sleep(3 * time.Second)
+		ctx, cancel := stdContext.WithTimeout(stdContext.TODO(), 3*time.Second)
+		defer cancel()
+		s.App.Shutdown(ctx)
+		s.Status = false
+	}()
 }
 
+// PathName
 type PathName struct {
 	Name   string
 	Path   string
@@ -75,6 +99,7 @@ func (s *Server) GetRoutes() []*models.Permission {
 	return rrs
 }
 
+// getPathNames
 func getPathNames(routeReadOnly []context.RouteReadOnly) []*PathName {
 	var pns []*PathName
 	if libs.Config.Debug {

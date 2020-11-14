@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/database"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"gorm.io/gorm"
 	"net/http"
 	"strings"
@@ -55,7 +55,7 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 		r.Read++
 		ips = append(ips, publicIp)
 		r.Ips = strings.Join(ips, ",")
-		err := database.Singleton().Db.Save(r).Error
+		err := easygorm.Egm.Db.Save(r).Error
 		if err != nil {
 			return err
 		}
@@ -68,7 +68,7 @@ func (r *Article) Addip() error {
 	defer r.Unlock()
 
 	r.Read++
-	err := database.Singleton().Db.Save(r).Error
+	err := easygorm.Egm.Db.Save(r).Error
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (r *Article) LikeArticle() error {
 	defer r.Unlock()
 
 	r.Like++
-	err := database.Singleton().Db.Save(r).Error
+	err := easygorm.Egm.Db.Save(r).Error
 	if err != nil {
 		return err
 	}
@@ -88,9 +88,19 @@ func (r *Article) LikeArticle() error {
 }
 
 // GetArticle 获取文章
-func GetArticle(search *Search) (*Article, error) {
+func GetArticle(search *easygorm.Search) (*Article, error) {
 	r := NewArticle()
-	err := Found(search).First(r).Error
+	err := easygorm.First(r, search)
+	if !IsNotFound(err) {
+		return r, err
+	}
+	return r, nil
+}
+
+// GetArticleById 通过 id 获取文章
+func GetArticleById(id uint) (*Article, error) {
+	r := NewArticle()
+	err := easygorm.FindById(r, id)
 	if !IsNotFound(err) {
 		return r, err
 	}
@@ -101,7 +111,7 @@ func GetArticle(search *Search) (*Article, error) {
 func GetArticleCount() (int64, error) {
 	var count int64
 	r := NewArticle()
-	err := database.Singleton().Db.Model(r).Count(&count).Error
+	err := easygorm.Egm.Db.Model(r).Count(&count).Error
 	if err != nil {
 		return count, err
 	}
@@ -109,9 +119,9 @@ func GetArticleCount() (int64, error) {
 }
 
 // GetArticleReads 获取文章阅读量
-func GetArticleReads() (*SumRes, error) {
-	var sr SumRes
-	err := database.Singleton().Db.Table(GetArticleTableName()).Select("sum(`read`) as total").Scan(&sr).Error
+func GetArticleReads() (*easygorm.SumRes, error) {
+	var sr easygorm.SumRes
+	err := easygorm.Egm.Db.Table(GetArticleTableName()).Select("sum(`read`) as total").Scan(&sr).Error
 	if err != nil {
 		return &sr, err
 	}
@@ -121,8 +131,7 @@ func GetArticleReads() (*SumRes, error) {
 // DeleteArticleById 删除
 func DeleteArticleById(id uint) error {
 	r := NewArticle()
-	r.ID = id
-	if err := database.Singleton().Db.Delete(r).Error; err != nil {
+	if err := easygorm.DeleteById(r, id); err != nil {
 		color.Red(fmt.Sprintf("DeleteArticleErr:%s \n", err))
 		return err
 	}
@@ -130,24 +139,21 @@ func DeleteArticleById(id uint) error {
 }
 
 // GetAllArticles 获取集合
-func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
+func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, error) {
 	var articles []*Article
-	var count int64
-
-	getAll := GetAll(&Article{}, search)
 
 	// 多对多标签搜索
 	if tagId > 0 {
 		var tagArticleIds []int64
-		s := &Search{
-			Fields: []*Filed{
+		s := &easygorm.Search{
+			Fields: []*easygorm.Field{
 				{
 					Key:       "id",
 					Condition: "=",
 					Value:     tagId,
 				},
 			},
-			Relations: []*Relate{
+			Relations: []*easygorm.Relate{
 				{
 					Value: "Articles",
 				},
@@ -155,7 +161,7 @@ func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
 		}
 		tag, err := GetTag(s)
 		if err != nil {
-			return nil, count, err
+			return nil, 0, err
 		}
 
 		for _, tagArticle := range tag.Articles {
@@ -163,18 +169,21 @@ func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
 				tagArticleIds = append(tagArticleIds, int64(tagArticle.ID))
 			}
 		}
-
-		getAll = getAll.Where("id IN ?", tagArticleIds)
+		field := &easygorm.Field{
+			Condition: "id",
+			Key:       "IN",
+			Value:     tagArticleIds,
+		}
+		search.Fields = append(search.Fields, field)
 	}
 
-	if err := getAll.Count(&count).Error; err != nil {
+	db, count, err := easygorm.Paginate(&Article{}, search)
+	if err != nil {
 		return nil, count, err
 	}
 
-	getAll = getAll.Scopes(Paginate(search.Offset, search.Limit))
-
-	if err := getAll.Find(&articles).Error; err != nil {
-		return nil, count, err
+	if err := db.Find(&articles).Error; err != nil {
+		return articles, count, err
 	}
 
 	return articles, count, nil
@@ -183,25 +192,25 @@ func GetAllArticles(search *Search, tagId int) ([]*Article, int64, error) {
 // CreateArticle 创建
 func (r *Article) CreateArticle() error {
 	r.getTypes()
-
-	if err := database.Singleton().Db.Create(r).Error; err != nil {
+	if err := easygorm.Egm.Db.Create(r).Error; err != nil {
 		return err
 	}
-
 	r.addTags()
-
 	return nil
 }
 
+// addTags 添加标签关联关系
 func (r *Article) addTags() {
-	if err := database.Singleton().Db.Model(r).Association("Tags").Clear(); err != nil {
-		color.Red(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
+	if len(r.Tags) > 0 {
+		if err := easygorm.Egm.Db.Model(r).Association("Tags").Clear(); err != nil {
+			color.Red(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
+		}
 	}
 	if len(r.TagNames) > 0 {
 		var tags []*Tag
 		for _, tagName := range r.TagNames {
-			s := &Search{
-				Fields: []*Filed{
+			s := &easygorm.Search{
+				Fields: []*easygorm.Field{
 					{
 						Key:       "name",
 						Condition: "=",
@@ -221,7 +230,7 @@ func (r *Article) addTags() {
 			tags = append(tags, tag)
 		}
 
-		err := database.Singleton().Db.Model(r).Association("Tags").Append(tags)
+		err := easygorm.Egm.Db.Model(r).Association("Tags").Append(tags)
 		if err != nil {
 			color.Red(fmt.Sprintf("标签添加错误:%+v\n tags:%+v", err, tags))
 		}
@@ -232,8 +241,8 @@ func (r *Article) addTags() {
 func (r *Article) getTypes() {
 	if r.Type != nil {
 		if r.Type.ID > 0 {
-			s := &Search{
-				Fields: []*Filed{
+			s := &easygorm.Search{
+				Fields: []*easygorm.Field{
 					{
 						Key:       "id",
 						Condition: "=",
@@ -254,11 +263,9 @@ func (r *Article) getTypes() {
 // UpdateArticle 更新
 func UpdateArticle(id uint, nr *Article) error {
 	nr.getTypes()
-
-	if err := Update(&Article{}, nr, id); err != nil {
+	if err := easygorm.Update(&Article{}, nr, id); err != nil {
 		return err
 	}
-
 	nr.addTags()
 	return nil
 }

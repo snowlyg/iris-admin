@@ -11,12 +11,32 @@ import (
 	"testing"
 )
 
-// 后台账号列表
+// TestRoles
 func TestRoles(t *testing.T) {
-	getMore(t, "roles", iris.StatusOK, 200, "操作成功")
+	tr, err := CreateRole()
+	if err != nil {
+		color.Red("TestRoles %+v", err)
+		return
+	}
+
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	more := &More{tr.ID, 1, 1, 2}
+	getMore(t, "roles", iris.StatusOK, obj, more)
 }
 
-// 创建角色
+func TestRolesNoPagination(t *testing.T) {
+	tr, err := CreateRole()
+	if err != nil {
+		color.Red("TestRoles %+v", err)
+		return
+	}
+
+	obj := map[string]interface{}{"limit": -1, "page": -1}
+	more := &More{tr.ID, -1, 3, 3}
+	getMore(t, "roles", iris.StatusOK, obj, more)
+}
+
+// TestRoleCreate
 func TestRoleCreate(t *testing.T) {
 	m := mock.Role{}
 	err := faker.FakeData(&m)
@@ -27,7 +47,7 @@ func TestRoleCreate(t *testing.T) {
 	create(t, "roles", m, iris.StatusOK, 200, "操作成功")
 }
 
-// 更新角色
+// TestRoleUpdate
 func TestRoleUpdate(t *testing.T) {
 	m := mock.Role{}
 	err := faker.FakeData(&m)

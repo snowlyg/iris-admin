@@ -12,11 +12,30 @@ import (
 )
 
 func TestUsers(t *testing.T) {
-	getMore(t, "users", iris.StatusOK, 200, "操作成功")
+	tu, err := CreateUser()
+	if err != nil {
+		color.Red("TestUserUpdate %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	more := &More{tu.ID, 1, 1, 2}
+	getMore(t, "users", iris.StatusOK, obj, more)
+}
+
+func TestUsersNoPagination(t *testing.T) {
+	tu, err := CreateUser()
+	if err != nil {
+		color.Red("TestUsersNoPagination %+v", err)
+		return
+	}
+	obj := map[string]interface{}{"limit": -1, "page": -1}
+	more := &More{tu.ID, -1, 3, 3}
+	getMore(t, "users", iris.StatusOK, obj, more)
 }
 
 func TestUserProfile(t *testing.T) {
-	getMore(t, "profile", iris.StatusOK, 200, "请求成功")
+	obj := map[string]interface{}{"limit": 1, "page": 1}
+	getData(t, "profile", iris.StatusOK, obj, []interface{}{"avatar", "id", "created_at", "introduction", "roles", "role_ids", "name"})
 }
 
 func TestUserCreate(t *testing.T) {

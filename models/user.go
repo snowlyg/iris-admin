@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
-	"github.com/snowlyg/blog/libs/database"
+	"github.com/snowlyg/blog/libs/easygorm"
 	"strconv"
 	"time"
 
@@ -43,9 +43,9 @@ func NewUser() *User {
 }
 
 // GetUser get user
-func GetUser(search *Search) (*User, error) {
+func GetUser(search *easygorm.Search) (*User, error) {
 	t := NewUser()
-	err := Found(search).First(t).Error
+	err := easygorm.Found(search).First(t).Error
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -54,8 +54,8 @@ func GetUser(search *Search) (*User, error) {
 
 // DeleteUser del user . if user's username is username ,can't del it.
 func DeleteUser(id uint) error {
-	s := &Search{
-		Fields: []*Filed{
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
 				Condition: "=",
@@ -71,7 +71,7 @@ func DeleteUser(id uint) error {
 		return errors.New(fmt.Sprintf("不能删除管理员 : %s \n ", u.Username))
 	}
 
-	if err := database.Singleton().Db.Delete(u, id).Error; err != nil {
+	if err := easygorm.Egm.Db.Delete(u, id).Error; err != nil {
 		color.Red(fmt.Sprintf("DeleteUserByIdErr:%s \n ", err))
 		return err
 	}
@@ -79,25 +79,23 @@ func DeleteUser(id uint) error {
 }
 
 // GetAllUsers get all users
-func GetAllUsers(s *Search) ([]*User, int64, error) {
+func GetAllUsers(s *easygorm.Search) ([]*User, int64, error) {
 	var users []*User
-	var count int64
-	q := GetAll(&User{}, s)
-	if err := q.Count(&count).Error; err != nil {
+	db, count, err := easygorm.Paginate(&User{}, s)
+	if err != nil {
 		return nil, count, err
 	}
-	q = q.Scopes(Paginate(s.Offset, s.Limit), Relation(s.Relations))
-	if err := q.Find(&users).Error; err != nil {
-		color.Red(fmt.Sprintf("GetAllUserErr:%s \n ", err))
-		return nil, count, err
+	if err := db.Find(&users).Error; err != nil {
+		return users, count, err
 	}
+
 	return users, count, nil
 }
 
 // CreateUser create user
 func (u *User) CreateUser() error {
 	u.Password = libs.HashPassword(u.Password)
-	if err := database.Singleton().Db.Create(u).Error; err != nil {
+	if err := easygorm.Egm.Db.Create(u).Error; err != nil {
 		return err
 	}
 
@@ -111,7 +109,7 @@ func UpdateUserById(id uint, nu *User) error {
 	if len(nu.Password) > 0 {
 		nu.Password = libs.HashPassword(nu.Password)
 	}
-	if err := Update(&User{}, nu, id); err != nil {
+	if err := easygorm.Update(&User{}, nu, id); err != nil {
 		return err
 	}
 
@@ -123,13 +121,13 @@ func UpdateUserById(id uint, nu *User) error {
 func addRoles(user *User) {
 	if len(user.RoleIds) > 0 {
 		userId := strconv.FormatUint(uint64(user.ID), 10)
-		if _, err := database.Singleton().Enforcer.DeleteRolesForUser(userId); err != nil {
+		if _, err := easygorm.Egm.Enforcer.DeleteRolesForUser(userId); err != nil {
 			color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 		}
 
 		for _, roleId := range user.RoleIds {
 			roleId := strconv.FormatUint(uint64(roleId), 10)
-			if _, err := database.Singleton().Enforcer.AddRoleForUser(userId, roleId); err != nil {
+			if _, err := easygorm.Egm.Enforcer.AddRoleForUser(userId, roleId); err != nil {
 				color.Red(fmt.Sprintf("CreateUserErr:%s \n ", err))
 			}
 		}

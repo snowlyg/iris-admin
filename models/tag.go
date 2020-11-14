@@ -41,8 +41,7 @@ func GetTag(s *easygorm.Search) (*Tag, error) {
  */
 func DeleteTagById(id uint) error {
 	t := NewTag()
-	t.ID = id
-	if err := easygorm.Egm.Db.Delete(t).Error; err != nil {
+	if err := easygorm.DeleteById(t, id); err != nil {
 		color.Red(fmt.Sprintf("DeleteTagByIdError:%s \n", err))
 		return err
 	}
@@ -65,7 +64,7 @@ func GetAllTags(s *easygorm.Search) ([]*Tag, int64, error) {
 
 // CreateTag create tag
 func (p *Tag) CreateTag() error {
-	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
+	if err := easygorm.Create(p); err != nil {
 		return err
 	}
 	return nil

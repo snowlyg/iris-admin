@@ -106,6 +106,23 @@ func Delete(model interface{}, s *Search) error {
 		return err
 	}
 	return nil
+
+}
+
+// Create 新建
+func Create(model interface{}) error {
+	if err := Egm.Db.Create(model).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+// Save 保存
+func Save(model interface{}) error {
+	if err := Egm.Db.Save(model).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 // Delete 通过 id 删除

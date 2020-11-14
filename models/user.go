@@ -45,7 +45,7 @@ func NewUser() *User {
 // GetUser get user
 func GetUser(search *easygorm.Search) (*User, error) {
 	t := NewUser()
-	err := easygorm.Found(search).First(t).Error
+	err := easygorm.First(t, search)
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -95,7 +95,7 @@ func GetAllUsers(s *easygorm.Search) ([]*User, int64, error) {
 // CreateUser create user
 func (u *User) CreateUser() error {
 	u.Password = libs.HashPassword(u.Password)
-	if err := easygorm.Egm.Db.Create(u).Error; err != nil {
+	if err := easygorm.Create(u); err != nil {
 		return err
 	}
 

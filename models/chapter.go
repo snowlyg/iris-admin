@@ -64,7 +64,7 @@ func GetChapterTableName() string {
 // GetDocReads 获取文章阅读量
 func GetDocReads() (*easygorm.SumRes, error) {
 	var sumRes easygorm.SumRes
-	err := easygorm.Egm.Db.Table(GetChapterTableName()).Select("sum(`read`) as total").Scan(&sumRes).Error
+	err := easygorm.Egm.Db.Model(&Chapter{}).Select("sum(`read`) as total").Scan(&sumRes).Error
 	if err != nil {
 		return &sumRes, err
 	}
@@ -74,7 +74,7 @@ func GetDocReads() (*easygorm.SumRes, error) {
 // GetChapter 获取
 func GetChapter(search *easygorm.Search) (*Chapter, error) {
 	t := NewChapter()
-	err := easygorm.Found(search).First(t).Error
+	err := easygorm.First(t, search)
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -93,7 +93,7 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 		p.Read++
 		ips = append(ips, publicIp)
 		p.Ips = strings.Join(ips, ",")
-		err := easygorm.Egm.Db.Save(p).Error
+		err := easygorm.Save(p)
 		if err != nil {
 			return err
 		}
@@ -107,7 +107,7 @@ func (p *Chapter) LikeChapter() error {
 	defer p.Unlock()
 
 	p.Like++
-	err := easygorm.Egm.Db.Save(p).Error
+	err := easygorm.Save(p)
 	if err != nil {
 		return err
 	}
@@ -117,8 +117,7 @@ func (p *Chapter) LikeChapter() error {
 // DeleteChapterById 删除
 func DeleteChapterById(id uint) error {
 	t := NewChapter()
-	t.ID = id
-	if err := easygorm.Egm.Db.Delete(t).Error; err != nil {
+	if err := easygorm.DeleteById(t, id); err != nil {
 		color.Red(fmt.Sprintf("DeleteChapterByIdError:%s \n", err))
 		return err
 	}
@@ -165,7 +164,7 @@ func (p *Chapter) getDoc() {
 // CreateChapter create chapter
 func (p *Chapter) CreateChapter() error {
 	p.getDoc()
-	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
+	if err := easygorm.Create(p); err != nil {
 		return err
 	}
 	return nil

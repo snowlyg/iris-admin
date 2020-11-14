@@ -40,8 +40,7 @@ func GetType(search *easygorm.Search) (*Type, error) {
  */
 func DeleteTypeById(id uint) error {
 	t := NewType()
-	t.ID = id
-	if err := easygorm.Egm.Db.Delete(t).Error; err != nil {
+	if err := easygorm.DeleteById(t, id); err != nil {
 		color.Red(fmt.Sprintf("DeleteTypeByIdError:%s \n", err))
 		return err
 	}
@@ -64,7 +63,7 @@ func GetAllTypes(s *easygorm.Search) ([]*Type, int64, error) {
 
 // CreateType create type
 func (p *Type) CreateType() error {
-	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
+	if err := easygorm.Create(p); err != nil {
 		return err
 	}
 	return nil

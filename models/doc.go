@@ -27,7 +27,7 @@ func NewDoc() *Doc {
 // GetDoc get doc
 func GetDoc(search *easygorm.Search) (*Doc, error) {
 	t := NewDoc()
-	err := easygorm.Found(search).First(t).Error
+	err := easygorm.First(t, search)
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -48,8 +48,7 @@ func GetDocCount() (int64, error) {
 // DeleteDocById del doc by id
 func DeleteDocById(id uint) error {
 	t := NewDoc()
-	t.ID = id
-	if err := easygorm.Egm.Db.Delete(t).Error; err != nil {
+	if err := easygorm.DeleteById(t, id); err != nil {
 		color.Red(fmt.Sprintf("DeleteDocByIdError:%s \n", err))
 		return err
 	}
@@ -73,7 +72,7 @@ func GetAllDocs(s *easygorm.Search) ([]*Doc, int64, error) {
 
 // CreateDoc create doc
 func (p *Doc) CreateDoc() error {
-	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
+	if err := easygorm.Create(p); err != nil {
 		return err
 	}
 	return nil

@@ -39,8 +39,7 @@ func GetPermission(search *easygorm.Search) (*Permission, error) {
 // DeletePermissionById del permission by id
 func DeletePermissionById(id uint) error {
 	p := NewPermission()
-	p.ID = id
-	if err := easygorm.Egm.Db.Delete(p).Error; err != nil {
+	if err := easygorm.DeleteById(p, id); err != nil {
 		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
 		return err
 	}
@@ -64,7 +63,7 @@ func GetAllPermissions(s *easygorm.Search) ([]*Permission, int64, error) {
 
 // CreatePermission create permission
 func (p *Permission) CreatePermission() error {
-	if err := easygorm.Egm.Db.Create(p).Error; err != nil {
+	if err := easygorm.Create(p); err != nil {
 		return err
 	}
 	return nil

@@ -25,7 +25,7 @@ func TestInitMysql(t *testing.T) {
 			Username:        "root",                                       // 用户名
 			Pwd:             "123456",                                     // 密码
 			Host:            "127.0.0.1",                                  // 地址
-			Port:            3305,                                         // 端口
+			Port:            3306,                                         // 端口
 			CasbinModelPath: filepath.Join(libs.CWD(), "rbac_model.conf"), // casbin 模型规则路径
 		})
 		if Egm.Db == nil {

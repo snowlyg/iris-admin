@@ -55,7 +55,7 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 		r.Read++
 		ips = append(ips, publicIp)
 		r.Ips = strings.Join(ips, ",")
-		err := easygorm.Egm.Db.Save(r).Error
+		err := easygorm.Save(r)
 		if err != nil {
 			return err
 		}
@@ -68,7 +68,7 @@ func (r *Article) Addip() error {
 	defer r.Unlock()
 
 	r.Read++
-	err := easygorm.Egm.Db.Save(r).Error
+	err := easygorm.Save(r)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func (r *Article) LikeArticle() error {
 	defer r.Unlock()
 
 	r.Like++
-	err := easygorm.Egm.Db.Save(r).Error
+	err := easygorm.Save(r)
 	if err != nil {
 		return err
 	}
@@ -192,7 +192,7 @@ func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, erro
 // CreateArticle 创建
 func (r *Article) CreateArticle() error {
 	r.getTypes()
-	if err := easygorm.Egm.Db.Create(r).Error; err != nil {
+	if err := easygorm.Create(r); err != nil {
 		return err
 	}
 	r.addTags()

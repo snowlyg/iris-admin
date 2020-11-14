@@ -31,7 +31,7 @@ func NewRole() *Role {
 // GetRole get role
 func GetRole(search *easygorm.Search) (*Role, error) {
 	t := NewRole()
-	err := easygorm.Found(search).First(t).Error
+	err := easygorm.First(t, search)
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -41,8 +41,7 @@ func GetRole(search *easygorm.Search) (*Role, error) {
 // DeleteRoleById del role by id
 func DeleteRoleById(id uint) error {
 	r := NewRole()
-	r.ID = id
-	err := easygorm.Egm.Db.Delete(r).Error
+	err := easygorm.DeleteById(r, id)
 	if err != nil {
 		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
 		return err
@@ -67,7 +66,7 @@ func GetAllRoles(s *easygorm.Search) ([]*Role, int64, error) {
 
 // CreateRole create role
 func (r *Role) CreateRole() error {
-	if err := easygorm.Egm.Db.Create(r).Error; err != nil {
+	if err := easygorm.Create(r); err != nil {
 		return err
 	}
 

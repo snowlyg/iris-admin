@@ -38,9 +38,7 @@ func GetConfig(search *easygorm.Search) (*Config, error) {
 // DeleteConfig del config
 func DeleteConfig(id uint) error {
 	u := NewConfig()
-	u.ID = id
-
-	if err := easygorm.Egm.Db.Delete(u).Error; err != nil {
+	if err := easygorm.DeleteById(u, id); err != nil {
 		color.Red(fmt.Sprintf("DeleteConfigByIdErr:%s \n ", err))
 		return err
 	}
@@ -58,7 +56,7 @@ func GetAllConfigs(s *easygorm.Search) ([]*Config, error) {
 
 // CreateConfig create config
 func (u *Config) CreateConfig() error {
-	if err := easygorm.Egm.Db.Create(u).Error; err != nil {
+	if err := easygorm.Create(u); err != nil {
 		return err
 	}
 

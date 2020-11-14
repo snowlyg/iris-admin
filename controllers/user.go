@@ -288,9 +288,9 @@ func DeleteUser(ctx iris.Context) {
  */
 func GetAllUsers(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	s := GetCommonListSearch(ctx)
 	name := ctx.FormValue("name")
 
+	s := GetCommonListSearch(ctx)
 	s.Fields = append(s.Fields, easygorm.GetField("name", name))
 	users, count, err := models.GetAllUsers(s)
 	if err != nil {

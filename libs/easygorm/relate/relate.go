@@ -1,9 +1,15 @@
 package relate
 
-import "gorm.io/gorm"
+import (
+	"github.com/snowlyg/blog/libs/easygorm"
+	"gorm.io/gorm"
+)
 
 var DocChapterRelate = map[string]interface{}{
 	"Chapters": func(db *gorm.DB) *gorm.DB {
-		return db.Where("status = ?", "published")
+		fields := easygorm.GetFields(map[string]string{
+			"status": "published",
+		})
+		return db.Scopes(easygorm.FoundByWhere(fields))
 	},
 }

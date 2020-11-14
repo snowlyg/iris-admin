@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"time"
 
 	"github.com/go-playground/validator/v10"

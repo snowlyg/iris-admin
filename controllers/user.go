@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"strconv"
 	"time"
 

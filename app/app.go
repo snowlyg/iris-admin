@@ -9,9 +9,9 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/easygorm"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/routes"
+	"github.com/snowlyg/easygorm"
 )
 
 // Server

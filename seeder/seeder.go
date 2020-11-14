@@ -3,7 +3,7 @@ package seeder
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"math/rand"
 	"path/filepath"
 	"time"

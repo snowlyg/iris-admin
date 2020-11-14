@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 	"net/http"
 	"strings"

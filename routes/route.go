@@ -5,8 +5,8 @@ import (
 	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/blog/controllers"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/easygorm"
 	"github.com/snowlyg/blog/middleware"
+	"github.com/snowlyg/easygorm"
 	"path/filepath"
 	"time"
 )

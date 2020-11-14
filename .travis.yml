@@ -9,6 +9,7 @@ gobuild_args: -a -installsuffix cgo -ldflags "-X main.Version master"
 before_install:
   - pwd
   - mysql -e 'CREATE DATABASE blog_test;'
+  - cp $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.example.yml $GOPATH/src/github.com/snowlyg/IrisAdminApi/application.yml
 install: true
 sudo: required
 

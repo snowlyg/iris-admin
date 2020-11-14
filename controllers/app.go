@@ -5,9 +5,9 @@ import (
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/easygorm"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/validates"
+	"github.com/snowlyg/easygorm"
 )
 
 /**

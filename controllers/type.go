@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"time"
 
 	"github.com/go-playground/validator/v10"

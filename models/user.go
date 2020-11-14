@@ -3,7 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"strconv"
 	"time"
 

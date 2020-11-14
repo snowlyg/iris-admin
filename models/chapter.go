@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"net/http"
 	"strings"
 	"sync"

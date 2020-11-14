@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"time"
 
 	"github.com/fatih/color"

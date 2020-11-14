@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 )
 

@@ -1,7 +1,7 @@
 package relate
 
 import (
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 )
 

@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/easygorm"
+	"github.com/snowlyg/easygorm"
 )
 
 func GetCommonListSearch(ctx iris.Context) *easygorm.Search {

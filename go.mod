@@ -17,8 +17,10 @@ require (
 	github.com/iris-contrib/httpexpect/v2 v2.0.5
 	github.com/iris-contrib/middleware/cors v0.0.0-20200810001613-32cf668f999f
 	github.com/iris-contrib/middleware/jwt v0.0.0-20200810001613-32cf668f999f
+	github.com/jackc/pgx/v4 v4.9.2 // indirect
 	github.com/jameskeane/bcrypt v0.0.0-20120420032655-c3cd44c1e20f
 	github.com/jinzhu/configor v1.2.0
+	github.com/jinzhu/gorm v1.9.16 // indirect
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201012125253-8e51a296b968
 	github.com/lib/pq v1.8.0 // indirect
@@ -33,15 +35,14 @@ require (
 	github.com/qiniu/api.v7/v7 v7.4.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	github.com/snowlyg/easygorm v0.0.0-20201114135841-031b37c757ae
+	github.com/snowlyg/easygorm v0.0.0-20201115042319-cdb55b32b929
 	github.com/snowlyg/gotransformer v0.1.0
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	golang.org/x/crypto v0.0.0-20201112155050-0c6587e931a9 // indirect
+	golang.org/x/sys v0.0.0-20201113233024-12cec1faf1ba // indirect
+	golang.org/x/text v0.3.4 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/ini.v1 v1.61.0
-	gorm.io/driver/mysql v1.0.3
-	gorm.io/driver/postgres v1.0.5
-	gorm.io/driver/sqlite v1.1.3
 	gorm.io/gorm v1.20.6
-	gorm.io/plugin/dbresolver v1.0.1
 )

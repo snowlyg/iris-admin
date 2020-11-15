@@ -16,11 +16,11 @@ import (
 )
 
 /**
-* @api {get} /admin/docs/:id 根据id获取分类信息
-* @apiName 根据id获取分类信息
+* @api {get} /admin/docs/:id 根据id获取文档信息
+* @apiName 根据id获取文档信息
 * @apiGroup Docs
 * @apiVersion 1.0.0
-* @apiDescription 根据id获取分类信息
+* @apiDescription 根据id获取文档信息
 * @apiSampleRequest /admin/docs/:id
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
@@ -53,13 +53,13 @@ func GetDoc(ctx iris.Context) {
 }
 
 /**
-* @api {post} /admin/docs/ 新建分类
-* @apiName 新建分类
+* @api {post} /admin/docs/ 新建文档
+* @apiName 新建文档
 * @apiGroup Docs
 * @apiVersion 1.0.0
-* @apiDescription 新建分类
+* @apiDescription 新建文档
 * @apiSampleRequest /admin/docs/
-* @apiParam {string} name 分类名
+* @apiParam {string} name 文档名
 * @apiParam {string} display_name
 * @apiParam {string} description
 * @apiParam {string} level
@@ -103,13 +103,13 @@ func CreateDoc(ctx iris.Context) {
 }
 
 /**
-* @api {post} /admin/docs/:id/update 更新分类
-* @apiName 更新分类
+* @api {post} /admin/docs/:id/update 更新文档
+* @apiName 更新文档
 * @apiGroup Docs
 * @apiVersion 1.0.0
-* @apiDescription 更新分类
+* @apiDescription 更新文档
 * @apiSampleRequest /admin/docs/:id/update
-* @apiParam {string} name 分类名
+* @apiParam {string} name 文档名
 * @apiParam {string} display_name
 * @apiParam {string} description
 * @apiParam {string} level
@@ -149,11 +149,11 @@ func UpdateDoc(ctx iris.Context) {
 }
 
 /**
-* @api {delete} /admin/docs/:id/delete 删除分类
-* @apiName 删除分类
+* @api {delete} /admin/docs/:id/delete 删除文档
+* @apiName 删除文档
 * @apiGroup Docs
 * @apiVersion 1.0.0
-* @apiDescription 删除分类
+* @apiDescription 删除文档
 * @apiSampleRequest /admin/docs/:id/delete
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
@@ -173,12 +173,12 @@ func DeleteDoc(ctx iris.Context) {
 }
 
 /**
-* @api {get} /tts 获取所有的分类
-* @apiName 获取所有的分类
+* @api {get} /docs 获取所有的文档
+* @apiName 获取所有的文档
 * @apiGroup Docs
 * @apiVersion 1.0.0
-* @apiDescription 获取所有的分类
-* @apiSampleRequest /tts
+* @apiDescription 获取所有的文档
+* @apiSampleRequest /docs
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
 * @apiSuccess {String} data 返回数据
@@ -188,7 +188,6 @@ func GetAllDocs(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	s := GetCommonListSearch(ctx)
-
 	docs, count, err := models.GetAllDocs(s)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))

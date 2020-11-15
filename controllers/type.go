@@ -165,12 +165,12 @@ func DeleteType(ctx iris.Context) {
 }
 
 /**
-* @api {get} /tts 获取所有的分类
+* @api {get} /types 获取所有的分类
 * @apiName 获取所有的分类
 * @apiGroup Types
 * @apiVersion 1.0.0
 * @apiDescription 获取所有的分类
-* @apiSampleRequest /tts
+* @apiSampleRequest /types
 * @apiSuccess {String} msg 消息
 * @apiSuccess {bool} state 状态
 * @apiSuccess {String} data 返回数据

@@ -138,7 +138,7 @@ func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, erro
 
 	// 多对多标签搜索
 	if tagId > 0 {
-		var tagArticleIds []int64
+		var tagArticleIds []int
 		s := &easygorm.Search{
 			Fields: []*easygorm.Field{
 				{
@@ -160,7 +160,7 @@ func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, erro
 
 		for _, tagArticle := range tag.Articles {
 			if tagArticle.ID > 0 {
-				tagArticleIds = append(tagArticleIds, int64(tagArticle.ID))
+				tagArticleIds = append(tagArticleIds, int(tagArticle.ID))
 			}
 		}
 		field := &easygorm.Field{

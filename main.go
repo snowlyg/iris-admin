@@ -81,7 +81,7 @@ version: %s`, Version))
 		Port:            libs.Config.DB.Port,     // 端口
 		CasbinModelPath: casbinModelPath,         // casbin 模型规则路径
 		Debug:           libs.Config.Debug,
-		TablePrefix:     "blog", // casbin 模型表前缀
+		TablePrefix:     "iris", // casbin 模型表前缀
 		Models: []interface{}{
 			&models.User{},
 			&models.Role{},

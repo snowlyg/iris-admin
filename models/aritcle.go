@@ -163,9 +163,10 @@ func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, erro
 				tagArticleIds = append(tagArticleIds, int(tagArticle.ID))
 			}
 		}
+
 		field := &easygorm.Field{
-			Condition: "id",
-			Key:       "IN",
+			Condition: "IN",
+			Key:       "id",
 			Value:     tagArticleIds,
 		}
 		search.Fields = append(search.Fields, field)

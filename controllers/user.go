@@ -327,7 +327,7 @@ func userTransform(user *models.User) *transformer.User {
 		Fields: []*easygorm.Field{
 			{
 				Key:       "id",
-				Condition: "in",
+				Condition: "IN",
 				Value:     ris,
 			},
 		},

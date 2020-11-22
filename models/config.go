@@ -66,7 +66,7 @@ func (u *Config) CreateConfig() error {
 // UpdateConfig update config
 func UpdateConfig(id uint, nu *Config) error {
 
-	if err := easygorm.Update(&Config{}, nu, id); err != nil {
+	if err := easygorm.Update(&Config{}, nu, nil, id); err != nil {
 		return err
 	}
 

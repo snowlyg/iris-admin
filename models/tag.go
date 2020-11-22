@@ -28,7 +28,7 @@ func NewTag() *Tag {
 // GetTag get tag
 func GetTag(s *easygorm.Search) (*Tag, error) {
 	t := NewTag()
-	err := easygorm.Found(s).First(t).Error
+	err := easygorm.First(t, s)
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -69,7 +69,7 @@ func (p *Tag) CreateTag() error {
 
 // UpdateTagById update tag by id
 func UpdateTagById(id uint, pj *Tag) error {
-	if err := easygorm.Update(&Tag{}, pj, id); err != nil {
+	if err := easygorm.Update(&Tag{}, pj, nil, id); err != nil {
 		return err
 	}
 	return nil

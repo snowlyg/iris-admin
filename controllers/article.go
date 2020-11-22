@@ -338,6 +338,8 @@ func articleTransform(article *models.Article) *transformer.Article {
 		}
 	}
 	r.TagNames = tagNames
+	r.Type.Id = int(article.Type.ID)
+	r.Type.Name = article.Type.Name
 
 	return r
 }

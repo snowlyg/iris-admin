@@ -106,7 +106,7 @@ func addPerms(permIds []uint, role *Role) {
 
 // UpdateRole update role
 func UpdateRole(id uint, nr *Role) error {
-	if err := easygorm.Update(&Role{}, nr, id); err != nil {
+	if err := easygorm.Update(&Role{}, nr, nil, id); err != nil {
 		return err
 	}
 

@@ -79,7 +79,7 @@ func (p *Permission) CreatePermission() error {
 
 // UpdatePermission update permission
 func UpdatePermission(id uint, pj *Permission) error {
-	if err := easygorm.Update(&Permission{}, pj, id); err != nil {
+	if err := easygorm.Update(&Permission{}, pj, nil, id); err != nil {
 		return err
 	}
 	return nil

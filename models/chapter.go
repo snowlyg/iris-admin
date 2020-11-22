@@ -168,7 +168,7 @@ func (p *Chapter) CreateChapter() error {
 // UpdateChapterById update chapter by id
 func UpdateChapterById(id uint, np *Chapter) error {
 	np.getDoc()
-	if err := easygorm.Update(&Chapter{}, np, id); err != nil {
+	if err := easygorm.Update(&Chapter{}, np, nil, id); err != nil {
 		return err
 	}
 	return nil

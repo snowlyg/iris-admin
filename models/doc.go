@@ -76,7 +76,7 @@ func (p *Doc) CreateDoc() error {
 
 // UpdateDocById update doc by id
 func UpdateDocById(id uint, np *Doc) error {
-	if err := easygorm.Update(&Doc{}, np, id); err != nil {
+	if err := easygorm.Update(&Doc{}, np, nil, id); err != nil {
 		return err
 	}
 	return nil

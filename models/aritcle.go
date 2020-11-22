@@ -83,9 +83,9 @@ func (r *Article) LikeArticle() error {
 }
 
 // GetArticle 获取文章
-func GetArticle(search *easygorm.Search) (*Article, error) {
+func GetArticle(s *easygorm.Search) (*Article, error) {
 	r := NewArticle()
-	err := easygorm.First(r, search)
+	err := easygorm.First(r, s)
 	if !IsNotFound(err) {
 		return r, err
 	}
@@ -254,7 +254,7 @@ func (r *Article) getTypes() {
 // UpdateArticle 更新
 func UpdateArticle(id uint, nr *Article) error {
 	nr.getTypes()
-	if err := easygorm.Update(&Article{}, nr, id); err != nil {
+	if err := easygorm.Update(&Article{}, nr, []interface{}{"Title", "ContentShort", "Author", "ImageUri", "SourceUri", "IsOriginal", "Content", "Status"}, id); err != nil {
 		return err
 	}
 	nr.addTags()

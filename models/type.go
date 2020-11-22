@@ -85,7 +85,7 @@ func (p *Type) CreateType() error {
 
 // UpdateTypeById update type by id
 func UpdateTypeById(id uint, np *Type) error {
-	if err := easygorm.Update(&Type{}, np, id); err != nil {
+	if err := easygorm.Update(&Type{}, np, nil, id); err != nil {
 		return err
 	}
 	return nil

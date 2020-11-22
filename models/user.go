@@ -106,7 +106,7 @@ func UpdateUserById(id uint, nu *User) error {
 	if len(nu.Password) > 0 {
 		nu.Password = libs.HashPassword(nu.Password)
 	}
-	if err := easygorm.Update(&User{}, nu, id); err != nil {
+	if err := easygorm.Update(&User{}, nu, nil, id); err != nil {
 		return err
 	}
 

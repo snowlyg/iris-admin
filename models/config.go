@@ -48,7 +48,7 @@ func DeleteConfig(id uint) error {
 // GetAllConfigs get all configs
 func GetAllConfigs(s *easygorm.Search) ([]*Config, error) {
 	var configs []*Config
-	if err := easygorm.All(&Config{}, s).Find(&configs).Error; err != nil {
+	if err := easygorm.All(&Config{}, &configs, s); err != nil {
 		return configs, err
 	}
 	return configs, nil

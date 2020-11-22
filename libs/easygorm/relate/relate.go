@@ -10,6 +10,6 @@ var DocChapterRelate = map[string]interface{}{
 		fields := easygorm.GetFields(map[string]interface{}{
 			"status": "published",
 		})
-		return db.Scopes(easygorm.FoundByWhere(fields))
+		return db.Scopes(easygorm.FoundByWhereScope(fields))
 	},
 }

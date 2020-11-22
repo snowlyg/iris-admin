@@ -43,6 +43,18 @@ func TestMain(m *testing.M) {
 		Name:            "blog_test",
 		CasbinModelPath: filepath.Join(libs.CWD(), "rbac_model.conf"), // casbin 模型规则路径
 		Debug:           true,
+		TablePrefix:     "iris",
+		Models: []interface{}{
+			&models.User{},
+			&models.Role{},
+			&models.Permission{},
+			&models.Article{},
+			&models.Config{},
+			&models.Tag{},
+			&models.Type{},
+			&models.Doc{},
+			&models.Chapter{},
+		},
 	})
 	s := app.NewServer() // 初始化app
 	application = s.App
@@ -50,7 +62,7 @@ func TestMain(m *testing.M) {
 
 	exitCode := m.Run()
 
-	models.DropTables() // 删除测试数据表，保持测试环境
+	models.DropTables("iris_") // 删除测试数据表，保持测试环境
 	os.Exit(exitCode)
 }
 
@@ -137,6 +149,7 @@ type More struct {
 	Limit int
 	Page  int
 	Total int64
+	Field []interface{}
 }
 
 //  getNoReturn 方法
@@ -166,6 +179,7 @@ func getMore(t *testing.T, url string, StatusCode int, obj interface{}, m *More)
 	items := o.Value("data").Object().Value("items").Array()
 	items.Length().Equal(m.Page)
 	items.First().Object().Value("id").Equal(m.Id)
+	items.First().Object().Keys().Contains(m.Field...)
 	o.Value("data").Object().Value("limit").Equal(m.Limit)
 	o.Value("data").Object().Value("total").Equal(m.Total)
 }

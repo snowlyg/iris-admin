@@ -17,8 +17,8 @@ func TestUsers(t *testing.T) {
 		color.Red("TestUserUpdate %+v", err)
 		return
 	}
-	obj := map[string]interface{}{"limit": 1, "page": 1}
-	more := &More{tu.ID, 1, 1, 2}
+	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,name,username,created_at"}
+	more := &More{tu.ID, 1, 1, 2, []interface{}{"id", "name", "username", "roles", "created_at"}}
 	getMore(t, "users", iris.StatusOK, obj, more)
 }
 
@@ -28,8 +28,8 @@ func TestUsersNoPagination(t *testing.T) {
 		color.Red("TestUsersNoPagination %+v", err)
 		return
 	}
-	obj := map[string]interface{}{"limit": -1, "page": -1}
-	more := &More{tu.ID, -1, 3, 3}
+	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,name,username,created_at"}
+	more := &More{tu.ID, -1, 3, 3, []interface{}{"id", "name", "username", "roles", "created_at"}}
 	getMore(t, "users", iris.StatusOK, obj, more)
 }
 

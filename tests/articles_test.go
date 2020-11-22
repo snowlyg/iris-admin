@@ -24,8 +24,8 @@ func TestArticles(t *testing.T) {
 		return
 	}
 
-	obj := map[string]interface{}{"limit": 1, "page": 1}
-	more := &More{tr2.ID, 1, 1, 2}
+	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,title,created_at"}
+	more := &More{tr2.ID, 1, 1, 2, []interface{}{"id", "title", "created_at"}}
 	getMore(t, "article", iris.StatusOK, obj, more)
 }
 
@@ -41,8 +41,8 @@ func TestArticlesWithSortByAsc(t *testing.T) {
 		return
 	}
 
-	obj := map[string]interface{}{"limit": 1, "page": 1, "sort": "asc"}
-	more := &More{1, 1, 1, 4}
+	obj := map[string]interface{}{"limit": 1, "page": 1, "sort": "asc", "field": "id,title,created_at"}
+	more := &More{1, 1, 1, 4, []interface{}{"id", "title", "created_at"}}
 	getMore(t, "article", iris.StatusOK, obj, more)
 }
 
@@ -58,8 +58,8 @@ func TestArticlesWithNoPagination(t *testing.T) {
 		return
 	}
 
-	obj := map[string]interface{}{"limit": -1, "page": -1, "sort": "asc"}
-	more := &More{1, -1, 6, 6}
+	obj := map[string]interface{}{"limit": -1, "page": -1, "sort": "asc", "field": "id,title,created_at"}
+	more := &More{1, -1, 6, 6, []interface{}{"id", "title", "created_at"}}
 	getMore(t, "article", iris.StatusOK, obj, more)
 }
 

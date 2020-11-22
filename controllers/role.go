@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"github.com/snowlyg/easygorm"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -28,16 +27,8 @@ import (
 func GetRole(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	s := &easygorm.Search{
-		Fields: []*easygorm.Field{
-			{
-				Key:       "id",
-				Condition: "=",
-				Value:     id,
-			},
-		},
-	}
-	role, err := models.GetRole(s)
+
+	role, err := models.GetRoleById(id)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -80,6 +81,18 @@ version: %s`, Version))
 		Port:            libs.Config.DB.Port,     // 端口
 		CasbinModelPath: casbinModelPath,         // casbin 模型规则路径
 		Debug:           libs.Config.Debug,
+		TablePrefix:     "blog", // casbin 模型表前缀
+		Models: []interface{}{
+			&models.User{},
+			&models.Role{},
+			&models.Permission{},
+			&models.Article{},
+			&models.Config{},
+			&models.Tag{},
+			&models.Type{},
+			&models.Doc{},
+			&models.Chapter{},
+		},
 	})
 
 	irisServer := app.NewServer()

@@ -58,13 +58,9 @@ func DeleteDocById(id uint) error {
 // GetAllDocs get all docs
 func GetAllDocs(s *easygorm.Search) ([]*Doc, int64, error) {
 	var docs []*Doc
-	db, count, err := easygorm.Paginate(&Doc{}, s)
+	count, err := easygorm.Paginate(&Doc{}, &docs, s)
 	if err != nil {
 		return nil, count, err
-	}
-
-	if err := db.Find(&docs).Error; err != nil {
-		return docs, count, err
 	}
 
 	return docs, count, nil

@@ -24,8 +24,7 @@ func NewServer() *Server {
 	app := iris.New()
 
 	app.Logger().SetLevel(libs.Config.LogLevel)                       //设置日志级别
-	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd) //初始化redis
-	models.Migrate()                                                  //初始化模型
+	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd) //初始化redis 	//初始化模型
 	routes.App(app)                                                   //注册 app 路由
 
 	// CTRL+C/CMD+C pressed or a unix kill command received

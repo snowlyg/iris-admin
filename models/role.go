@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/libs"
 	"strconv"
 	"time"
 
@@ -28,10 +29,20 @@ func NewRole() *Role {
 	}
 }
 
-// GetRole get role
-func GetRole(search *easygorm.Search) (*Role, error) {
+// GetRoleById get role by it
+func GetRoleById(id uint) (*Role, error) {
 	t := NewRole()
-	err := easygorm.First(t, search)
+	err := easygorm.FindById(NewRole(), id)
+	if !IsNotFound(err) {
+		return t, err
+	}
+	return t, nil
+}
+
+// GetRole get role
+func GetRole(s *easygorm.Search) (*Role, error) {
+	t := NewRole()
+	err := easygorm.First(NewRole(), s)
 	if !IsNotFound(err) {
 		return t, err
 	}
@@ -53,12 +64,9 @@ func DeleteRoleById(id uint) error {
 // GetAllRoles get all roles
 func GetAllRoles(s *easygorm.Search) ([]*Role, int64, error) {
 	var roles []*Role
-	db, count, err := easygorm.Paginate(&Role{}, s)
+	count, err := easygorm.Paginate(&Role{}, &roles, s)
 	if err != nil {
 		return nil, count, err
-	}
-	if err := db.Find(&roles).Error; err != nil {
-		return roles, count, err
 	}
 
 	return roles, count, nil
@@ -90,7 +98,9 @@ func addPerms(permIds []uint, role *Role) {
 			}
 		}
 	} else {
-		color.Yellow(fmt.Sprintf("没有角色：%s 权限为空 \n", role.Name))
+		if libs.Config.Debug {
+			color.Yellow(fmt.Sprintf("没有角色：%s 权限为空 \n", role.Name))
+		}
 	}
 }
 

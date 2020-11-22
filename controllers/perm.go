@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/snowlyg/easygorm"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -29,16 +28,7 @@ import (
 func GetPermission(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	s := &easygorm.Search{
-		Fields: []*easygorm.Field{
-			{
-				Key:       "id",
-				Condition: "=",
-				Value:     id,
-			},
-		},
-	}
-	perm, err := models.GetPermission(s)
+	perm, err := models.GetPermissionById(id)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return

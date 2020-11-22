@@ -81,12 +81,9 @@ func DeleteUser(id uint) error {
 // GetAllUsers get all users
 func GetAllUsers(s *easygorm.Search) ([]*User, int64, error) {
 	var users []*User
-	db, count, err := easygorm.Paginate(&User{}, s)
+	count, err := easygorm.Paginate(&User{}, &users, s)
 	if err != nil {
 		return nil, count, err
-	}
-	if err := db.Find(&users).Error; err != nil {
-		return users, count, err
 	}
 
 	return users, count, nil

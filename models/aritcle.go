@@ -39,11 +39,6 @@ func NewArticle() *Article {
 	return &Article{}
 }
 
-// GetArticleTableName
-func GetArticleTableName() string {
-	return fmt.Sprintf("%s%s", libs.Config.DB.Prefix, "articles")
-}
-
 func (r *Article) ReadArticle(rh *http.Request) error {
 	ip := r.Ips
 	ips := strings.Split(ip, ",")
@@ -119,13 +114,12 @@ func GetArticleCount() (int64, error) {
 }
 
 // GetArticleReads 获取文章阅读量
-func GetArticleReads() (*easygorm.SumRes, error) {
-	var sr easygorm.SumRes
-	err := easygorm.Egm.Db.Table(GetArticleTableName()).Select("sum(`read`) as total").Scan(&sr).Error
+func GetArticleReads() (int64, error) {
+	sr, err := easygorm.Count(&Article{}, "read")
 	if err != nil {
-		return &sr, err
+		return sr, err
 	}
-	return &sr, nil
+	return sr, nil
 }
 
 // DeleteArticleById 删除
@@ -177,13 +171,9 @@ func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, erro
 		search.Fields = append(search.Fields, field)
 	}
 
-	db, count, err := easygorm.Paginate(&Article{}, search)
+	count, err := easygorm.Paginate(&Article{}, &articles, search)
 	if err != nil {
 		return nil, count, err
-	}
-
-	if err := db.Find(&articles).Error; err != nil {
-		return articles, count, err
 	}
 
 	return articles, count, nil

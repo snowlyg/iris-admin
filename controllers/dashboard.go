@@ -51,9 +51,9 @@ func Dashboard(ctx iris.Context) {
 	}
 
 	dashboard := map[string]int64{
-		"articleVisitis": articleReads.Total,
+		"articleVisitis": articleReads,
 		"articles":       articles,
-		"docVisitis":     docReads.Total,
+		"docVisitis":     docReads,
 		"docs":           docs,
 	}
 	_, _ = ctx.JSON(libs.ApiResource(200, dashboard, "操作成功"))

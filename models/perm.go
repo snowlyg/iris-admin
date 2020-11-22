@@ -36,6 +36,18 @@ func GetPermission(search *easygorm.Search) (*Permission, error) {
 	return t, nil
 }
 
+// GetPermissionById get permission by id
+func GetPermissionById(id uint) (*Permission, error) {
+	t := NewPermission()
+	err := easygorm.FindById(t, id)
+	if !IsNotFound(err) {
+		return t, err
+	}
+	return t, nil
+}
+
+// GetPermission get permission
+
 // DeletePermissionById del permission by id
 func DeletePermissionById(id uint) error {
 	p := NewPermission()
@@ -49,13 +61,9 @@ func DeletePermissionById(id uint) error {
 // GetAllPermissions get all permissions
 func GetAllPermissions(s *easygorm.Search) ([]*Permission, int64, error) {
 	var permissions []*Permission
-	db, count, err := easygorm.Paginate(&Permission{}, s)
+	count, err := easygorm.Paginate(&Permission{}, &permissions, s)
 	if err != nil {
 		return nil, count, err
-	}
-
-	if err := db.Find(&permissions).Error; err != nil {
-		return permissions, count, err
 	}
 
 	return permissions, count, nil

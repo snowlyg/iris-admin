@@ -18,8 +18,8 @@ func TestTypes(t *testing.T) {
 		color.Red("TestTypes %+v", err)
 		return
 	}
-	obj := map[string]interface{}{"limit": 1, "page": 1}
-	more := &More{tr.ID, 1, 1, 1}
+	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,name,created_at"}
+	more := &More{tr.ID, 1, 1, 1, []interface{}{"name"}}
 	getMore(t, "types", iris.StatusOK, obj, more)
 }
 
@@ -29,8 +29,8 @@ func TestTypesNoPagination(t *testing.T) {
 		color.Red("TestTypes %+v", err)
 		return
 	}
-	obj := map[string]interface{}{"limit": -1, "page": -1}
-	more := &More{tr.ID, -1, 2, 2}
+	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,name,created_at"}
+	more := &More{tr.ID, -1, 2, 2, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "types", iris.StatusOK, obj, more)
 }
 

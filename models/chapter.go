@@ -62,13 +62,12 @@ func GetChapterTableName() string {
 }
 
 // GetDocReads 获取文章阅读量
-func GetDocReads() (*easygorm.SumRes, error) {
-	var sumRes easygorm.SumRes
-	err := easygorm.Egm.Db.Model(&Chapter{}).Select("sum(`read`) as total").Scan(&sumRes).Error
+func GetDocReads() (int64, error) {
+	sumRes, err := easygorm.Count(&Chapter{}, "read")
 	if err != nil {
-		return &sumRes, err
+		return sumRes, err
 	}
-	return &sumRes, nil
+	return sumRes, nil
 }
 
 // GetChapter 获取
@@ -127,13 +126,9 @@ func DeleteChapterById(id uint) error {
 // GetAllChapters
 func GetAllChapters(search *easygorm.Search) ([]*Chapter, int64, error) {
 	var chapters []*Chapter
-	db, count, err := easygorm.Paginate(&Chapter{}, search)
+	count, err := easygorm.Paginate(&Chapter{}, &chapters, search)
 	if err != nil {
 		return nil, count, err
-	}
-
-	if err := db.Find(&chapters).Error; err != nil {
-		return chapters, count, err
 	}
 
 	return chapters, count, nil

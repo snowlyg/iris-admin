@@ -258,9 +258,20 @@ func CreateAdminUser() {
 /*
 	AutoMigrates 重置数据表
 	easygorm.Egm.Db.DropTableIfExists 删除存在数据表
-	easygorm.Egm.Db.AutoMigrate 重建数据表
 */
 func AutoMigrates() {
-	models.DropTables()
-	models.Migrate()
+	models.DropTables("")
+	if err := easygorm.Migrate([]interface{}{
+		&models.User{},
+		&models.Role{},
+		&models.Permission{},
+		&models.Article{},
+		&models.Config{},
+		&models.Tag{},
+		&models.Type{},
+		&models.Doc{},
+		&models.Chapter{},
+	}); err != nil {
+		logger.Println(fmt.Sprintf("AutoMigrates 重置数据表错误：%+v\n", err))
+	}
 }

@@ -2,8 +2,6 @@ package models
 
 import (
 	"errors"
-	"fmt"
-	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/easygorm"
@@ -20,37 +18,21 @@ func IsNotFound(err error) bool {
 }
 
 // DropTables 删除数据表
-func DropTables() {
-	_ = easygorm.Egm.Db.Migrator().DropTable(
-		libs.Config.DB.Prefix+"users",
-		libs.Config.DB.Prefix+"roles",
-		libs.Config.DB.Prefix+"permissions",
-		libs.Config.DB.Prefix+"articles",
-		libs.Config.DB.Prefix+"configs",
-		libs.Config.DB.Prefix+"tags",
-		libs.Config.DB.Prefix+"types",
-		libs.Config.DB.Prefix+"chapters",
-		libs.Config.DB.Prefix+"docs",
-		libs.Config.DB.Prefix+"article_tags",
-		"casbin_rule")
-}
-
-// Migrate 迁移数据表
-func Migrate() {
-	err := easygorm.Egm.Db.AutoMigrate(
-		&User{},
-		&Role{},
-		&Permission{},
-		&Article{},
-		&gormadapter.CasbinRule{},
-		&Config{},
-		&Tag{},
-		&Type{},
-		&Doc{},
-		&Chapter{},
-	)
-
-	if err != nil {
-		color.Yellow(fmt.Sprintf("初始化数据表错误 ：%+v", err))
+func DropTables(prefix string) {
+	if prefix == "" {
+		prefix = libs.Config.DB.Prefix
 	}
+	_ = easygorm.Egm.Db.Migrator().DropTable(
+		prefix+"users",
+		prefix+"roles",
+		prefix+"permissions",
+		prefix+"articles",
+		prefix+"configs",
+		prefix+"tags",
+		prefix+"types",
+		prefix+"chapters",
+		prefix+"docs",
+		prefix+"article_tags",
+		prefix+"casbin_rule",
+	)
 }

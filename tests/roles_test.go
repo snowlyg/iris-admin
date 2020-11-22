@@ -19,8 +19,8 @@ func TestRoles(t *testing.T) {
 		return
 	}
 
-	obj := map[string]interface{}{"limit": 1, "page": 1}
-	more := &More{tr.ID, 1, 1, 2}
+	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,name,created_at"}
+	more := &More{tr.ID, 1, 1, 2, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "roles", iris.StatusOK, obj, more)
 }
 
@@ -31,8 +31,8 @@ func TestRolesNoPagination(t *testing.T) {
 		return
 	}
 
-	obj := map[string]interface{}{"limit": -1, "page": -1}
-	more := &More{tr.ID, -1, 3, 3}
+	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,name,created_at"}
+	more := &More{tr.ID, -1, 3, 3, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "roles", iris.StatusOK, obj, more)
 }
 

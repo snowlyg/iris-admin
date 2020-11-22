@@ -51,11 +51,8 @@ func DeleteTagById(id uint) error {
 // GetAllTags get all tags
 func GetAllTags(s *easygorm.Search) ([]*Tag, int64, error) {
 	var tags []*Tag
-	db, count, err := easygorm.Paginate(&Tag{}, s)
+	count, err := easygorm.Paginate(&Tag{}, &tags, s)
 	if err != nil {
-		return tags, count, err
-	}
-	if err := db.Find(&tags).Error; err != nil {
 		return tags, count, err
 	}
 

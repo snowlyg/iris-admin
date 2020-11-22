@@ -18,8 +18,8 @@ func TestChapters(t *testing.T) {
 		color.Red("TestChapterUpdate %+v", err)
 		return
 	}
-	obj := map[string]interface{}{"limit": 1, "page": 1}
-	more := &More{tr.ID, 1, 1, 1}
+	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,title,created_at"}
+	more := &More{tr.ID, 1, 1, 1, []interface{}{"id", "title", "created_at"}}
 	getMore(t, "chapters", iris.StatusOK, obj, more)
 }
 
@@ -29,8 +29,8 @@ func TestChaptersNoPagination(t *testing.T) {
 		color.Red("TestChapterUpdate %+v", err)
 		return
 	}
-	obj := map[string]interface{}{"limit": -1, "page": -1}
-	more := &More{tr.ID, -1, 2, 2}
+	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,title,created_at"}
+	more := &More{tr.ID, -1, 2, 2, []interface{}{"id", "title", "created_at"}}
 	getMore(t, "chapters", iris.StatusOK, obj, more)
 }
 

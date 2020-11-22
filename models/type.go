@@ -15,6 +15,12 @@ type Type struct {
 	Articles []*Article
 }
 
+type ListType struct {
+	Id        int       `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 func NewType() *Type {
 	return &Type{
 		Model: gorm.Model{
@@ -28,6 +34,16 @@ func NewType() *Type {
 func GetType(search *easygorm.Search) (*Type, error) {
 	t := NewType()
 	err := easygorm.First(t, search)
+	if err != nil {
+		return t, err
+	}
+	return t, nil
+}
+
+// GetTypeById get type
+func GetTypeById(id uint) (*Type, error) {
+	t := NewType()
+	err := easygorm.FindById(t, id)
 	if err != nil {
 		return t, err
 	}
@@ -48,14 +64,12 @@ func DeleteTypeById(id uint) error {
 }
 
 // GetAllTypes get all types
-func GetAllTypes(s *easygorm.Search) ([]*Type, int64, error) {
-	var types []*Type
-	db, count, err := easygorm.Paginate(&Type{}, s)
+func GetAllTypes(s *easygorm.Search) ([]*ListType, int64, error) {
+	var types []*ListType
+
+	count, err := easygorm.Paginate(&Type{}, &types, s)
 	if err != nil {
 		return nil, count, err
-	}
-	if err := db.Find(&types).Error; err != nil {
-		return types, count, err
 	}
 
 	return types, count, nil

@@ -2,16 +2,11 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/snowlyg/easygorm"
-	"time"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/blog/models"
-	"github.com/snowlyg/blog/transformer"
 	"github.com/snowlyg/blog/validates"
-	gf "github.com/snowlyg/gotransformer"
 )
 
 /**
@@ -28,22 +23,13 @@ import (
 func GetType(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	s := &easygorm.Search{
-		Fields: []*easygorm.Field{
-			{
-				Key:       "id",
-				Condition: "=",
-				Value:     id,
-			},
-		},
-	}
-	tt, err := models.GetType(s)
+	tt, err := models.GetTypeById(id)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
 
-	_, _ = ctx.JSON(libs.ApiResource(200, ttTransform(tt), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, tt, "操作成功"))
 }
 
 /**
@@ -90,7 +76,7 @@ func CreateType(ctx iris.Context) {
 		_, _ = ctx.JSON(libs.ApiResource(400, tt, "操作失败"))
 		return
 	}
-	_, _ = ctx.JSON(libs.ApiResource(200, ttTransform(tt), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, tt, "操作成功"))
 
 }
 
@@ -137,7 +123,7 @@ func UpdateType(ctx iris.Context) {
 		return
 	}
 
-	_, _ = ctx.JSON(libs.ApiResource(200, ttTransform(aul), "操作成功"))
+	_, _ = ctx.JSON(libs.ApiResource(200, aul, "操作成功"))
 
 }
 
@@ -179,29 +165,12 @@ func DeleteType(ctx iris.Context) {
 func GetAllTypes(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	s := GetCommonListSearch(ctx)
+
 	tts, count, err := models.GetAllTypes(s)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}
+	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": tts, "total": count, "limit": s.Limit}, "操作成功"))
 
-	transform := ttsTransform(tts)
-	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": transform, "total": count, "limit": s.Limit}, "操作成功"))
-
-}
-
-func ttsTransform(tts []*models.Type) []*transformer.Type {
-	var rs []*transformer.Type
-	for _, tt := range tts {
-		r := ttTransform(tt)
-		rs = append(rs, r)
-	}
-	return rs
-}
-
-func ttTransform(tt *models.Type) *transformer.Type {
-	r := &transformer.Type{}
-	g := gf.NewTransform(r, tt, time.RFC3339)
-	_ = g.Transformer()
-	return r
 }

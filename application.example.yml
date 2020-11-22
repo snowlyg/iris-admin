@@ -19,6 +19,7 @@ db:
   name: goirisapi
   user: root
   password: password
+  prefix: blog
 redis:
   host: localhost
   port: 6379

@@ -48,7 +48,7 @@ func TestMain(m *testing.M) {
 				SingularTable: false,   // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
 			},
 		},
-		Adapter:         "mysql", // 类型
+		Adapter:         "sqlite3", // 类型
 		Name:            "blog_test",
 		Username:        "root",                                       // 用户名
 		Pwd:             "123456",                                     // 密码

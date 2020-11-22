@@ -19,6 +19,7 @@ func IsNotFound(err error) bool {
 
 // DropTables 删除数据表
 func DropTables(prefix string) {
+	// 兼容单元测试
 	if prefix == "" {
 		prefix = libs.Config.DB.Prefix
 	}
@@ -33,6 +34,5 @@ func DropTables(prefix string) {
 		prefix+"chapters",
 		prefix+"docs",
 		prefix+"article_tags",
-		prefix+"casbin_rule",
 	)
 }

@@ -39,8 +39,12 @@ func TestMain(m *testing.M) {
 				SingularTable: false,   // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
 			},
 		},
-		Adapter:         "sqlite3", // 类型
+		Adapter:         "mysql", // 类型
 		Name:            "blog_test",
+		Username:        "root",                                       // 用户名
+		Pwd:             "123456",                                     // 密码
+		Host:            "127.0.0.1",                                  // 地址
+		Port:            3306,                                         // 端口
 		CasbinModelPath: filepath.Join(libs.CWD(), "rbac_model.conf"), // casbin 模型规则路径
 		Debug:           true,
 		TablePrefix:     "iris",

@@ -30,7 +30,7 @@ func TestTagsNoPagination(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,name,created_at"}
-	more := &More{tr.ID, -1, 2, 2, []interface{}{"id", "name", "created_at"}}
+	more := &More{tr.ID, -1, TagCount, TagCount, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "tags", iris.StatusOK, obj, more)
 }
 

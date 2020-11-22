@@ -4,6 +4,7 @@ package mock
 
 import (
 	"github.com/bxcodec/faker/v3"
+	"github.com/snowlyg/blog/models"
 	"reflect"
 	"time"
 )
@@ -23,28 +24,32 @@ type Article struct {
 	ImageUri     string `faker:"url" json:"image_uri"`
 	SourceUri    string `faker:"url" json:"source_uri"`
 	IsOriginal   bool
-	Content      string `faker:"len=1000,lang=chi" json:"content"`
-	Status       string `faker:"len=10,lang=chi" json:"status"`
-	DisplayTime  string `faker:"ctime" json:"display_time"`
-	Like         int64  `json:"like"`
-	Read         int64  `json:"read"`
-	Ips          string `faker:"paragraph,lang=chi" json:"ips"`
+	Content      string       `faker:"len=1000,lang=chi" json:"content"`
+	Status       string       `faker:"len=10,lang=chi" json:"status"`
+	DisplayTime  string       `faker:"ctime" json:"display_time"`
+	Like         int64        `json:"like"`
+	Read         int64        `json:"read"`
+	Ips          string       `faker:"paragraph,lang=chi" json:"ips"`
+	Type         *models.Type `faker:"-"`
+	TypeId       int64        `faker:"-"`
 }
 
 type Chapter struct {
-	Title        string `faker:"len=200,lang=chi" json:"title"`
-	ContentShort string `faker:"len=200,lang=chi" json:"content_short"`
-	Author       string `faker:"len=20,lang=chi" json:"author"`
-	ImageUri     string `faker:"url" json:"image_uri"`
-	SourceUri    string `faker:"url" json:"source_uri"`
-	IsOriginal   bool   `json:"is_original"`
-	Content      string `faker:"len=2000,lang=chi" json:"content"`
-	Status       string `faker:"len=10,lang=chi" json:"status"`
-	DisplayTime  string `faker:"ctime" json:"display_time"`
-	Like         int64  `json:"like"`
-	Read         int64  `json:"read"`
-	Ips          string `faker:"len=200,lang=chi" json:"ips"`
-	Sort         int64  `faker:"boundary_start=31, boundary_end=88" json:"sort"`
+	Title        string      `faker:"len=200,lang=chi" json:"title"`
+	ContentShort string      `faker:"len=200,lang=chi" json:"content_short"`
+	Author       string      `faker:"len=20,lang=chi" json:"author"`
+	ImageUri     string      `faker:"url" json:"image_uri"`
+	SourceUri    string      `faker:"url" json:"source_uri"`
+	IsOriginal   bool        `json:"is_original"`
+	Content      string      `faker:"len=2000,lang=chi" json:"content"`
+	Status       string      `faker:"len=10,lang=chi" json:"status"`
+	DisplayTime  string      `faker:"ctime" json:"display_time"`
+	Like         int64       `json:"like"`
+	Read         int64       `json:"read"`
+	Ips          string      `faker:"len=200,lang=chi" json:"ips"`
+	Sort         int64       `faker:"boundary_start=31, boundary_end=88" json:"sort"`
+	Doc          *models.Doc `faker:"-"`
+	DocId        int64       `faker:"-"`
 }
 
 type Config struct {

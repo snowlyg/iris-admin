@@ -274,4 +274,5 @@ func AutoMigrates() {
 	}); err != nil {
 		logger.Println(fmt.Sprintf("AutoMigrates 重置数据表错误：%+v\n", err))
 	}
+
 }

@@ -18,7 +18,7 @@ func TestUsers(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,name,username,created_at"}
-	more := &More{tu.ID, 1, 1, 2, []interface{}{"id", "name", "username", "roles", "created_at"}}
+	more := &More{tu.ID, 1, 1, UserCount, []interface{}{"id", "name", "username", "roles", "created_at"}}
 	getMore(t, "users", iris.StatusOK, obj, more)
 }
 
@@ -29,12 +29,12 @@ func TestUsersNoPagination(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,name,username,created_at"}
-	more := &More{tu.ID, -1, 3, 3, []interface{}{"id", "name", "username", "roles", "created_at"}}
+	more := &More{tu.ID, -1, 3, UserCount, []interface{}{"id", "name", "username", "roles", "created_at"}}
 	getMore(t, "users", iris.StatusOK, obj, more)
 }
 
 func TestUserProfile(t *testing.T) {
-	obj := map[string]interface{}{"limit": 1, "page": 1}
+	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,name,introduction,username,created_at"}
 	getData(t, "profile", iris.StatusOK, obj, []interface{}{"avatar", "id", "created_at", "introduction", "roles", "role_ids", "name"})
 }
 

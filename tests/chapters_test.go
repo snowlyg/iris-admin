@@ -19,7 +19,7 @@ func TestChapters(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,title,created_at"}
-	more := &More{tr.ID, 1, 1, 1, []interface{}{"id", "title", "created_at"}}
+	more := &More{tr.ID, 1, 1, ChapterCount, []interface{}{"id", "title", "created_at"}}
 	getMore(t, "chapters", iris.StatusOK, obj, more)
 }
 
@@ -30,18 +30,25 @@ func TestChaptersNoPagination(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,title,created_at"}
-	more := &More{tr.ID, -1, 2, 2, []interface{}{"id", "title", "created_at"}}
+	more := &More{tr.ID, -1, ChapterCount, ChapterCount, []interface{}{"id", "title", "created_at"}}
 	getMore(t, "chapters", iris.StatusOK, obj, more)
 }
 
 func TestChapterCreate(t *testing.T) {
 	mock.CustomGenerator()
-	m := mock.Chapter{}
-	err := faker.FakeData(&m)
+	doc, err := CreateDoc()
 	if err != nil {
 		color.Red("TestChapterCreate %+v", err)
 		return
 	}
+	m := mock.Chapter{}
+	err = faker.FakeData(&m)
+	if err != nil {
+		color.Red("TestChapterCreate %+v", err)
+		return
+	}
+	m.Doc = doc
+	m.DocId = int64(doc.ID)
 
 	create(t, "chapters", m, iris.StatusOK, 200, "操作成功")
 }

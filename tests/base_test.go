@@ -24,8 +24,17 @@ import (
 )
 
 var (
-	application *iris.Application
-	token       string
+	application  *iris.Application
+	token        string
+	ArticleCount int64
+	DocCount     int64
+	TypeCount    int64
+	TagCount     int64
+	ChapterCount int64
+	UserCount    int64 = 1
+	RoleCount    int64 = 1
+	PermCount    int64 = 53
+	ConfigCount  int64 = 2
 )
 
 //基境
@@ -151,7 +160,7 @@ func bImport(t *testing.T, url string, StatusCode int, Code int, Msg string, _ m
 type More struct {
 	Id    uint
 	Limit int
-	Page  int
+	Page  int64
 	Total int64
 	Field []interface{}
 }
@@ -243,25 +252,32 @@ func CreateArticle(status string) (*models.Article, error) {
 	if len(status) == 0 {
 		status = m.Status
 	}
-	article := &models.Article{
-		Title:        m.Title,
-		ContentShort: m.ContentShort,
-		Author:       m.Author,
-		ImageUri:     m.ImageUri,
-		SourceUri:    m.SourceUri,
-		IsOriginal:   m.IsOriginal,
-		Content:      m.ContentShort,
-		Status:       status,
-		DisplayTime:  time.Now(),
-		Like:         m.Like,
-		Read:         m.Read,
-		Ips:          m.Ips,
+	if tr, err := CreateType(); err != nil {
+		return nil, err
+	} else {
+		article := &models.Article{
+			Title:        m.Title,
+			ContentShort: m.ContentShort,
+			Author:       m.Author,
+			ImageUri:     m.ImageUri,
+			SourceUri:    m.SourceUri,
+			IsOriginal:   m.IsOriginal,
+			Content:      m.ContentShort,
+			Status:       status,
+			DisplayTime:  time.Now(),
+			Like:         m.Like,
+			Read:         m.Read,
+			Ips:          m.Ips,
+			Type:         tr,
+			TypeID:       tr.ID,
+		}
+		err = article.CreateArticle()
+		if err != nil {
+			return article, err
+		}
+		ArticleCount++
+		return article, nil
 	}
-	err = article.CreateArticle()
-	if err != nil {
-		return article, err
-	}
-	return article, nil
 }
 func CreateChapter(status string) (*models.Chapter, error) {
 	mock.CustomGenerator()
@@ -275,26 +291,33 @@ func CreateChapter(status string) (*models.Chapter, error) {
 		status = m.Status
 	}
 
-	chapter := &models.Chapter{
-		Title:        m.Title,
-		ContentShort: m.ContentShort,
-		Author:       m.Author,
-		ImageUri:     m.ImageUri,
-		SourceUri:    m.SourceUri,
-		IsOriginal:   m.IsOriginal,
-		Content:      m.ContentShort,
-		Status:       status,
-		DisplayTime:  time.Now(),
-		Like:         m.Like,
-		Read:         m.Read,
-		Ips:          m.Ips,
-		Sort:         m.Sort,
+	if doc, err := CreateDoc(); err != nil {
+		return nil, err
+	} else {
+		chapter := &models.Chapter{
+			Title:        m.Title,
+			ContentShort: m.ContentShort,
+			Author:       m.Author,
+			ImageUri:     m.ImageUri,
+			SourceUri:    m.SourceUri,
+			IsOriginal:   m.IsOriginal,
+			Content:      m.ContentShort,
+			Status:       status,
+			DisplayTime:  time.Now(),
+			Like:         m.Like,
+			Read:         m.Read,
+			Ips:          m.Ips,
+			Sort:         m.Sort,
+			Doc:          doc,
+			DocID:        doc.ID,
+		}
+		err = chapter.CreateChapter()
+		if err != nil {
+			return chapter, err
+		}
+		ChapterCount++
+		return chapter, nil
 	}
-	err = chapter.CreateChapter()
-	if err != nil {
-		return chapter, err
-	}
-	return chapter, nil
 }
 
 func CreateConfig() (*models.Config, error) {
@@ -311,6 +334,7 @@ func CreateConfig() (*models.Config, error) {
 	if err != nil {
 		return config, err
 	}
+	ConfigCount++
 	return config, nil
 }
 
@@ -327,6 +351,7 @@ func CreateDoc() (*models.Doc, error) {
 	if err != nil {
 		return doc, err
 	}
+	DocCount++
 	return doc, nil
 }
 
@@ -343,6 +368,7 @@ func CreateType() (*models.Type, error) {
 	if err != nil {
 		return tt, err
 	}
+	TypeCount++
 	return tt, nil
 }
 
@@ -359,6 +385,7 @@ func CreateTag() (*models.Tag, error) {
 	if err != nil {
 		return tag, err
 	}
+	TagCount++
 	return tag, nil
 }
 
@@ -378,7 +405,7 @@ func CreatePermission() (*models.Permission, error) {
 	if err != nil {
 		return perm, err
 	}
-
+	PermCount++
 	return perm, nil
 
 }
@@ -398,7 +425,7 @@ func CreateRole() (*models.Role, error) {
 	if err != nil {
 		return role, err
 	}
-
+	RoleCount++
 	return role, nil
 }
 
@@ -422,7 +449,7 @@ func CreateUser() (*models.User, error) {
 	if err != nil {
 		return user, err
 	}
-
+	UserCount++
 	return user, nil
 }
 

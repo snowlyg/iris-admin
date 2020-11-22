@@ -24,7 +24,7 @@ func TestDocs(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,name,created_at"}
-	more := &More{tr2.ID, 1, 1, 2, []interface{}{"id", "name", "created_at"}}
+	more := &More{tr2.ID, 1, 1, DocCount, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "docs", iris.StatusOK, obj, more)
 }
 func TestDocsLimit(t *testing.T) {
@@ -39,7 +39,7 @@ func TestDocsLimit(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": 2, "page": 1, "field": "id,name,created_at"}
-	more := &More{tr2.ID, 2, 2, 4, []interface{}{"id", "name", "created_at"}}
+	more := &More{tr2.ID, 2, 2, DocCount, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "docs", iris.StatusOK, obj, more)
 }
 
@@ -55,7 +55,7 @@ func TestDocsNoPagination(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,name,created_at"}
-	more := &More{tr2.ID, -1, 6, 6, []interface{}{"id", "name", "created_at"}}
+	more := &More{tr2.ID, -1, DocCount, DocCount, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "docs", iris.StatusOK, obj, more)
 }
 

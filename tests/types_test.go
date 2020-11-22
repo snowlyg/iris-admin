@@ -19,7 +19,7 @@ func TestTypes(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,name,created_at"}
-	more := &More{tr.ID, 1, 1, 1, []interface{}{"name"}}
+	more := &More{tr.ID, 1, 1, TypeCount, []interface{}{"name"}}
 	getMore(t, "types", iris.StatusOK, obj, more)
 }
 
@@ -30,7 +30,7 @@ func TestTypesNoPagination(t *testing.T) {
 		return
 	}
 	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,name,created_at"}
-	more := &More{tr.ID, -1, 2, 2, []interface{}{"id", "name", "created_at"}}
+	more := &More{tr.ID, -1, TypeCount, TypeCount, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "types", iris.StatusOK, obj, more)
 }
 

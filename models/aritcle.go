@@ -27,7 +27,7 @@ type Article struct {
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
 	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
 	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
-	Ips          string    `gorm:"not null;default(0);type:varchar(1024)" json:"ips" comment:"ip 地址"`
+	Ips          string    `gorm:"not null;default(0);type:varchar(4096)" json:"ips" comment:"ip 地址"`
 
 	TypeID   uint
 	Type     *Type

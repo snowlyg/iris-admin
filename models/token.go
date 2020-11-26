@@ -57,6 +57,7 @@ type RedisSessionV2 struct {
 	Scope        uint64 `json:"scope" redis:"scope"`
 }
 
+//  GetRedisSessionV2获取 session
 func GetRedisSessionV2(conn *libs.RedisCluster, token string) (*RedisSessionV2, error) {
 	sKey := ZXW_SESSION_TOKEN_PREFIX + token
 	if !conn.Exists(sKey) {
@@ -69,6 +70,7 @@ func GetRedisSessionV2(conn *libs.RedisCluster, token string) (*RedisSessionV2, 
 	return pp, nil
 }
 
+// loadRedisHashToStruct 从 redis 加载 数据
 func loadRedisHashToStruct(conn *libs.RedisCluster, sKey string, pst interface{}) error {
 	vals, err := redis.Values(conn.HGetAll(sKey))
 	if err != nil {
@@ -81,6 +83,7 @@ func loadRedisHashToStruct(conn *libs.RedisCluster, sKey string, pst interface{}
 	return nil
 }
 
+// isUserTokenOver 超过登录设备限制
 func isUserTokenOver(userId string) bool {
 	conn := libs.GetRedisClusterClient()
 	defer conn.Close()
@@ -90,6 +93,7 @@ func isUserTokenOver(userId string) bool {
 	return false
 }
 
+// getUserTokenCount 获取登录数量
 func getUserTokenCount(conn *libs.RedisCluster, userId string) int {
 	count, err := redis.Int(conn.Scard(ZXW_SESSION_USER_PREFIX + userId))
 	if err != nil {
@@ -99,6 +103,7 @@ func getUserTokenCount(conn *libs.RedisCluster, userId string) int {
 	return count
 }
 
+// getUserTokenMaxCount 最大登录限制
 func getUserTokenMaxCount(conn *libs.RedisCluster) int {
 	count, err := redis.Int(conn.GetKey(ZXW_SESSION_USER_MAX_TOKEN_PREFIX))
 	if err != nil {
@@ -107,6 +112,7 @@ func getUserTokenMaxCount(conn *libs.RedisCluster) int {
 	return count
 }
 
+// UserTokenExpired 过期 token
 func UserTokenExpired(token string) {
 	conn := libs.GetRedisClusterClient()
 	defer conn.Close()
@@ -133,6 +139,7 @@ func UserTokenExpired(token string) {
 	return
 }
 
+// getUserScope 角色
 func getUserScope(userType string) uint64 {
 	switch userType {
 	case "admin":
@@ -141,6 +148,7 @@ func getUserScope(userType string) uint64 {
 	return NoneScope
 }
 
+// ToCache 缓存 token
 func (r *RedisSessionV2) ToCache(conn *libs.RedisCluster, token string) error {
 	sKey := ZXW_SESSION_TOKEN_PREFIX + token
 
@@ -158,8 +166,9 @@ func (r *RedisSessionV2) ToCache(conn *libs.RedisCluster, token string) error {
 	return nil
 }
 
+// SyncUserTokenCache 同步 token 到缓存
 func (r *RedisSessionV2) SyncUserTokenCache(conn *libs.RedisCluster, token string) error {
-	sKey := ZXW_SESSION_USER_PREFIX + token
+	sKey := ZXW_SESSION_USER_PREFIX + r.UserId
 	if _, err := conn.Sadd(sKey, token); err != nil {
 		fmt.Println(fmt.Sprintf("conn.SyncUserTokenCache1 error :%+v", err))
 		return err
@@ -173,6 +182,7 @@ func (r *RedisSessionV2) SyncUserTokenCache(conn *libs.RedisCluster, token strin
 	return nil
 }
 
+//UpdateUserTokenCacheExpire 更新过期时间
 func (r *RedisSessionV2) UpdateUserTokenCacheExpire(conn *libs.RedisCluster, token string) error {
 	if _, err := conn.Expire(ZXW_SESSION_TOKEN_PREFIX+token, int(r.GetTokenExpire().Seconds())); err != nil {
 		fmt.Println(fmt.Sprintf("conn.UpdateUserTokenCacheExpire error :%+v", err))
@@ -181,6 +191,7 @@ func (r *RedisSessionV2) UpdateUserTokenCacheExpire(conn *libs.RedisCluster, tok
 	return nil
 }
 
+// GetTokenExpire 过期时间
 func (r *RedisSessionV2) GetTokenExpire() time.Duration {
 	timeout := RedisSessionTimeoutApp
 	if r.LoginType == LoginTypeWeb {
@@ -193,6 +204,7 @@ func (r *RedisSessionV2) GetTokenExpire() time.Duration {
 	return timeout
 }
 
+// DelUserTokenCache 删除token缓存
 func (r *RedisSessionV2) DelUserTokenCache(conn *libs.RedisCluster, token string) error {
 	sKey := ZXW_SESSION_USER_PREFIX + r.UserId
 	_, err := conn.Do("SREM", sKey, token)
@@ -208,6 +220,8 @@ func (r *RedisSessionV2) DelUserTokenCache(conn *libs.RedisCluster, token string
 
 	return nil
 }
+
+// DelTokenCache 删除token缓存
 func (r *RedisSessionV2) DelTokenCache(conn *libs.RedisCluster, token string) error {
 	sKey2 := ZXW_SESSION_BIND_USER_PREFIX + token
 	_, err := conn.Del(sKey2)
@@ -215,6 +229,7 @@ func (r *RedisSessionV2) DelTokenCache(conn *libs.RedisCluster, token string) er
 		fmt.Println(fmt.Sprintf("conn.DelUserTokenCache2 error :%+v", err))
 		return err
 	}
+
 	sKey3 := ZXW_SESSION_TOKEN_PREFIX + token
 	_, err = conn.Del(sKey3)
 	if err != nil {
@@ -225,6 +240,7 @@ func (r *RedisSessionV2) DelTokenCache(conn *libs.RedisCluster, token string) er
 	return nil
 }
 
+// CleanUserTokenCache 清空token缓存
 func (r *RedisSessionV2) CleanUserTokenCache(conn *libs.RedisCluster) error {
 	sKey := ZXW_SESSION_USER_PREFIX + r.UserId
 	allTokens, err := redis.Strings(conn.Members(sKey))

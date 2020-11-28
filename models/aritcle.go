@@ -7,7 +7,6 @@ import (
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 )
@@ -27,12 +26,12 @@ type Article struct {
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
 	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
 	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
-	Ips          string    `gorm:"not null;default(0);type:varchar(4096)" json:"ips" comment:"ip 地址"`
 
 	TypeID   uint
 	Type     *Type
 	Tags     []*Tag   `gorm:"many2many:article_tags;"`
 	TagNames []string `gorm:"-" json:"tag_names"`
+	Ips      []*ArticleIp
 }
 
 func NewArticle() *Article {
@@ -40,34 +39,57 @@ func NewArticle() *Article {
 }
 
 func (r *Article) ReadArticle(rh *http.Request) error {
-	ip := r.Ips
-	ips := strings.Split(ip, ",")
-	publicIp := libs.ClientPublicIp(rh)
-	if !libs.InArrayS(ips, publicIp) {
-		r.Lock()
-		defer r.Unlock()
-
-		r.Read++
-		ips = append(ips, publicIp)
-		r.Ips = strings.Join(ips, ",")
-		err := easygorm.Save(r)
-		if err != nil {
-			return err
-		}
+	search := &easygorm.Search{
+		Fields: []*easygorm.Field{
+			{
+				Key:       "article_id",
+				Condition: "=",
+				Value:     r.ID,
+			},
+		},
 	}
-	return nil
-}
-
-func (r *Article) Addip() error {
-	r.Lock()
-	defer r.Unlock()
-
-	r.Read++
-	err := easygorm.Save(r)
+	articleIps, err := GetArticleIps(search)
 	if err != nil {
 		return err
 	}
+
+	publicIp := libs.ClientPublicIp(rh)
+	if publicIp == "" {
+		return nil
+	}
+
+	for _, articleIp := range articleIps {
+		// 原来ip增加访问次数
+		if articleIp.Addr == publicIp {
+			err := articleIp.AddArticleIpMun()
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+	}
+
+	r.Lock()
+	defer r.Unlock()
+	r.Read++
+	if err := easygorm.UpdateWithFilde(&Article{}, map[string]interface{}{"Read": r.Read}, r.ID); err != nil {
+		return err
+	}
+
+	// 没有的话就创建新的 ip
+	articleIp := ArticleIp{
+		Mun:       1,
+		Addr:      publicIp,
+		ArticleID: r.ID,
+		Article:   r,
+	}
+	err = articleIp.CreateArticleIp()
+	if err != nil {
+		return err
+	}
+
 	return nil
+
 }
 
 func (r *Article) LikeArticle() error {
@@ -75,8 +97,7 @@ func (r *Article) LikeArticle() error {
 	defer r.Unlock()
 
 	r.Like++
-	err := easygorm.Save(r)
-	if err != nil {
+	if err := easygorm.UpdateWithFilde(&Article{}, map[string]interface{}{"Like": r.Like}, r.ID); err != nil {
 		return err
 	}
 	return nil

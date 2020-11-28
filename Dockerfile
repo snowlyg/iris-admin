@@ -5,7 +5,7 @@ FROM archlinux
 
 LABEL maintainer="snowlyg <569616226@qq.com>"
 
-COPY ./cmd/main_lin /go/src/github.com/snowlyg/blog/main_lin
+COPY ./main_lin /go/src/github.com/snowlyg/blog/main_lin
 COPY ./application.example.yml /go/src/github.com/snowlyg/blog/application.yml
 COPY ./rbac_model.conf /go/src/github.com/snowlyg/blog/rbac_model.conf
 COPY ./seeder/data /go/src/github.com/snowlyg/blog/seeder/data

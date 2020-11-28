@@ -92,6 +92,8 @@ version: %s`, Version))
 			&models.Type{},
 			&models.Doc{},
 			&models.Chapter{},
+			&models.ChapterIp{},
+			&models.ArticleIp{},
 		},
 	})
 

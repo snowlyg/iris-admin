@@ -5,7 +5,6 @@ import (
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/easygorm"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -28,11 +27,12 @@ type Chapter struct {
 	DisplayTime  time.Time `json:"display_time" comment:"发布时间" validate:"required"`
 	Like         int64     `gorm:"not null;default(0)" json:"like" comment:"点赞"`
 	Read         int64     `gorm:"not null;default(0)" json:"read" comment:"阅读量"`
-	Ips          string    `gorm:"not null;default(0);type:varchar(1024)" json:"ips" comment:"ip 地址"`
 	Sort         int64     `gorm:"not null;default(0)" json:"sort" comment:"排序"`
 
 	DocID uint
 	Doc   *Doc
+
+	Ips []*ChapterIp
 }
 
 type MiniChapter struct {
@@ -56,11 +56,6 @@ func NewChapter() *Chapter {
 	}
 }
 
-// GetChapterTableName
-func GetChapterTableName() string {
-	return fmt.Sprintf("%s%s", libs.Config.DB.Prefix, "chapters")
-}
-
 // GetDocReads 获取文章阅读量
 func GetDocReads() (int64, error) {
 	sumRes, err := easygorm.Count(&Chapter{}, "read")
@@ -82,22 +77,57 @@ func GetChapter(search *easygorm.Search) (*Chapter, error) {
 
 // ReadChapter 增加阅读量
 func (p *Chapter) ReadChapter(rh *http.Request) error {
-	ip := p.Ips
-	ips := strings.Split(ip, ",")
-	publicIp := libs.ClientPublicIp(rh)
-	if !libs.InArrayS(ips, publicIp) {
-		p.Lock()
-		defer p.Unlock()
+	search := &easygorm.Search{
+		Fields: []*easygorm.Field{
+			{
+				Key:       "chapter_id",
+				Condition: "=",
+				Value:     p.ID,
+			},
+		},
+	}
+	chapterIps, err := GetChapterIps(search)
+	if err != nil {
+		return err
+	}
 
-		p.Read++
-		ips = append(ips, publicIp)
-		p.Ips = strings.Join(ips, ",")
-		err := easygorm.Save(p)
-		if err != nil {
-			return err
+	publicIp := libs.ClientPublicIp(rh)
+	if publicIp == "" {
+		return nil
+	}
+
+	for _, chapterIp := range chapterIps {
+		// 原来ip增加访问次数
+		if chapterIp.Addr == publicIp {
+			err := chapterIp.AddChapterIpMun()
+			if err != nil {
+				return err
+			}
+			return nil
 		}
 	}
+
+	p.Lock()
+	defer p.Unlock()
+	p.Read++
+	if err := easygorm.UpdateWithFilde(&Chapter{}, map[string]interface{}{"Read": p.Read}, p.ID); err != nil {
+		return err
+	}
+
+	// 没有的话就创建新的 ip
+	chapterIp := ChapterIp{
+		Mun:       1,
+		Addr:      publicIp,
+		ChapterID: p.ID,
+		Chapter:   p,
+	}
+	err = chapterIp.CreateChapterIp()
+	if err != nil {
+		return err
+	}
+
 	return nil
+
 }
 
 // LikeChapter 点赞
@@ -106,8 +136,7 @@ func (p *Chapter) LikeChapter() error {
 	defer p.Unlock()
 
 	p.Like++
-	err := easygorm.Save(p)
-	if err != nil {
+	if err := easygorm.UpdateWithFilde(&Chapter{}, map[string]interface{}{"Like": p.Like}, p.ID); err != nil {
 		return err
 	}
 	return nil

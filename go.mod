@@ -2,7 +2,7 @@ module github.com/snowlyg/blog
 
 go 1.14
 
-//replace github.com/snowlyg/easygorm v0.0.0-20201122113836-231ae984a5d1 => /Users/snowlyg/go/src/github.com/snowlyg/easygorm
+replace github.com/snowlyg/easygorm v0.0.0-20201122113836-231ae984a5d1 => /Users/snowlyg/go/src/github.com/snowlyg/easygorm
 
 require (
 	github.com/Joker/hpp v1.0.0 // indirect

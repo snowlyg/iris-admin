@@ -34,5 +34,7 @@ func DropTables(prefix string) {
 		prefix+"chapters",
 		prefix+"docs",
 		prefix+"article_tags",
+		prefix+"article_ips",
+		prefix+"chapter_ips",
 	)
 }

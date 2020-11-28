@@ -11,15 +11,15 @@ admin: # 管理员账号信息，用于数据填充
   username: username
   rolename: rolename
   name: name
-  password: password
+  pwd: password
 db:
   adapter: sqlite3 # mysql postgres sqlite3
   host: localhost
   port: 3306
   name: goirisapi
   user: root
-  pwd: password
-  prefix: blog
+  password: password
+  prefix: blog_
 redis:
   host: localhost
   port: 6379

@@ -67,6 +67,8 @@ func TestMain(m *testing.M) {
 			&models.Type{},
 			&models.Doc{},
 			&models.Chapter{},
+			&models.ChapterIp{},
+			&models.ArticleIp{},
 		},
 	})
 	s := app.NewServer() // 初始化app
@@ -242,7 +244,26 @@ func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *
 	return
 }
 
+func CreateArticleIp() (*models.ArticleIp, error) {
+	m := mock.ArticleIp{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
+	}
+	articleIp := &models.ArticleIp{
+		Mun:  m.Mun,
+		Addr: m.Addr,
+	}
+	err = articleIp.CreateArticleIp()
+	if err != nil {
+		return articleIp, err
+	}
+	return articleIp, nil
+}
+
 func CreateArticle(status string) (*models.Article, error) {
+	var tr *models.Type
+	var articleIp *models.ArticleIp
 	mock.CustomGenerator()
 	m := mock.Article{}
 	err := faker.FakeData(&m)
@@ -252,33 +273,59 @@ func CreateArticle(status string) (*models.Article, error) {
 	if len(status) == 0 {
 		status = m.Status
 	}
-	if tr, err := CreateType(); err != nil {
+
+	tr, err = CreateType()
+	if err != nil {
 		return nil, err
-	} else {
-		article := &models.Article{
-			Title:        m.Title,
-			ContentShort: m.ContentShort,
-			Author:       m.Author,
-			ImageUri:     m.ImageUri,
-			SourceUri:    m.SourceUri,
-			IsOriginal:   m.IsOriginal,
-			Content:      m.ContentShort,
-			Status:       status,
-			DisplayTime:  time.Now(),
-			Like:         m.Like,
-			Read:         m.Read,
-			Ips:          m.Ips,
-			Type:         tr,
-			TypeID:       tr.ID,
-		}
-		err = article.CreateArticle()
-		if err != nil {
-			return article, err
-		}
-		ArticleCount++
-		return article, nil
 	}
+
+	articleIp, err = CreateArticleIp()
+	if err != nil {
+		return nil, err
+	}
+
+	article := &models.Article{
+		Title:        m.Title,
+		ContentShort: m.ContentShort,
+		Author:       m.Author,
+		ImageUri:     m.ImageUri,
+		SourceUri:    m.SourceUri,
+		IsOriginal:   m.IsOriginal,
+		Content:      m.ContentShort,
+		Status:       status,
+		DisplayTime:  time.Now(),
+		Like:         m.Like,
+		Read:         m.Read,
+		Ips:          []*models.ArticleIp{articleIp},
+		Type:         tr,
+		TypeID:       tr.ID,
+	}
+	err = article.CreateArticle()
+	if err != nil {
+		return article, err
+	}
+	ArticleCount++
+	return article, nil
+
 }
+
+func CreateChapterIp() (*models.ChapterIp, error) {
+	m := mock.ChapterIp{}
+	err := faker.FakeData(&m)
+	if err != nil {
+		return nil, err
+	}
+	chapterIp := &models.ChapterIp{
+		Mun:  m.Mun,
+		Addr: m.Addr,
+	}
+	err = chapterIp.CreateChapterIp()
+	if err != nil {
+		return chapterIp, err
+	}
+	return chapterIp, nil
+}
+
 func CreateChapter(status string) (*models.Chapter, error) {
 	mock.CustomGenerator()
 	m := mock.Chapter{}
@@ -291,33 +338,41 @@ func CreateChapter(status string) (*models.Chapter, error) {
 		status = m.Status
 	}
 
-	if doc, err := CreateDoc(); err != nil {
+	var doc *models.Doc
+	doc, err = CreateDoc()
+	if err != nil {
 		return nil, err
-	} else {
-		chapter := &models.Chapter{
-			Title:        m.Title,
-			ContentShort: m.ContentShort,
-			Author:       m.Author,
-			ImageUri:     m.ImageUri,
-			SourceUri:    m.SourceUri,
-			IsOriginal:   m.IsOriginal,
-			Content:      m.ContentShort,
-			Status:       status,
-			DisplayTime:  time.Now(),
-			Like:         m.Like,
-			Read:         m.Read,
-			Ips:          m.Ips,
-			Sort:         m.Sort,
-			Doc:          doc,
-			DocID:        doc.ID,
-		}
-		err = chapter.CreateChapter()
-		if err != nil {
-			return chapter, err
-		}
-		ChapterCount++
-		return chapter, nil
 	}
+	var chapterIp *models.ChapterIp
+	chapterIp, err = CreateChapterIp()
+	if err != nil {
+		return nil, err
+	}
+
+	chapter := &models.Chapter{
+		Title:        m.Title,
+		ContentShort: m.ContentShort,
+		Author:       m.Author,
+		ImageUri:     m.ImageUri,
+		SourceUri:    m.SourceUri,
+		IsOriginal:   m.IsOriginal,
+		Content:      m.ContentShort,
+		Status:       status,
+		DisplayTime:  time.Now(),
+		Like:         m.Like,
+		Read:         m.Read,
+		Ips:          []*models.ChapterIp{chapterIp},
+		Sort:         m.Sort,
+		Doc:          doc,
+		DocID:        doc.ID,
+	}
+	err = chapter.CreateChapter()
+	if err != nil {
+		return chapter, err
+	}
+	ChapterCount++
+	return chapter, nil
+
 }
 
 func CreateConfig() (*models.Config, error) {

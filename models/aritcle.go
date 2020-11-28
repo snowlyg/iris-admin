@@ -39,16 +39,7 @@ func NewArticle() *Article {
 }
 
 func (r *Article) ReadArticle(rh *http.Request) error {
-	search := &easygorm.Search{
-		Fields: []*easygorm.Field{
-			{
-				Key:       "article_id",
-				Condition: "=",
-				Value:     r.ID,
-			},
-		},
-	}
-	articleIps, err := GetArticleIps(search)
+	articleIps, err := r.getArticleIps()
 	if err != nil {
 		return err
 	}
@@ -92,7 +83,42 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 
 }
 
-func (r *Article) LikeArticle() error {
+func (r *Article) getArticleIps() ([]*ArticleIp, error) {
+	search := &easygorm.Search{
+		Fields: []*easygorm.Field{
+			{
+				Key:       "article_id",
+				Condition: "=",
+				Value:     r.ID,
+			},
+		},
+	}
+	articleIps, err := GetArticleIps(search)
+	if err != nil {
+		return nil, err
+	}
+	return articleIps, nil
+}
+
+func (r *Article) LikeArticle(rh *http.Request) error {
+
+	articleIps, err := r.getArticleIps()
+	if err != nil {
+		return err
+	}
+
+	publicIp := libs.ClientPublicIp(rh)
+	if publicIp == "" {
+		return nil
+	}
+
+	for _, articleIp := range articleIps {
+		// 原来ip增加访问次数
+		if articleIp.Addr == publicIp {
+			return nil
+		}
+	}
+
 	r.Lock()
 	defer r.Unlock()
 

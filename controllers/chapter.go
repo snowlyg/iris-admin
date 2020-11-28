@@ -384,7 +384,7 @@ func GetPublishedChapterLike(ctx iris.Context) {
 		return
 	}
 
-	err = chapter.LikeChapter()
+	err = chapter.LikeChapter(ctx.Request())
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return

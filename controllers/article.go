@@ -80,7 +80,7 @@ func GetPublishedArticleLike(ctx iris.Context) {
 		return
 	}
 
-	err = article.LikeArticle()
+	err = article.LikeArticle(ctx.Request())
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return

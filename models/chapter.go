@@ -77,16 +77,7 @@ func GetChapter(search *easygorm.Search) (*Chapter, error) {
 
 // ReadChapter 增加阅读量
 func (p *Chapter) ReadChapter(rh *http.Request) error {
-	search := &easygorm.Search{
-		Fields: []*easygorm.Field{
-			{
-				Key:       "chapter_id",
-				Condition: "=",
-				Value:     p.ID,
-			},
-		},
-	}
-	chapterIps, err := GetChapterIps(search)
+	chapterIps, err := p.getChapterIps()
 	if err != nil {
 		return err
 	}
@@ -130,8 +121,42 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 
 }
 
+func (p *Chapter) getChapterIps() ([]*ChapterIp, error) {
+	search := &easygorm.Search{
+		Fields: []*easygorm.Field{
+			{
+				Key:       "chapter_id",
+				Condition: "=",
+				Value:     p.ID,
+			},
+		},
+	}
+	chapterIps, err := GetChapterIps(search)
+	if err != nil {
+		return nil, err
+	}
+	return chapterIps, nil
+}
+
 // LikeChapter 点赞
-func (p *Chapter) LikeChapter() error {
+func (p *Chapter) LikeChapter(rh *http.Request) error {
+	chapterIps, err := p.getChapterIps()
+	if err != nil {
+		return err
+	}
+
+	publicIp := libs.ClientPublicIp(rh)
+	if publicIp == "" {
+		return nil
+	}
+
+	for _, chapterIp := range chapterIps {
+		// 原来ip增加访问次数
+		if chapterIp.Addr == publicIp {
+			return nil
+		}
+	}
+
 	p.Lock()
 	defer p.Unlock()
 

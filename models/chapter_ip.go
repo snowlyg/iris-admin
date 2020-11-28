@@ -11,7 +11,7 @@ type ChapterIp struct {
 	gorm.Model
 
 	Mun  int64  `gorm:"not null;default(0)" json:"mun" comment:"访问次数"`
-	Addr string `gorm:"unique;not null;default(0);type:varchar(20)" json:"addr" comment:"ip 地址"`
+	Addr string `gorm:"not null;default(0);type:varchar(20)" json:"addr" comment:"ip 地址"`
 
 	ChapterID uint
 	Chapter   *Chapter

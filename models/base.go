@@ -8,6 +8,12 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	NoAct    = iota // 无操作
+	Read            // 阅读
+	ReadLike        //阅读点赞
+)
+
 // IsNotFound 判断是否是查询不存在错误
 func IsNotFound(err error) bool {
 	if ok := errors.Is(err, gorm.ErrRecordNotFound); ok {

@@ -52,6 +52,16 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 	for _, articleIp := range articleIps {
 		// 原来ip增加访问次数
 		if articleIp.Addr == publicIp {
+
+			if articleIp.Type == NoAct {
+				err := articleIp.UpdateType()
+				if err != nil {
+					return err
+				}
+
+				return nil
+			}
+
 			err := articleIp.AddArticleIpMun()
 			if err != nil {
 				return err
@@ -70,6 +80,7 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 	// 没有的话就创建新的 ip
 	articleIp := ArticleIp{
 		Mun:       1,
+		Type:      Read,
 		Addr:      publicIp,
 		ArticleID: r.ID,
 		Article:   r,
@@ -114,9 +125,15 @@ func (r *Article) LikeArticle(rh *http.Request) error {
 
 	for _, articleIp := range articleIps {
 		// 原来ip增加访问次数
-		if articleIp.Addr == publicIp {
+		if articleIp.Type == ReadLike {
 			return nil
 		}
+
+		err := articleIp.UpdateType()
+		if err != nil {
+			return err
+		}
+
 	}
 
 	r.Lock()

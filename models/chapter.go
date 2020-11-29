@@ -90,6 +90,14 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 	for _, chapterIp := range chapterIps {
 		// 原来ip增加访问次数
 		if chapterIp.Addr == publicIp {
+
+			if chapterIp.Type == NoAct {
+				err := chapterIp.UpdateType()
+				if err != nil {
+					return err
+				}
+			}
+
 			err := chapterIp.AddChapterIpMun()
 			if err != nil {
 				return err
@@ -108,6 +116,7 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 	// 没有的话就创建新的 ip
 	chapterIp := ChapterIp{
 		Mun:       1,
+		Type:      Read,
 		Addr:      publicIp,
 		ChapterID: p.ID,
 		Chapter:   p,
@@ -153,7 +162,17 @@ func (p *Chapter) LikeChapter(rh *http.Request) error {
 	for _, chapterIp := range chapterIps {
 		// 原来ip增加访问次数
 		if chapterIp.Addr == publicIp {
+			if chapterIp.Type == ReadLike {
+				return nil
+			}
+
+			err := chapterIp.UpdateType()
+			if err != nil {
+				return err
+			}
+
 			return nil
+
 		}
 	}
 

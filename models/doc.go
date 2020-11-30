@@ -12,8 +12,9 @@ import (
 
 type Doc struct {
 	gorm.Model
-	Name     string `gorm:"not null ;type:varchar(256)" json:"name" validate:"required,gte=0,lte=256" comment:"文档名称"`
-	Chapters []*Chapter
+	Name       string `gorm:"not null ;type:varchar(256)" json:"name" validate:"required,gte=0,lte=256" comment:"文档名称"`
+	ChapterMun int64  `gorm:"not null ;default(0)" json:"name" validate:"required" comment:"章节数量"`
+	Chapters   []*Chapter
 }
 
 func NewDoc() *Doc {

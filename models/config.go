@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -29,8 +30,11 @@ func NewConfig() *Config {
 func GetConfig(search *easygorm.Search) (*Config, error) {
 	r := NewConfig()
 	err := easygorm.Found(search).First(r).Error
-	if !IsNotFound(err) {
+	if err != nil {
 		return r, err
+	}
+	if r.ID == 0 {
+		return r, errors.New("数据不存在")
 	}
 	return r, nil
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/snowlyg/easygorm"
 	"time"
@@ -29,8 +30,11 @@ func NewTag() *Tag {
 func GetTag(s *easygorm.Search) (*Tag, error) {
 	t := NewTag()
 	err := easygorm.First(t, s)
-	if !IsNotFound(err) {
+	if err != nil {
 		return t, err
+	}
+	if t.ID == 0 {
+		return t, errors.New("数据不存在")
 	}
 	return t, nil
 }

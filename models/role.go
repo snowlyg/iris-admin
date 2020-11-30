@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/snowlyg/blog/libs"
 	"strconv"
@@ -33,8 +34,11 @@ func NewRole() *Role {
 func GetRoleById(id uint) (*Role, error) {
 	t := NewRole()
 	err := easygorm.FindById(NewRole(), id)
-	if !IsNotFound(err) {
+	if err != nil {
 		return t, err
+	}
+	if t.ID == 0 {
+		return t, errors.New("数据不存在")
 	}
 	return t, nil
 }
@@ -43,8 +47,11 @@ func GetRoleById(id uint) (*Role, error) {
 func GetRole(s *easygorm.Search) (*Role, error) {
 	t := NewRole()
 	err := easygorm.First(NewRole(), s)
-	if !IsNotFound(err) {
+	if err != nil {
 		return t, err
+	}
+	if t.ID == 0 {
+		return t, errors.New("数据不存在")
 	}
 	return t, nil
 }

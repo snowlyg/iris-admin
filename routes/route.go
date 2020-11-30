@@ -49,6 +49,8 @@ func App(api *iris.Application) {
 				chapter.Get("/", controllers.GetAllPublishedChapters)
 				chapter.Get("/{id:uint}", controllers.GetPublishedChapter)
 				chapter.Get("/like/{id:uint}", controllers.GetPublishedChapterLike)
+				chapter.Get("/prev/{sort:uint}", controllers.GetPublishedChapterPrev)
+				chapter.Get("/next/{sort:uint}", controllers.GetPublishedChapterNext)
 			})
 			v1.Post("/admin/login", controllers.UserLogin)
 			v1.PartyFunc("/admin", func(admin iris.Party) {

@@ -9,7 +9,7 @@ limit:
   burst: 10 # 最高允许并发
 admin: # 管理员账号信息，用于数据填充
   username: username
-  rolename: rolename
+  rolename: admin
   name: name
   pwd: password
 db:

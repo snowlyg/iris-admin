@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
@@ -150,8 +151,11 @@ func (r *Article) LikeArticle(rh *http.Request) error {
 func GetArticle(s *easygorm.Search) (*Article, error) {
 	r := NewArticle()
 	err := easygorm.First(r, s)
-	if !IsNotFound(err) {
+	if err != nil {
 		return r, err
+	}
+	if r.ID == 0 {
+		return r, errors.New("数据不存在")
 	}
 	return r, nil
 }
@@ -160,8 +164,11 @@ func GetArticle(s *easygorm.Search) (*Article, error) {
 func GetArticleById(id uint) (*Article, error) {
 	r := NewArticle()
 	err := easygorm.FindById(r, id)
-	if !IsNotFound(err) {
+	if err != nil {
 		return r, err
+	}
+	if r.ID == 0 {
+		return nil, errors.New("数据不存在")
 	}
 	return r, nil
 }

@@ -395,6 +395,82 @@ func GetPublishedChapterLike(ctx iris.Context) {
 }
 
 /**
+* @api {get} /chapter/prev/:id 上一页
+* @apiName 上一页
+* @apiGroup Chapter
+* @apiVersion 1.0.0
+* @apiDescription 上一页
+* @apiSampleRequest /chapter/prev/:id
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission
+ */
+func GetPublishedChapterPrev(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+	sort, _ := ctx.Params().GetUint("sort")
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
+			{
+				Key:       "sort",
+				Condition: "=",
+				Value:     sort - 1,
+			}, {
+				Key:       "status",
+				Condition: "=",
+				Value:     "published",
+			},
+		},
+	}
+	chapter, err := models.GetChapter(s)
+	if err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
+	}
+
+	rr := chapterTransform(chapter)
+	_, _ = ctx.JSON(libs.ApiResource(200, rr, "操作成功"))
+}
+
+/**
+* @api {get} /chapter/next/:id 下一页
+* @apiName 下一页
+* @apiGroup Chapter
+* @apiVersion 1.0.0
+* @apiDescription 下一页
+* @apiSampleRequest /chapter/next/:id
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiPermission
+ */
+func GetPublishedChapterNext(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+	sort, _ := ctx.Params().GetUint("sort")
+	s := &easygorm.Search{
+		Fields: []*easygorm.Field{
+			{
+				Key:       "sort",
+				Condition: "=",
+				Value:     sort + 1,
+			}, {
+				Key:       "status",
+				Condition: "=",
+				Value:     "published",
+			},
+		},
+	}
+	chapter, err := models.GetChapter(s)
+	if err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
+	}
+
+	rr := chapterTransform(chapter)
+	_, _ = ctx.JSON(libs.ApiResource(200, rr, "操作成功"))
+}
+
+/**
 * @api {get} /chapter 获取所有的文章
 * @apiName 获取所有的文章
 * @apiGroup Chapter

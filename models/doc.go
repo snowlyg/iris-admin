@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/snowlyg/easygorm"
 	"time"
@@ -28,8 +29,11 @@ func NewDoc() *Doc {
 func GetDoc(search *easygorm.Search) (*Doc, error) {
 	t := NewDoc()
 	err := easygorm.First(t, search)
-	if !IsNotFound(err) {
+	if err != nil {
 		return t, err
+	}
+	if t.ID == 0 {
+		return t, errors.New("数据不存在")
 	}
 	return t, nil
 }

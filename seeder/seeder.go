@@ -154,22 +154,23 @@ func CreateAdminRole() {
 		},
 	}
 	role, err := models.GetRole(s)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("角色获取失败：%+v\n", err))
+	}
 	var permIds []uint
 	ss := &easygorm.Search{
 		Limit:  -1,
 		Offset: -1,
 	}
-	perms, _, err := models.GetAllPermissions(ss)
-	if libs.Config.Debug {
-		if err != nil {
-			fmt.Println(fmt.Sprintf("权限获取失败：%+v\n", err))
-		}
+	var perms []*models.Permission
+	perms, _, err = models.GetAllPermissions(ss)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("权限获取失败：%+v\n", err))
 	}
 
 	for _, perm := range perms {
 		permIds = append(permIds, perm.ID)
 	}
-	role.PermIds = permIds
 
 	if err == nil {
 		if role.ID == 0 {
@@ -184,6 +185,7 @@ func CreateAdminRole() {
 				logger.Println(fmt.Sprintf("管理角色填充错误：%+v\n", err))
 			}
 		} else {
+			role.PermIds = permIds
 			if err := models.UpdateRole(role.ID, role); err != nil {
 				logger.Println(fmt.Sprintf("管理角色填充错误：%+v\n", err))
 			}

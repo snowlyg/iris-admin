@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/easygorm"
@@ -69,8 +70,11 @@ func GetDocReads() (int64, error) {
 func GetChapter(search *easygorm.Search) (*Chapter, error) {
 	t := NewChapter()
 	err := easygorm.First(t, search)
-	if !IsNotFound(err) {
+	if err != nil {
 		return t, err
+	}
+	if t.ID == 0 {
+		return t, errors.New("数据不存在")
 	}
 	return t, nil
 }

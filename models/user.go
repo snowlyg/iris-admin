@@ -46,8 +46,11 @@ func NewUser() *User {
 func GetUser(search *easygorm.Search) (*User, error) {
 	t := NewUser()
 	err := easygorm.First(t, search)
-	if !IsNotFound(err) {
+	if err != nil {
 		return t, err
+	}
+	if t.ID == 0 {
+		return t, errors.New("数据不存在")
 	}
 	return t, nil
 }

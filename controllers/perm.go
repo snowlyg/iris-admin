@@ -72,7 +72,7 @@ func CreatePermission(ctx iris.Context) {
 		}
 	}
 
-	err = perm.CreatePermission()
+	err = models.CreatePermission(perm)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error create prem: %s", err.Error())))
 		return

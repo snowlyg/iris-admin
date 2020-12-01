@@ -73,4 +73,5 @@ func TestUserDelete(t *testing.T) {
 		return
 	}
 	delete(t, fmt.Sprintf("users/%d", tu.ID), iris.StatusOK, 200, "删除成功")
+	UserCount--
 }

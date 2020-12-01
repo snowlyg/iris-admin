@@ -14,13 +14,13 @@ import (
 
 func TestPermissions(t *testing.T) {
 	obj := map[string]interface{}{"limit": 1, "page": 1, "field": "id,name,created_at"}
-	more := &More{54, 1, 1, PermCount, []interface{}{"id", "name", "created_at"}}
+	more := &More{1, 1, 1, PermCount, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "permissions", iris.StatusOK, obj, more)
 }
 
 func TestPermissionsNoPagination(t *testing.T) {
 	obj := map[string]interface{}{"limit": -1, "page": -1, "field": "id,name,created_at"}
-	more := &More{54, -1, PermCount, PermCount, []interface{}{"id", "name", "created_at"}}
+	more := &More{1, -1, PermCount, PermCount, []interface{}{"id", "name", "created_at"}}
 	getMore(t, "permissions", iris.StatusOK, obj, more)
 }
 

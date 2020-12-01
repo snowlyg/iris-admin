@@ -39,6 +39,8 @@ github.com/casbin/casbin/v2 v2.18.0 h1:R2w6Gp7TwvqYZRLzT5/QxFRc782Ton1LSNZEyeo0w
 github.com/casbin/casbin/v2 v2.18.0/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
 github.com/casbin/casbin/v2 v2.19.0 h1:8wOi+WQqqXu2AD3f9H7TVP9HDTLyhaONae4i/Oxepho=
 github.com/casbin/casbin/v2 v2.19.0/go.mod h1:wUgota0cQbTXE6Vd+KWpg41726jFRi7upxio0sR+Xd0=
+github.com/casbin/casbin/v2 v2.19.2 h1:bSsTfnZRStNatu0dWIsXGp8ltzvRQh4azNjV5+wWJMI=
+github.com/casbin/casbin/v2 v2.19.2/go.mod h1:wUgota0cQbTXE6Vd+KWpg41726jFRi7upxio0sR+Xd0=
 github.com/casbin/gorm-adapter/v3 v3.0.3 h1:hXGl0MvyOgo7veI9L3PEGg1nrYZz46jVohsWJl6Ue4k=
 github.com/casbin/gorm-adapter/v3 v3.0.3/go.mod h1:mQI09sqvXfy5p6kZB5HBzZrgKWwxaJ4xMWpd5OGfHRY=
 github.com/casbin/gorm-adapter/v3 v3.0.4 h1:T7JVXJt2/BTmVnNdi2JJW3GLUTktqyYIezQKLcA32GM=
@@ -403,6 +405,8 @@ github.com/snowlyg/easygorm v0.0.0-20201122113836-231ae984a5d1 h1:62Lpe6LduzF/x8
 github.com/snowlyg/easygorm v0.0.0-20201122113836-231ae984a5d1/go.mod h1:7LrV2cnMx7FDS6Co3CzbP1V8EdW7xMCy9C6t5qveyec=
 github.com/snowlyg/easygorm v0.0.0-20201128050115-b2c7dab3ef90 h1:0KQHaT1jJ0TN6pqaME+ucoeZFxMQ2dIr7od5dQOdFFk=
 github.com/snowlyg/easygorm v0.0.0-20201128050115-b2c7dab3ef90/go.mod h1:wcMJZ65fkTZZsz7zmlTStKcLBvxp+qlaJs2eAHLEhNA=
+github.com/snowlyg/easygorm v0.0.0-20201201125442-d726e2ba177d h1:alLycXfeTP82UTeu4wK9xYGNIuLXbLx8n68UPBndq5U=
+github.com/snowlyg/easygorm v0.0.0-20201201125442-d726e2ba177d/go.mod h1:/UQnDt8G01Klq1wcalJa88+h/plIWjAycyZJ/mMHZ84=
 github.com/snowlyg/gotransformer v0.1.0 h1:Oa5cUFeVMFHrriTPdR9PlBiL7seZzzAwTi8FLcCK1j4=
 github.com/snowlyg/gotransformer v0.1.0/go.mod h1:XQTsi1E7BSdtkFtsDNh0bLb7cooz/MfqoJws4FFIwYE=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=
@@ -545,6 +549,8 @@ golang.org/x/sys v0.0.0-20201119102817-f84b799fce68 h1:nxC68pudNYkKU6jWhgrqdreuF
 golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20201126233918-771906719818 h1:f1CIuDlJhwANEC2MM87MBEVMr3jl5bifgsfj90XAF9c=
 golang.org/x/sys v0.0.0-20201126233918-771906719818/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20201130171929-760e229fe7c5 h1:dMDtAap8F/+vsyXblqK90iTzYJjNix5MsXDicSYol6w=
+golang.org/x/sys v0.0.0-20201130171929-760e229fe7c5/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=

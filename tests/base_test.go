@@ -477,7 +477,7 @@ func CreatePermission() (*models.Permission, error) {
 		Description: m.Description,
 		Act:         m.Act,
 	}
-	err = perm.CreatePermission()
+	err = models.CreatePermission(perm)
 	if err != nil {
 		return perm, err
 	}

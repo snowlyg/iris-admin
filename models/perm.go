@@ -71,7 +71,7 @@ func GetAllPermissions(s *easygorm.Search) ([]*Permission, int64, error) {
 }
 
 // CreatePermission create permission
-func (p *Permission) CreatePermission() error {
+func CreatePermission(p interface{}) error {
 	if err := easygorm.Create(p); err != nil {
 		return err
 	}

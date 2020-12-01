@@ -2,13 +2,13 @@ module github.com/snowlyg/blog
 
 go 1.14
 
-//replace github.com/snowlyg/easygorm v0.0.0-20201128050115-b2c7dab3ef90 => /Users/snowlyg/go/src/github.com/snowlyg/easygorm
+//replace github.com/snowlyg/easygorm v0.0.0-20201201125442-d726e2ba177d => /Users/snowlyg/go/src/github.com/snowlyg/easygorm
 
 require (
 	github.com/Joker/hpp v1.0.0 // indirect
 	github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107
 	github.com/bxcodec/faker/v3 v3.5.0
-	github.com/casbin/casbin/v2 v2.19.0
+	github.com/casbin/casbin/v2 v2.19.2
 	github.com/casbin/gorm-adapter/v3 v3.0.4 // indirect
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
 	github.com/fatih/color v1.10.0
@@ -37,13 +37,13 @@ require (
 	github.com/qiniu/api.v7/v7 v7.4.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	github.com/snowlyg/easygorm v0.0.0-20201128050115-b2c7dab3ef90
+	github.com/snowlyg/easygorm v0.0.0-20201201125442-d726e2ba177d
 	github.com/snowlyg/gotransformer v0.1.0
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392 // indirect
 	golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0 // indirect
-	golang.org/x/sys v0.0.0-20201126233918-771906719818 // indirect
+	golang.org/x/sys v0.0.0-20201130171929-760e229fe7c5 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/ini.v1 v1.61.0
 	gorm.io/driver/mysql v1.0.3 // indirect

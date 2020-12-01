@@ -73,4 +73,5 @@ func TestRoleDelete(t *testing.T) {
 		fmt.Print(err)
 	}
 	delete(t, fmt.Sprintf("roles/%d", tr.ID), iris.StatusOK, 200, "删除成功")
+	RoleCount--
 }

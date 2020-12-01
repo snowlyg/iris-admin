@@ -128,7 +128,7 @@ func App(api *iris.Application) {
 					chapters.Put("/{id:uint}", controllers.UpdateChapter).Name = "编辑章节"
 					chapters.Put("/{id:uint}/set_sort", controllers.SetChapterSort).Name = "设置排序"
 					chapters.Put("/sort", controllers.SortChapter).Name = "排序章节"
-					chapters.Delete("/{id:uint}", controllers.DeleteChapter).Name = "删除章节"
+					chapters.Delete("/{id:uint}/doc/{doc_id:uint}", controllers.DeleteChapter).Name = "删除章节"
 				})
 			})
 		}

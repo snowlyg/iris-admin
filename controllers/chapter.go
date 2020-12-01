@@ -308,7 +308,8 @@ func DeleteChapter(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
-	err := models.DeleteChapterById(id)
+	docId, _ := ctx.Params().GetUint("doc_id")
+	err := models.DeleteChapterById(id, docId)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return

@@ -104,5 +104,5 @@ func TestChapterDelete(t *testing.T) {
 		color.Red("TestChapterDelete %+v", err)
 		return
 	}
-	delete(t, fmt.Sprintf("chapters/%d", tr.ID), iris.StatusOK, 200, "删除成功")
+	delete(t, fmt.Sprintf("chapters/%d/doc/%d", tr.ID, tr.DocID), iris.StatusOK, 200, "删除成功")
 }

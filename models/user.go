@@ -45,8 +45,7 @@ func NewUser() *User {
 // GetUser get user
 func GetUser(search *easygorm.Search) (*User, error) {
 	t := NewUser()
-	err := easygorm.First(t, search)
-	if err != nil {
+	if err := easygorm.First(t, search); err != nil {
 		return t, err
 	}
 

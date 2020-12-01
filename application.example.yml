@@ -3,6 +3,7 @@ debug: true # 调试模式
 https: false # https
 host: 127.0.0.1 # host 地址
 port: 80 # 端口
+cache: false
 limit:
   disable: true
   limit: 2 # 每秒允许请求 1 次

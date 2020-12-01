@@ -41,7 +41,7 @@ func GetPermission(search *easygorm.Search) (*Permission, error) {
 func GetPermissionById(id uint) (*Permission, error) {
 	t := NewPermission()
 	err := easygorm.FindById(t, id)
-	if !IsNotFound(err) {
+	if err != nil {
 		return t, err
 	}
 	return t, nil

@@ -90,7 +90,7 @@ func CreateConfigs() {
 			},
 		}
 		perm, err := models.GetConfig(s)
-		if !models.IsNotFound(err) {
+		if err != nil && models.IsNotFound(err) {
 			if perm.ID == 0 {
 				perm = &models.Config{
 					Model: gorm.Model{CreatedAt: time.Now()},
@@ -125,7 +125,7 @@ func CreatePerms() {
 			},
 		}
 		perm, err := models.GetPermission(s)
-		if err != nil && !models.IsNotFound(err) {
+		if err != nil && models.IsNotFound(err) {
 			if perm.ID == 0 {
 				perm = &models.Permission{
 					Model:       gorm.Model{CreatedAt: time.Now()},
@@ -155,7 +155,7 @@ func CreateAdminRole() {
 		},
 	}
 	role, err := models.GetRole(s)
-	if err != nil && !models.IsNotFound(err) {
+	if err != nil && models.IsNotFound(err) {
 		fmt.Println(fmt.Sprintf("角色获取失败：%+v\n", err))
 	}
 	var permIds []uint
@@ -211,7 +211,7 @@ func CreateAdminUser() {
 		},
 	}
 	admin, err := models.GetUser(s)
-	if err != nil && !models.IsNotFound(err) {
+	if err != nil && models.IsNotFound(err) {
 		fmt.Println(fmt.Sprintf("Get admin error：%+v\n", err))
 	}
 

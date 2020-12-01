@@ -316,9 +316,8 @@ func (r *Article) getTypes() {
 				},
 			}
 			tt, err := GetType(s)
-			if err == nil && tt.ID > 0 {
-				r.TypeID = tt.ID
-				r.Type = tt
+			if err == nil && tt.Id > 0 {
+				r.TypeID = tt.Id
 			}
 		}
 	}

@@ -4,6 +4,7 @@ package tests
 
 import (
 	"github.com/bxcodec/faker/v3"
+	"github.com/fatih/color"
 	"github.com/iris-contrib/httpexpect/v2"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
@@ -33,7 +34,7 @@ var (
 	ChapterCount int64
 	UserCount    int64 = 1
 	RoleCount    int64 = 1
-	PermCount    int64 = 53
+	PermCount          = int64(len(seeder.Seeds.Perms))
 	ConfigCount  int64 = 2
 )
 
@@ -44,19 +45,19 @@ func TestMain(m *testing.M) {
 	easygorm.Init(&easygorm.Config{
 		GormConfig: &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
-				TablePrefix:   "iris_", // 表名前缀，`User` 的表名应该是 `t_users`
-				SingularTable: false,   // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
+				TablePrefix:   "iris_test_", // 表名前缀，`User` 的表名应该是 `t_users`
+				SingularTable: false,        // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
 			},
 		},
-		Adapter:         "sqlite3", // 类型
-		Name:            "blog_test",
-		Username:        "root",                                       // 用户名
-		Pwd:             "123456",                                     // 密码
-		Host:            "127.0.0.1",                                  // 地址
-		Port:            3306,                                         // 端口
-		CasbinModelPath: filepath.Join(libs.CWD(), "rbac_model.conf"), // casbin 模型规则路径
-		Debug:           true,
-		TablePrefix:     "iris",
+		Adapter:           "sqlite3", // 类型
+		Name:              "blog_test",
+		Username:          "root",                                       // 用户名
+		Pwd:               "123456",                                     // 密码
+		Host:              "127.0.0.1",                                  // 地址
+		Port:              3306,                                         // 端口
+		CasbinModelPath:   filepath.Join(libs.CWD(), "rbac_model.conf"), // casbin 模型规则路径
+		Debug:             true,
+		CasbinTablePrefix: "iris_test",
 		Models: []interface{}{
 			&models.User{},
 			&models.Role{},
@@ -77,7 +78,10 @@ func TestMain(m *testing.M) {
 
 	exitCode := m.Run()
 
-	models.DropTables("iris_") // 删除测试数据表，保持测试环境
+	if err := ClearTokenCache(token); err != nil {
+		color.Red("clear token :%s err : %+v", token, err)
+	}
+	models.DropTables("iris_test_") // 删除测试数据表，保持测试环境
 	os.Exit(exitCode)
 }
 
@@ -101,7 +105,8 @@ func login(t *testing.T, Object interface{}, StatusCode int, Code int, Msg strin
 //  create 方法
 func create(t *testing.T, url string, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
-	ob := e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
+	oauthToken := GetOauthToken(e)
+	ob := e.POST(url).WithHeader("Authorization", "Bearer "+oauthToken).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 	ob.Value("code").Equal(Code)
 	ob.Value("message").Equal(Msg)
@@ -112,7 +117,8 @@ func create(t *testing.T, url string, Object interface{}, StatusCode int, Code i
 //  update 方法
 func update(t *testing.T, url string, Object interface{}, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
-	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).WithJSON(Object).
+	oauthToken := GetOauthToken(e)
+	ob := e.PUT(url).WithHeader("Authorization", "Bearer "+oauthToken).WithJSON(Object).
 		Expect().Status(StatusCode).JSON().Object()
 	ob.Value("code").Equal(Code)
 	ob.Value("message").Equal(Msg)
@@ -123,9 +129,11 @@ func update(t *testing.T, url string, Object interface{}, StatusCode int, Code i
 //  getOne 方法
 func getOne(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
-	e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+	oauthToken := GetOauthToken(e)
+	e.GET(url).WithHeader("Authorization", "Bearer "+oauthToken).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Code, Msg)
+
 	return
 }
 
@@ -135,6 +143,7 @@ func getOnePublic(t *testing.T, url string, StatusCode int, Code int, Msg string
 	e.GET(url).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Code, Msg)
+
 	return
 }
 
@@ -150,7 +159,8 @@ func getNoAuth(t *testing.T, url string, StatusCode int, Code int, Msg string) (
 //  bImport 方法
 func bImport(t *testing.T, url string, StatusCode int, Code int, Msg string, _ map[string]interface{}) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
-	e.POST(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+	oauthToken := GetOauthToken(e)
+	e.POST(url).WithHeader("Authorization", "Bearer "+oauthToken).
 		WithMultipart().
 		WithFile("file", "permissions.xlsx").
 		Expect().Status(StatusCode).
@@ -170,7 +180,8 @@ type More struct {
 //  getNoReturn 方法
 func getNoReturn(t *testing.T, url string, StatusCode int, obj interface{}) {
 	e := getHttpexpect(t)
-	o := e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+	oauthToken := GetOauthToken(e)
+	o := e.GET(url).WithHeader("Authorization", "Bearer "+oauthToken).
 		WithQueryObject(obj).
 		Expect().Status(StatusCode).
 		JSON().Object()
@@ -178,13 +189,15 @@ func getNoReturn(t *testing.T, url string, StatusCode int, obj interface{}) {
 	o.Value("code").Equal(200)
 	o.Value("message").Equal("")
 	o.Value("data").Null()
+
 }
 
 //  getMore 方法
 func getMore(t *testing.T, url string, StatusCode int, obj interface{}, m *More) {
 	e := getHttpexpect(t)
 
-	o := e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+	oauthToken := GetOauthToken(e)
+	o := e.GET(url).WithHeader("Authorization", "Bearer "+oauthToken).
 		WithQueryObject(obj).
 		Expect().Status(StatusCode).
 		JSON().Object()
@@ -197,12 +210,14 @@ func getMore(t *testing.T, url string, StatusCode int, obj interface{}, m *More)
 	items.First().Object().Keys().Contains(m.Field...)
 	o.Value("data").Object().Value("limit").Equal(m.Limit)
 	o.Value("data").Object().Value("total").Equal(m.Total)
+
 }
 
 //  getAll 方法
 func getAll(t *testing.T, url string, StatusCode int, obj interface{}, total int64) {
 	e := getHttpexpect(t)
-	o := e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+	oauthToken := GetOauthToken(e)
+	o := e.GET(url).WithHeader("Authorization", "Bearer "+oauthToken).
 		WithQueryObject(obj).
 		Expect().Status(StatusCode).
 		JSON().Object()
@@ -210,12 +225,15 @@ func getAll(t *testing.T, url string, StatusCode int, obj interface{}, total int
 	o.Value("code").Equal(200)
 	o.Value("message").Equal("操作成功")
 	o.Value("data").Array().Length().Equal(total)
+
 }
 
 //  getData 方法
 func getData(t *testing.T, url string, StatusCode int, obj interface{}, keys []interface{}) {
 	e := getHttpexpect(t)
-	o := e.GET(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+	oauthToken := GetOauthToken(e)
+	color.Yellow("oauthToken:%s", oauthToken)
+	o := e.GET(url).WithHeader("Authorization", "Bearer "+oauthToken).
 		WithQueryObject(obj).
 		Expect().Status(StatusCode).
 		JSON().Object()
@@ -223,6 +241,7 @@ func getData(t *testing.T, url string, StatusCode int, obj interface{}, keys []i
 	o.Value("code").Equal(200)
 	o.Value("message").Equal("操作成功")
 	o.Value("data").Object().Keys().Contains(keys...)
+
 }
 
 //  getPublicMore 方法
@@ -238,9 +257,11 @@ func getPublicMore(t *testing.T, url string, StatusCode int, Code int, Msg strin
 //  delete 方法
 func delete(t *testing.T, url string, StatusCode int, Code int, Msg string) (e *httpexpect.Expect) {
 	e = getHttpexpect(t)
-	e.DELETE(url).WithHeader("Authorization", "Bearer "+GetOauthToken(e)).
+	oauthToken := GetOauthToken(e)
+	e.DELETE(url).WithHeader("Authorization", "Bearer "+oauthToken).
 		Expect().Status(StatusCode).
 		JSON().Object().Values().Contains(Code, Msg)
+
 	return
 }
 
@@ -523,5 +544,23 @@ func GetOauthToken(e *httpexpect.Expect) string {
 
 	token = r.Value("data").Object().Value("token").String().Raw()
 
+	if len(token) == 0 {
+		color.Red("token is empty: %s", token)
+	}
+
 	return token
+}
+
+func ClearTokenCache(token string) error {
+	conn := libs.GetRedisClusterClient()
+	defer conn.Close()
+	sess, err := models.GetRedisSessionV2(conn, token)
+	if err != nil {
+		return err
+	}
+	err = sess.CleanUserTokenCache(conn)
+	if err != nil {
+		return err
+	}
+	return nil
 }

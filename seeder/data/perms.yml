@@ -264,7 +264,7 @@ perms:
     description: "编辑章节"
     act: "PUT"
 
-  - name: "/v1/admin/chapters/{id:uint}"
+  - name: "/v1/admin/chapters/{id:uint}/doc/{doc_id:uint}"
     displayname: "删除章节"
     description: "删除章节"
     act: "DELETE"

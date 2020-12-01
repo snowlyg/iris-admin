@@ -73,15 +73,15 @@ version: %s`, Version))
 				SingularTable: false,                 // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
 			},
 		},
-		Adapter:         libs.Config.DB.Adapter,  // 类型
-		Name:            libs.Config.DB.Name,     // 数据库名称
-		Username:        libs.Config.DB.User,     // 用户名
-		Pwd:             libs.Config.DB.Password, // 密码
-		Host:            libs.Config.DB.Host,     // 地址
-		Port:            libs.Config.DB.Port,     // 端口
-		CasbinModelPath: casbinModelPath,         // casbin 模型规则路径
-		Debug:           libs.Config.Debug,
-		TablePrefix:     "iris", // casbin 模型表前缀
+		Adapter:           libs.Config.DB.Adapter,  // 类型
+		Name:              libs.Config.DB.Name,     // 数据库名称
+		Username:          libs.Config.DB.User,     // 用户名
+		Pwd:               libs.Config.DB.Password, // 密码
+		Host:              libs.Config.DB.Host,     // 地址
+		Port:              libs.Config.DB.Port,     // 端口
+		CasbinModelPath:   casbinModelPath,         // casbin 模型规则路径
+		Debug:             libs.Config.Debug,
+		CasbinTablePrefix: "iris", // casbin 模型表前缀
 		Models: []interface{}{
 			&models.User{},
 			&models.Role{},

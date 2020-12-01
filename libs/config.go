@@ -13,11 +13,12 @@ import (
 var Config = struct {
 	LogLevel string `default:"info" env:"Loglevel"`
 	Debug    bool   `default:"true" env:"Debug"`
-	HTTPS    bool   `default:"false" env:"HTTPS"`
+	HTTPS    bool   `default:"false" env:"Https"`
 	Certpath string `default:"" env:"Certpath"`
 	Certkey  string `default:"" env:"Certkey"`
-	Port     int64  `default:"8085" env:"PORT"`
+	Port     int64  `default:"8085" env:"Port"`
 	Host     string `default:"127.0.0.1" env:"Host"`
+	Cache    bool   `default:"false" env:"Cache"`
 	Admin    struct {
 		UserName        string `env:"AdminUserName" default:"username"`
 		Name            string `env:"AdminName" default:"name"`

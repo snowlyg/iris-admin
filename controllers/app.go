@@ -57,8 +57,9 @@ func UserLogin(ctx iris.Context) {
 		},
 	}
 
-	user, err := models.GetUser(s)
-	if err != nil {
+	var user *models.User
+	user, err = models.GetUser(s)
+	if err != nil && !models.IsNotFound(err) {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
 	}

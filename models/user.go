@@ -49,9 +49,7 @@ func GetUser(search *easygorm.Search) (*User, error) {
 	if err != nil {
 		return t, err
 	}
-	if t.ID == 0 {
-		return t, errors.New("数据不存在")
-	}
+
 	return t, nil
 }
 

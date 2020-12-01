@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"github.com/snowlyg/easygorm"
 	"time"
@@ -34,9 +33,7 @@ func GetPermission(search *easygorm.Search) (*Permission, error) {
 	if err != nil {
 		return t, err
 	}
-	if t.ID == 0 {
-		return t, errors.New("数据不存在")
-	}
+
 	return t, nil
 }
 

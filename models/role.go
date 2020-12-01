@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"github.com/snowlyg/blog/libs"
 	"strconv"
@@ -37,22 +36,18 @@ func GetRoleById(id uint) (*Role, error) {
 	if err != nil {
 		return t, err
 	}
-	if t.ID == 0 {
-		return t, errors.New("数据不存在")
-	}
+
 	return t, nil
 }
 
 // GetRole get role
 func GetRole(s *easygorm.Search) (*Role, error) {
 	t := NewRole()
-	err := easygorm.First(NewRole(), s)
+	err := easygorm.First(t, s)
 	if err != nil {
 		return t, err
 	}
-	if t.ID == 0 {
-		return t, errors.New("数据不存在")
-	}
+
 	return t, nil
 }
 
@@ -113,7 +108,7 @@ func addPerms(permIds []uint, role *Role) {
 
 // UpdateRole update role
 func UpdateRole(id uint, nr *Role) error {
-	if err := easygorm.Update(&Role{}, nr, nil, id); err != nil {
+	if err := easygorm.Update(&Role{}, nr, []interface{}{"DisplayName", "Description"}, id); err != nil {
 		return err
 	}
 

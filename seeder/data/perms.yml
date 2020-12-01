@@ -224,6 +224,11 @@ perms:
     description: "编辑文档"
     act: "PUT"
 
+  - name: "/v1/admin/docs/{id:uint}/set_chapter_mun"
+    displayname: "设置章节数"
+    description: "设置章节数"
+    act: "PUT"
+
   - name: "/v1/admin/docs/{id:uint}"
     displayname: "删除文档"
     description: "删除文档"

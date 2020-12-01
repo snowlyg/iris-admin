@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"github.com/snowlyg/easygorm"
 	"time"
@@ -13,7 +12,7 @@ import (
 type Doc struct {
 	gorm.Model
 	Name       string `gorm:"not null ;type:varchar(256)" json:"name" validate:"required,gte=0,lte=256" comment:"文档名称"`
-	ChapterMun int64  `gorm:"not null ;default(0)" json:"name" validate:"required" comment:"章节数量"`
+	ChapterMun int64  `gorm:"not null ;default(0)" json:"chapter_mun" comment:"章节数量"`
 	Chapters   []*Chapter
 }
 
@@ -33,9 +32,18 @@ func GetDoc(search *easygorm.Search) (*Doc, error) {
 	if err != nil {
 		return t, err
 	}
-	if t.ID == 0 {
-		return t, errors.New("数据不存在")
+
+	return t, nil
+}
+
+// GetDocById get doc
+func GetDocById(id uint) (*Doc, error) {
+	t := NewDoc()
+	err := easygorm.FindById(t, id)
+	if err != nil {
+		return t, err
 	}
+
 	return t, nil
 }
 
@@ -80,8 +88,8 @@ func (p *Doc) CreateDoc() error {
 }
 
 // UpdateDocById update doc by id
-func UpdateDocById(id uint, np *Doc) error {
-	if err := easygorm.Update(&Doc{}, np, nil, id); err != nil {
+func UpdateDocById(id uint, np *Doc, fileds []interface{}) error {
+	if err := easygorm.Update(&Doc{}, np, fileds, id); err != nil {
 		return err
 	}
 	return nil

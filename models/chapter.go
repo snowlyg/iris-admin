@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/easygorm"
@@ -73,9 +72,7 @@ func GetChapter(search *easygorm.Search) (*Chapter, error) {
 	if err != nil {
 		return t, err
 	}
-	if t.ID == 0 {
-		return t, errors.New("数据不存在")
-	}
+
 	return t, nil
 }
 
@@ -191,12 +188,19 @@ func (p *Chapter) LikeChapter(rh *http.Request) error {
 }
 
 // DeleteChapterById 删除
-func DeleteChapterById(id uint) error {
+func DeleteChapterById(id, docId uint) error {
 	t := NewChapter()
 	if err := easygorm.DeleteById(t, id); err != nil {
 		color.Red(fmt.Sprintf("DeleteChapterByIdError:%s \n", err))
 		return err
 	}
+
+	doc, _ := GetDocById(docId)
+	doc.ChapterMun--
+	if err := UpdateDocById(doc.ID, doc, []interface{}{"ChapterMun"}); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -239,6 +243,13 @@ func (p *Chapter) CreateChapter() error {
 	if err := easygorm.Create(p); err != nil {
 		return err
 	}
+
+	p.Doc.ChapterMun++
+
+	if err := UpdateDocById(p.DocID, p.Doc, []interface{}{"ChapterMun"}); err != nil {
+		return err
+	}
+
 	return nil
 }
 

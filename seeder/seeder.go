@@ -56,11 +56,11 @@ func Run() {
 }
 
 func AddPerm() {
-	fmt.Println(fmt.Sprintf("开始填充权限！！"))
+	fmt.Println(fmt.Sprintf("开始同步权限！！"))
 	CreatePerms()
 	CreateAdminRole()
 	CreateAdminUser()
-	fmt.Println(fmt.Sprintf("权限填充完成！！"))
+	fmt.Println(fmt.Sprintf("权限同步完成！！"))
 }
 
 // CreateConfigs 新建权限
@@ -90,7 +90,7 @@ func CreateConfigs() {
 			},
 		}
 		perm, err := models.GetConfig(s)
-		if err == nil {
+		if !models.IsNotFound(err) {
 			if perm.ID == 0 {
 				perm = &models.Config{
 					Model: gorm.Model{CreatedAt: time.Now()},
@@ -125,7 +125,7 @@ func CreatePerms() {
 			},
 		}
 		perm, err := models.GetPermission(s)
-		if err == nil {
+		if err != nil && !models.IsNotFound(err) {
 			if perm.ID == 0 {
 				perm = &models.Permission{
 					Model:       gorm.Model{CreatedAt: time.Now()},
@@ -137,6 +137,7 @@ func CreatePerms() {
 				if err := perm.CreatePermission(); err != nil {
 					logger.Println(fmt.Sprintf("权限填充错误：%+v\n", err))
 				}
+				logger.Println(fmt.Sprintf("权限填充：%+v\n", perm))
 			}
 		}
 	}
@@ -154,7 +155,7 @@ func CreateAdminRole() {
 		},
 	}
 	role, err := models.GetRole(s)
-	if err != nil {
+	if err != nil && !models.IsNotFound(err) {
 		fmt.Println(fmt.Sprintf("角色获取失败：%+v\n", err))
 	}
 	var permIds []uint
@@ -182,12 +183,12 @@ func CreateAdminRole() {
 			}
 			role.PermIds = permIds
 			if err := role.CreateRole(); err != nil {
-				logger.Println(fmt.Sprintf("管理角色填充错误：%+v\n", err))
+				logger.Println(fmt.Sprintf("create 管理角色填充错误：%+v\n", err))
 			}
 		} else {
 			role.PermIds = permIds
 			if err := models.UpdateRole(role.ID, role); err != nil {
-				logger.Println(fmt.Sprintf("管理角色填充错误：%+v\n", err))
+				logger.Println(fmt.Sprintf("update 管理角色填充错误：%+v\n", err))
 			}
 		}
 	}
@@ -210,7 +211,7 @@ func CreateAdminUser() {
 		},
 	}
 	admin, err := models.GetUser(s)
-	if err != nil {
+	if err != nil && !models.IsNotFound(err) {
 		fmt.Println(fmt.Sprintf("Get admin error：%+v\n", err))
 	}
 

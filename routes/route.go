@@ -118,6 +118,7 @@ func App(api *iris.Application) {
 					docs.Get("/{id:uint}", controllers.GetDoc).Name = "文档详情"
 					docs.Post("/", controllers.CreateDoc).Name = "创建文档"
 					docs.Put("/{id:uint}", controllers.UpdateDoc).Name = "编辑文档"
+					docs.Put("/{id:uint}/set_chapter_mun", controllers.SetChapterMun).Name = "设置章节数"
 					docs.Delete("/{id:uint}", controllers.DeleteDoc).Name = "删除文档"
 				})
 				admin.PartyFunc("/chapters", func(chapters iris.Party) {

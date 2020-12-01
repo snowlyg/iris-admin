@@ -138,7 +138,47 @@ func UpdateDoc(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	err = models.UpdateDocById(id, aul)
+	err = models.UpdateDocById(id, aul, nil)
+	if err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error update doc: %s", err.Error())))
+		return
+	}
+
+	_, _ = ctx.JSON(libs.ApiResource(200, docTransform(aul), "操作成功"))
+
+}
+
+/**
+* @api {post} /admin/docs/:id/set_chapter_mun 设置章节数
+* @apiName 设置章节数
+* @apiGroup Docs
+* @apiVersion 1.0.0
+* @apiDescription 设置章节数
+* @apiSampleRequest /admin/docs/:id/set_chapter_mun
+* @apiParam {string} name 文档名
+* @apiParam {string} display_name
+* @apiParam {string} description
+* @apiParam {string} level
+* @apiSuccess {String} msg 消息
+* @apiSuccess {bool} state 状态
+* @apiSuccess {String} data 返回数据
+* @apiDoc null
+ */
+func SetChapterMun(ctx iris.Context) {
+	ctx.StatusCode(iris.StatusOK)
+	id, _ := ctx.Params().GetUint("id")
+	aul := new(models.Doc)
+	if err := ctx.ReadJSON(aul); err != nil {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
+		return
+	}
+
+	if aul.ChapterMun <= 0 {
+		_, _ = ctx.JSON(libs.ApiResource(400, nil, "章节数必须大于0"))
+		return
+	}
+
+	err := models.UpdateDocById(id, aul, []interface{}{"ChapterMun"})
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, fmt.Sprintf("Error update doc: %s", err.Error())))
 		return

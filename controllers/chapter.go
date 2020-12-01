@@ -140,6 +140,7 @@ func CreateChapter(ctx iris.Context) {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
 		return
 	}
+
 	_, _ = ctx.JSON(libs.ApiResource(200, chapterTransform(chapter), "操作成功"))
 
 }

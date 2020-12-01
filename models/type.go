@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"github.com/snowlyg/easygorm"
 	"time"
@@ -38,9 +37,7 @@ func GetType(search *easygorm.Search) (*Type, error) {
 	if err != nil {
 		return t, err
 	}
-	if t.ID == 0 {
-		return t, errors.New("数据不存在")
-	}
+
 	return t, nil
 }
 
@@ -51,9 +48,7 @@ func GetTypeById(id uint) (*Type, error) {
 	if err != nil {
 		return t, err
 	}
-	if t.ID == 0 {
-		return t, errors.New("数据不存在")
-	}
+
 	return t, nil
 }
 

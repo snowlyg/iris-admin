@@ -148,15 +148,18 @@ func (r *Article) LikeArticle(rh *http.Request) error {
 }
 
 // GetArticle 获取文章
-func GetArticle(s *easygorm.Search) (*Article, error) {
+func GetArticle(s *easygorm.Search, id uint) (*Article, error) {
 	r := NewArticle()
-	err := easygorm.First(r, s)
-	if err != nil {
+	r.ID = id
+
+	if err := easygorm.First(r, s); err != nil {
 		return r, err
 	}
+
 	if r.ID == 0 {
 		return r, errors.New("数据不存在")
 	}
+
 	return r, nil
 }
 

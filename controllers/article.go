@@ -32,11 +32,10 @@ func GetPublishedArticle(ctx iris.Context) {
 
 	s := GetCommonSearch(ctx)
 	s.Fields = easygorm.GetFields(map[string]interface{}{
-		"id":     id,
 		"status": "published",
 	})
 
-	article, err := models.GetArticle(s)
+	article, err := models.GetArticle(s, id)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
@@ -70,11 +69,10 @@ func GetPublishedArticleLike(ctx iris.Context) {
 
 	s := GetCommonSearch(ctx)
 	s.Fields = easygorm.GetFields(map[string]interface{}{
-		"id":     id,
 		"status": "published",
 	})
 
-	article, err := models.GetArticle(s)
+	article, err := models.GetArticle(s, id)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return
@@ -107,16 +105,9 @@ func GetArticle(ctx iris.Context) {
 	id, _ := ctx.Params().GetUint("id")
 	relation := ctx.FormValue("relation")
 	search := &easygorm.Search{
-		Fields: []*easygorm.Field{
-			{
-				Key:       "id",
-				Value:     id,
-				Condition: "=",
-			},
-		},
 		Relations: easygorm.GetRelations(relation, nil),
 	}
-	article, err := models.GetArticle(search)
+	article, err := models.GetArticle(search, id)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
 		return

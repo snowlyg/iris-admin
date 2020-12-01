@@ -85,6 +85,7 @@ func (rc *RedisCluster) Set(key string, value interface{}, ttl ...time.Duration)
 	}
 	return reply, err
 }
+
 func (rc *RedisCluster) SetNX(key string, value interface{}, expireSeconds int) bool {
 	n, err := rc.Do("SETNX", key, value)
 	if err != nil {
@@ -185,4 +186,17 @@ func (rc *RedisCluster) Scard(key string) (interface{}, error) {
 
 func (rc *RedisCluster) Members(key string) (interface{}, error) {
 	return rc.Do("SMEMBERS", key)
+}
+
+// LoadRedisHashToStruct 从 redis 加载数据
+func (rc *RedisCluster) LoadRedisHashToStruct(sKey string, pst interface{}) error {
+	vals, err := redis.Values(rc.HGetAll(sKey))
+	if err != nil {
+		return err
+	}
+	err = redis.ScanStruct(vals, pst)
+	if err != nil {
+		return err
+	}
+	return nil
 }

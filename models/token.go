@@ -64,23 +64,10 @@ func GetRedisSessionV2(conn *libs.RedisCluster, token string) (*RedisSessionV2, 
 		return nil, ERR_TOKEN_INVALID
 	}
 	pp := new(RedisSessionV2)
-	if err := loadRedisHashToStruct(conn, sKey, pp); err != nil {
+	if err := conn.LoadRedisHashToStruct(sKey, pp); err != nil {
 		return nil, err
 	}
 	return pp, nil
-}
-
-// loadRedisHashToStruct 从 redis 加载 数据
-func loadRedisHashToStruct(conn *libs.RedisCluster, sKey string, pst interface{}) error {
-	vals, err := redis.Values(conn.HGetAll(sKey))
-	if err != nil {
-		return err
-	}
-	err = redis.ScanStruct(vals, pst)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 // isUserTokenOver 超过登录设备限制

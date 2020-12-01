@@ -409,6 +409,7 @@ func GetPublishedChapterLike(ctx iris.Context) {
 func GetPublishedChapterPrev(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	sort, _ := ctx.Params().GetUint("sort")
+	relation := ctx.FormValue("relation")
 	s := &easygorm.Search{
 		Fields: []*easygorm.Field{
 			{
@@ -421,6 +422,7 @@ func GetPublishedChapterPrev(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
+		Relations: easygorm.GetRelations(relation, nil),
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {
@@ -447,6 +449,7 @@ func GetPublishedChapterPrev(ctx iris.Context) {
 func GetPublishedChapterNext(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	sort, _ := ctx.Params().GetUint("sort")
+	relation := ctx.FormValue("relation")
 	s := &easygorm.Search{
 		Fields: []*easygorm.Field{
 			{
@@ -459,6 +462,7 @@ func GetPublishedChapterNext(ctx iris.Context) {
 				Value:     "published",
 			},
 		},
+		Relations: easygorm.GetRelations(relation, nil),
 	}
 	chapter, err := models.GetChapter(s)
 	if err != nil {

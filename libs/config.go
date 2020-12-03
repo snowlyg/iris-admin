@@ -5,21 +5,19 @@ import (
 	"path/filepath"
 	"strings"
 
-	logger "github.com/sirupsen/logrus"
-
 	"github.com/jinzhu/configor"
 )
 
 var Config = struct {
-	LogLevel string `default:"info" env:"Loglevel"`
-	Debug    bool   `default:"true" env:"Debug"`
-	HTTPS    bool   `default:"false" env:"Https"`
-	Certpath string `default:"" env:"Certpath"`
-	Certkey  string `default:"" env:"Certkey"`
-	Port     int64  `default:"8085" env:"Port"`
-	Host     string `default:"127.0.0.1" env:"Host"`
-	Cache    bool   `default:"false" env:"Cache"`
-	Admin    struct {
+	LogLevel    string `default:"info" env:"Loglevel"`
+	HTTPS       bool   `default:"false" env:"Https"`
+	Certpath    string `default:"" env:"Certpath"`
+	Certkey     string `default:"" env:"Certkey"`
+	Port        int64  `default:"8085" env:"Port"`
+	Host        string `default:"127.0.0.1" env:"Host"`
+	Cache       bool   `default:"false" env:"Cache"`
+	CasbinModel string `default:"" env:"CasbinModel"`
+	Admin       struct {
 		UserName        string `env:"AdminUserName" default:"username"`
 		Name            string `env:"AdminName" default:"name"`
 		Pwd             string `env:"AdminPwd" default:"123456"`
@@ -54,22 +52,28 @@ var Config = struct {
 	}
 }{}
 
-func InitConfig(p string) {
-
-	configPath := filepath.Join(CWD(), "application.yml")
-	if p != "" {
-		configPath = p
+func InitConfig(cp, cm string) {
+	path := filepath.Join(CWD(), "application.yml")
+	if cp != "" {
+		path = cp
 	}
 
-	fmt.Println(fmt.Sprintf("配置YML文件路径：%v", configPath))
-	if err := configor.Load(&Config, configPath); err != nil {
-		logger.Println(fmt.Sprintf("Config Path:%s ,Error:%s", configPath, err.Error()))
+	fmt.Println(fmt.Sprintf("配置YML文件路径：%v\n", path))
+	if err := configor.Load(&Config, path); err != nil {
+		fmt.Println(fmt.Sprintf("Config Path:%s ,Error:%s", path, err.Error()))
 		return
 	}
 
-	if Config.Debug {
-		fmt.Println(fmt.Sprintf("配置项：%v", Config))
+	if cm != "" {
+		Config.CasbinModel = cm
+		return
 	}
+
+	if Config.CasbinModel == "" {
+		Config.CasbinModel = filepath.Join(CWD(), "rbac_model.conf")
+	}
+
+	fmt.Println(fmt.Sprintf("配置项：%v\n", Config))
 }
 
 func GetRedisUris() []string {

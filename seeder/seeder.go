@@ -2,18 +2,19 @@ package seeder
 
 import (
 	"fmt"
-	"github.com/fatih/color"
-	"github.com/snowlyg/easygorm"
+	"github.com/kataras/iris/v12/context"
+	"github.com/snowlyg/blog/app"
+	"github.com/snowlyg/blog/libs/logging"
 	"math/rand"
 	"path/filepath"
+	"strings"
 	"time"
-
-	logger "github.com/sirupsen/logrus"
-	"github.com/snowlyg/blog/libs"
 
 	"github.com/azumads/faker"
 	"github.com/jinzhu/configor"
+	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/blog/models"
+	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 )
 
@@ -33,12 +34,10 @@ func init() {
 	Fake.Rand = rand.New(rand.NewSource(42))
 	rand.Seed(time.Now().UnixNano())
 
-	filepaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "seeder", "data", "*.yml"))
-	if libs.Config.Debug {
-		fmt.Println(fmt.Sprintf("数据填充YML文件路径：%+v\n", filepaths))
-	}
-	if err := configor.Load(&Seeds, filepaths...); err != nil {
-		logger.Println(err)
+	fpaths, _ := filepath.Glob(filepath.Join(libs.CWD(), "seeder", "data", "*.yml"))
+	logging.Dbug.Debugf("数据填充YML文件路径：%+v\n", fpaths)
+	if err := configor.Load(&Seeds, fpaths...); err != nil {
+		logging.Err.Errorf("load config file err：%+v\n", err)
 	}
 }
 
@@ -75,10 +74,7 @@ func CreateConfigs() {
 			Value: "",
 		},
 	}
-
-	if libs.Config.Debug {
-		color.Yellow(fmt.Sprintf("系统设置填充：%+v\n", configs))
-	}
+	app.Ser.App.Logger().Debugf("系统设置填充：%+v\n", configs)
 	for _, m := range configs {
 		s := &easygorm.Search{
 			Fields: []*easygorm.Field{
@@ -98,7 +94,8 @@ func CreateConfigs() {
 					Value: m.Value,
 				}
 				if err := perm.CreateConfig(); err != nil {
-					color.Red("系统设置填充错误：%+v\n", err)
+					logging.Err.Errorf("seeder data create config err：%+v\n", err)
+					return
 				}
 			}
 		}
@@ -107,9 +104,6 @@ func CreateConfigs() {
 
 // CreatePerms 新建权限
 func CreatePerms() {
-	if libs.Config.Debug {
-		fmt.Println(fmt.Sprintf("填充权限：%+v\n", Seeds))
-	}
 	ss := &easygorm.Search{
 		Limit:  -1,
 		Offset: -1,
@@ -118,7 +112,8 @@ func CreatePerms() {
 	var perms []*models.Permission
 	perms, _, err = models.GetAllPermissions(ss)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("权限获取失败：%+v\n", err))
+		logging.Err.Errorf("seeder data get perms err：%+v\n", err)
+		return
 	}
 	var insertPerms []models.Permission
 	for _, m := range Seeds.Perms {
@@ -142,12 +137,15 @@ func CreatePerms() {
 		}
 	}
 
-	if libs.Config.Debug {
-		color.Yellow("%d  perm :%+v", len(insertPerms), insertPerms)
+	logging.Dbug.Debugf("seeder data insert perms ：%+d\n", len(insertPerms))
+
+	if len(insertPerms) == 0 {
+		return
 	}
 
 	if err := models.CreatePermission(&insertPerms); err != nil {
-		logger.Println(fmt.Sprintf("权限填充错误：%+v\n", err))
+		logging.Err.Errorf("seeder data create perms err：%+v\n", err)
+		return
 	}
 }
 
@@ -161,7 +159,8 @@ func CreateAdminRole() {
 
 	perms, _, err := models.GetAllPermissions(ss)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("权限获取失败：%+v\n", err))
+		logging.Err.Errorf("seeder data  get perms err：%+v\n", err)
+		return
 	}
 
 	for _, perm := range perms {
@@ -189,21 +188,20 @@ func CreateAdminRole() {
 			}
 			role.PermIds = permIds
 			if err := role.CreateRole(); err != nil {
-				logger.Println(fmt.Sprintf("create 管理角色填充错误：%+v\n", err))
+				logging.Err.Errorf("seeder data create role err：%+v\n", err)
+				return
 			}
 		} else {
 			role.PermIds = permIds
 			if err := models.UpdateRole(role.ID, role); err != nil {
-				logger.Println(fmt.Sprintf("update 管理角色填充错误：%+v\n", err))
+				logging.Err.Errorf("seeder data  update role err：%+v\n", err)
+				return
 			}
 		}
 	}
 
-	if libs.Config.Debug {
-		fmt.Println(fmt.Sprintf("填充角色数据：%+v\n", role))
-		fmt.Println(fmt.Sprintf("填充角色权限：%+v\n", role.PermIds))
-	}
-
+	logging.Dbug.Debugf("填充角色数据：%+v\n", role)
+	logging.Dbug.Debugf("填充角色权限：%+v\n", role.PermIds)
 }
 
 // CreateAdminUser 新建管理员
@@ -218,8 +216,9 @@ func CreateAdminUser() {
 		},
 	}
 	admin, err := models.GetUser(s)
-	if err != nil && models.IsNotFound(err) {
-		fmt.Println(fmt.Sprintf("Get admin error：%+v\n", err))
+	if err != nil && !models.IsNotFound(err) {
+		logging.Err.Errorf("seeder data  get user err：%+v\n", err)
+		return
 	}
 
 	var roleIds []uint
@@ -227,18 +226,18 @@ func CreateAdminUser() {
 		Limit:  -1,
 		Offset: -1,
 	}
-	roles, _, err := models.GetAllRoles(ss)
-	if libs.Config.Debug {
-		if err != nil {
-			fmt.Println(fmt.Sprintf("角色获取失败：%+v\n", err))
-		}
+	var roles []*models.Role
+	roles, _, err = models.GetAllRoles(ss)
+	if err != nil {
+		logging.Err.Errorf("seeder data  get roles err：%+v\n", err)
+		return
 	}
 
 	for _, role := range roles {
 		roleIds = append(roleIds, role.ID)
 	}
-	admin.RoleIds = roleIds
 
+	admin.RoleIds = roleIds
 	if admin.ID == 0 {
 		admin = &models.User{
 			Username: libs.Config.Admin.UserName,
@@ -250,19 +249,20 @@ func CreateAdminUser() {
 		}
 		admin.RoleIds = roleIds
 		if err := admin.CreateUser(); err != nil {
-			logger.Println(fmt.Sprintf("管理员填充错误：%+v\n", err))
+			logging.Err.Errorf("seeder data  create admin  err：%+v\n", err)
+			return
 		}
 	} else {
 		admin.Password = libs.Config.Admin.Pwd
 		if err := models.UpdateUserById(admin.ID, admin); err != nil {
-			logger.Println(fmt.Sprintf("管理员填充错误：%+v\n", err))
+			app.Ser.App.Logger().Errorf("seeder data  update admin  err：%+v\n", err)
+			return
 		}
 	}
 
-	if libs.Config.Debug {
-		fmt.Println(fmt.Sprintf("管理员密码：%s\n", libs.Config.Admin.Pwd))
-		fmt.Println(fmt.Sprintf("填充管理员数据：%+v", admin))
-	}
+	logging.Dbug.Debugf("管理员密码：%s\n", libs.Config.Admin.Pwd)
+	logging.Dbug.Debugf("填充管理员数据：%+v", admin)
+
 }
 
 /*
@@ -282,7 +282,56 @@ func AutoMigrates() {
 		&models.Doc{},
 		&models.Chapter{},
 	}); err != nil {
-		logger.Println(fmt.Sprintf("AutoMigrates 重置数据表错误：%+v\n", err))
+		logging.Err.Errorf("seeder data  auto migrate  err：%+v\n", err)
+		return
 	}
 
+}
+
+// PathName
+type PathName struct {
+	Name   string
+	Path   string
+	Method string
+}
+
+// 获取路由信息
+func GetRoutes() []*models.Permission {
+	var rrs []*models.Permission
+	names := getPathNames(app.Ser.App.GetRoutesReadOnly())
+	logging.Dbug.Debugf("路由权限集合：%v", names)
+	logging.Dbug.Debugf("Iris App ：%v", app.Ser.App)
+	for _, pathName := range names {
+		if !isPermRoute(pathName.Name) {
+			rr := &models.Permission{Name: pathName.Path, DisplayName: pathName.Name, Description: pathName.Name, Act: pathName.Method}
+			rrs = append(rrs, rr)
+		}
+	}
+	return rrs
+}
+
+// getPathNames
+func getPathNames(routeReadOnly []context.RouteReadOnly) []*PathName {
+	var pns []*PathName
+	app.Ser.App.Logger().Debugf("routeReadOnly：%v", routeReadOnly)
+	for _, s := range routeReadOnly {
+		pn := &PathName{
+			Name:   s.Name(),
+			Path:   s.Path(),
+			Method: s.Method(),
+		}
+		pns = append(pns, pn)
+	}
+	return pns
+}
+
+// 过滤非必要权限
+func isPermRoute(name string) bool {
+	exceptRouteName := []string{"OPTIONS", "GET", "POST", "HEAD", "PUT", "PATCH", "payload"}
+	for _, er := range exceptRouteName {
+		if strings.Contains(name, er) {
+			return true
+		}
+	}
+	return false
 }

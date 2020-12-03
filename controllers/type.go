@@ -164,7 +164,7 @@ func DeleteType(ctx iris.Context) {
  */
 func GetAllTypes(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 
 	tts, count, err := models.GetAllTypes(s)
 	if err != nil {

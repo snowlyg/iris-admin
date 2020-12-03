@@ -14,18 +14,6 @@ import (
 	gf "github.com/snowlyg/gotransformer"
 )
 
-/**
-* @api {get} /admin/profile 获取登陆用户信息
-* @apiName 获取登陆用户信息
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 获取登陆用户信息
-* @apiSampleRequest /admin/profile
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission 登陆用户
- */
 func GetProfile(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
@@ -47,18 +35,6 @@ func GetProfile(ctx iris.Context) {
 	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 }
 
-/**
-* @api {get} /profile 管理员信息
-* @apiName 管理员信息
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 管理员信息
-* @apiSampleRequest /profile
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission 登陆用户
- */
 func GetAdminInfo(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	s := &easygorm.Search{
@@ -78,18 +54,6 @@ func GetAdminInfo(ctx iris.Context) {
 	_, _ = ctx.JSON(libs.ApiResource(200, map[string]string{"avatar": user.Avatar}, "操作成功"))
 }
 
-/**
-* @api {get} /admin/change_avatar 修改头像
-* @apiName 修改头像
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 修改头像
-* @apiSampleRequest /admin/change_avatar
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission 登陆用户
- */
 func ChangeAvatar(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
@@ -112,7 +76,7 @@ func ChangeAvatar(ctx iris.Context) {
 		}
 	}
 
-	user := models.NewUser()
+	user := &models.User{}
 	user.ID = id
 	user.Avatar = avatar.Avatar
 	err = models.UpdateUserById(id, user)
@@ -123,18 +87,6 @@ func ChangeAvatar(ctx iris.Context) {
 	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 }
 
-/**
-* @api {get} /admin/users/:id 根据id获取用户信息
-* @apiName 根据id获取用户信息
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 根据id获取用户信息
-* @apiSampleRequest /admin/users/:id
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission 登陆用户
- */
 func GetUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
@@ -155,20 +107,6 @@ func GetUser(ctx iris.Context) {
 	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 }
 
-/**
-* @api {post} /admin/users/ 新建账号
-* @apiName 新建账号
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 新建账号
-* @apiSampleRequest /admin/users/
-* @apiParam {string} username 用户名
-* @apiParam {string} password 密码
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission null
- */
 func CreateUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
@@ -203,20 +141,6 @@ func CreateUser(ctx iris.Context) {
 
 }
 
-/**
-* @api {post} /admin/users/:id/update 更新账号
-* @apiName 更新账号
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 更新账号
-* @apiSampleRequest /admin/users/:id/update
-* @apiParam {string} username 用户名
-* @apiParam {string} password 密码
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission null
- */
 func UpdateUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	user := new(models.User)
@@ -250,18 +174,6 @@ func UpdateUser(ctx iris.Context) {
 	_, _ = ctx.JSON(libs.ApiResource(200, userTransform(user), "操作成功"))
 }
 
-/**
-* @api {delete} /admin/users/:id/delete 删除用户
-* @apiName 删除用户
-* @apiGroup Users
-* @apiVersion 1.0.0
-* @apiDescription 删除用户
-* @apiSampleRequest /admin/users/:id/delete
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission null
- */
 func DeleteUser(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
@@ -290,7 +202,7 @@ func GetAllUsers(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	name := ctx.FormValue("name")
 
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 	s.Fields = append(s.Fields, easygorm.GetField("name", name))
 	users, count, err := models.GetAllUsers(s)
 	if err != nil {

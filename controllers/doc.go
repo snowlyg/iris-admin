@@ -227,7 +227,7 @@ func DeleteDoc(ctx iris.Context) {
 func GetAllDocs(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 	docs, count, err := models.GetAllDocs(s)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))

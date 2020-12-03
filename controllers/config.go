@@ -176,7 +176,7 @@ func DeleteConfig(ctx iris.Context) {
 func GetAllConfigs(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 
 	configs, err := models.GetAllConfigs(s)
 	if err != nil {

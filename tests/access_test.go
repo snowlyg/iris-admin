@@ -15,7 +15,7 @@ func TestUserLoginSuccess(t *testing.T) {
 		"username": libs.Config.Admin.UserName,
 		"password": libs.Config.Admin.Pwd,
 	}
-	login(t, oj, iris.StatusOK, 200, "登陆成功")
+	login(t, oj, iris.StatusOK, 200, "请求成功")
 }
 
 // 输入不存在的用户名登陆
@@ -25,7 +25,7 @@ func TestUserLoginWithErrorName(t *testing.T) {
 		"password": libs.Config.Admin.Pwd,
 	}
 
-	login(t, oj, iris.StatusOK, 400, "用户不存在")
+	login(t, oj, iris.StatusOK, 5004, "数据为空")
 }
 
 // 输入错误的登陆密码
@@ -74,5 +74,5 @@ func TestUserLoginWithErrorFormtUserName(t *testing.T) {
 		"username": "df",
 		"password": "123",
 	}
-	login(t, oj, iris.StatusOK, 400, "用户不存在")
+	login(t, oj, iris.StatusOK, 5004, "数据为空")
 }

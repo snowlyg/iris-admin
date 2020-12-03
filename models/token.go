@@ -70,8 +70,8 @@ func GetRedisSessionV2(conn *libs.RedisCluster, token string) (*RedisSessionV2, 
 	return pp, nil
 }
 
-// isUserTokenOver 超过登录设备限制
-func isUserTokenOver(userId string) bool {
+// IsUserTokenOver 超过登录设备限制
+func IsUserTokenOver(userId string) bool {
 	conn := libs.GetRedisClusterClient()
 	defer conn.Close()
 	if getUserTokenCount(conn, userId) >= getUserTokenMaxCount(conn) {

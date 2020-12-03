@@ -333,7 +333,7 @@ func GetAllChapters(ctx iris.Context) {
 
 	ctx.StatusCode(iris.StatusOK)
 	docId := libs.ParseInt(ctx.URLParam("docId"), 0)
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 	s.Fields = []*easygorm.Field{
 		{
 			Key:       "doc_id",
@@ -491,7 +491,7 @@ func GetPublishedChapterNext(ctx iris.Context) {
 func GetAllPublishedChapters(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	docId := libs.ParseInt(ctx.FormValue("docId"), 0)
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 	s.Fields = []*easygorm.Field{
 		{
 			Key:       "doc_id",

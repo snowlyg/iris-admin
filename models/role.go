@@ -1,8 +1,8 @@
 package models
 
 import (
+	"errors"
 	"fmt"
-	"github.com/snowlyg/blog/libs"
 	"strconv"
 	"time"
 
@@ -86,24 +86,23 @@ func (r *Role) CreateRole() error {
 }
 
 // addPerms add perms
-func addPerms(permIds []uint, role *Role) {
+func addPerms(permIds []uint, role *Role) error {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
 		if _, err := easygorm.Egm.Enforcer.DeletePermissionsForUser(roleId); err != nil {
-			color.Red(fmt.Sprintf("AppendPermsErr:%s \n", err))
+			return err
 		}
 		var perms []Permission
 		easygorm.Egm.Db.Where("id in (?)", permIds).Find(&perms)
 		for _, perm := range perms {
 			if _, err := easygorm.Egm.Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
-				color.Red(fmt.Sprintf("AddPolicy:%s \n", err))
+				return err
 			}
 		}
 	} else {
-		if libs.Config.Debug {
-			color.Yellow(fmt.Sprintf("没有角色：%s 权限为空 \n", role.Name))
-		}
+		return errors.New(fmt.Sprintf("没有角色：%s 权限为空 \n", role.Name))
 	}
+	return nil
 }
 
 // UpdateRole update role

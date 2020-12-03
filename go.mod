@@ -2,10 +2,9 @@ module github.com/snowlyg/blog
 
 go 1.14
 
-//replace github.com/snowlyg/easygorm v0.0.0-20201201125442-d726e2ba177d => /Users/snowlyg/go/src/github.com/snowlyg/easygorm
+replace github.com/snowlyg/easygorm v0.0.0-20201201125442-d726e2ba177d => /Users/snowlyg/go/src/github.com/snowlyg/easygorm
 
 require (
-	github.com/Joker/hpp v1.0.0 // indirect
 	github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107
 	github.com/bxcodec/faker/v3 v3.5.0
 	github.com/casbin/casbin/v2 v2.19.2
@@ -25,7 +24,6 @@ require (
 	github.com/jinzhu/configor v1.2.0
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201012125253-8e51a296b968
-	github.com/lib/pq v1.8.0 // indirect
 	github.com/manveru/gobdd v0.0.0-20131210092515-f1a17fdd710b // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/mna/redisc v1.1.7
@@ -33,6 +31,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.3 // indirect
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/pkg/errors v0.8.1
 	github.com/qiniu/api.v7/v7 v7.4.1
 	github.com/sirupsen/logrus v1.6.0
@@ -41,6 +40,7 @@ require (
 	github.com/snowlyg/gotransformer v0.1.0
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20201124201722-c8d3bf9c5392 // indirect
 	golang.org/x/net v0.0.0-20201016165138-7b1cca2348c0 // indirect
 	golang.org/x/sys v0.0.0-20201130171929-760e229fe7c5 // indirect

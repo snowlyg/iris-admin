@@ -30,7 +30,7 @@ func GetPublishedArticle(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 
-	s := GetCommonSearch(ctx)
+	s := libs.GetCommonSearch(ctx)
 	s.Fields = easygorm.GetFields(map[string]interface{}{
 		"status": "published",
 	})
@@ -67,7 +67,7 @@ func GetPublishedArticleLike(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	id, _ := ctx.Params().GetUint("id")
 
-	s := GetCommonSearch(ctx)
+	s := libs.GetCommonSearch(ctx)
 	s.Fields = easygorm.GetFields(map[string]interface{}{
 		"status": "published",
 	})
@@ -258,7 +258,7 @@ func GetAllPublishedArticles(ctx iris.Context) {
 	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
 	title := ctx.FormValue("title")
 
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 	s.Fields = easygorm.GetFields(map[string]interface{}{
 		"title":   title,
 		"type_id": typeId,
@@ -293,7 +293,7 @@ func GetAllArticles(ctx iris.Context) {
 	tagId := libs.ParseInt(ctx.FormValue("tagId"), 0)
 	typeId := libs.ParseInt(ctx.FormValue("typeId"), 0)
 
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 	s.Fields = easygorm.GetFields(map[string]interface{}{
 		"type_id": typeId,
 	})

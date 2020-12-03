@@ -179,7 +179,7 @@ func DeleteTag(ctx iris.Context) {
  */
 func GetAllTags(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 	tags, count, err := models.GetAllTags(s)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))

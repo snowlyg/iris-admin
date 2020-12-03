@@ -174,7 +174,7 @@ func DeleteRole(ctx iris.Context) {
  */
 func GetAllRoles(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	s := GetCommonListSearch(ctx)
+	s := libs.GetCommonListSearch(ctx)
 	roles, count, err := models.GetAllRoles(s)
 	if err != nil {
 		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))

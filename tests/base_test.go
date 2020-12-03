@@ -17,7 +17,6 @@ import (
 	"gorm.io/gorm/schema"
 	"net/http"
 	"os"
-	"path/filepath"
 	"testing"
 	"time"
 
@@ -41,7 +40,7 @@ var (
 //基境
 func TestMain(m *testing.M) {
 
-	libs.InitConfig("")
+	libs.InitConfig("", "")
 	easygorm.Init(&easygorm.Config{
 		GormConfig: &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
@@ -51,12 +50,11 @@ func TestMain(m *testing.M) {
 		},
 		Adapter:           "sqlite3", // 类型
 		Name:              "blog_test",
-		Username:          "root",                                       // 用户名
-		Pwd:               "123456",                                     // 密码
-		Host:              "127.0.0.1",                                  // 地址
-		Port:              3306,                                         // 端口
-		CasbinModelPath:   filepath.Join(libs.CWD(), "rbac_model.conf"), // casbin 模型规则路径
-		Debug:             true,
+		Username:          "root",                  // 用户名
+		Pwd:               "123456",                // 密码
+		Host:              "127.0.0.1",             // 地址
+		Port:              3306,                    // 端口
+		CasbinModelPath:   libs.Config.CasbinModel, // casbin 模型规则路径
 		CasbinTablePrefix: "iris_test",
 		Models: []interface{}{
 			&models.User{},

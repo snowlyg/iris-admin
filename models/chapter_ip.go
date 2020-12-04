@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 	"sync"
@@ -23,15 +24,16 @@ func GetChapterIps(s *easygorm.Search) ([]*ChapterIp, error) {
 	var ips []*ChapterIp
 	err := easygorm.All(&ChapterIp{}, &ips, s)
 	if err != nil {
+		logging.Err.Errorf("get chapter ips err :%+v\n", err)
 		return ips, err
 	}
-
 	return ips, nil
 }
 
 // CreateChapterIp add chapter ip
 func (p *ChapterIp) CreateChapterIp() error {
 	if err := easygorm.Create(p); err != nil {
+		logging.Err.Errorf("create chapter ip err :%+v\n", err)
 		return err
 	}
 	return nil
@@ -44,6 +46,7 @@ func (p *ChapterIp) AddChapterIpMun() error {
 
 	p.Mun++
 	if err := easygorm.UpdateWithFilde(&ChapterIp{}, map[string]interface{}{"Mun": p.Mun}, p.ID); err != nil {
+		logging.Err.Errorf("add chapter ip err :%+v\n", err)
 		return err
 	}
 	return nil
@@ -55,6 +58,7 @@ func (p *ChapterIp) UpdateType() error {
 	defer p.Unlock()
 	p.Type++
 	if err := easygorm.UpdateWithFilde(&ChapterIp{}, map[string]interface{}{"Type": p.Type}, p.ID); err != nil {
+		logging.Err.Errorf("update chapter type err :%+v\n", err)
 		return err
 	}
 	return nil

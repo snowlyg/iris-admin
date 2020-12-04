@@ -1,14 +1,13 @@
 package models
 
 import (
-	"fmt"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
 	"net/http"
 	"sync"
 	"time"
 
-	"github.com/fatih/color"
 	"gorm.io/gorm"
 )
 
@@ -47,19 +46,11 @@ type SortChapter struct {
 	NewSort int64 `json:"new_sort" validate:"required"`
 }
 
-func NewChapter() *Chapter {
-	return &Chapter{
-		Model: gorm.Model{
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-	}
-}
-
 // GetDocReads 获取文章阅读量
 func GetDocReads() (int64, error) {
 	sumRes, err := easygorm.Count(&Chapter{}, "read")
 	if err != nil {
+		logging.Err.Errorf("get doc reads err :%+v\n", err)
 		return sumRes, err
 	}
 	return sumRes, nil
@@ -67,12 +58,12 @@ func GetDocReads() (int64, error) {
 
 // GetChapter 获取
 func GetChapter(search *easygorm.Search) (*Chapter, error) {
-	t := NewChapter()
+	t := &Chapter{}
 	err := easygorm.First(t, search)
 	if err != nil {
+		logging.Err.Errorf("get chapter err :%+v\n", err)
 		return t, err
 	}
-
 	return t, nil
 }
 
@@ -91,14 +82,12 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 	for _, chapterIp := range chapterIps {
 		// 原来ip增加访问次数
 		if chapterIp.Addr == publicIp {
-
 			if chapterIp.Type == NoAct {
 				err := chapterIp.UpdateType()
 				if err != nil {
 					return err
 				}
 			}
-
 			err := chapterIp.AddChapterIpMun()
 			if err != nil {
 				return err
@@ -111,6 +100,7 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 	defer p.Unlock()
 	p.Read++
 	if err := easygorm.UpdateWithFilde(&Chapter{}, map[string]interface{}{"Read": p.Read}, p.ID); err != nil {
+		logging.Err.Errorf("read chapter err :%+v\n", err)
 		return err
 	}
 
@@ -126,9 +116,7 @@ func (p *Chapter) ReadChapter(rh *http.Request) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
-
 }
 
 func (p *Chapter) getChapterIps() ([]*ChapterIp, error) {
@@ -143,6 +131,7 @@ func (p *Chapter) getChapterIps() ([]*ChapterIp, error) {
 	}
 	chapterIps, err := GetChapterIps(search)
 	if err != nil {
+		logging.Err.Errorf("get chapter ips err :%+v\n", err)
 		return nil, err
 	}
 	return chapterIps, nil
@@ -166,12 +155,10 @@ func (p *Chapter) LikeChapter(rh *http.Request) error {
 			if chapterIp.Type == ReadLike {
 				return nil
 			}
-
 			err := chapterIp.UpdateType()
 			if err != nil {
 				return err
 			}
-
 			return nil
 
 		}
@@ -189,9 +176,9 @@ func (p *Chapter) LikeChapter(rh *http.Request) error {
 
 // DeleteChapterById 删除
 func DeleteChapterById(id, docId uint) error {
-	t := NewChapter()
+	t := &Chapter{}
 	if err := easygorm.DeleteById(t, id); err != nil {
-		color.Red(fmt.Sprintf("DeleteChapterByIdError:%s \n", err))
+		logging.Err.Errorf("del chapter by id err :%+v\n", err)
 		return err
 	}
 
@@ -200,7 +187,6 @@ func DeleteChapterById(id, docId uint) error {
 	if err := UpdateDocById(doc.ID, doc, []interface{}{"ChapterMun"}); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -209,9 +195,9 @@ func GetAllChapters(search *easygorm.Search) ([]*Chapter, int64, error) {
 	var chapters []*Chapter
 	count, err := easygorm.Paginate(&Chapter{}, &chapters, search)
 	if err != nil {
+		logging.Err.Errorf("get all chapter err :%+v\n", err)
 		return nil, count, err
 	}
-
 	return chapters, count, nil
 }
 
@@ -219,16 +205,7 @@ func GetAllChapters(search *easygorm.Search) ([]*Chapter, int64, error) {
 func (p *Chapter) getDoc() {
 	if p.Doc != nil {
 		if p.Doc.ID > 0 {
-			s := &easygorm.Search{
-				Fields: []*easygorm.Field{
-					{
-						Key:       "id",
-						Condition: "=",
-						Value:     p.Doc.ID,
-					},
-				},
-			}
-			doc, err := GetDoc(s)
+			doc, err := GetDocById(p.ID)
 			if err == nil && doc.ID > 0 {
 				p.DocID = doc.ID
 				p.Doc = doc
@@ -241,15 +218,13 @@ func (p *Chapter) getDoc() {
 func (p *Chapter) CreateChapter() error {
 	p.getDoc()
 	if err := easygorm.Create(p); err != nil {
+		logging.Err.Errorf("create chapter err :%+v\n", err)
 		return err
 	}
-
 	p.Doc.ChapterMun++
-
 	if err := UpdateDocById(p.DocID, p.Doc, []interface{}{"ChapterMun"}); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -257,6 +232,7 @@ func (p *Chapter) CreateChapter() error {
 func UpdateChapterById(id uint, np *Chapter) error {
 	np.getDoc()
 	if err := easygorm.Update(&Chapter{}, np, nil, id); err != nil {
+		logging.Err.Errorf("update chapter by id err :%+v\n", err)
 		return err
 	}
 	return nil
@@ -265,20 +241,18 @@ func UpdateChapterById(id uint, np *Chapter) error {
 func Sort(sc *SortChapter) error {
 	err := easygorm.Egm.Db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(&Chapter{}).Where("id = ?", sc.NewId).Update("sort", sc.NewSort).Error; err != nil {
+			logging.Err.Errorf("sort chapter update err :%+v\n", err)
 			return err
 		}
-
 		if err := tx.Model(&Chapter{}).Where("id = ?", sc.OldId).Update("sort", sc.OldSort).Error; err != nil {
+			logging.Err.Errorf("sort chapter update err :%+v\n", err)
 			return err
 		}
-
 		// 返回 nil 提交事务
 		return nil
 	})
-
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

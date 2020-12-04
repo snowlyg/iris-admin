@@ -2,6 +2,7 @@ package libs
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/libs/logging"
 	"path/filepath"
 	"strings"
 
@@ -58,9 +59,9 @@ func InitConfig(cp, cm string) {
 		path = cp
 	}
 
-	fmt.Println(fmt.Sprintf("配置YML文件路径：%v\n", path))
+	logging.Dbug.Debugf("配置YML文件路径：%v\n", path)
 	if err := configor.Load(&Config, path); err != nil {
-		fmt.Println(fmt.Sprintf("Config Path:%s ,Error:%s", path, err.Error()))
+		logging.Err.Errorf("Config Path:%s ,Error:%+v\n", path, err)
 		return
 	}
 
@@ -73,7 +74,7 @@ func InitConfig(cp, cm string) {
 		Config.CasbinModel = filepath.Join(CWD(), "rbac_model.conf")
 	}
 
-	fmt.Println(fmt.Sprintf("配置项：%v\n", Config))
+	logging.Dbug.Debugf("配置项：%+v\n", Config)
 }
 
 func GetRedisUris() []string {

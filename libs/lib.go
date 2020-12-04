@@ -41,7 +41,6 @@ func CWD() string {
 	if os.Getenv("TRAVIS_BUILD_DIR") != "" {
 		return os.Getenv("TRAVIS_BUILD_DIR")
 	}
-
 	path, err := os.Executable()
 	if err != nil {
 		return ""

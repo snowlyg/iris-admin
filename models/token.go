@@ -1,10 +1,10 @@
 package models
 
 import (
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"github.com/pkg/errors"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/logging"
 	"strings"
 	"time"
 )
@@ -84,7 +84,7 @@ func IsUserTokenOver(userId string) bool {
 func getUserTokenCount(conn *libs.RedisCluster, userId string) int {
 	count, err := redis.Int(conn.Scard(ZXW_SESSION_USER_PREFIX + userId))
 	if err != nil {
-		fmt.Println(fmt.Sprintf("getUserTokenCount error :%+v", err))
+		logging.Err.Errorf("get user token count err: %+v", err)
 		return 0
 	}
 	return count
@@ -107,7 +107,7 @@ func UserTokenExpired(token string) {
 	uKey := ZXW_SESSION_BIND_USER_PREFIX + token
 	sKeys, err := redis.Strings(conn.Members(uKey))
 	if err != nil {
-		fmt.Println(fmt.Sprintf("conn.Members key %s error :%+v", uKey, err))
+		logging.Err.Errorf("user token expired get members err: %+v", err)
 		return
 	}
 	for _, v := range sKeys {
@@ -116,12 +116,12 @@ func UserTokenExpired(token string) {
 		}
 		_, err := conn.Do("SREM", v, token)
 		if err != nil {
-			fmt.Println(fmt.Sprintf("conn.SREM key %s token %s  error :%+v", v, token, err))
+			logging.Err.Errorf("user token expired do srem err: %+v", err)
 			return
 		}
 	}
 	if _, err := conn.Del(uKey); err != nil {
-		fmt.Println(fmt.Sprintf("conn.Del key %s error :%+v", uKey, err))
+		logging.Err.Errorf("user token expired del err: %+v", err)
 	}
 	return
 }
@@ -147,7 +147,7 @@ func (r *RedisSessionV2) ToCache(conn *libs.RedisCluster, token string) error {
 		"expires_in", r.ExpiresIn,
 		"scope", r.Scope,
 	); err != nil {
-		fmt.Println(fmt.Sprintf("conn.ToCache error :%+v", err))
+		logging.Err.Errorf("to cache token err: %+v", err)
 		return err
 	}
 	return nil
@@ -157,13 +157,13 @@ func (r *RedisSessionV2) ToCache(conn *libs.RedisCluster, token string) error {
 func (r *RedisSessionV2) SyncUserTokenCache(conn *libs.RedisCluster, token string) error {
 	sKey := ZXW_SESSION_USER_PREFIX + r.UserId
 	if _, err := conn.Sadd(sKey, token); err != nil {
-		fmt.Println(fmt.Sprintf("conn.SyncUserTokenCache1 error :%+v", err))
+		logging.Err.Errorf("sync user token cache sadd err: %+v", err)
 		return err
 	}
 	sKey2 := ZXW_SESSION_BIND_USER_PREFIX + token
 	_, err := conn.Sadd(sKey2, sKey)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("conn.SyncUserTokenCache2 error :%+v", err))
+		logging.Err.Errorf("sync user token cache sadd err: %+v", err)
 		return err
 	}
 	return nil
@@ -172,7 +172,7 @@ func (r *RedisSessionV2) SyncUserTokenCache(conn *libs.RedisCluster, token strin
 //UpdateUserTokenCacheExpire 更新过期时间
 func (r *RedisSessionV2) UpdateUserTokenCacheExpire(conn *libs.RedisCluster, token string) error {
 	if _, err := conn.Expire(ZXW_SESSION_TOKEN_PREFIX+token, int(r.GetTokenExpire().Seconds())); err != nil {
-		fmt.Println(fmt.Sprintf("conn.UpdateUserTokenCacheExpire error :%+v", err))
+		logging.Err.Errorf("update user token cache expire err: %+v", err)
 		return err
 	}
 	return nil
@@ -196,12 +196,11 @@ func (r *RedisSessionV2) DelUserTokenCache(conn *libs.RedisCluster, token string
 	sKey := ZXW_SESSION_USER_PREFIX + r.UserId
 	_, err := conn.Do("SREM", sKey, token)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("conn.DelUserTokenCache1 error :%+v", err))
+		logging.Err.Errorf("del user token cache do srem err: %+v", err)
 		return err
 	}
 	err = r.DelTokenCache(conn, token)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("conn.DelUserTokenCache2 error :%+v", err))
 		return err
 	}
 
@@ -213,14 +212,14 @@ func (r *RedisSessionV2) DelTokenCache(conn *libs.RedisCluster, token string) er
 	sKey2 := ZXW_SESSION_BIND_USER_PREFIX + token
 	_, err := conn.Del(sKey2)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("conn.DelUserTokenCache2 error :%+v", err))
+		logging.Err.Errorf("del token cache del key err: %+v", err)
 		return err
 	}
 
 	sKey3 := ZXW_SESSION_TOKEN_PREFIX + token
 	_, err = conn.Del(sKey3)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("conn.DelUserTokenCache3 error :%+v", err))
+		logging.Err.Errorf("del token cache del key err: %+v", err)
 		return err
 	}
 
@@ -232,19 +231,18 @@ func (r *RedisSessionV2) CleanUserTokenCache(conn *libs.RedisCluster) error {
 	sKey := ZXW_SESSION_USER_PREFIX + r.UserId
 	allTokens, err := redis.Strings(conn.Members(sKey))
 	if err != nil {
-		fmt.Println(fmt.Sprintf("conn.CleanUserTokenCache1 error :%+v", err))
+		logging.Err.Errorf("clean user token cache member err: %+v", err)
 		return err
 	}
 	_, err = conn.Del(sKey)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("conn.CleanUserTokenCache2 error :%+v", err))
+		logging.Err.Errorf("clean user token cache del err: %+v", err)
 		return err
 	}
 
 	for _, token := range allTokens {
 		err = r.DelTokenCache(conn, token)
 		if err != nil {
-			fmt.Println(fmt.Sprintf("conn.DelUserTokenCache2 error :%+v", err))
 			return err
 		}
 	}

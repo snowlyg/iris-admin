@@ -43,6 +43,7 @@ func main() {
 	flag.Parse()
 
 	libs.InitConfig(*ConfigPath, *CasbinModelPath)
+	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
 	easygorm.Init(&easygorm.Config{
 		GormConfig: &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{

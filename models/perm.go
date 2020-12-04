@@ -1,11 +1,8 @@
 package models
 
 import (
-	"fmt"
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
-	"time"
-
-	"github.com/fatih/color"
 	"gorm.io/gorm"
 )
 
@@ -17,43 +14,33 @@ type Permission struct {
 	Act         string `gorm:"type:varchar(256)" json:"act" comment:"Act"`
 }
 
-func NewPermission() *Permission {
-	return &Permission{
-		Model: gorm.Model{
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-	}
-}
-
 // GetPermission get permission
 func GetPermission(search *easygorm.Search) (*Permission, error) {
-	t := NewPermission()
+	t := &Permission{}
 	err := easygorm.First(t, search)
 	if err != nil {
+		logging.Err.Errorf("get perm err: %+v", err)
 		return t, err
 	}
-
 	return t, nil
 }
 
 // GetPermissionById get permission by id
 func GetPermissionById(id uint) (*Permission, error) {
-	t := NewPermission()
+	t := &Permission{}
 	err := easygorm.FindById(t, id)
 	if err != nil {
+		logging.Err.Errorf("get perm by id err: %+v", err)
 		return t, err
 	}
 	return t, nil
 }
 
-// GetPermission get permission
-
 // DeletePermissionById del permission by id
 func DeletePermissionById(id uint) error {
-	p := NewPermission()
+	p := &Permission{}
 	if err := easygorm.DeleteById(p, id); err != nil {
-		color.Red(fmt.Sprintf("DeletePermissionByIdError:%s \n", err))
+		logging.Err.Errorf("del perm by id err: %+v", err)
 		return err
 	}
 	return nil
@@ -64,15 +51,16 @@ func GetAllPermissions(s *easygorm.Search) ([]*Permission, int64, error) {
 	var permissions []*Permission
 	count, err := easygorm.Paginate(&Permission{}, &permissions, s)
 	if err != nil {
+		logging.Err.Errorf("get all perms err: %+v", err)
 		return nil, count, err
 	}
-
 	return permissions, count, nil
 }
 
 // CreatePermission create permission
 func CreatePermission(p interface{}) error {
 	if err := easygorm.Create(p); err != nil {
+		logging.Err.Errorf("create perm err: %+v", err)
 		return err
 	}
 	return nil
@@ -81,6 +69,7 @@ func CreatePermission(p interface{}) error {
 // UpdatePermission update permission
 func UpdatePermission(id uint, pj *Permission) error {
 	if err := easygorm.Update(&Permission{}, pj, nil, id); err != nil {
+		logging.Err.Errorf("update perm err: %+v", err)
 		return err
 	}
 	return nil

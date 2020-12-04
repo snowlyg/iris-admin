@@ -41,6 +41,7 @@ var (
 func TestMain(m *testing.M) {
 
 	libs.InitConfig("", "")
+	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
 	easygorm.Init(&easygorm.Config{
 		GormConfig: &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{

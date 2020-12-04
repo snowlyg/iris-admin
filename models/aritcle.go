@@ -2,9 +2,8 @@ package models
 
 import (
 	"errors"
-	"fmt"
-	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 	"net/http"
@@ -33,10 +32,6 @@ type Article struct {
 	Tags     []*Tag   `gorm:"many2many:article_tags;"`
 	TagNames []string `gorm:"-" json:"tag_names"`
 	Ips      []*ArticleIp
-}
-
-func NewArticle() *Article {
-	return &Article{}
 }
 
 func (r *Article) ReadArticle(rh *http.Request) error {
@@ -75,6 +70,7 @@ func (r *Article) ReadArticle(rh *http.Request) error {
 	defer r.Unlock()
 	r.Read++
 	if err := easygorm.UpdateWithFilde(&Article{}, map[string]interface{}{"Read": r.Read}, r.ID); err != nil {
+		logging.Err.Errorf("read article err : %+v\n", err)
 		return err
 	}
 
@@ -107,6 +103,7 @@ func (r *Article) getArticleIps() ([]*ArticleIp, error) {
 	}
 	articleIps, err := GetArticleIps(search)
 	if err != nil {
+		logging.Err.Errorf("get article ips err : %+v\n", err)
 		return nil, err
 	}
 	return articleIps, nil
@@ -142,6 +139,7 @@ func (r *Article) LikeArticle(rh *http.Request) error {
 
 	r.Like++
 	if err := easygorm.UpdateWithFilde(&Article{}, map[string]interface{}{"Like": r.Like}, r.ID); err != nil {
+		logging.Err.Errorf("like article err : %+v\n", err)
 		return err
 	}
 	return nil
@@ -149,10 +147,10 @@ func (r *Article) LikeArticle(rh *http.Request) error {
 
 // GetArticle 获取文章
 func GetArticle(s *easygorm.Search, id uint) (*Article, error) {
-	r := NewArticle()
+	r := &Article{}
 	r.ID = id
-
 	if err := easygorm.First(r, s); err != nil {
+		logging.Err.Errorf("get article err : %+v\n", err)
 		return r, err
 	}
 
@@ -165,9 +163,10 @@ func GetArticle(s *easygorm.Search, id uint) (*Article, error) {
 
 // GetArticleById 通过 id 获取文章
 func GetArticleById(id uint) (*Article, error) {
-	r := NewArticle()
+	r := &Article{}
 	err := easygorm.FindById(r, id)
 	if err != nil {
+		logging.Err.Errorf("get article by id err : %+v\n", err)
 		return r, err
 	}
 	if r.ID == 0 {
@@ -179,9 +178,10 @@ func GetArticleById(id uint) (*Article, error) {
 // GetArticleCount 获取文章数量
 func GetArticleCount() (int64, error) {
 	var count int64
-	r := NewArticle()
+	r := &Article{}
 	err := easygorm.Egm.Db.Model(r).Count(&count).Error
 	if err != nil {
+		logging.Err.Errorf("get article count err : %+v\n", err)
 		return count, err
 	}
 	return count, nil
@@ -191,6 +191,7 @@ func GetArticleCount() (int64, error) {
 func GetArticleReads() (int64, error) {
 	sr, err := easygorm.Count(&Article{}, "read")
 	if err != nil {
+		logging.Err.Errorf("get article reads err : %+v\n", err)
 		return sr, err
 	}
 	return sr, nil
@@ -198,9 +199,9 @@ func GetArticleReads() (int64, error) {
 
 // DeleteArticleById 删除
 func DeleteArticleById(id uint) error {
-	r := NewArticle()
+	r := &Article{}
 	if err := easygorm.DeleteById(r, id); err != nil {
-		color.Red(fmt.Sprintf("DeleteArticleErr:%s \n", err))
+		logging.Err.Errorf("del article  by id err : %+v\n", err)
 		return err
 	}
 	return nil
@@ -209,7 +210,6 @@ func DeleteArticleById(id uint) error {
 // GetAllArticles 获取集合
 func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, error) {
 	var articles []*Article
-
 	// 多对多标签搜索
 	if tagId > 0 {
 		var tagArticleIds []int
@@ -245,12 +245,11 @@ func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, erro
 		}
 		search.Fields = append(search.Fields, field)
 	}
-
 	count, err := easygorm.Paginate(&Article{}, &articles, search)
 	if err != nil {
+		logging.Err.Errorf("get all  articles err : %+v\n", err)
 		return nil, count, err
 	}
-
 	return articles, count, nil
 }
 
@@ -258,6 +257,7 @@ func GetAllArticles(search *easygorm.Search, tagId int) ([]*Article, int64, erro
 func (r *Article) CreateArticle() error {
 	r.getTypes()
 	if err := easygorm.Create(r); err != nil {
+		logging.Err.Errorf("create article err : %+v\n", err)
 		return err
 	}
 	r.addTags()
@@ -265,10 +265,11 @@ func (r *Article) CreateArticle() error {
 }
 
 // addTags 添加标签关联关系
-func (r *Article) addTags() {
+func (r *Article) addTags() error {
 	if len(r.Tags) > 0 {
 		if err := easygorm.Egm.Db.Model(r).Association("Tags").Clear(); err != nil {
-			color.Red(fmt.Sprintf("Tags 清空关系错误:%+v\n", err))
+			logging.Err.Errorf("clear article tags err : %+v\n", err)
+			return err
 		}
 	}
 	if len(r.TagNames) > 0 {
@@ -285,21 +286,20 @@ func (r *Article) addTags() {
 			}
 			tag, err := GetTag(s)
 			if err != nil || tag.ID == 0 {
-				tag = NewTag()
+				tag = &Tag{}
 				tag.Name = tagName
-				err := tag.CreateTag()
-				if err != nil {
-					color.Red(fmt.Sprintf("标签新建错误:%+v\n", err))
-				}
+				tag.CreateTag()
 			}
 			tags = append(tags, tag)
 		}
 
 		err := easygorm.Egm.Db.Model(r).Association("Tags").Append(tags)
 		if err != nil {
-			color.Red(fmt.Sprintf("标签添加错误:%+v\n tags:%+v", err, tags))
+			logging.Err.Errorf("add  article tag err : %+v\n", err)
+			return err
 		}
 	}
+	return nil
 }
 
 // getTypes 获取关联数据
@@ -328,6 +328,7 @@ func (r *Article) getTypes() {
 func UpdateArticle(id uint, nr *Article) error {
 	nr.getTypes()
 	if err := easygorm.Update(&Article{}, nr, []interface{}{"Title", "ContentShort", "Author", "ImageUri", "SourceUri", "IsOriginal", "Content", "Status"}, id); err != nil {
+		logging.Err.Errorf("update article err : %+v\n", err)
 		return err
 	}
 	nr.addTags()

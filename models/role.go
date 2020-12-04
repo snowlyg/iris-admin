@@ -3,12 +3,10 @@ package models
 import (
 	"errors"
 	"fmt"
-	"strconv"
-	"time"
-
-	"github.com/fatih/color"
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type Role struct {
@@ -20,20 +18,12 @@ type Role struct {
 	PermIds     []uint `gorm:"-" json:"perm_ids" comment:"权限id"`
 }
 
-func NewRole() *Role {
-	return &Role{
-		Model: gorm.Model{
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-	}
-}
-
 // GetRoleById get role by it
 func GetRoleById(id uint) (*Role, error) {
-	t := NewRole()
-	err := easygorm.FindById(NewRole(), id)
+	t := &Role{}
+	err := easygorm.FindById(&Role{}, id)
 	if err != nil {
+		logging.Err.Errorf("get role by id err: %+v", err)
 		return t, err
 	}
 
@@ -42,9 +32,10 @@ func GetRoleById(id uint) (*Role, error) {
 
 // GetRole get role
 func GetRole(s *easygorm.Search) (*Role, error) {
-	t := NewRole()
+	t := &Role{}
 	err := easygorm.First(t, s)
 	if err != nil {
+		logging.Err.Errorf("get role err: %+v", err)
 		return t, err
 	}
 
@@ -53,10 +44,10 @@ func GetRole(s *easygorm.Search) (*Role, error) {
 
 // DeleteRoleById del role by id
 func DeleteRoleById(id uint) error {
-	r := NewRole()
+	r := &Role{}
 	err := easygorm.DeleteById(r, id)
 	if err != nil {
-		color.Red(fmt.Sprintf("DeleteRoleErr:%s \n", err))
+		logging.Err.Errorf("del role by id err: %+v", err)
 		return err
 	}
 
@@ -68,6 +59,7 @@ func GetAllRoles(s *easygorm.Search) ([]*Role, int64, error) {
 	var roles []*Role
 	count, err := easygorm.Paginate(&Role{}, &roles, s)
 	if err != nil {
+		logging.Err.Errorf("get all role err: %+v", err)
 		return nil, count, err
 	}
 
@@ -77,11 +69,12 @@ func GetAllRoles(s *easygorm.Search) ([]*Role, int64, error) {
 // CreateRole create role
 func (r *Role) CreateRole() error {
 	if err := easygorm.Create(r); err != nil {
+		logging.Err.Errorf("create role err: %+v", err)
 		return err
 	}
-
-	addPerms(r.PermIds, r)
-
+	if err := addPerms(r.PermIds, r); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -90,29 +83,34 @@ func addPerms(permIds []uint, role *Role) error {
 	if len(permIds) > 0 {
 		roleId := strconv.FormatUint(uint64(role.ID), 10)
 		if _, err := easygorm.Egm.Enforcer.DeletePermissionsForUser(roleId); err != nil {
+			logging.Err.Errorf("del perm for user err: %+v", err)
 			return err
 		}
 		var perms []Permission
 		easygorm.Egm.Db.Where("id in (?)", permIds).Find(&perms)
 		for _, perm := range perms {
 			if _, err := easygorm.Egm.Enforcer.AddPolicy(roleId, perm.Name, perm.Act); err != nil {
+				logging.Err.Errorf("add policy err: %+v", err)
 				return err
 			}
 		}
 	} else {
-		return errors.New(fmt.Sprintf("没有角色：%s 权限为空 \n", role.Name))
+		err := errors.New(fmt.Sprintf("没有角色：%s 权限为空 \n", role.Name))
+		logging.Err.Errorf("empty role err: %+v", err)
+		return err
 	}
 	return nil
 }
 
 // UpdateRole update role
-func UpdateRole(id uint, nr *Role) error {
-	if err := easygorm.Update(&Role{}, nr, []interface{}{"DisplayName", "Description"}, id); err != nil {
+func UpdateRole(id uint, r *Role) error {
+	if err := easygorm.Update(&Role{}, r, []interface{}{"DisplayName", "Description"}, id); err != nil {
+		logging.Err.Errorf("update role err: %+v", err)
 		return err
 	}
-
-	addPerms(nr.PermIds, nr)
-
+	if err := addPerms(r.PermIds, r); err != nil {
+		return err
+	}
 	return nil
 }
 

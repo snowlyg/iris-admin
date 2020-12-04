@@ -1,35 +1,23 @@
 package models
 
 import (
-	"fmt"
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
-	"time"
-
-	"github.com/fatih/color"
 	"gorm.io/gorm"
 )
 
 type Tag struct {
 	gorm.Model
-	Name string `gorm:"not null ;type:varchar(256)" json:"name" validate:"required,gte=0,lte=256" comment:"标签名称"`
-
+	Name     string     `gorm:"not null ;type:varchar(256)" json:"name" validate:"required,gte=0,lte=256" comment:"标签名称"`
 	Articles []*Article `gorm:"many2many:article_tags;"`
-}
-
-func NewTag() *Tag {
-	return &Tag{
-		Model: gorm.Model{
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-	}
 }
 
 // GetTag get tag
 func GetTag(s *easygorm.Search) (*Tag, error) {
-	t := NewTag()
+	t := &Tag{}
 	err := easygorm.First(t, s)
 	if err != nil {
+		logging.Err.Errorf("get tag err: %+v", err)
 		return t, err
 	}
 
@@ -41,9 +29,9 @@ func GetTag(s *easygorm.Search) (*Tag, error) {
  * @method DeleteTagById
  */
 func DeleteTagById(id uint) error {
-	t := NewTag()
+	t := &Tag{}
 	if err := easygorm.DeleteById(t, id); err != nil {
-		color.Red(fmt.Sprintf("DeleteTagByIdError:%s \n", err))
+		logging.Err.Errorf("del tag by id err: %+v", err)
 		return err
 	}
 	return nil
@@ -54,6 +42,7 @@ func GetAllTags(s *easygorm.Search) ([]*Tag, int64, error) {
 	var tags []*Tag
 	count, err := easygorm.Paginate(&Tag{}, &tags, s)
 	if err != nil {
+		logging.Err.Errorf("get all tags err: %+v", err)
 		return tags, count, err
 	}
 
@@ -63,6 +52,7 @@ func GetAllTags(s *easygorm.Search) ([]*Tag, int64, error) {
 // CreateTag create tag
 func (p *Tag) CreateTag() error {
 	if err := easygorm.Create(p); err != nil {
+		logging.Err.Errorf("create tag err: %+v", err)
 		return err
 	}
 	return nil
@@ -71,6 +61,7 @@ func (p *Tag) CreateTag() error {
 // UpdateTagById update tag by id
 func UpdateTagById(id uint, pj *Tag) error {
 	if err := easygorm.Update(&Tag{}, pj, nil, id); err != nil {
+		logging.Err.Errorf("update tag by id err: %+v", err)
 		return err
 	}
 	return nil

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 	"sync"
@@ -23,6 +24,7 @@ func GetArticleIps(s *easygorm.Search) ([]*ArticleIp, error) {
 	var ips []*ArticleIp
 	err := easygorm.All(&ArticleIp{}, &ips, s)
 	if err != nil {
+		logging.Err.Errorf("get article ips err : %+v\n", err)
 		return ips, err
 	}
 
@@ -32,6 +34,7 @@ func GetArticleIps(s *easygorm.Search) ([]*ArticleIp, error) {
 // CreateArticleIp add article ip
 func (p *ArticleIp) CreateArticleIp() error {
 	if err := easygorm.Create(p); err != nil {
+		logging.Err.Errorf("create article ip err : %+v\n", err)
 		return err
 	}
 	return nil
@@ -43,6 +46,7 @@ func (p *ArticleIp) UpdateType() error {
 	defer p.Unlock()
 	p.Type++
 	if err := easygorm.UpdateWithFilde(&ArticleIp{}, map[string]interface{}{"Type": p.Type}, p.ID); err != nil {
+		logging.Err.Errorf("update article ip type err : %+v\n", err)
 		return err
 	}
 	return nil
@@ -55,6 +59,7 @@ func (p *ArticleIp) AddArticleIpMun() error {
 
 	p.Mun++
 	if err := easygorm.UpdateWithFilde(&ArticleIp{}, map[string]interface{}{"Mun": p.Mun}, p.ID); err != nil {
+		logging.Err.Errorf("add article ip mun err : %+v\n", err)
 		return err
 	}
 	return nil

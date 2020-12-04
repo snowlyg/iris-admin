@@ -1,11 +1,10 @@
 package models
 
 import (
-	"fmt"
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
 	"time"
 
-	"github.com/fatih/color"
 	"gorm.io/gorm"
 )
 
@@ -21,15 +20,12 @@ type TypeInfo struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-func NewType() *Type {
-	return &Type{}
-}
-
 // GetType get type
 func GetType(search *easygorm.Search) (*TypeInfo, error) {
 	t := &TypeInfo{}
 	err := easygorm.First(t, search)
 	if err != nil {
+		logging.Err.Errorf("get type err: %+v", err)
 		return t, err
 	}
 
@@ -41,6 +37,7 @@ func GetTypeById(id uint) (*TypeInfo, error) {
 	t := &TypeInfo{}
 	err := easygorm.FindById(t, id)
 	if err != nil {
+		logging.Err.Errorf("get type by id err: %+v", err)
 		return t, err
 	}
 
@@ -52,9 +49,9 @@ func GetTypeById(id uint) (*TypeInfo, error) {
  * @method DeleteTypeById
  */
 func DeleteTypeById(id uint) error {
-	t := NewType()
+	t := &TypeInfo{}
 	if err := easygorm.DeleteById(t, id); err != nil {
-		color.Red(fmt.Sprintf("DeleteTypeByIdError:%s \n", err))
+		logging.Err.Errorf("del type by id err: %+v", err)
 		return err
 	}
 	return nil
@@ -66,6 +63,7 @@ func GetAllTypes(s *easygorm.Search) ([]*TypeInfo, int64, error) {
 
 	count, err := easygorm.Paginate(&Type{}, &types, s)
 	if err != nil {
+		logging.Err.Errorf("get all type err: %+v", err)
 		return nil, count, err
 	}
 
@@ -75,6 +73,7 @@ func GetAllTypes(s *easygorm.Search) ([]*TypeInfo, int64, error) {
 // CreateType create type
 func (p *Type) CreateType() error {
 	if err := easygorm.Create(p); err != nil {
+		logging.Err.Errorf("create type err: %+v", err)
 		return err
 	}
 	return nil
@@ -83,6 +82,7 @@ func (p *Type) CreateType() error {
 // UpdateTypeById update type by id
 func UpdateTypeById(id uint, np *Type) error {
 	if err := easygorm.Update(&Type{}, np, nil, id); err != nil {
+		logging.Err.Errorf("update type by id err: %+v", err)
 		return err
 	}
 	return nil

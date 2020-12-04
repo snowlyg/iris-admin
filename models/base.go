@@ -2,8 +2,8 @@ package models
 
 import (
 	"errors"
-	"github.com/fatih/color"
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ const (
 // IsNotFound 判断是否是查询不存在错误
 func IsNotFound(err error) bool {
 	if ok := errors.Is(err, gorm.ErrRecordNotFound); ok {
-		color.Yellow("查询数据不存在")
+		logging.Err.Error("查询数据不存在")
 		return true
 	}
 	return false

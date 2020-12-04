@@ -23,7 +23,6 @@ type Server struct {
 func NewServer() *Server {
 	app := iris.New()
 	app.Logger().SetLevel(libs.Config.LogLevel)
-	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
 	routes.App(app)
 	iris.RegisterOnInterrupt(func() {
 		db, err := easygorm.Egm.Db.DB()

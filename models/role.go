@@ -1,8 +1,6 @@
 package models
 
 import (
-	"errors"
-	"fmt"
 	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
@@ -95,9 +93,8 @@ func addPerms(permIds []uint, role *Role) error {
 			}
 		}
 	} else {
-		err := errors.New(fmt.Sprintf("没有角色：%s 权限为空 \n", role.Name))
-		logging.Err.Errorf("empty role err: %+v", err)
-		return err
+		logging.Err.Errorf("角色：%s 权限为空 \n", role.Name)
+		return nil
 	}
 	return nil
 }

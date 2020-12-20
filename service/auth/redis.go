@@ -211,9 +211,15 @@ func (ra *RedisAuth) DelTokenCache(token string) error {
 }
 
 // CleanUserTokenCache 清空token缓存
-func (ra *RedisAuth) CleanUserTokenCache(rsv2 *SessionV2) error {
+func (ra *RedisAuth) CleanUserTokenCache(token string) error {
+	rsv2, err := ra.GetSessionV2(token)
+	if err != nil {
+		logging.Err.Errorf("clean user token cache member err: %+v", err)
+		return err
+	}
 	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
-	allTokens, err := redis.Strings(ra.Conn.Members(sKey))
+	var allTokens []string
+	allTokens, err = redis.Strings(ra.Conn.Members(sKey))
 	if err != nil {
 		logging.Err.Errorf("clean user token cache member err: %+v", err)
 		return err

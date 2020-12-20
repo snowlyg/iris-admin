@@ -63,6 +63,7 @@ type Authentication interface {
 	UpdateUserTokenCacheExpire(token string) error
 	GetSessionV2(token string) (*SessionV2, error)
 	IsUserTokenOver(token string) bool
+	CleanUserTokenCache(token string) error
 	Close()
 }
 

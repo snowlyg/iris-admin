@@ -12,6 +12,7 @@ import (
 	"github.com/snowlyg/blog/cache"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/seeder"
+	"github.com/snowlyg/blog/service/auth"
 	"github.com/snowlyg/blog/tests/mock"
 	"github.com/snowlyg/easygorm"
 	"gorm.io/gorm"
@@ -552,15 +553,11 @@ func GetOauthToken(e *httpexpect.Expect) string {
 }
 
 func ClearTokenCache(token string) error {
-	conn := cache.GetRedisClusterClient()
-	defer conn.Close()
-	//sess, err := auth.GetRedisSessionV2(conn, token)
-	//if err != nil {
-	//	return err
-	//}
-	//err = sess.CleanUserTokenCache(conn)
-	//if err != nil {
-	//	return err
-	//}
+	authDriver := auth.NewAuthDriver()
+	defer authDriver.Close()
+	err := authDriver.CleanUserTokenCache(token)
+	if err != nil {
+		return err
+	}
 	return nil
 }

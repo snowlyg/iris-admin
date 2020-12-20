@@ -2,7 +2,7 @@ module github.com/snowlyg/blog
 
 go 1.14
 
-//replace github.com/snowlyg/easygorm v0.0.0-20201201125442-d726e2ba177d => /Users/snowlyg/go/src/github.com/snowlyg/easygorm
+replace github.com/snowlyg/easygorm v0.0.0-20201201125442-d726e2ba177d => /Users/snowlyg/go/src/github.com/snowlyg/easygorm
 
 require (
 	github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107

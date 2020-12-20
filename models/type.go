@@ -49,7 +49,7 @@ func GetTypeById(id uint) (*TypeInfo, error) {
  * @method DeleteTypeById
  */
 func DeleteTypeById(id uint) error {
-	t := &TypeInfo{}
+	t := &Type{}
 	if err := easygorm.DeleteById(t, id); err != nil {
 		logging.Err.Errorf("del type by id err: %+v", err)
 		return err

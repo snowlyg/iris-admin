@@ -94,6 +94,6 @@ func UserExpire(ctx iris.Context) {
 		ctx.JSON(libs.ApiResource(libs.TokenCacheErr.Code, nil, libs.TokenCacheErr.Msg))
 		return
 	}
-	ctx.JSON(libs.ApiResource(libs.NoErr.Code, nil, libs.NoErr.Msg))
+	ctx.JSON(libs.ApiResource(libs.NoErr.Code, nil, ""))
 	return
 }

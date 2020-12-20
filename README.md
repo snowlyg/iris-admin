@@ -9,10 +9,14 @@
     <h5 align="center">IrisAdminApi</h5>
 </div>
 
-> 简单学习项目 ----写的挺烂，欢迎指点
+> 简单项目仅供学习，欢迎指点！
 >
 #### 演示地址
+主分支：
 [http://irisadminapi.snowlyg.com](http://irisadminapi.snowlyg.com)
+
+blog 分支:
+[http://www.snowlyg.com](http://www.snowlyg.com) 
 
 #### IRIS V12 中文文档
 [IRIS V12 中文文档](https://www.snowlyg.com/chapter/1)
@@ -25,10 +29,6 @@
 
 
 #### 项目介绍
-- `iris-go` 框架后台接口项目
-- `gorm` 数据库模块 
-- `jwt` 的单点登陆认证方式
-- `cors` 跨域认证
 - 数据支持 `mysql`，`sqlite3` 配置; `sqlite3` 需要下载 `gcc`。  [gcc 下载地址](http://mingw-w64.org/doku.php/download)
 - 使用了 [https://github.com/snowlyg/gotransformer](https://github.com/snowlyg/gotransformer) 转换数据，返回数据格式化，excel 导入数据转换，xml 文件生产数据转换等 
 - 使用 `casbin` 做权限控制, `server/config/rbac_model.conf` 为相关配置。系统会根据路由名称生成对应路由权限，并配置到管理员角色。
@@ -106,8 +106,8 @@ git clone https://gitee.com/snowlyg/IrisAdminApi.git
 >中国：https://goproxy.cn
 >
 >其他：https://gocenter.io
->
->golang 1.13 可以直接执行：
+
+##### golang 1.13+ 可以直接执行：
 ```shell script
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
@@ -115,23 +115,9 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 > 修改配置文件 `application.yml` ,配置文件需要放置在运行程序的同级目录
 
-- 前端代码运行
-```shell script
-
-# 安装前端依赖
-npm i
-
-# 开发方式启动（开发时使用，会在修改代码后实时更新）
-npm run dev 
-
-# 打包前端代码（部署时使用）
-npm run build:prod  或者  npm run build:stage
-
-```
-
 - 运行项目,
 >推荐使用 air 或者 gowatch 等热编译工具,直接使用 `go run main.go `  方法运行，可能会出现配置文件无法加载的问题
->如果想使用 `go run main.go` 命令运行, 设置环境变量 `TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi/cmd`
+>如果想使用 `go run main.go` 命令运行, 设置环境变量 `TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi`
 
 ```shell script
 
@@ -145,8 +131,6 @@ air
 ---
 ##### 单元测试 
 > http test
->
-> 
 
 ```shell script
 # 设置环境变量 TRAVIS_BUILD_DIR=~/go/src/github.com/snowlyg/IrisAdminApi
@@ -158,24 +142,10 @@ air
 #单个方法
  go test -run TestUserCreate -v  -tags test
 
-# 安装工具 gotest 增加测试输出数据颜色
-go get github.com/rakyll/gotest@latest
-
 # 测试
  gotest  
  
 ```
-
-#### docker 运行
-可以使用 docker-compose 脚本 [https://github.com/snowlyg/dnmp](https://github.com/snowlyg/dnmp)
-
-手工构建启动镜像
-```shell script
-docker build -t iris_admin_api:0.0.1 . # 构建
-
-docker run --name=irisadminapi -d -p 8085:80 iris_admin_api:test  # 运行
-```
-
 ---
 
 ##### 接口文档

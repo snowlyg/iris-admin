@@ -8,9 +8,9 @@ import (
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/blog/models"
+	"github.com/snowlyg/blog/service/auth"
 	"github.com/snowlyg/blog/validates"
 	"github.com/snowlyg/easygorm"
-	"strconv"
 )
 
 func UserLogin(ctx iris.Context) {
@@ -54,46 +54,33 @@ func UserLogin(ctx iris.Context) {
 		return
 	}
 
-	uid := strconv.FormatUint(uint64(user.ID), 10)
-	if models.IsUserTokenOver(uid) {
-		ctx.JSON(libs.ApiResource(libs.ReqErr.Code, nil, "以达到同时登录设备上限"))
-		return
-	}
-
 	if ok := bcrypt.Match(loginReq.Password, user.Password); !ok {
 		ctx.JSON(libs.ApiResource(libs.ReqErr.Code, nil, "用户名或密码错误"))
 		return
 	}
-	token := &models.Token{}
-	token.Token, err = models.CacheToken(user)
-	if err != nil {
-		logging.Err.Errorf("login cache token err:%+v", err)
-		ctx.JSON(libs.ApiResource(libs.DBErr.Code, nil, libs.DBErr.Msg))
+
+	authDriver := auth.NewAuthDriver()
+	defer authDriver.Close()
+	if tokenString, err := auth.Login(authDriver, uint64(user.ID)); err != nil {
+		ctx.JSON(libs.ApiResource(libs.DBErr.Code, nil, err.Error()))
+		return
+	} else {
+		ctx.JSON(libs.ApiResource(libs.NoErr.Code, &models.Token{Token: tokenString}, libs.NoErr.Msg))
 		return
 	}
-
-	ctx.JSON(libs.ApiResource(libs.NoErr.Code, token, libs.NoErr.Msg))
-	return
 }
 
 func UserLogout(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	conn := libs.GetRedisClusterClient()
-	defer conn.Close()
-	sess, err := models.GetRedisSessionV2(conn, value.Raw)
+	authDriver := auth.NewAuthDriver()
+	defer authDriver.Close()
+	err := auth.Logout(authDriver, value.Raw)
 	if err != nil {
-		logging.Err.Errorf("user logout get redis session err:%+v", err)
-		ctx.JSON(libs.ApiResource(libs.TokenCacheErr.Code, nil, libs.TokenCacheErr.Msg))
+		ctx.JSON(libs.ApiResource(libs.TokenCacheErr.Code, nil, err.Error()))
 		return
 	}
-	if sess != nil {
-		if err := sess.DelUserTokenCache(conn, value.Raw); err != nil {
-			logging.Err.Errorf("user logout del user token err:%+v", err)
-			ctx.JSON(libs.ApiResource(libs.TokenCacheErr.Code, nil, libs.TokenCacheErr.Msg))
-			return
-		}
-	}
+
 	ctx.JSON(libs.ApiResource(libs.NoErr.Code, nil, libs.NoErr.Msg))
 	return
 }
@@ -101,20 +88,11 @@ func UserLogout(ctx iris.Context) {
 func UserExpire(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	conn := libs.GetRedisClusterClient()
-	defer conn.Close()
-	sess, err := models.GetRedisSessionV2(conn, value.Raw)
-	if err != nil {
-		logging.Err.Errorf("user expire get token err:%+v", err)
+	authDriver := auth.NewAuthDriver()
+	defer authDriver.Close()
+	if err := auth.Expire(authDriver, value.Raw); err != nil {
 		ctx.JSON(libs.ApiResource(libs.TokenCacheErr.Code, nil, libs.TokenCacheErr.Msg))
 		return
-	}
-	if sess != nil {
-		if err := sess.UpdateUserTokenCacheExpire(conn, value.Raw); err != nil {
-			logging.Err.Errorf("user expire update user token err:%+v", err)
-			ctx.JSON(libs.ApiResource(libs.TokenCacheErr.Code, nil, libs.TokenCacheErr.Msg))
-			return
-		}
 	}
 	ctx.JSON(libs.ApiResource(libs.NoErr.Code, nil, libs.NoErr.Msg))
 	return

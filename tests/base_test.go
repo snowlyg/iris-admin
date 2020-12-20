@@ -9,6 +9,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/httptest"
 	"github.com/snowlyg/blog/app"
+	"github.com/snowlyg/blog/cache"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/seeder"
 	"github.com/snowlyg/blog/tests/mock"
@@ -41,7 +42,7 @@ var (
 func TestMain(m *testing.M) {
 
 	libs.InitConfig("", "")
-	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
+	cache.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
 	easygorm.Init(&easygorm.Config{
 		GormConfig: &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
@@ -551,15 +552,15 @@ func GetOauthToken(e *httpexpect.Expect) string {
 }
 
 func ClearTokenCache(token string) error {
-	conn := libs.GetRedisClusterClient()
+	conn := cache.GetRedisClusterClient()
 	defer conn.Close()
-	sess, err := models.GetRedisSessionV2(conn, token)
-	if err != nil {
-		return err
-	}
-	err = sess.CleanUserTokenCache(conn)
-	if err != nil {
-		return err
-	}
+	//sess, err := auth.GetRedisSessionV2(conn, token)
+	//if err != nil {
+	//	return err
+	//}
+	//err = sess.CleanUserTokenCache(conn)
+	//if err != nil {
+	//	return err
+	//}
 	return nil
 }

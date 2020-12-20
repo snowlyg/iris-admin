@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/service/auth"
 	"github.com/snowlyg/easygorm"
 	"strconv"
 	"time"
@@ -16,7 +17,7 @@ import (
 
 func GetProfile(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
+	sess := ctx.Values().Get("sess").(*auth.SessionV2)
 	id := uint(libs.ParseInt(sess.UserId, 10))
 	s := &easygorm.Search{
 		Fields: []*easygorm.Field{
@@ -56,7 +57,7 @@ func GetAdminInfo(ctx iris.Context) {
 
 func ChangeAvatar(ctx iris.Context) {
 	ctx.StatusCode(iris.StatusOK)
-	sess := ctx.Values().Get("sess").(*models.RedisSessionV2)
+	sess := ctx.Values().Get("sess").(*auth.SessionV2)
 	id := uint(libs.ParseInt(sess.UserId, 10))
 
 	avatar := new(models.Avatar)

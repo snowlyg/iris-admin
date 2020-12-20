@@ -229,7 +229,7 @@ func SetChapterSort(ctx iris.Context) {
 	}
 
 	id, _ := ctx.Params().GetUint("id")
-	chapter := models.NewChapter()
+	chapter := &models.Chapter{}
 	chapter.ID = aul.Id
 	chapter.Sort = aul.Sort
 	err = models.UpdateChapterById(id, chapter)

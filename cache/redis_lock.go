@@ -1,4 +1,4 @@
-package libs
+package cache
 
 import (
 	"github.com/gomodule/redigo/redis"

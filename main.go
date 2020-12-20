@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/snowlyg/blog/app"
+	"github.com/snowlyg/blog/cache"
 	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/blog/models"
 	"github.com/snowlyg/blog/seeder"
@@ -43,7 +44,12 @@ func main() {
 	flag.Parse()
 
 	libs.InitConfig(*ConfigPath, *CasbinModelPath)
-	libs.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
+	if libs.Config.Cache.Driver == "redis" {
+		cache.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Pwd)
+		if cache.GetRedisClusterClient() == nil {
+			panic("redis cache driver require redis")
+		}
+	}
 	easygorm.Init(&easygorm.Config{
 		GormConfig: &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{

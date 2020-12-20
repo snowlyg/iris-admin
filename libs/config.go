@@ -10,13 +10,15 @@ import (
 )
 
 var Config = struct {
-	LogLevel    string `default:"info" env:"Loglevel"`
-	HTTPS       bool   `default:"false" env:"Https"`
-	Certpath    string `default:"" env:"Certpath"`
-	Certkey     string `default:"" env:"Certkey"`
-	Port        int64  `default:"8085" env:"Port"`
-	Host        string `default:"127.0.0.1" env:"Host"`
-	Cache       bool   `default:"false" env:"Cache"`
+	LogLevel string `default:"info" env:"Loglevel"`
+	HTTPS    bool   `default:"false" env:"Https"`
+	Certpath string `default:"" env:"Certpath"`
+	Certkey  string `default:"" env:"Certkey"`
+	Port     int64  `default:"8085" env:"Port"`
+	Host     string `default:"127.0.0.1" env:"Host"`
+	Cache    struct {
+		Driver string `env:"CacheDriver" default:"local"`
+	}
 	CasbinModel string `default:"" env:"CasbinModel"`
 	Admin       struct {
 		UserName        string `env:"AdminUserName" default:"username"`

@@ -3,14 +3,11 @@ package models
 import (
 	"errors"
 	"fmt"
+	"github.com/snowlyg/blog/libs"
 	"github.com/snowlyg/blog/libs/logging"
 	"github.com/snowlyg/easygorm"
-	"strconv"
-	"time"
-
-	"github.com/iris-contrib/middleware/jwt"
-	"github.com/snowlyg/blog/libs"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 type User struct {
@@ -116,35 +113,4 @@ func addRoles(user *User) error {
 		}
 	}
 	return nil
-}
-
-// CacheToken check login user
-func CacheToken(user *User) (string, error) {
-	token := jwt.NewTokenWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"exp": time.Now().Add(time.Hour * time.Duration(1)).Unix(),
-		"iat": time.Now().Unix(),
-	})
-	tokenString, _ := token.SignedString([]byte("HS2JDFKhu7Y1av7b"))
-	rsv2 := RedisSessionV2{
-		UserId:       strconv.FormatUint(uint64(user.ID), 10),
-		LoginType:    LoginTypeWeb,
-		AuthType:     AuthPwd,
-		CreationDate: time.Now().Unix(),
-		Scope:        getUserScope("admin"),
-	}
-	conn := libs.GetRedisClusterClient()
-	defer conn.Close()
-
-	if err := rsv2.ToCache(conn, tokenString); err != nil {
-		logging.Err.Errorf("cache token toCahce err: %+v\n", err)
-		return "", err
-	}
-
-	if err := rsv2.SyncUserTokenCache(conn, tokenString); err != nil {
-		logging.Err.Errorf("cache token SyncUserTokenCache err: %+v\n", err)
-		return "", err
-	}
-
-	return tokenString, nil
-
 }

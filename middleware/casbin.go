@@ -8,7 +8,7 @@ import (
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/models"
+	"github.com/snowlyg/blog/service/auth"
 	"net/http"
 )
 
@@ -20,28 +20,27 @@ func (c *Casbin) ServeHTTP(ctx iris.Context) {
 	ctx.StatusCode(http.StatusOK)
 	value := ctx.Values().Get("jwt").(*jwt.Token)
 
-	conn := libs.GetRedisClusterClient()
-	defer conn.Close()
-
-	sess, err := models.GetRedisSessionV2(conn, value.Raw)
+	authDriver := auth.NewAuthDriver()
+	defer authDriver.Close()
+	rsv2, err := auth.Check(authDriver, value.Raw)
 	if err != nil {
-		models.UserTokenExpired(value.Raw)
-		_, _ = ctx.JSON(libs.ApiResource(401, nil, ""))
+		authDriver.UserTokenExpired(value.Raw)
+		_, _ = ctx.JSON(libs.ApiResource(401, nil, err.Error()))
 		ctx.StopExecution()
 		return
 	}
-	if sess == nil {
-		_, _ = ctx.JSON(libs.ApiResource(401, nil, ""))
+
+	if rsv2 == nil {
+		_, _ = ctx.JSON(libs.ApiResource(401, nil, "系统错误"))
 		ctx.StopExecution()
 		return
 	} else {
-		check, err := c.Check(ctx.Request(), sess.UserId)
-		if !check {
-			_, _ = ctx.JSON(libs.ApiResource(403, nil, err.Error()))
+		if check, err := c.Check(ctx.Request(), rsv2.UserId); !check {
+			_, _ = ctx.JSON(libs.ApiResource(403, nil, fmt.Sprintf("您无权操作：%v", err)))
 			ctx.StopExecution()
 			return
 		} else {
-			ctx.Values().Set("sess", sess)
+			ctx.Values().Set("sess", rsv2)
 		}
 	}
 

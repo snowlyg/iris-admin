@@ -194,30 +194,24 @@ func (la *LocalAuth) getUserTokenMaxCount() int {
 
 // CleanUserTokenCache 清空token缓存
 func (la *LocalAuth) CleanUserTokenCache(token string) error {
-	//rsv2,err := ra.GetSessionV2(token)
-	//if err != nil {
-	//	logging.Err.Errorf("clean user token cache member err: %+v", err)
-	//	return err
-	//}
-	//sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
-	//var allTokens []string
-	//allTokens, err = redis.Strings(ra.Conn.Members(sKey))
-	//if err != nil {
-	//	logging.Err.Errorf("clean user token cache member err: %+v", err)
-	//	return err
-	//}
-	//_, err = ra.Conn.Del(sKey)
-	//if err != nil {
-	//	logging.Err.Errorf("clean user token cache del err: %+v", err)
-	//	return err
-	//}
-	//
-	//for _, token := range allTokens {
-	//	err = ra.DelTokenCache(token)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
+	rsv2, err := la.GetSessionV2(token)
+	if err != nil {
+		logging.Err.Errorf("clean user token cache member err: %+v", err)
+		return err
+	}
+	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
+	if userTokens, found := la.Cache.Get(sKey); !found {
+		return nil
+	} else {
+		for _, token := range userTokens.(tokens) {
+			err = la.DelTokenCache(token)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	la.Cache.Delete(sKey)
+
 	return nil
 }
 

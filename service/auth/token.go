@@ -3,8 +3,7 @@ package auth
 import (
 	"errors"
 	"github.com/iris-contrib/middleware/jwt"
-	"github.com/snowlyg/blog/libs"
-	"github.com/snowlyg/blog/libs/logging"
+	"github.com/snowlyg/blog/application/libs/logging"
 	"strconv"
 	"time"
 )
@@ -21,10 +20,12 @@ func Login(auth Authentication, id uint64) (string, error) {
 	})
 	tokenString, _ := token.SignedString([]byte("HS2JDFKhu7Y1av7b"))
 	if err := auth.ToCache(tokenString, id); err != nil {
+		logging.ErrorLogger.Errorf("tocache user token err:%+v", err)
 		return "", err
 	}
 
 	if err := auth.SyncUserTokenCache(tokenString); err != nil {
+		logging.ErrorLogger.Errorf("sync user token err:%+v", err)
 		return "", err
 	}
 
@@ -35,8 +36,8 @@ func Login(auth Authentication, id uint64) (string, error) {
 // Logout 退出
 func Logout(auth Authentication, token string) error {
 	if err := auth.DelUserTokenCache(token); err != nil {
-		logging.Err.Errorf("del user token err:%+v", err)
-		return errors.New(libs.TokenCacheErr.Msg)
+		logging.ErrorLogger.Errorf("del user token err:%+v", err)
+		return err
 	}
 	return nil
 }
@@ -44,8 +45,8 @@ func Logout(auth Authentication, token string) error {
 // Expire 更新
 func Expire(auth Authentication, token string) error {
 	if err := auth.UpdateUserTokenCacheExpire(token); err != nil {
-		logging.Err.Errorf("update user token err:%+v", err)
-		return errors.New(libs.TokenCacheErr.Msg)
+		logging.ErrorLogger.Errorf("update user token err:%+v", err)
+		return err
 	}
 	return nil
 }
@@ -54,6 +55,7 @@ func Expire(auth Authentication, token string) error {
 func Check(auth Authentication, token string) (*SessionV2, error) {
 	rsv2, err := auth.GetSessionV2(token)
 	if err != nil {
+		logging.ErrorLogger.Errorf("check user token err:%+v", err)
 		return nil, err
 	}
 	return rsv2, nil

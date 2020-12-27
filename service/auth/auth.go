@@ -2,7 +2,7 @@ package auth
 
 import (
 	"errors"
-	"github.com/snowlyg/blog/libs"
+	"github.com/snowlyg/blog/application/libs"
 	"time"
 )
 
@@ -39,10 +39,10 @@ const (
 )
 
 var (
-	RedisSessionTimeoutWeb    = 30 * time.Minute
-	RedisSessionTimeoutApp    = 24 * time.Hour
-	RedisSessionTimeoutApplet = 7 * 24 * time.Hour
-	RedisSessionTimeoutWx     = 5 * 52 * 168 * time.Hour
+	RedisSessionTimeoutWeb = 30 * time.Minute
+	RedisSessionTimeoutApp = 24 * time.Hour
+	RedisSessionTimeoutWx  = 5 * 52 * 168 * time.Hour
+	//RedisSessionTimeoutApplet = 7 * 24 * time.Hour
 )
 
 type SessionV2 struct {

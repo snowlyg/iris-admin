@@ -1,11 +1,11 @@
-loglevel: disable # 日志级别 info debug disable error fatal warn 等等
-debug: true # 调试模式
-https: false # https
+loglevel: debug # 日志级别 info debug disable error fatal warn 等等
 host: 127.0.0.1 # host 地址
-port: 80 # 端口
+port: 80
+casbin:
+  prefix: blog
+  path: /Users/snowlyg/go/src/github.com/snowlyg/blog/rbac_model.conf # go run main.go 运行必须指定路径
 cache:
   driver: local # 缓存驱动 local cache
-casbinmodel:
 limit:
   disable: true
   limit: 2 # 每秒允许请求 1 次
@@ -14,19 +14,15 @@ admin: # 管理员账号信息，用于数据填充
   username: username
   rolename: admin
   name: name
-  pwd: password
-db:
-  adapter: sqlite3 # mysql postgres sqlite3
-  host: localhost
-  port: 3306
-  name: goirisapi
-  user: root
   password: password
+db:
+  adapter: mysql # mysql postgres sqlite3
+  conn: "root:password@tcp(localhost:3306)/iris?parseTime=True&loc=Local" # postgres://root:password@localhost/iris?sslmode=disable
   prefix: blog_
 redis:
   host: localhost
   port: 6379
-  pwd:
+  password:
 qiniu:
   enable: false
   host: http://your_host

@@ -3,7 +3,7 @@ package auth
 import (
 	"errors"
 	"github.com/patrickmn/go-cache"
-	"github.com/snowlyg/blog/libs/logging"
+	"github.com/snowlyg/blog/application/libs/logging"
 	"strconv"
 	"strings"
 	"time"
@@ -42,7 +42,7 @@ func (la *LocalAuth) ToCache(token string, id uint64) error {
 func (la *LocalAuth) SyncUserTokenCache(token string) error {
 	rsv2, err := la.GetSessionV2(token)
 	if err != nil {
-		logging.Err.Errorf("SyncUserTokenCache err: %+v\n", err)
+		logging.ErrorLogger.Errorf("SyncUserTokenCache err: %+v\n", err)
 		return err
 	}
 
@@ -159,7 +159,7 @@ func (la *LocalAuth) getTokenExpire(rsv2 *SessionV2) time.Duration {
 func (la *LocalAuth) GetSessionV2(token string) (*SessionV2, error) {
 	sKey := ZXW_SESSION_TOKEN_PREFIX + token
 	get, _ := la.Cache.Get(sKey)
-	logging.Dbug.Infof("GetSessionV2: %+v", get)
+	logging.DebugLogger.Infof("GetSessionV2: %+v", get)
 	if food, found := la.Cache.Get(sKey); !found {
 		return nil, ERR_TOKEN_INVALID
 	} else {
@@ -196,7 +196,7 @@ func (la *LocalAuth) getUserTokenMaxCount() int {
 func (la *LocalAuth) CleanUserTokenCache(token string) error {
 	rsv2, err := la.GetSessionV2(token)
 	if err != nil {
-		logging.Err.Errorf("clean user token cache member err: %+v", err)
+		logging.ErrorLogger.Errorf("clean user token cache member err: %+v", err)
 		return err
 	}
 	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId

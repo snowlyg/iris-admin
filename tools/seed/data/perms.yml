@@ -1,0 +1,102 @@
+perms:
+  - name: "/api/v1/admin/logout"
+    displayname: "退出"
+    description: "退出"
+    act: "GET"
+
+  - name: "/api/v1/admin/expire"
+    displayname: "刷新 token"
+    description: "刷新 token"
+    act: "GET"
+
+  - name: "/api/v1/admin/change_avatar"
+    displayname: "修改头像"
+    description: "修改头像"
+    act: "PUT"
+
+  - name: "/api/v1/admin/profile"
+    displayname: "个人信息"
+    description: "个人信息"
+    act: "GET"
+
+  - name: "/api/v1/admin/dashboard"
+    displayname: "面板数据"
+    description: "面板数据"
+    act: "GET"
+
+  - name: "/api/v1/admin/users"
+    displayname: "用户列表"
+    description: "用户列表"
+    act: "GET"
+
+  - name: "/api/v1/admin/users/{id:uint}"
+    displayname: "用户详情"
+    description: "用户列表"
+    act: "GET"
+
+  - name: "/api/v1/admin/users"
+    displayname: "创建用户"
+    description: "创建用户"
+    act: "POST"
+
+  - name: "/api/v1/admin/users/{id:uint}"
+    displayname: "编辑用户"
+    description: "编辑用户"
+    act: "PUT"
+
+  - name: "/api/v1/admin/users/{id:uint}"
+    displayname: "删除用户"
+    description: "删除用户"
+    act: "DELETE"
+
+  - name: "/api/v1/admin/roles"
+    displayname: "角色列表"
+    description: "角色列表"
+    act: "GET"
+
+  - name: "/api/v1/admin/roles/{id:uint}"
+    displayname: "角色详情"
+    description: "角色详情"
+    act: "GET"
+
+  - name: "/api/v1/admin/roles"
+    displayname: "创建角色"
+    description: "创建角色"
+    act: "POST"
+
+  - name: "/api/v1/admin/roles/{id:uint}"
+    displayname: "编辑角色"
+    description: "编辑角色"
+    act: "PUT"
+
+  - name: "/api/v1/admin/roles/{id:uint}"
+    displayname: "删除角色"
+    description: "删除角色"
+    act: "DELETE"
+
+  - name: "/api/v1/admin/permissions"
+    displayname: "权限列表"
+    description: "权限列表"
+    act: "GET"
+
+  - name: "/api/v1/admin/permissions/{id:uint}"
+    displayname: "权限详情"
+    description: "权限详情"
+    act: "GET"
+
+  - name: "/api/v1/admin/permissions"
+    displayname: "创建权限"
+    description: "创建权限"
+    act: "POST"
+
+  - name: "/api/v1/admin/permissions/{id:uint}"
+    displayname: "编辑权限"
+    description: "编辑权限"
+    act: "PUT"
+
+  - name: "/api/v1/admin/permissions/{id:uint}"
+    displayname: "删除权限"
+    description: "删除权限"
+    act: "DELETE"
+
+

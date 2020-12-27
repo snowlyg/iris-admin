@@ -25,14 +25,14 @@ func (c *Casbin) ServeHTTP(ctx iris.Context) {
 	defer authDriver.Close()
 	rsv2, err := auth.Check(authDriver, value.Raw)
 	if err != nil {
-		authDriver.UserTokenExpired(value.Raw)
-		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, err.Error()))
+		authDriver.DelUserTokenCache(value.Raw)
+		_, _ = ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
 		ctx.StopExecution()
 		return
 	}
 
 	if rsv2 == nil {
-		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, "系统错误"))
+		_, _ = ctx.JSON(response.NewResponse(response.AuthExpireErr.Code, nil, response.AuthExpireErr.Msg))
 		ctx.StopExecution()
 		return
 	} else {
@@ -64,7 +64,7 @@ func (c *Casbin) Check(r *http.Request, userId string) (bool, error) {
 		return false, err
 	}
 
-	logging.DebugLogger.Debugf("验证权限报错：%s-%s-%s", userId, path, method)
+	logging.DebugLogger.Debugf("权限：%s-%s-%s", userId, path, method)
 
 	if !ok {
 		return ok, errors.New(fmt.Sprintf("你未拥有当前操作权限，请联系管理员"))

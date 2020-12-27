@@ -57,7 +57,7 @@ func Expire(auth Authentication, token string) error {
 	return nil
 }
 
-// Check 更新
+// Check
 func Check(auth Authentication, token string) (*SessionV2, error) {
 	rsv2, err := auth.GetSessionV2(token)
 	if err != nil {

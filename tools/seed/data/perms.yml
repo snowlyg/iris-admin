@@ -4,6 +4,11 @@ perms:
     description: "退出"
     act: "GET"
 
+  - name: "/api/v1/admin/clear"
+    displayname: "清除用户token"
+    description: "清除用户token"
+    act: "GET"
+
   - name: "/api/v1/admin/expire"
     displayname: "刷新 token"
     description: "刷新 token"

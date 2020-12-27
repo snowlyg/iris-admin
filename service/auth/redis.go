@@ -35,6 +35,7 @@ func (ra *RedisAuth) GetSessionV2(token string) (*SessionV2, error) {
 
 // IsUserTokenOver 超过登录设备限制
 func (ra *RedisAuth) IsUserTokenOver(userId string) bool {
+	logging.DebugLogger.Debugf("user token count ", ra.getUserTokenCount(userId), " user max count ", ra.getUserTokenMaxCount())
 	if ra.getUserTokenCount(userId) >= ra.getUserTokenMaxCount() {
 		return true
 	}

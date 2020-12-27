@@ -39,6 +39,7 @@ func (la *LocalAuth) ToCache(token string, id uint64) error {
 	la.Cache.Set(sKey, rsv2, la.getTokenExpire(rsv2))
 	return nil
 }
+
 func (la *LocalAuth) SyncUserTokenCache(token string) error {
 	rsv2, err := la.GetSessionV2(token)
 	if err != nil {
@@ -53,15 +54,18 @@ func (la *LocalAuth) SyncUserTokenCache(token string) error {
 	}
 	ts = append(ts, token)
 
+	la.Cache.Set(sKey, ts, la.getTokenExpire(rsv2))
+
 	sKey2 := ZXW_SESSION_BIND_USER_PREFIX + token
 	sys := skeys{}
 	if keys, found := la.Cache.Get(sKey2); found {
 		sys = keys.(skeys)
 	}
 	sys = append(sys, sKey)
-
+	la.Cache.Set(sKey2, sys, la.getTokenExpire(rsv2))
 	return nil
 }
+
 func (la *LocalAuth) DelUserTokenCache(token string) error {
 	rsv2, err := la.GetSessionV2(token)
 	if err != nil {
@@ -168,6 +172,7 @@ func (la *LocalAuth) GetSessionV2(token string) (*SessionV2, error) {
 }
 
 func (la *LocalAuth) IsUserTokenOver(userId string) bool {
+	logging.DebugLogger.Debugf("user token count ", la.getUserTokenCount(userId), " user max count ", la.getUserTokenMaxCount())
 	if la.getUserTokenCount(userId) >= la.getUserTokenMaxCount() {
 		return true
 	}

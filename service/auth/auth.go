@@ -27,7 +27,7 @@ const (
 	NonoAuth int = iota
 	AuthPwd
 	AuthCode
-	AuthThirdparty
+	AuthThirdParty
 )
 
 const (
@@ -35,7 +35,7 @@ const (
 	LoginTypeApp
 	LoginTypeWx
 	LoginTypeAlipay
-	LoginApplet
+	//LoginApplet
 )
 
 var (

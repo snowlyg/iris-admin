@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/Joker/hpp v1.0.0 // indirect
 	github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.19.2
 	github.com/casbin/gorm-adapter/v3 v3.0.4
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect

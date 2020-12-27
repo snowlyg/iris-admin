@@ -26,6 +26,8 @@ github.com/aymerick/raymond v2.0.3-0.20180322193309-b565731e1464+incompatible h1
 github.com/aymerick/raymond v2.0.3-0.20180322193309-b565731e1464+incompatible/go.mod h1:osfaiScAUVup+UC9Nfq76eWqDhXlp+4UYaA8uhTBO6g=
 github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107 h1:1xCUqbLLqz3OCYzdxAqBd7ZHT6qYLY/uwZh2FfepfGA=
 github.com/azumads/faker v0.0.0-20150921074035-6cae71ddb107/go.mod h1:o2l/Pkxm4WT1YKjbR1E8fsToXKDPCfY8GrmqATdIEb0=
+github.com/bwmarrin/snowflake v0.3.0 h1:xm67bEhkKh6ij1790JB83OujPR5CzNe8QuQqAgISZN0=
+github.com/bwmarrin/snowflake v0.3.0/go.mod h1:NdZxfVWX+oR6y2K0o6qAYv6gIOP9rjG0/E9WsDpxqwE=
 github.com/casbin/casbin/v2 v2.12.0/go.mod h1:XXtYGrs/0zlOsJMeRteEdVi/FsB0ph7KgNfjoCoJUD8=
 github.com/casbin/casbin/v2 v2.19.2 h1:bSsTfnZRStNatu0dWIsXGp8ltzvRQh4azNjV5+wWJMI=
 github.com/casbin/casbin/v2 v2.19.2/go.mod h1:wUgota0cQbTXE6Vd+KWpg41726jFRi7upxio0sR+Xd0=

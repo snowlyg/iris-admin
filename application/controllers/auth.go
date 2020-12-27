@@ -75,6 +75,8 @@ func Login(ctx iris.Context) {
 		return
 	}
 
+	logging.DebugLogger.Debugf("user token %s", token)
+
 	ctx.JSON(response.NewResponse(response.NoErr.Code, &Token{AccessToken: token}, response.NoErr.Msg))
 	return
 }
@@ -98,6 +100,18 @@ func Expire(ctx iris.Context) {
 	authDriver := auth.NewAuthDriver()
 	defer authDriver.Close()
 	if err := auth.Expire(authDriver, value.Raw); err != nil {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
+		return
+	}
+	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
+	return
+}
+
+func Clear(ctx iris.Context) {
+	value := ctx.Values().Get("jwt").(*jwt.Token)
+	authDriver := auth.NewAuthDriver()
+	defer authDriver.Close()
+	if err := auth.Clear(authDriver, value.Raw); err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}

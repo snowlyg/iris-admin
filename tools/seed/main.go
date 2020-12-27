@@ -51,8 +51,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, "    设置填充数据路径\n")
 		fmt.Fprintf(os.Stderr, "  --seed <bool>\n")
 		fmt.Fprintf(os.Stderr, "    填充数据\n")
-		fmt.Fprintf(os.Stderr, "  --perm <bool>\n")
-		fmt.Fprintf(os.Stderr, "    同步权限\n")
 		fmt.Fprintf(os.Stderr, "\n")
 	}
 	flag.Parse()
@@ -100,25 +98,14 @@ func main() {
 		return
 	}
 
-	if *perm {
-		SyncPerm()
-		return
-	}
-
-}
-
-func SyncPerm() {
-	//SyncPerms()
-	//SyncAdminRole()
-	//SyncAdmin()
 }
 
 func Seed() {
 	AutoMigrates()
-	//CreateConfigs()
 	perms := CreatePerms()
 	CreateRole(perms)
 	CreateAdmin()
+	//CreateConfigs()
 }
 
 // CreateConfigs 新建权限

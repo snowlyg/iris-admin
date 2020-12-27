@@ -1,7 +1,7 @@
 <h1 align="center">IrisAdmin</h1>
 
 <div align="center">
- <a href="https://codecov.io/gh/snowlyg/IrisAdminApi"><img src="https://codecov.io/gh/snowlyg/IrisAdminApi/branch/master/graph/badge.svg" alt="Code Coverage"></a>
+    <a href="https://codecov.io/gh/snowlyg/IrisAdminApi"><img src="https://codecov.io/gh/snowlyg/IrisAdminApi/branch/master/graph/badge.svg" alt="Code Coverage"></a>
     <a href="https://goreportcard.com/report/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
     <a href="https://godoc.org/github.com/snowlyg/IrisAdminApi"><img src="https://godoc.org/github.com/snowlyg/IrisAdminApi?status.svg" alt="GoDoc"></a>
     <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
@@ -55,24 +55,39 @@ blog 分支:
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
 ```
+- 复制配置文件
+```
+cp application.example.yml application.yml
+```
 
-> 修改配置文件 `application.yml` ,配置文件需要放置在运行程序的同级目录
+>  修改配置文件 `application.yml` 
 
 - 运行项目
->推荐使用 air 或者 gowatch 等热编译工具,直接使用 `go run main.go `  方法运行，可能会出现配置文件无法加载的问题
->如果想使用 `go run main.go` 命令运行
+>如果想使用 `go run main.go --config ` 命令运行,注意不用 --config 指定配置路径，将无法加载配置文件
+```
+ go run main.go --config your_config_path
+```
 
-```shell script
-
+>推荐使用 air 热编译工具
+```
 # 安装工具 air     
 go get -u github.com/cosmtrek/air
 
-# 在 server 目录执行,可以通过 .air.conf 配置 air 工具
+cp .air.example.conf  .air.conf # 复制后修改 .air.conf 文件，默认为 mac 环境
+
 air
 ```
 
-#### 登录项目
-- http://localhost:80
+- 填充数据, 注意配置文件同项目配置文件，权限数据位于 tools/seed/data
+```
+go build -o seed tools/seed/main.go 
+./seed --config your_config_path --path youer_seed_data_path
+```
+
+- 运行测试
+```
+go test ./...
+```
 
 #### 感谢 
 

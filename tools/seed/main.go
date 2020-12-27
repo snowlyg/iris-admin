@@ -32,7 +32,6 @@ func init() {
 	Fake, _ = faker.New("en")
 	Fake.Rand = rand.New(rand.NewSource(42))
 	rand.Seed(time.Now().UnixNano())
-
 }
 
 var config = flag.String("config", "", "配置路径")

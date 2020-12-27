@@ -11,7 +11,6 @@ import (
 	"github.com/snowlyg/blog/application/libs/response"
 	"github.com/snowlyg/blog/application/models"
 	"github.com/snowlyg/blog/service/auth"
-	"gorm.io/gorm"
 	"strings"
 )
 
@@ -31,8 +30,6 @@ type Token struct {
 }
 
 func Login(ctx iris.Context) {
-	ctx.StatusCode(iris.StatusOK)
-
 	loginReq := new(LoginRe)
 	if err := ctx.ReadJSON(loginReq); err != nil {
 		logging.ErrorLogger.Errorf("login read request json err:%+v", err)
@@ -50,10 +47,6 @@ func Login(ctx iris.Context) {
 	}
 
 	user := User{Username: loginReq.Username}
-
-	stmt := easygorm.EasyGorm.DB.Session(&gorm.Session{DryRun: true}).Model(models.User{}).Find(&user).Statement
-	logging.DebugLogger.Debugf("login sql ", stmt.SQL.String(), stmt.Vars)
-
 	err := easygorm.EasyGorm.DB.Model(models.User{}).Find(&user).Error
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
@@ -84,14 +77,10 @@ func Login(ctx iris.Context) {
 
 	ctx.JSON(response.NewResponse(response.NoErr.Code, &Token{AccessToken: token}, response.NoErr.Msg))
 	return
-
 }
 
 func Logout(ctx iris.Context) {
-	ctx.StatusCode(iris.StatusOK)
-
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-
 	authDriver := auth.NewAuthDriver()
 	defer authDriver.Close()
 
@@ -100,23 +89,18 @@ func Logout(ctx iris.Context) {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
-
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
 	return
 }
 
 func Expire(ctx iris.Context) {
-	ctx.StatusCode(iris.StatusOK)
-
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-
 	authDriver := auth.NewAuthDriver()
 	defer authDriver.Close()
 	if err := auth.Expire(authDriver, value.Raw); err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
-
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
 	return
 }

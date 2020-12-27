@@ -32,12 +32,12 @@ type Token struct {
 func Login(ctx iris.Context) {
 	loginReq := new(LoginRe)
 	if err := ctx.ReadJSON(loginReq); err != nil {
-		logging.ErrorLogger.Errorf("login read request json err:%+v", err)
+		logging.ErrorLogger.Errorf("login read request json err ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
 		return
 	}
 
-	logging.DebugLogger.Debugf("login user %+v", loginReq)
+	logging.DebugLogger.Debugf("login user ", loginReq)
 
 	validErr := libs.Validate.Struct(*loginReq)
 	errs := libs.ValidRequest(validErr)
@@ -53,7 +53,7 @@ func Login(ctx iris.Context) {
 		return
 	}
 
-	logging.DebugLogger.Debugf("user %+v", user)
+	logging.DebugLogger.Debugf("user", user)
 
 	if user.Id == 0 {
 		ctx.JSON(response.NewResponse(response.DataEmptyErr.Code, nil, fmt.Sprintf("用户 %s 不存在", user.Username)))

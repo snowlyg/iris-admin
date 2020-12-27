@@ -26,7 +26,7 @@ func (c *Casbin) ServeHTTP(ctx iris.Context) {
 	rsv2, err := auth.Check(authDriver, value.Raw)
 	if err != nil {
 		authDriver.DelUserTokenCache(value.Raw)
-		_, _ = ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
+		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, response.AuthErr.Msg))
 		ctx.StopExecution()
 		return
 	}

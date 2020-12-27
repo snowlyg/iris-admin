@@ -2,7 +2,6 @@ package libs
 
 import (
 	"context"
-	"github.com/fatih/color"
 	"github.com/qiniu/api.v7/v7/auth"
 	"github.com/qiniu/api.v7/v7/storage"
 )
@@ -31,7 +30,6 @@ func Upload(path, key string) (string, string, error) {
 	//putExtra.NoCrc32Check = true
 	err := formUploader.PutFile(context.Background(), &ret, upToken, key, path, &putExtra)
 	if err != nil {
-		color.Red("formUploader.PutFile error: %+v", err)
 		return "", "", err
 	}
 	return ret.Key, ret.Hash, nil

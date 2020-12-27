@@ -104,4 +104,9 @@ perms:
     description: "删除权限"
     act: "DELETE"
 
+  - name: "/api/v1/admin/upload_file"
+    displayname: "文件上传"
+    description: "文件上传"
+    act: "POST"
+
 

@@ -80,22 +80,29 @@ type Role struct {
 // AddPermForRole add perms
 func AddPermForRole(role *Role) error {
 	if len(role.Perms) == 0 {
+		logging.DebugLogger.Debugf("no perms")
 		return nil
 	}
 
 	var newPerms [][]string
 	roleId := strconv.FormatUint(uint64(role.ID), 10)
 	oldPerms := easygorm.EasyGorm.Enforcer.GetPermissionsForUser(roleId)
-	{
-		for _, perm := range role.Perms {
-			for _, oldPerm := range oldPerms {
-				if perm[0] != oldPerm[0] || perm[1] != oldPerm[1] {
-					continue
-				}
+
+	for _, perm := range role.Perms {
+		var in bool
+		for _, oldPerm := range oldPerms {
+			if roleId == oldPerm[0] && perm[0] == oldPerm[1] && perm[1] == oldPerm[2] {
+				in = true
+				continue
 			}
+		}
+
+		if !in {
 			newPerms = append(newPerms, append([]string{roleId}, perm...))
 		}
 	}
+
+	logging.DebugLogger.Debugf("new perms", newPerms)
 
 	var err error
 	_, err = easygorm.EasyGorm.Enforcer.AddPolicies(newPerms)

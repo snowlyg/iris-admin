@@ -37,8 +37,6 @@ func init() {
 
 var config = flag.String("config", "", "配置路径")
 var path = flag.String("path", "", "数据路径")
-var seed = flag.Bool("seed", true, "填充数据")
-var perm = flag.Bool("perm", true, "同步权限")
 
 func main() {
 	flag.Usage = func() {
@@ -49,8 +47,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, "    设置配置文件路径\n")
 		fmt.Fprintf(os.Stderr, "  --path <path>\n")
 		fmt.Fprintf(os.Stderr, "    设置填充数据路径\n")
-		fmt.Fprintf(os.Stderr, "  --seed <bool>\n")
-		fmt.Fprintf(os.Stderr, "    填充数据\n")
 		fmt.Fprintf(os.Stderr, "\n")
 	}
 	flag.Parse()
@@ -93,10 +89,7 @@ func main() {
 		panic(fmt.Sprintf("数据库初始化失败: %+v\n", err))
 	}
 
-	if *seed {
-		Seed()
-		return
-	}
+	Seed()
 
 }
 
@@ -186,8 +179,7 @@ func CreateRole(perms [][]string) {
 		Model:       gorm.Model{CreatedAt: time.Now()},
 		Perms:       perms,
 	}
-	create := easygorm.EasyGorm.DB.Create(&role)
-	if err := create.Error; err != nil {
+	if err := easygorm.EasyGorm.DB.Create(&role).Error; err != nil {
 		panic(fmt.Sprintf("seeder data create role err：%+v\n", err))
 	}
 

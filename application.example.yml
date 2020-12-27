@@ -25,7 +25,7 @@ redis:
   password:
 qiniu:
   enable: false
-  host: http://your_host
-  accesskey: QINIU_ACCESS_KEY
-  secretkey: QINIU_SECRET_KEY
-  bucket: QINIU_TEST_BUCKET
+  host:
+  accesskey:
+  secretkey:
+  bucket:

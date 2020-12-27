@@ -4,6 +4,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/easygorm"
+	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/libs/response"
 	"github.com/snowlyg/blog/application/models"
 	"github.com/snowlyg/blog/service/auth"
@@ -40,6 +41,7 @@ func ChangeAvatar(ctx iris.Context) {
 
 	avatar := &Avatar{}
 	if err := ctx.ReadJSON(avatar); err != nil {
+		logging.ErrorLogger.Errorf("change avatar read json error ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
 		return
 	}

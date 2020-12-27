@@ -5,7 +5,7 @@ casbin:
   prefix: blog
   path: /Users/snowlyg/go/src/github.com/snowlyg/blog/rbac_model.conf # go run main.go 运行必须指定路径
 cache:
-  driver: local # 缓存驱动 local cache
+  driver: local # 缓存驱动 local redis
 limit:
   disable: true
   limit: 2 # 每秒允许请求 1 次

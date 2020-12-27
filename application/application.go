@@ -101,9 +101,8 @@ func (s *HttpServer) RouteInit() {
 				admin.Get("/logout", controllers.Logout).Name = "退出"
 				admin.Get("/expire", controllers.Expire).Name = "刷新 token"
 				admin.Get("/clear", controllers.Clear).Name = "清空 token"
-
-				//admin.Get("/profile", controllers.GetProfile).Name = "个人信息"
-				//admin.Put("/change_avatar", controllers.ChangeAvatar).Name = "修改头像"
+				admin.Get("/profile", controllers.Profile).Name = "个人信息"
+				admin.Put("/change_avatar", controllers.ChangeAvatar).Name = "修改头像"
 				//admin.Post("/upload_file", iris.LimitRequestBodySize(libs.Config.MaxSize+1<<20), controllers.UploadFile).Name = "上传文件"
 
 				//admin.PartyFunc("/users", func(users iris.Party) {

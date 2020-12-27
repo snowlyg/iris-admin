@@ -19,10 +19,6 @@ type User struct {
 	RoleIds  []uint `gorm:"-" json:"role_ids"`
 }
 
-type Avatar struct {
-	Avatar string
-}
-
 //// GetUser get user
 //func GetUser(search *easygorm.Search) (*User, error) {
 //	user := &User{}

@@ -1,77 +1,63 @@
 package controllers
 
-//func GetProfile(ctx iris.Context) {
-//	ctx.StatusCode(iris.StatusOK)
-//	sess := ctx.Values().Get("sess").(*auth.SessionV2)
-//	id := uint(libs.ParseInt(sess.UserId, 10))
-//	s := &easygorm.Search{
-//		Fields: []*easygorm.Field{
-//			{
-//				Key:       "id",
-//				Condition: "=",
-//				Value:     id,
-//			},
-//		},
-//	}
-//	user, err := models.GetUser(s)
-//	if err != nil {
-//		_, _ = ctx.JSON(response.NewResponse(400, nil, err.Error()))
-//		return
-//	}
-//	_, _ = ctx.JSON(response.NewResponse(200, user, "操作成功"))
-//}
-//
-//func GetAdminInfo(ctx iris.Context) {
-//	ctx.StatusCode(iris.StatusOK)
-//	s := &easygorm.Search{
-//		Fields: []*easygorm.Field{
-//			{
-//				Key:       "username",
-//				Condition: "=",
-//				Value:     "username",
-//			},
-//		},
-//	}
-//	user, err := models.GetUser(s)
-//	if err != nil {
-//		_, _ = ctx.JSON(response.NewResponse(400, nil, err.Error()))
-//		return
-//	}
-//	_, _ = ctx.JSON(response.NewResponse(200, map[string]string{"avatar": user.Avatar}, "操作成功"))
-//}
-//
-//func ChangeAvatar(ctx iris.Context) {
-//	ctx.StatusCode(iris.StatusOK)
-//	sess := ctx.Values().Get("sess").(*auth.SessionV2)
-//	id := uint(libs.ParseInt(sess.UserId, 10))
-//
-//	avatar := new(models.Avatar)
-//	if err := ctx.ReadJSON(avatar); err != nil {
-//		_, _ = ctx.JSON(response.NewResponse(400, nil, err.Error()))
-//		return
-//	}
-//
-//	err := validates.Validate.Struct(*avatar)
-//	if err != nil {
-//		errs := err.(validator.ValidationErrors)
-//		for _, e := range errs.Translate(validates.ValidateTrans) {
-//			if len(e) > 0 {
-//				_, _ = ctx.JSON(response.NewResponse(400, nil, e))
-//				return
-//			}
-//		}
-//	}
-//
-//	user := &models.User{}
-//	user.ID = id
-//	user.Avatar = avatar.Avatar
-//	err = models.UpdateUserById(id, user)
-//	if err != nil {
-//		_, _ = ctx.JSON(response.NewResponse(400, nil, err.Error()))
-//		return
-//	}
-//	_, _ = ctx.JSON(response.NewResponse(200, user, "操作成功"))
-//}
+import (
+	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/blog/application/libs"
+	"github.com/snowlyg/blog/application/libs/easygorm"
+	"github.com/snowlyg/blog/application/libs/response"
+	"github.com/snowlyg/blog/application/models"
+	"github.com/snowlyg/blog/service/auth"
+	"strings"
+)
+
+type Info struct {
+	Id       uint
+	Name     string
+	Username string
+	Intro    string
+	Avatar   string
+}
+
+func Profile(ctx iris.Context) {
+	sess := ctx.Values().Get("sess").(*auth.SessionV2)
+	id := uint(libs.ParseInt(sess.UserId, 10))
+	info := Info{Id: id}
+	err := easygorm.EasyGorm.DB.Model(&models.User{}).Find(&info).Error
+	if err != nil {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
+		return
+	}
+	ctx.JSON(response.NewResponse(response.NoErr.Code, info, response.NoErr.Msg))
+}
+
+type Avatar struct {
+	Avatar string
+}
+
+func ChangeAvatar(ctx iris.Context) {
+	sess := ctx.Values().Get("sess").(*auth.SessionV2)
+	id := uint(libs.ParseInt(sess.UserId, 10))
+
+	avatar := &Avatar{}
+	if err := ctx.ReadJSON(avatar); err != nil {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
+		return
+	}
+
+	validErr := libs.Validate.Struct(*avatar)
+	errs := libs.ValidRequest(validErr)
+	if len(errs) > 0 {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, strings.Join(errs, ";")))
+		return
+	}
+	err := easygorm.EasyGorm.DB.Model(&models.User{}).Where("id = ?", id).Update("avatar", avatar.Avatar).Error
+	if err != nil {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
+		return
+	}
+	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
+}
+
 //
 //func GetUser(ctx iris.Context) {
 //	ctx.StatusCode(iris.StatusOK)

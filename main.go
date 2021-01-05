@@ -18,9 +18,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "usage: %s [options] [command]\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "Commands:\n")
 		fmt.Fprintf(os.Stderr, "\n")
-		fmt.Fprintf(os.Stderr, "  --config <path>\n")
-		fmt.Fprintf(os.Stderr, "    设置配置文件路径\n")
-		fmt.Fprintf(os.Stderr, "  --version <true or false> 默认为: false\n")
+		fmt.Fprintf(os.Stderr, "  -config <path>\n")
+		fmt.Fprintf(os.Stderr, "    设置项目配置文件路径，可选\n")
+		fmt.Fprintf(os.Stderr, "  -version <true or false> 打印项目版本号，默认为: false\n")
 		fmt.Fprintf(os.Stderr, "    打印版本号\n")
 		fmt.Fprintf(os.Stderr, "\n")
 	}

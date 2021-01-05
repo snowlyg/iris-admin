@@ -22,14 +22,14 @@ func Profile(ctx iris.Context) {
 		return
 	}
 
-	info := duser.UserResponse{}
-	err = dao.Find(&info, ctx, id)
+	profile := &duser.UserResponse{}
+	err = profile.Profile(id)
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
 		return
 	}
 
-	ctx.JSON(response.NewResponse(response.NoErr.Code, info, response.NoErr.Msg))
+	ctx.JSON(response.NewResponse(response.NoErr.Code, profile, response.NoErr.Msg))
 }
 
 type Avatar struct {
@@ -65,9 +65,8 @@ func ChangeAvatar(ctx iris.Context) {
 }
 
 func GetUser(ctx iris.Context) {
-	id, _ := ctx.Params().GetUint("id")
 	info := duser.UserResponse{}
-	err := dao.Find(&info, ctx, id)
+	err := dao.Find(&info, ctx)
 	if err != nil {
 		logging.ErrorLogger.Errorf("get user get err ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
@@ -108,11 +107,9 @@ func CreateUser(ctx iris.Context) {
 
 	ctx.JSON(response.NewResponse(response.NoErr.Code, userReq, response.NoErr.Msg))
 	return
-
 }
 
 func UpdateUser(ctx iris.Context) {
-	id, _ := ctx.Params().GetUint("id")
 	userReq := &duser.UserReq{}
 	if err := ctx.ReadJSON(userReq); err != nil {
 		logging.ErrorLogger.Errorf("create user read json err ", err)
@@ -127,7 +124,7 @@ func UpdateUser(ctx iris.Context) {
 		return
 	}
 
-	err := dao.Update(&duser.UserResponse{}, ctx, id, map[string]interface{}{
+	err := dao.Update(&duser.UserResponse{}, ctx, map[string]interface{}{
 		"Name":      userReq.Name,
 		"Password":  libs.HashPassword(userReq.Password),
 		"Intro":     userReq.Intro,
@@ -143,8 +140,7 @@ func UpdateUser(ctx iris.Context) {
 }
 
 func DeleteUser(ctx iris.Context) {
-	id, _ := ctx.Params().GetUint("id")
-	err := dao.Delete(&duser.UserResponse{}, ctx, id)
+	err := dao.Delete(&duser.UserResponse{}, ctx)
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return

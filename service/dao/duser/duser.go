@@ -15,7 +15,7 @@ const ModelName = "用户管理"
 
 type UserResponse struct {
 	Id        uint   `json:"id"`
-	Name      string `json:"name" `
+	Name      string `json:"name"`
 	Username  string `json:"username"`
 	Intro     string `json:"introduction"`
 	Avatar    string `json:"avatar"`
@@ -23,14 +23,26 @@ type UserResponse struct {
 	CreatedAt string `json:"created_at"`
 }
 
+type UserReq struct {
+	Name     string `json:"name" `
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Intro    string `json:"introduction"`
+	Avatar   string `json:"avatar"`
+}
+
 func (u *UserResponse) ModelName() string {
 	return ModelName
+}
+
+func (u *UserResponse) Model() *models.User {
+	return &models.User{}
 }
 
 func (u *UserResponse) All(name, sort, orderBy string, page, pageSize int) (map[string]interface{}, error) {
 	var count int64
 	var users []*UserResponse
-	db := easygorm.GetEasyGormDb().Model(&models.User{})
+	db := easygorm.GetEasyGormDb().Model(u.Model())
 	if len(name) > 0 {
 		db = db.Where("name", "like", fmt.Sprintf("%%%s%%", name))
 	}
@@ -50,16 +62,8 @@ func (u *UserResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 	return list, nil
 }
 
-type UserReq struct {
-	Name     string `json:"name" `
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Intro    string `json:"introduction"`
-	Avatar   string `json:"avatar"`
-}
-
 func (u *UserResponse) FindByUserName(username string) error {
-	err := easygorm.GetEasyGormDb().Model(&models.User{}).Where("username = ?", username).Find(u).Error
+	err := easygorm.GetEasyGormDb().Model(u.Model()).Where("username = ?", username).Find(u).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find user by username ", username, " err ", err)
 		return err
@@ -80,7 +84,7 @@ func (u *UserResponse) Create(object map[string]interface{}) error {
 		}
 	}
 
-	err := easygorm.GetEasyGormDb().Model(&models.User{}).Create(object).Error
+	err := easygorm.GetEasyGormDb().Model(u.Model()).Create(object).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("create data err ", err)
 		return err
@@ -108,7 +112,7 @@ func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
 			return errors.New(fmt.Sprintf("username %s is being used", username))
 		}
 	}
-	err = easygorm.GetEasyGormDb().Model(&models.User{}).Where("id = ?", id).Updates(object).Error
+	err = easygorm.GetEasyGormDb().Model(u.Model()).Where("id = ?", id).Updates(object).Error
 	if err != nil {
 		return err
 	}
@@ -116,7 +120,7 @@ func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
 }
 
 func (u *UserResponse) Find(id uint) error {
-	err := easygorm.GetEasyGormDb().Model(&models.User{}).Where("id = ?", id).Find(&u).Error
+	err := easygorm.GetEasyGormDb().Model(u.Model()).Where("id = ?", id).Find(u).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find user err ", err)
 		return err
@@ -125,8 +129,9 @@ func (u *UserResponse) Find(id uint) error {
 }
 
 func (u *UserResponse) Delete(id uint) error {
-	err := easygorm.GetEasyGormDb().Delete(&models.User{}, id).Error
+	err := easygorm.GetEasyGormDb().Delete(u.Model(), id).Error
 	if err != nil {
+		logging.ErrorLogger.Errorf("delete user by id get  err ", err)
 		return err
 	}
 	return nil
@@ -164,4 +169,8 @@ func AddRoleForUser(user *models.User) error {
 	}
 
 	return nil
+}
+
+func (u *UserResponse) Profile(id uint) error {
+	return u.Find(id)
 }

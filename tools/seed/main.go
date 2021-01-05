@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/configor"
 	"github.com/snowlyg/blog/application/libs/easygorm"
 	"github.com/snowlyg/blog/application/models"
+	"github.com/snowlyg/blog/service/dao/drole"
 	"github.com/snowlyg/blog/service/dao/duser"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
@@ -184,7 +185,7 @@ func CreateRole(perms [][]string) {
 		panic(fmt.Sprintf("seeder data create role err：%+v\n", err))
 	}
 
-	err := models.AddPermForRole(role)
+	err := drole.AddPermForRole(role)
 	if err != nil {
 		panic(fmt.Sprintf("添加角色失败：%+v", err))
 	}

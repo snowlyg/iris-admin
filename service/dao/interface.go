@@ -108,7 +108,8 @@ func Create(d Dao, ctx iris.Context, object map[string]interface{}) error {
 	return nil
 }
 
-func Update(d Dao, ctx iris.Context, id uint, object map[string]interface{}) error {
+func Update(d Dao, ctx iris.Context, object map[string]interface{}) error {
+	id, _ := getId(ctx)
 	err := d.Update(id, object)
 	if err != nil {
 		logging.ErrorLogger.Errorf("dao update get err ", err)
@@ -125,7 +126,8 @@ func Update(d Dao, ctx iris.Context, id uint, object map[string]interface{}) err
 	return nil
 }
 
-func Find(d Dao, ctx iris.Context, id uint) error {
+func Find(d Dao, ctx iris.Context) error {
+	id, _ := getId(ctx)
 	err := d.Find(id)
 	if err != nil {
 		logging.ErrorLogger.Errorf("dao find by id  get err ", err)
@@ -140,7 +142,18 @@ func Find(d Dao, ctx iris.Context, id uint) error {
 	return nil
 }
 
-func Delete(d Dao, ctx iris.Context, id uint) error {
+func getId(ctx iris.Context) (uint, error) {
+	id, err := ctx.Params().GetUint("id")
+	if err != nil {
+		logging.ErrorLogger.Errorf("dao get id get err ", err)
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func Delete(d Dao, ctx iris.Context) error {
+	id, _ := getId(ctx)
 	err := d.Delete(id)
 	if err != nil {
 		logging.ErrorLogger.Errorf("dao delete  get err ", err)

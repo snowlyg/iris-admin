@@ -1,174 +1,114 @@
 package controllers
 
-///**
-//* @api {get} /admin/roles/:id 根据id获取角色信息
-//* @apiName 根据id获取角色信息
-//* @apiGroup Roles
-//* @apiVersion 1.0.0
-//* @apiDescription 根据id获取角色信息
-//* @apiSampleRequest /admin/roles/:id
-//* @apiSuccess {String} msg 消息
-//* @apiSuccess {bool} state 状态
-//* @apiSuccess {String} data 返回数据
-//* @apiPermission
-// */
-//func GetRole(ctx iris.Context) {
-//	ctx.StatusCode(iris.StatusOK)
-//	id, _ := ctx.Params().GetUint("id")
-//
-//	role, err := models.GetRoleById(id)
-//	if err != nil {
-//		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
-//		return
-//	}
-//
-//	_, _ = ctx.JSON(libs.ApiResource(200, role, "操作成功"))
-//}
-//
-///**
-//* @api {post} /admin/roles/ 新建角色
-//* @apiName 新建角色
-//* @apiGroup Roles
-//* @apiVersion 1.0.0
-//* @apiDescription 新建角色
-//* @apiSampleRequest /admin/roles/
-//* @apiParam {string} name 角色名
-//* @apiParam {string} display_name
-//* @apiParam {string} description
-//* @apiParam {string} level
-//* @apiSuccess {String} msg 消息
-//* @apiSuccess {bool} state 状态
-//* @apiSuccess {String} data 返回数据
-//* @apiPermission null
-// */
-//func CreateRole(ctx iris.Context) {
-//
-//	ctx.StatusCode(iris.StatusOK)
-//	role := new(models.Role)
-//
-//	if err := ctx.ReadJSON(role); err != nil {
-//		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
-//		return
-//	}
-//
-//	err := validates.Validate.Struct(*role)
-//	if err != nil {
-//		errs := err.(validator.ValidationErrors)
-//		for _, e := range errs.Translate(validates.ValidateTrans) {
-//			if len(e) > 0 {
-//				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
-//				return
-//			}
-//		}
-//	}
-//
-//	err = role.CreateRole()
-//	if err != nil {
-//		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
-//		return
-//	}
-//	if role.ID == 0 {
-//		_, _ = ctx.JSON(libs.ApiResource(400, nil, "操作失败"))
-//		return
-//	}
-//	_, _ = ctx.JSON(libs.ApiResource(200, role, "操作成功"))
-//
-//}
-//
-///**
-//* @api {post} /admin/roles/:id/update 更新角色
-//* @apiName 更新角色
-//* @apiGroup Roles
-//* @apiVersion 1.0.0
-//* @apiDescription 更新角色
-//* @apiSampleRequest /admin/roles/:id/update
-//* @apiParam {string} name 角色名
-//* @apiParam {string} display_name
-//* @apiParam {string} description
-//* @apiParam {string} level
-//* @apiSuccess {String} msg 消息
-//* @apiSuccess {bool} state 状态
-//* @apiSuccess {String} data 返回数据
-//* @apiPermission null
-// */
-//func UpdateRole(ctx iris.Context) {
-//
-//	ctx.StatusCode(iris.StatusOK)
-//	role := new(models.Role)
-//	if err := ctx.ReadJSON(role); err != nil {
-//		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
-//		return
-//	}
-//
-//	err := validates.Validate.Struct(*role)
-//	if err != nil {
-//		errs := err.(validator.ValidationErrors)
-//		for _, e := range errs.Translate(validates.ValidateTrans) {
-//			if len(e) > 0 {
-//				_, _ = ctx.JSON(libs.ApiResource(400, nil, e))
-//				return
-//			}
-//		}
-//	}
-//
-//	id, _ := ctx.Params().GetUint("id")
-//	err = models.UpdateRole(id, role)
-//	if err != nil {
-//		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
-//		return
-//	}
-//	_, _ = ctx.JSON(libs.ApiResource(200, role, "操作成功"))
-//
-//}
-//
-///**
-//* @api {delete} /admin/roles/:id/delete 删除角色
-//* @apiName 删除角色
-//* @apiGroup Roles
-//* @apiVersion 1.0.0
-//* @apiDescription 删除角色
-//* @apiSampleRequest /admin/roles/:id/delete
-//* @apiSuccess {String} msg 消息
-//* @apiSuccess {bool} state 状态
-//* @apiSuccess {String} data 返回数据
-//* @apiPermission null
-// */
-//func DeleteRole(ctx iris.Context) {
-//	ctx.StatusCode(iris.StatusOK)
-//	id, _ := ctx.Params().GetUint("id")
-//
-//	err := models.DeleteRoleById(id)
-//	if err != nil {
-//		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
-//		return
-//	}
-//
-//	_, _ = ctx.JSON(libs.ApiResource(200, nil, "删除成功"))
-//}
-//
-///**
-//* @api {get} /roles 获取所有的角色
-//* @apiName 获取所有的角色
-//* @apiGroup Roles
-//* @apiVersion 1.0.0
-//* @apiDescription 获取所有的角色
-//* @apiSampleRequest /roles
-//* @apiSuccess {String} msg 消息
-//* @apiSuccess {bool} state 状态
-//* @apiSuccess {String} data 返回数据
-//* @apiPermission null
-// */
-//func GetAllRoles(ctx iris.Context) {
-//	ctx.StatusCode(iris.StatusOK)
-//	s := libs.GetCommonListSearch(ctx)
-//	roles, count, err := models.GetAllRoles(s)
-//	if err != nil {
-//		_, _ = ctx.JSON(libs.ApiResource(400, nil, err.Error()))
-//		return
-//	}
-//
-//	_, _ = ctx.JSON(libs.ApiResource(200, map[string]interface{}{"items": roles, "total": count, "limit": s.Limit}, "操作成功"))
-//}
+import (
+	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/blog/application/libs"
+	"github.com/snowlyg/blog/application/libs/logging"
+	"github.com/snowlyg/blog/application/libs/response"
+	"github.com/snowlyg/blog/service/dao"
+	"github.com/snowlyg/blog/service/dao/drole"
+	"strconv"
+	"strings"
+	"time"
+)
+
+func GetRole(ctx iris.Context) {
+	info := drole.RoleResponse{}
+	err := dao.Find(&info, ctx)
+	if err != nil {
+		logging.ErrorLogger.Errorf("get role get err ", err)
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
+		return
+	}
+	ctx.JSON(response.NewResponse(response.NoErr.Code, info, response.NoErr.Msg))
+}
+
+func CreateRole(ctx iris.Context) {
+	roleReq := &drole.RoleReq{}
+	if err := ctx.ReadJSON(roleReq); err != nil {
+		logging.ErrorLogger.Errorf("create role read json err ", err)
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
+		return
+	}
+
+	validErr := libs.Validate.Struct(*roleReq)
+	errs := libs.ValidRequest(validErr)
+	if len(errs) > 0 {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, strings.Join(errs, ";")))
+		return
+	}
+	err := dao.Create(&drole.RoleResponse{}, ctx, map[string]interface{}{
+		"Name":        roleReq.Name,
+		"DisplayName": roleReq.DisplayName,
+		"Description": roleReq.Description,
+		"CreatedAt":   time.Now(),
+		"UpdatedAt":   time.Now(),
+	})
+	if err != nil {
+		logging.ErrorLogger.Errorf("create role get err ", err)
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
+		return
+	}
+
+	ctx.JSON(response.NewResponse(response.NoErr.Code, roleReq, response.NoErr.Msg))
+	return
+}
+
+func UpdateRole(ctx iris.Context) {
+	roleReq := &drole.RoleReq{}
+	if err := ctx.ReadJSON(roleReq); err != nil {
+		logging.ErrorLogger.Errorf("create role read json err ", err)
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
+		return
+	}
+
+	validErr := libs.Validate.Struct(*roleReq)
+	errs := libs.ValidRequest(validErr)
+	if len(errs) > 0 {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, strings.Join(errs, ";")))
+		return
+	}
+
+	err := dao.Update(&drole.RoleResponse{}, ctx, map[string]interface{}{
+		"Name":        roleReq.Name,
+		"DisplayName": roleReq.DisplayName,
+		"Description": roleReq.Description,
+		"UpdatedAt":   time.Now(),
+	})
+	if err != nil {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
+		return
+	}
+	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
+	return
+}
+
+func DeleteRole(ctx iris.Context) {
+	err := dao.Delete(&drole.RoleResponse{}, ctx)
+	if err != nil {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
+		return
+	}
+
+	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
+	return
+}
+
+func GetAllRoles(ctx iris.Context) {
+	name := ctx.FormValue("name")
+	page, _ := strconv.Atoi(ctx.FormValue("page"))
+	pageSize, _ := strconv.Atoi(ctx.FormValue("pageSize"))
+	orderBy := ctx.FormValue("orderBy")
+	sort := ctx.FormValue("sort")
+
+	list, err := dao.All(&drole.RoleResponse{}, ctx, name, sort, orderBy, page, pageSize)
+	if err != nil {
+		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
+		return
+	}
+	ctx.JSON(response.NewResponse(response.NoErr.Code, list, response.NoErr.Msg))
+	return
+}
 
 //func rolesTransform(roles []*models.Role) []*transformer.Role {
 //	var rs []*transformer.Role
@@ -178,7 +118,7 @@ package controllers
 //	}
 //	return rs
 //}
-//
+
 //func roleTransform(role *models.Role) *transformer.Role {
 //	r := &transformer.Role{}
 //	g := gf.NewTransform(r, role, time.RFC3339)

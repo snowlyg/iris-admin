@@ -1,20 +1,20 @@
 *.dll
 *.db
 *.exe
-*.txt
 *.log
+*.out
+.air.conf
+coverage.txt
 application.yml
 
-.air.conf
-
-views/
-tmp/
+/cmd/
+/tmp/
+/views/
 /logs/
 /.idea/
 
 main
 main_lin
-main_mac
+seed
 
-prod.sh
 

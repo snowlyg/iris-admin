@@ -54,8 +54,8 @@ func (p *PermResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 	return list, nil
 }
 
-func (p *PermResponse) FindByName(name string) error {
-	err := easygorm.GetEasyGormDb().Model(p.Model()).Where("name = ?", name).Find(p).Error
+func (p *PermResponse) FindByNameAndAct(name, act string) error {
+	err := easygorm.GetEasyGormDb().Model(p.Model()).Where("name = ?", name).Where("act = ?", act).Find(p).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find perm by name get err ", err)
 		return err
@@ -64,17 +64,13 @@ func (p *PermResponse) FindByName(name string) error {
 }
 
 func (p *PermResponse) Create(object map[string]interface{}) error {
-	if name, ok := object["Name"].(string); ok {
-		err := p.FindByName(name)
-		if err != nil {
-			logging.ErrorLogger.Errorf("create perm find by name get err ", err)
-			return err
-		}
-		if p.Id > 0 {
-			return errors.New(fmt.Sprintf("name %s is being used", name))
-		}
+	err := p.checkNameAndAct(object)
+	if err != nil {
+		logging.ErrorLogger.Errorf("check perm name and act get err ", err)
+		return err
 	}
-	err := easygorm.GetEasyGormDb().Model(p.Model()).Create(object).Error
+
+	err = easygorm.GetEasyGormDb().Model(p.Model()).Create(object).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("create perm err ", err)
 		return err
@@ -85,24 +81,45 @@ func (p *PermResponse) Create(object map[string]interface{}) error {
 func (p *PermResponse) Update(id uint, object map[string]interface{}) error {
 	err := p.Find(id)
 	if err != nil {
+		logging.ErrorLogger.Errorf("find perm by id get err ", err)
 		return err
 	}
-	if name, ok := object["Name"].(string); ok {
-		err := p.FindByName(name)
-		if err != nil {
-			logging.ErrorLogger.Errorf("create perm find by name get err ", err)
-			return err
-		}
 
-		if p.Id > 0 && p.Id != id {
-			return errors.New(fmt.Sprintf("name %s is being used", name))
-		}
+	err = p.checkNameAndAct(object)
+	if err != nil {
+		logging.ErrorLogger.Errorf("check perm name and act get err ", err)
+		return err
 	}
+
 	err = easygorm.GetEasyGormDb().Model(p.Model()).Where("id = ?", id).Updates(object).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("update perm  get err ", err)
 		return err
 	}
+	return nil
+}
+
+func (p *PermResponse) checkNameAndAct(object map[string]interface{}) error {
+	var name string
+	var act string
+	if obj, ok := object["Name"].(string); ok {
+		name = obj
+	}
+	if obj, ok := object["Act"].(string); ok {
+		act = obj
+	}
+
+	if len(name) > 0 && len(act) > 0 {
+		err := p.FindByNameAndAct(name, act)
+		if err != nil {
+			logging.ErrorLogger.Errorf("create perm find by name get err ", err)
+			return err
+		}
+		if p.Id > 0 {
+			return errors.New(fmt.Sprintf("name %s is being used", name))
+		}
+	}
+
 	return nil
 }
 

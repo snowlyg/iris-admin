@@ -76,6 +76,7 @@ func UpdateRole(ctx iris.Context) {
 		"UpdatedAt":   time.Now(),
 	})
 	if err != nil {
+		logging.ErrorLogger.Errorf("update role read json err ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
@@ -86,6 +87,7 @@ func UpdateRole(ctx iris.Context) {
 func DeleteRole(ctx iris.Context) {
 	err := dao.Delete(&drole.RoleResponse{}, ctx)
 	if err != nil {
+		logging.ErrorLogger.Errorf("del role read json err ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
@@ -103,6 +105,7 @@ func GetAllRoles(ctx iris.Context) {
 
 	list, err := dao.All(&drole.RoleResponse{}, ctx, name, sort, orderBy, page, pageSize)
 	if err != nil {
+		logging.ErrorLogger.Errorf("get all role read json err ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}

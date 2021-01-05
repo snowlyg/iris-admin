@@ -119,13 +119,13 @@ func (s *HttpServer) RouteInit() {
 					roles.Post("/{id:uint}", controllers.UpdateRole).Name = "编辑角色"
 					roles.Delete("/{id:uint}", controllers.DeleteRole).Name = "删除角色"
 				})
-				//admin.PartyFunc("/permissions", func(permissions iris.Party) {
-				//	permissions.Get("/", controllers.GetAllPermissions).Name = "权限列表"
-				//	permissions.Get("/{id:uint}", controllers.GetPermission).Name = "权限详情"
-				//	permissions.Post("/", controllers.CreatePermission).Name = "创建权限"
-				//	permissions.Post("/{id:uint}", controllers.UpdatePermission).Name = "编辑权限"
-				//	permissions.Delete("/{id:uint}", controllers.DeletePermission).Name = "删除权限"
-				//})
+				admin.PartyFunc("/perms", func(permissions iris.Party) {
+					permissions.Get("/", controllers.GetAllPermissions).Name = "权限列表"
+					permissions.Get("/{id:uint}", controllers.GetPermission).Name = "权限详情"
+					permissions.Post("/", controllers.CreatePermission).Name = "创建权限"
+					permissions.Post("/{id:uint}", controllers.UpdatePermission).Name = "编辑权限"
+					permissions.Delete("/{id:uint}", controllers.DeletePermission).Name = "删除权限"
+				})
 				//admin.PartyFunc("/configs", func(configs iris.Party) {
 				//	configs.Get("/", controllers.GetAllConfigs).Name = "系统配置列表"
 				//	configs.Get("/{key:string}", controllers.GetConfig).Name = "系统配置详情"

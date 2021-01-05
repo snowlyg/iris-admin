@@ -47,13 +47,11 @@ func (r *RoleResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 		logging.ErrorLogger.Errorf("get list count err ", err)
 		return nil, err
 	}
-
 	err = db.Scopes(easygorm.PaginateScope(page, pageSize, sort, orderBy)).Find(&roles).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("get list data err ", err)
 		return nil, err
 	}
-
 	list := map[string]interface{}{"items": roles, "total": count, "limit": pageSize}
 	return list, nil
 }
@@ -109,6 +107,7 @@ func (r *RoleResponse) Update(id uint, object map[string]interface{}) error {
 	}
 	err = easygorm.GetEasyGormDb().Model(r.Model()).Where("id = ?", id).Updates(object).Error
 	if err != nil {
+		logging.ErrorLogger.Errorf("update role  get err ", err)
 		return err
 	}
 	return nil

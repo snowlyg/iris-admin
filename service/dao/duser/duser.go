@@ -114,6 +114,7 @@ func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
 	}
 	err = easygorm.GetEasyGormDb().Model(u.Model()).Where("id = ?", id).Updates(object).Error
 	if err != nil {
+		logging.ErrorLogger.Errorf("update user  get err ", err)
 		return err
 	}
 	return nil

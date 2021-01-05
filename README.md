@@ -17,7 +17,6 @@
 blog 分支:
 [http://www.snowlyg.com](http://www.snowlyg.com) 
 
-#### IRIS V12 中文文档
 [IRIS V12 中文文档](https://www.snowlyg.com/chapter/1)
 
 
@@ -84,7 +83,12 @@ go build -o seed tools/seed/main.go
 ./seed --config your_config_path --path youer_seed_data_path
 ```
 
-- 运行测试
+#### postman 接口
+```text
+https://www.getpostman.com/collections/048078cdfd16667352b0
+```
+
+#### 运行测试
 ```
 go test ./...
 ```

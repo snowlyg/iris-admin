@@ -1,24 +1,22 @@
 package controllers
 
 import (
-	"github.com/iris-contrib/middleware/jwt"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/easygorm"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/libs/response"
 	"github.com/snowlyg/blog/application/models"
-	"github.com/snowlyg/blog/service/auth"
 	"github.com/snowlyg/blog/service/dao"
 	"github.com/snowlyg/blog/service/dao/duser"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func Profile(ctx iris.Context) {
-	token := ctx.Values().Get("jwt").(*jwt.Token).Raw
-	id, err := auth.AuthId(token)
+	id, err := dao.GetAuthId(ctx)
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
 		return
@@ -39,9 +37,7 @@ type Avatar struct {
 }
 
 func ChangeAvatar(ctx iris.Context) {
-
-	token := ctx.Values().Get("jwt").(*jwt.Token).Raw
-	id, err := auth.AuthId(token)
+	id, err := dao.GetAuthId(ctx)
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
 		return
@@ -142,7 +138,7 @@ func UpdateUser(ctx iris.Context) {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
-	ctx.JSON(response.NewResponse(response.NoErr.Code, userReq, response.NoErr.Msg))
+	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
 	return
 }
 

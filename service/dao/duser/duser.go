@@ -3,11 +3,12 @@ package duser
 import (
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/easygorm"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/models"
-	"strconv"
 )
 
 const ModelName = "用户管理"
@@ -67,7 +68,6 @@ func (u *UserResponse) FindByUserName(username string) error {
 }
 
 func (u *UserResponse) Create(object map[string]interface{}) error {
-
 	if username, ok := object["Username"].(string); ok {
 		err := u.FindByUserName(username)
 		if err != nil {
@@ -94,11 +94,9 @@ func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
 	if err != nil {
 		return err
 	}
-
 	if u.Username == "username" {
 		return errors.New("不能编辑管理员")
 	}
-
 	if username, ok := object["Username"].(string); ok {
 		err := u.FindByUserName(username)
 		if err != nil {
@@ -110,7 +108,6 @@ func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
 			return errors.New(fmt.Sprintf("username %s is being used", username))
 		}
 	}
-
 	err = easygorm.GetEasyGormDb().Model(&models.User{}).Where("id = ?", id).Updates(object).Error
 	if err != nil {
 		return err

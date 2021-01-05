@@ -40,7 +40,7 @@ func (la *LocalAuth) GetAuthId(token string) (uint, error) {
 
 func (la *LocalAuth) ToCache(token string, id uint64) error {
 	sKey := ZxwSessionTokenPrefix + token
-	rsv2 := &SessionV2{
+	rsv2 := &Session{
 		UserId:       strconv.FormatUint(id, 10),
 		LoginType:    LoginTypeWeb,
 		AuthType:     AuthPwd,
@@ -159,7 +159,7 @@ func (la *LocalAuth) UpdateUserTokenCacheExpire(token string) error {
 }
 
 // getTokenExpire 过期时间
-func (la *LocalAuth) getTokenExpire(rsv2 *SessionV2) time.Duration {
+func (la *LocalAuth) getTokenExpire(rsv2 *Session) time.Duration {
 	timeout := RedisSessionTimeoutApp
 	if rsv2.LoginType == LoginTypeWeb {
 		timeout = RedisSessionTimeoutWeb
@@ -171,7 +171,7 @@ func (la *LocalAuth) getTokenExpire(rsv2 *SessionV2) time.Duration {
 	return timeout
 }
 
-func (la *LocalAuth) GetSessionV2(token string) (*SessionV2, error) {
+func (la *LocalAuth) GetSessionV2(token string) (*Session, error) {
 	sKey := ZxwSessionTokenPrefix + token
 	get, _ := la.Cache.Get(sKey)
 	logging.DebugLogger.Infof("GetSessionV2: %+v", get)
@@ -179,7 +179,7 @@ func (la *LocalAuth) GetSessionV2(token string) (*SessionV2, error) {
 		logging.ErrorLogger.Errorf("get serssion err ", ErrTokenInvalid)
 		return nil, ErrTokenInvalid
 	} else {
-		return food.(*SessionV2), nil
+		return food.(*Session), nil
 	}
 }
 

@@ -1,8 +1,9 @@
 package logging
 
 import (
-	"github.com/snowlyg/blog/application/libs"
 	"path"
+
+	"github.com/snowlyg/blog/application/libs"
 )
 
 var DebugLogger *Logger

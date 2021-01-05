@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/snowlyg/blog/service/dao/duser"
+	"strings"
+
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/jameskeane/bcrypt"
 	"github.com/kataras/iris/v12"
@@ -10,8 +13,6 @@ import (
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/libs/response"
 	"github.com/snowlyg/blog/application/models"
-	"github.com/snowlyg/blog/service/auth"
-	"strings"
 )
 
 type LoginRe struct {
@@ -66,7 +67,7 @@ func Login(ctx iris.Context) {
 	}
 
 	var token string
-	token, err = auth.Login(uint64(user.Id))
+	token, err = duser.Login(uint64(user.Id))
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, err.Error()))
 		return
@@ -80,7 +81,7 @@ func Login(ctx iris.Context) {
 
 func Logout(ctx iris.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	err := auth.Logout(value.Raw)
+	err := duser.Logout(value.Raw)
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
@@ -91,7 +92,7 @@ func Logout(ctx iris.Context) {
 
 func Expire(ctx iris.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	if err := auth.Expire(value.Raw); err != nil {
+	if err := duser.Expire(value.Raw); err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
@@ -101,7 +102,7 @@ func Expire(ctx iris.Context) {
 
 func Clear(ctx iris.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	if err := auth.Clear(value.Raw); err != nil {
+	if err := duser.Clear(value.Raw); err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}

@@ -2,30 +2,20 @@ package controllers
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
+	"time"
+
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/libs/response"
-	"path/filepath"
-	"strings"
-	"time"
 )
 
-/**
-* @api {post} /admin/upload_file 文件上传
-* @apiName 文件上传
-* @apiGroup UploadFile
-* @apiVersion 1.0.0
-* @apiDescription 文件上传
-* @apiSampleRequest /admin/upload_file
-* @apiSuccess {String} msg 消息
-* @apiSuccess {bool} state 状态
-* @apiSuccess {String} data 返回数据
-* @apiPermission
- */
 func UploadFile(ctx iris.Context) {
 	f, fh, err := ctx.FormFile("file")
 	defer f.Close()
+
 	if err != nil {
 		logging.ErrorLogger.Errorf(fmt.Sprintf("Error while uploading: %s", err.Error()))
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))

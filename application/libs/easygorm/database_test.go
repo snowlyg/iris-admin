@@ -1,9 +1,10 @@
 package easygorm
 
 import (
+	"testing"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"testing"
 )
 
 func TestInitSqlite(t *testing.T) {
@@ -27,10 +28,10 @@ func TestInitSqlite(t *testing.T) {
 			t.Errorf("TestInitSqlite DB error %+v", err)
 		}
 
-		if EasyGorm.DB == nil {
+		if GetEasyGormDb() == nil {
 			t.Errorf("TestInitSqlite DB error")
 		}
-		if EasyGorm.Enforcer == nil {
+		if GetEasyGormEnforcer() == nil {
 			t.Errorf("TestInitSqlite Enforcer error")
 		}
 
@@ -76,10 +77,10 @@ func TestMigrate(t *testing.T) {
 			t.Errorf("TestInitSqlite DB error %+v", err)
 		}
 
-		if EasyGorm.DB == nil {
+		if GetEasyGormDb() == nil {
 			t.Errorf("TestInitSqlite DB error")
 		}
-		if EasyGorm.Enforcer == nil {
+		if GetEasyGormEnforcer() == nil {
 			t.Errorf("TestInitSqlite Enforcer error")
 		}
 

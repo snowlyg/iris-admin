@@ -9,7 +9,7 @@ import (
 	"github.com/snowlyg/blog/application/libs/easygorm"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/libs/response"
-	"github.com/snowlyg/blog/service/auth"
+	"github.com/snowlyg/blog/service/dao/duser"
 	"net/http"
 )
 
@@ -19,19 +19,19 @@ func New() *Casbin {
 
 func (c *Casbin) ServeHTTP(ctx iris.Context) {
 	token := ctx.Values().Get("jwt").(*jwt.Token).Raw
-	rsv2, err := auth.Check(token)
+	sess, err := duser.Check(token)
 	if err != nil {
 		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, response.AuthErr.Msg))
 		ctx.StopExecution()
 		return
 	}
 
-	if rsv2 == nil {
+	if sess == nil {
 		_, _ = ctx.JSON(response.NewResponse(response.AuthExpireErr.Code, nil, response.AuthExpireErr.Msg))
 		ctx.StopExecution()
 		return
 	} else {
-		if check, _ := c.Check(ctx.Request(), rsv2.UserId); !check {
+		if check, _ := c.Check(ctx.Request(), sess.UserId); !check {
 			_, _ = ctx.JSON(response.NewResponse(response.AuthActionErr.Code, nil, fmt.Sprintf("你未拥有当前操作权限，请联系管理员")))
 			ctx.StopExecution()
 			return

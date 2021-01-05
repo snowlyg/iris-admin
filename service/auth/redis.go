@@ -32,12 +32,12 @@ func (ra *RedisAuth) GetAuthId(token string) (uint, error) {
 }
 
 //  GetSessionV2 session
-func (ra *RedisAuth) GetSessionV2(token string) (*SessionV2, error) {
+func (ra *RedisAuth) GetSessionV2(token string) (*Session, error) {
 	sKey := ZxwSessionTokenPrefix + token
 	if !ra.Conn.Exists(sKey) {
 		return nil, ErrTokenInvalid
 	}
-	pp := new(SessionV2)
+	pp := new(Session)
 	if err := ra.Conn.LoadRedisHashToStruct(sKey, pp); err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func GetUserScope(userType string) uint64 {
 // ToCache 缓存 token
 func (ra *RedisAuth) ToCache(token string, id uint64) error {
 	sKey := ZxwSessionTokenPrefix + token
-	rsv2 := &SessionV2{
+	rsv2 := &Session{
 		UserId:       strconv.FormatUint(id, 10),
 		LoginType:    LoginTypeWeb,
 		AuthType:     AuthPwd,
@@ -168,7 +168,7 @@ func (ra *RedisAuth) UpdateUserTokenCacheExpire(token string) error {
 }
 
 // getTokenExpire 过期时间
-func (ra *RedisAuth) getTokenExpire(rsv2 *SessionV2) time.Duration {
+func (ra *RedisAuth) getTokenExpire(rsv2 *Session) time.Duration {
 	timeout := RedisSessionTimeoutApp
 	if rsv2.LoginType == LoginTypeWeb {
 		timeout = RedisSessionTimeoutWeb

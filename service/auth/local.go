@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"github.com/patrickmn/go-cache"
+	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"strconv"
 	"strings"
@@ -27,8 +28,18 @@ func NewLocalAuth() *LocalAuth {
 	}
 }
 
+// GetAuthId
+func (la *LocalAuth) GetAuthId(token string) (uint, error) {
+	sess, err := la.GetSessionV2(token)
+	if err != nil {
+		return 0, err
+	}
+	id := uint(libs.ParseInt(sess.UserId, 10))
+	return id, nil
+}
+
 func (la *LocalAuth) ToCache(token string, id uint64) error {
-	sKey := ZXW_SESSION_TOKEN_PREFIX + token
+	sKey := ZxwSessionTokenPrefix + token
 	rsv2 := &SessionV2{
 		UserId:       strconv.FormatUint(id, 10),
 		LoginType:    LoginTypeWeb,
@@ -47,7 +58,7 @@ func (la *LocalAuth) SyncUserTokenCache(token string) error {
 		return err
 	}
 
-	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
+	sKey := ZxwSessionUserPrefix + rsv2.UserId
 	ts := tokens{}
 	if uTokens, uFound := la.Cache.Get(sKey); uFound {
 		ts = uTokens.(tokens)
@@ -56,7 +67,7 @@ func (la *LocalAuth) SyncUserTokenCache(token string) error {
 
 	la.Cache.Set(sKey, ts, la.getTokenExpire(rsv2))
 
-	sKey2 := ZXW_SESSION_BIND_USER_PREFIX + token
+	sKey2 := ZxwSessionBindUserPrefix + token
 	sys := skeys{}
 	if keys, found := la.Cache.Get(sKey2); found {
 		sys = keys.(skeys)
@@ -74,7 +85,7 @@ func (la *LocalAuth) DelUserTokenCache(token string) error {
 	if rsv2 == nil {
 		return errors.New("token cache is nil")
 	}
-	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
+	sKey := ZxwSessionUserPrefix + rsv2.UserId
 	exp := la.getTokenExpire(rsv2)
 	if utokens, ufound := la.Cache.Get(sKey); ufound {
 		t := utokens.(tokens)
@@ -95,8 +106,8 @@ func (la *LocalAuth) DelUserTokenCache(token string) error {
 
 // DelTokenCache 删除token缓存
 func (la *LocalAuth) DelTokenCache(token string) error {
-	la.Cache.Delete(ZXW_SESSION_BIND_USER_PREFIX + token)
-	la.Cache.Delete(ZXW_SESSION_TOKEN_PREFIX + token)
+	la.Cache.Delete(ZxwSessionBindUserPrefix + token)
+	la.Cache.Delete(ZxwSessionTokenPrefix + token)
 	return nil
 }
 
@@ -110,12 +121,12 @@ func (la *LocalAuth) UserTokenExpired(token string) error {
 	}
 
 	exp := la.getTokenExpire(rsv2)
-	uKey := ZXW_SESSION_BIND_USER_PREFIX + token
+	uKey := ZxwSessionBindUserPrefix + token
 	if sKeys, found := la.Cache.Get(uKey); !found {
 		return errors.New("token skey is empty")
 	} else {
 		for _, v := range sKeys.(skeys) {
-			if !strings.Contains(v, ZXW_SESSION_USER_PREFIX) {
+			if !strings.Contains(v, ZxwSessionUserPrefix) {
 				continue
 			}
 			if utokens, ufound := la.Cache.Get(v); ufound {
@@ -142,7 +153,7 @@ func (la *LocalAuth) UpdateUserTokenCacheExpire(token string) error {
 	if rsv2 == nil {
 		return errors.New("token cache is nil")
 	}
-	la.Cache.Set(ZXW_SESSION_TOKEN_PREFIX+token, rsv2, la.getTokenExpire(rsv2))
+	la.Cache.Set(ZxwSessionTokenPrefix+token, rsv2, la.getTokenExpire(rsv2))
 
 	return nil
 }
@@ -161,11 +172,12 @@ func (la *LocalAuth) getTokenExpire(rsv2 *SessionV2) time.Duration {
 }
 
 func (la *LocalAuth) GetSessionV2(token string) (*SessionV2, error) {
-	sKey := ZXW_SESSION_TOKEN_PREFIX + token
+	sKey := ZxwSessionTokenPrefix + token
 	get, _ := la.Cache.Get(sKey)
 	logging.DebugLogger.Infof("GetSessionV2: %+v", get)
 	if food, found := la.Cache.Get(sKey); !found {
-		return nil, ERR_TOKEN_INVALID
+		logging.ErrorLogger.Errorf("get serssion err ", ErrTokenInvalid)
+		return nil, ErrTokenInvalid
 	} else {
 		return food.(*SessionV2), nil
 	}
@@ -181,7 +193,7 @@ func (la *LocalAuth) IsUserTokenOver(userId string) bool {
 
 // getUserTokenCount 获取登录数量
 func (la *LocalAuth) getUserTokenCount(userId string) int {
-	if userTokens, found := la.Cache.Get(ZXW_SESSION_USER_PREFIX + userId); !found {
+	if userTokens, found := la.Cache.Get(ZxwSessionUserPrefix + userId); !found {
 		return 0
 	} else {
 		return len(userTokens.(tokens))
@@ -190,8 +202,8 @@ func (la *LocalAuth) getUserTokenCount(userId string) int {
 
 // getUserTokenMaxCount 最大登录限制
 func (la *LocalAuth) getUserTokenMaxCount() int {
-	if count, found := la.Cache.Get(ZXW_SESSION_USER_MAX_TOKEN_PREFIX); !found {
-		return ZXW_SESSION_USER_MAX_TOKEN_DEFAULT
+	if count, found := la.Cache.Get(ZxwSessionUserMaxTokenPrefix); !found {
+		return ZxwSessionUserMaxTokenDefault
 	} else {
 		return count.(int)
 	}
@@ -204,7 +216,7 @@ func (la *LocalAuth) CleanUserTokenCache(token string) error {
 		logging.ErrorLogger.Errorf("clean user token cache member err: %+v", err)
 		return err
 	}
-	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
+	sKey := ZxwSessionUserPrefix + rsv2.UserId
 	if userTokens, found := la.Cache.Get(sKey); !found {
 		return nil
 	} else {

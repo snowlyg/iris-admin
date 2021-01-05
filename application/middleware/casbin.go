@@ -14,18 +14,13 @@ import (
 )
 
 func New() *Casbin {
-	return &Casbin{enforcer: easygorm.EasyGorm.Enforcer}
+	return &Casbin{enforcer: easygorm.GetEasyGormEnforcer()}
 }
 
 func (c *Casbin) ServeHTTP(ctx iris.Context) {
-	ctx.StatusCode(http.StatusOK)
-	value := ctx.Values().Get("jwt").(*jwt.Token)
-
-	authDriver := auth.NewAuthDriver()
-	defer authDriver.Close()
-	rsv2, err := auth.Check(authDriver, value.Raw)
+	token := ctx.Values().Get("jwt").(*jwt.Token).Raw
+	rsv2, err := auth.Check(token)
 	if err != nil {
-		authDriver.DelUserTokenCache(value.Raw)
 		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, response.AuthErr.Msg))
 		ctx.StopExecution()
 		return
@@ -40,8 +35,6 @@ func (c *Casbin) ServeHTTP(ctx iris.Context) {
 			_, _ = ctx.JSON(response.NewResponse(response.AuthActionErr.Code, nil, fmt.Sprintf("你未拥有当前操作权限，请联系管理员")))
 			ctx.StopExecution()
 			return
-		} else {
-			ctx.Values().Set("sess", rsv2)
 		}
 	}
 

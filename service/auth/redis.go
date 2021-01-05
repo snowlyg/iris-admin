@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/pkg/errors"
+	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/service/cache"
 	"strconv"
@@ -20,11 +21,21 @@ func NewRedisAuth() *RedisAuth {
 	}
 }
 
+// GetAuthId
+func (ra *RedisAuth) GetAuthId(token string) (uint, error) {
+	sess, err := ra.GetSessionV2(token)
+	if err != nil {
+		return 0, err
+	}
+	id := uint(libs.ParseInt(sess.UserId, 10))
+	return id, nil
+}
+
 //  GetSessionV2 session
 func (ra *RedisAuth) GetSessionV2(token string) (*SessionV2, error) {
-	sKey := ZXW_SESSION_TOKEN_PREFIX + token
+	sKey := ZxwSessionTokenPrefix + token
 	if !ra.Conn.Exists(sKey) {
-		return nil, ERR_TOKEN_INVALID
+		return nil, ErrTokenInvalid
 	}
 	pp := new(SessionV2)
 	if err := ra.Conn.LoadRedisHashToStruct(sKey, pp); err != nil {
@@ -44,7 +55,7 @@ func (ra *RedisAuth) IsUserTokenOver(userId string) bool {
 
 // getUserTokenCount 获取登录数量
 func (ra *RedisAuth) getUserTokenCount(userId string) int {
-	count, err := redis.Int(ra.Conn.Scard(ZXW_SESSION_USER_PREFIX + userId))
+	count, err := redis.Int(ra.Conn.Scard(ZxwSessionUserPrefix + userId))
 	if err != nil {
 		logging.ErrorLogger.Errorf("get user token count err: %+v", err)
 		return 0
@@ -54,23 +65,23 @@ func (ra *RedisAuth) getUserTokenCount(userId string) int {
 
 // getUserTokenMaxCount 最大登录限制
 func (ra *RedisAuth) getUserTokenMaxCount() int {
-	count, err := redis.Int(ra.Conn.GetKey(ZXW_SESSION_USER_MAX_TOKEN_PREFIX))
+	count, err := redis.Int(ra.Conn.GetKey(ZxwSessionUserMaxTokenPrefix))
 	if err != nil {
-		return ZXW_SESSION_USER_MAX_TOKEN_DEFAULT
+		return ZxwSessionUserMaxTokenDefault
 	}
 	return count
 }
 
 // UserTokenExpired 过期 token
 func (ra *RedisAuth) UserTokenExpired(token string) error {
-	uKey := ZXW_SESSION_BIND_USER_PREFIX + token
+	uKey := ZxwSessionBindUserPrefix + token
 	sKeys, err := redis.Strings(ra.Conn.Members(uKey))
 	if err != nil {
 		logging.ErrorLogger.Errorf("user token expired get members err: %+v", err)
 		return err
 	}
 	for _, v := range sKeys {
-		if !strings.Contains(v, ZXW_SESSION_USER_PREFIX) {
+		if !strings.Contains(v, ZxwSessionUserPrefix) {
 			continue
 		}
 		_, err = ra.Conn.Do("SREM", v, token)
@@ -97,7 +108,7 @@ func GetUserScope(userType string) uint64 {
 
 // ToCache 缓存 token
 func (ra *RedisAuth) ToCache(token string, id uint64) error {
-	sKey := ZXW_SESSION_TOKEN_PREFIX + token
+	sKey := ZxwSessionTokenPrefix + token
 	rsv2 := &SessionV2{
 		UserId:       strconv.FormatUint(id, 10),
 		LoginType:    LoginTypeWeb,
@@ -126,12 +137,12 @@ func (ra *RedisAuth) SyncUserTokenCache(token string) error {
 	if err != nil {
 		return err
 	}
-	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
+	sKey := ZxwSessionUserPrefix + rsv2.UserId
 	if _, err := ra.Conn.Sadd(sKey, token); err != nil {
 		logging.ErrorLogger.Errorf("sync user token cache sadd err: %+v", err)
 		return err
 	}
-	sKey2 := ZXW_SESSION_BIND_USER_PREFIX + token
+	sKey2 := ZxwSessionBindUserPrefix + token
 	_, err = ra.Conn.Sadd(sKey2, sKey)
 	if err != nil {
 		logging.ErrorLogger.Errorf("sync user token cache sadd err: %+v", err)
@@ -149,7 +160,7 @@ func (ra *RedisAuth) UpdateUserTokenCacheExpire(token string) error {
 	if rsv2 == nil {
 		return errors.New("token cache is nil")
 	}
-	if _, err = ra.Conn.Expire(ZXW_SESSION_TOKEN_PREFIX+token, int(ra.getTokenExpire(rsv2).Seconds())); err != nil {
+	if _, err = ra.Conn.Expire(ZxwSessionTokenPrefix+token, int(ra.getTokenExpire(rsv2).Seconds())); err != nil {
 		logging.ErrorLogger.Errorf("update user token cache expire err: %+v", err)
 		return err
 	}
@@ -178,7 +189,7 @@ func (ra *RedisAuth) DelUserTokenCache(token string) error {
 	if rsv2 == nil {
 		return errors.New("token cache is nil")
 	}
-	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
+	sKey := ZxwSessionUserPrefix + rsv2.UserId
 	_, err = ra.Conn.Do("SREM", sKey, token)
 	if err != nil {
 		logging.ErrorLogger.Errorf("del user token cache do srem err: %+v", err)
@@ -194,14 +205,14 @@ func (ra *RedisAuth) DelUserTokenCache(token string) error {
 
 // DelTokenCache 删除token缓存
 func (ra *RedisAuth) DelTokenCache(token string) error {
-	sKey2 := ZXW_SESSION_BIND_USER_PREFIX + token
+	sKey2 := ZxwSessionBindUserPrefix + token
 	_, err := ra.Conn.Del(sKey2)
 	if err != nil {
 		logging.ErrorLogger.Errorf("del token cache del key err: %+v", err)
 		return err
 	}
 
-	sKey3 := ZXW_SESSION_TOKEN_PREFIX + token
+	sKey3 := ZxwSessionTokenPrefix + token
 	_, err = ra.Conn.Del(sKey3)
 	if err != nil {
 		logging.ErrorLogger.Errorf("del token cache del key err: %+v", err)
@@ -218,7 +229,7 @@ func (ra *RedisAuth) CleanUserTokenCache(token string) error {
 		logging.ErrorLogger.Errorf("clean user token cache member err: %+v", err)
 		return err
 	}
-	sKey := ZXW_SESSION_USER_PREFIX + rsv2.UserId
+	sKey := ZxwSessionUserPrefix + rsv2.UserId
 	var allTokens []string
 	allTokens, err = redis.Strings(ra.Conn.Members(sKey))
 	if err != nil {

@@ -27,7 +27,7 @@ func main() {
 	flag.Parse()
 
 	if *version {
-		logging.InfoLogger.Infof(fmt.Sprintf("版本号：%s\n", Version))
+		fmt.Println(fmt.Sprintf("版本号：%s\n", Version))
 	}
 
 	irisServer := application.NewServer(*config)

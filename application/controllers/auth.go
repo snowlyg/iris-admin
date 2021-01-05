@@ -30,7 +30,7 @@ type Token struct {
 }
 
 func Login(ctx iris.Context) {
-	loginReq := new(LoginRe)
+	loginReq := &LoginRe{}
 	if err := ctx.ReadJSON(loginReq); err != nil {
 		logging.ErrorLogger.Errorf("login read request json err ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, response.SystemErr.Msg))
@@ -47,7 +47,7 @@ func Login(ctx iris.Context) {
 	}
 
 	user := User{Username: loginReq.Username}
-	err := easygorm.EasyGorm.DB.Model(models.User{}).Find(&user).Error
+	err := easygorm.GetEasyGormDb().Model(models.User{}).Find(&user).Error
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
@@ -65,11 +65,8 @@ func Login(ctx iris.Context) {
 		return
 	}
 
-	authDriver := auth.NewAuthDriver()
-	defer authDriver.Close()
-
 	var token string
-	token, err = auth.Login(authDriver, uint64(user.Id))
+	token, err = auth.Login(uint64(user.Id))
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, err.Error()))
 		return
@@ -83,10 +80,7 @@ func Login(ctx iris.Context) {
 
 func Logout(ctx iris.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	authDriver := auth.NewAuthDriver()
-	defer authDriver.Close()
-
-	err := auth.Logout(authDriver, value.Raw)
+	err := auth.Logout(value.Raw)
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
@@ -97,9 +91,7 @@ func Logout(ctx iris.Context) {
 
 func Expire(ctx iris.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	authDriver := auth.NewAuthDriver()
-	defer authDriver.Close()
-	if err := auth.Expire(authDriver, value.Raw); err != nil {
+	if err := auth.Expire(value.Raw); err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
@@ -109,9 +101,7 @@ func Expire(ctx iris.Context) {
 
 func Clear(ctx iris.Context) {
 	value := ctx.Values().Get("jwt").(*jwt.Token)
-	authDriver := auth.NewAuthDriver()
-	defer authDriver.Close()
-	if err := auth.Clear(authDriver, value.Raw); err != nil {
+	if err := auth.Clear(value.Raw); err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}

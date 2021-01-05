@@ -15,13 +15,13 @@ import (
 	"gorm.io/gorm"
 )
 
-var EasyGorm *DBServer
+var easyGorm *DBServer
 
 // DBServer 简单便捷的使用 gorm
 type DBServer struct {
-	conn string
-	*gorm.DB
-	*casbin.Enforcer
+	conn     string
+	db       *gorm.DB
+	enforcer *casbin.Enforcer
 	*Config
 }
 
@@ -36,15 +36,15 @@ type Config struct {
 	Adapter    string        // 类型
 	Conn       string        // 名称
 	Models     []interface{} // 模型数据
-	*Casbin
+	Casbin     *Casbin
 }
 
 func Init(c *Config) error {
-	if EasyGorm != nil {
+	if easyGorm != nil {
 		return nil
 	}
 
-	EasyGorm = &DBServer{
+	easyGorm = &DBServer{
 		Config: &Config{
 			GormConfig: &gorm.Config{
 				NamingStrategy: schema.NamingStrategy{
@@ -63,35 +63,35 @@ func Init(c *Config) error {
 	}
 
 	if c != nil {
-		EasyGorm.Config = c
+		easyGorm.Config = c
 	}
 
-	err := EasyGorm.getGormDb()
+	err := easyGorm.initGormDb()
 	if err != nil {
 		return errors.New(fmt.Sprintf("getGormDb err: : %+v", err))
 	}
-	if EasyGorm.DB == nil {
+	if easyGorm.db == nil {
 		return errors.New("数据库初始化失败")
 	}
 
-	if len(EasyGorm.Config.Models) > 0 {
-		err = Migrate(EasyGorm.Config.Models)
+	if len(easyGorm.Config.Models) > 0 {
+		err = Migrate(easyGorm.Config.Models)
 		if err != nil {
 			return errors.New(fmt.Sprintf("AutoMigrate err: : %+v", err))
 		}
 	}
 
 	// 没有 CasbinPath 不使用 casbin
-	if EasyGorm.Casbin == nil {
+	if easyGorm.Casbin == nil {
 		return errors.New("casbin 设置不能为空")
 	}
 
-	err = EasyGorm.getEnforcer()
+	err = easyGorm.initEnforcer()
 	if err != nil {
 		return errors.New(fmt.Sprintf("getEnforcer err: : %+v", err))
 	}
 
-	if EasyGorm.Enforcer == nil {
+	if easyGorm.enforcer == nil {
 		return errors.New("casbin 初始化失败")
 	}
 
@@ -100,15 +100,15 @@ func Init(c *Config) error {
 
 // Migrate 迁移数据表
 func Migrate(models []interface{}) error {
-	err := EasyGorm.DB.AutoMigrate(models...)
+	err := easyGorm.db.AutoMigrate(models...)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// getGormDb
-func (db *DBServer) getGormDb() error {
+// initGormDb
+func (db *DBServer) initGormDb() error {
 	var err error
 	var dialector gorm.Dialector
 	if db.Config.Adapter == "mysql" {
@@ -127,12 +127,12 @@ func (db *DBServer) getGormDb() error {
 	//		SingularTable: false,            // 使用单数表名，启用该选项，此时，`User` 的表名应该是 `t_user`
 	//	},
 	//}
-	db.DB, err = gorm.Open(dialector, db.Config.GormConfig)
+	db.db, err = gorm.Open(dialector, db.Config.GormConfig)
 	if err != nil {
 		return err
 	}
 
-	err = db.DB.Use(
+	err = db.db.Use(
 		dbresolver.Register(
 			dbresolver.Config{ /* xxx */ }).
 			SetConnMaxIdleTime(time.Hour).
@@ -144,26 +144,34 @@ func (db *DBServer) getGormDb() error {
 		return err
 	}
 
-	db.DB.Session(&gorm.Session{FullSaveAssociations: true, AllowGlobalUpdate: false})
+	db.db.Session(&gorm.Session{FullSaveAssociations: true, AllowGlobalUpdate: false})
 	return nil
 }
 
-// getEnforcer
-func (db *DBServer) getEnforcer() error {
-	c, err := gormadapter.NewAdapterByDBUseTableName(db.DB, db.Config.Casbin.Prefix, "casbin_rule") // Your driver and data source.
+// initEnforcer
+func (db *DBServer) initEnforcer() error {
+	c, err := gormadapter.NewAdapterByDBUseTableName(db.db, db.Config.Casbin.Prefix, "casbin_rule") // Your driver and data source.
 	if err != nil {
 		return err
 	}
 
-	db.Enforcer, err = casbin.NewEnforcer(db.Config.Casbin.Path, c)
+	db.enforcer, err = casbin.NewEnforcer(db.Config.Casbin.Path, c)
 	if err != nil {
 		return err
 	}
 
-	err = db.Enforcer.LoadPolicy()
+	err = db.enforcer.LoadPolicy()
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func GetEasyGormDb() *gorm.DB {
+	return easyGorm.db
+}
+
+func GetEasyGormEnforcer() *casbin.Enforcer {
+	return easyGorm.enforcer
 }

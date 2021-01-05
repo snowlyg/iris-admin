@@ -14,5 +14,7 @@ application.yml
 /.idea/
 
 main
+main_lin
+seed
 
 

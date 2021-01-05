@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/configor"
 	"github.com/snowlyg/blog/application/libs/easygorm"
 	"github.com/snowlyg/blog/application/models"
+	"github.com/snowlyg/blog/service/dao/duser"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	"math/rand"
@@ -82,6 +83,7 @@ func main() {
 			&models.Role{},
 			&models.Permission{},
 			&models.Config{},
+			&models.Oplog{},
 		},
 	})
 	if err != nil {
@@ -147,7 +149,7 @@ func CreatePerms() [][]string {
 		return nil
 	}
 
-	create := easygorm.EasyGorm.DB.Create(&insertPerms)
+	create := easygorm.GetEasyGormDb().Create(&insertPerms)
 	if err := create.Error; err != nil {
 		panic(fmt.Sprintf("seeder data create perms err：%+v\n", err))
 		return nil
@@ -178,7 +180,7 @@ func CreateRole(perms [][]string) {
 		Model:       gorm.Model{CreatedAt: time.Now()},
 		Perms:       perms,
 	}
-	if err := easygorm.EasyGorm.DB.Create(&role).Error; err != nil {
+	if err := easygorm.GetEasyGormDb().Create(&role).Error; err != nil {
 		panic(fmt.Sprintf("seeder data create role err：%+v\n", err))
 	}
 
@@ -204,7 +206,7 @@ func CreateAdmin() {
 	var roleIds []uint
 	var roleNames []string
 	var roles []*Role
-	easygorm.EasyGorm.DB.Model(&models.Role{}).Find(&roles)
+	easygorm.GetEasyGormDb().Model(&models.Role{}).Find(&roles)
 	for _, role := range roles {
 		roleIds = append(roleIds, role.Id)
 		roleNames = append(roleNames, role.Name)
@@ -220,9 +222,9 @@ func CreateAdmin() {
 		RoleIds:  roleIds,
 	}
 
-	easygorm.EasyGorm.DB.Create(admin)
+	easygorm.GetEasyGormDb().Create(admin)
 
-	err := models.AddRoleForUser(admin)
+	err := duser.AddRoleForUser(admin)
 	if err != nil {
 		panic(fmt.Sprintf("添加管理员失败：%+v", err))
 	}
@@ -252,7 +254,7 @@ func AutoMigrates() {
 // DropTables 删除数据表
 func DropTables() error {
 	prefix := libs.Config.DB.Prefix
-	err := easygorm.EasyGorm.DB.Migrator().DropTable(
+	err := easygorm.GetEasyGormDb().Migrator().DropTable(
 		prefix+"users",
 		prefix+"roles",
 		prefix+"permissions",

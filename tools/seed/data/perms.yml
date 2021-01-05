@@ -17,7 +17,7 @@ perms:
   - name: "/api/v1/admin/change_avatar"
     displayname: "修改头像"
     description: "修改头像"
-    act: "PUT"
+    act: "POST"
 
   - name: "/api/v1/admin/profile"
     displayname: "个人信息"
@@ -47,7 +47,7 @@ perms:
   - name: "/api/v1/admin/users/{id:uint}"
     displayname: "编辑用户"
     description: "编辑用户"
-    act: "PUT"
+    act: "POST"
 
   - name: "/api/v1/admin/users/{id:uint}"
     displayname: "删除用户"
@@ -72,7 +72,7 @@ perms:
   - name: "/api/v1/admin/roles/{id:uint}"
     displayname: "编辑角色"
     description: "编辑角色"
-    act: "PUT"
+    act: "POST"
 
   - name: "/api/v1/admin/roles/{id:uint}"
     displayname: "删除角色"
@@ -97,7 +97,7 @@ perms:
   - name: "/api/v1/admin/permissions/{id:uint}"
     displayname: "编辑权限"
     description: "编辑权限"
-    act: "PUT"
+    act: "POST"
 
   - name: "/api/v1/admin/permissions/{id:uint}"
     displayname: "删除权限"

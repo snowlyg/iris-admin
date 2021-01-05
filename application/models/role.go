@@ -16,67 +16,6 @@ type Role struct {
 	Perms       [][]string `gorm:"-" json:"perms" comment:"权限 name, act "`
 }
 
-//
-//// GetRoleById get role by it
-//func GetRoleById(id uint) (*Role, error) {
-//	t := &Role{}
-//	err := easygorm.FindById(&Role{}, id)
-//	if err != nil {
-//		logging.ErrorLogger.Errorf("get role by id err: %+v", err)
-//		return t, err
-//	}
-//
-//	return t, nil
-//}
-//
-//// GetRole get role
-//func GetRole(s *easygorm.Search) (*Role, error) {
-//	t := &Role{}
-//	err := easygorm.First(t, s)
-//	if err != nil {
-//		logging.ErrorLogger.Errorf("get role err: %+v", err)
-//		return t, err
-//	}
-//
-//	return t, nil
-//}
-//
-//// DeleteRoleById del role by id
-//func DeleteRoleById(id uint) error {
-//	r := &Role{}
-//	err := easygorm.DeleteById(r, id)
-//	if err != nil {
-//		logging.ErrorLogger.Errorf("del role by id err: %+v", err)
-//		return err
-//	}
-//
-//	return nil
-//}
-//
-//// GetAllRoles get all roles
-//func GetAllRoles(s *easygorm.Search) ([]*Role, int64, error) {
-//	var roles []*Role
-//	count, err := easygorm.Paginate(&Role{}, &roles, s)
-//	if err != nil {
-//		logging.ErrorLogger.Errorf("get all role err: %+v", err)
-//		return nil, count, err
-//	}
-//
-//	return roles, count, nil
-//}
-//
-//// CreateRole create role
-//func (r *Role) CreateRole() error {
-//	if err := easygorm.Create(r); err != nil {
-//		logging.ErrorLogger.Errorf("create role err: %+v", err)
-//		return err
-//	}
-//	if err := addPerms(r.PermIds, r); err != nil {
-//		return err
-//	}
-//	return nil
-//}
-
 // AddPermForRole add perms
 func AddPermForRole(role *Role) error {
 	if len(role.Perms) == 0 {
@@ -86,7 +25,7 @@ func AddPermForRole(role *Role) error {
 
 	var newPerms [][]string
 	roleId := strconv.FormatUint(uint64(role.ID), 10)
-	oldPerms := easygorm.EasyGorm.Enforcer.GetPermissionsForUser(roleId)
+	oldPerms := easygorm.GetEasyGormEnforcer().GetPermissionsForUser(roleId)
 
 	for _, perm := range role.Perms {
 		var in bool
@@ -105,7 +44,7 @@ func AddPermForRole(role *Role) error {
 	logging.DebugLogger.Debugf("new perms", newPerms)
 
 	var err error
-	_, err = easygorm.EasyGorm.Enforcer.AddPolicies(newPerms)
+	_, err = easygorm.GetEasyGormEnforcer().AddPolicies(newPerms)
 	if err != nil {
 		logging.ErrorLogger.Errorf("add policy err: %+v", err)
 		return err
@@ -113,45 +52,3 @@ func AddPermForRole(role *Role) error {
 
 	return nil
 }
-
-//
-//// UpdateRole update role
-//func UpdateRole(id uint, r *Role) error {
-//	if err := easygorm.Update(&Role{}, r, []interface{}{"DisplayName", "Description"}, id); err != nil {
-//		logging.ErrorLogger.Errorf("update role err: %+v", err)
-//		return err
-//	}
-//	if err := addPerms(r.PermIds, r); err != nil {
-//		return err
-//	}
-//	return nil
-//}
-//
-//// RolePermissions get role's permissions
-//func (r *Role) RolePermissions() []*Permission {
-//	perms := easygorm.GetPermissionsForUser(r.ID)
-//	var ps []*Permission
-//	for _, perm := range perms {
-//		if len(perm) >= 3 && len(perm[1]) > 0 && len(perm[2]) > 0 {
-//			s := &easygorm.Search{
-//				Fields: []*easygorm.Field{
-//					{
-//						Key:       "name",
-//						Condition: "=",
-//						Value:     perm[1],
-//					},
-//					{
-//						Key:       "act",
-//						Condition: "=",
-//						Value:     perm[2],
-//					},
-//				},
-//			}
-//			p, err := GetPermission(s)
-//			if err == nil && p.ID > 0 {
-//				ps = append(ps, p)
-//			}
-//		}
-//	}
-//	return ps
-//}

@@ -1,7 +1,6 @@
 package libs
 
 import (
-	"bytes"
 	"crypto/md5"
 	"encoding/gob"
 	"encoding/hex"
@@ -10,23 +9,8 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"strings"
-	"sync"
 	"time"
 )
-
-// 本机 ip
-func LocalIP() string {
-	ip := ""
-	if addrs, err := net.InterfaceAddrs(); err == nil {
-		for _, addr := range addrs {
-			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() && !ipnet.IP.IsMulticast() && !ipnet.IP.IsLinkLocalUnicast() && !ipnet.IP.IsLinkLocalMulticast() && ipnet.IP.To4() != nil {
-				ip = ipnet.IP.String()
-			}
-		}
-	}
-	return ip
-}
 
 // md5
 func MD5(str string) string {
@@ -44,51 +28,10 @@ func CWD() string {
 	return filepath.Dir(path)
 }
 
-// 工作目录
-var workInDirLock sync.Mutex
-
-func WorkInDir(f func(), dir string) {
-	wd, _ := os.Getwd()
-	workInDirLock.Lock()
-	defer workInDirLock.Unlock()
-	_ = os.Chdir(dir)
-	defer os.Chdir(wd)
-	f()
-}
-
-func EXEName() string {
-	path, err := os.Executable()
-	if err != nil {
-		return ""
-	}
-	return strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
-}
-
 func LogDir() string {
 	dir := filepath.Join(CWD(), "logs")
 	EnsureDir(dir)
 	return dir
-}
-
-func ErrorLogFilename() string {
-	return filepath.Join(LogDir(), fmt.Sprintf("%s-error.log", strings.ToLower(EXEName())))
-}
-
-var FlagVarDBFile string
-
-func DBFile() string {
-	if FlagVarDBFile != "" {
-		return FlagVarDBFile
-	}
-	if Exist(DBFileDev()) {
-		return DBFileDev()
-	}
-
-	return filepath.Join(CWD(), strings.ToLower(EXEName()+".db"))
-}
-
-func DBFileDev() string {
-	return filepath.Join(CWD(), strings.ToLower(EXEName())+".dev.db")
 }
 
 func EnsureDir(dir string) (err error) {
@@ -99,21 +42,6 @@ func EnsureDir(dir string) (err error) {
 		}
 	}
 	return
-}
-
-func Exist(path string) bool {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
-
-func DeepCopy(dst, src interface{}) error {
-	var buf bytes.Buffer
-	if err := gob.NewEncoder(&buf).Encode(src); err != nil {
-		return err
-	}
-	return gob.NewDecoder(bytes.NewBuffer(buf.Bytes())).Decode(dst)
 }
 
 func IsPortInUse(port int64) bool {

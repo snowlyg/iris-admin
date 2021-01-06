@@ -123,7 +123,7 @@ func (r *RoleResponse) Find(id uint) error {
 }
 
 func (r *RoleResponse) Delete(id uint) error {
-	err := easygorm.GetEasyGormDb().Delete(r.Model(), id).Error
+	err := easygorm.GetEasyGormDb().Unscoped().Delete(r.Model(), id).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("delete role by id get  err ", err)
 		return err

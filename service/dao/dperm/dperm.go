@@ -134,7 +134,7 @@ func (p *PermResponse) Find(id uint) error {
 }
 
 func (p *PermResponse) Delete(id uint) error {
-	err := easygorm.GetEasyGormDb().Delete(p.Model(), id).Error
+	err := easygorm.GetEasyGormDb().Unscoped().Delete(p.Model(), id).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("delete perm by id get  err ", err)
 		return err

@@ -130,7 +130,7 @@ func (u *UserResponse) Find(id uint) error {
 }
 
 func (u *UserResponse) Delete(id uint) error {
-	err := easygorm.GetEasyGormDb().Delete(u.Model(), id).Error
+	err := easygorm.GetEasyGormDb().Unscoped().Delete(u.Model(), id).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("delete user by id get  err ", err)
 		return err

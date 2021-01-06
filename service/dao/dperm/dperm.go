@@ -23,6 +23,7 @@ type PermReq struct {
 	Name        string `json:"name" `
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
+	Act         string `json:"act"`
 }
 
 func (p *PermResponse) ModelName() string {

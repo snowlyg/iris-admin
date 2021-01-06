@@ -41,6 +41,7 @@ func CreatePermission(ctx iris.Context) {
 		"Name":        permReq.Name,
 		"DisplayName": permReq.DisplayName,
 		"Description": permReq.Description,
+		"Act":         permReq.Act,
 		"CreatedAt":   time.Now(),
 		"UpdatedAt":   time.Now(),
 	})

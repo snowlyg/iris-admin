@@ -166,30 +166,3 @@ func GetUsers(ctx iris.Context) {
 	ctx.JSON(response.NewResponse(response.NoErr.Code, list, response.NoErr.Msg))
 	return
 }
-
-//func userTransform(user *models.User) *transformer.User {
-//	u := &transformer.User{}
-//	g := gf.NewTransform(u, user, time.RFC3339)
-//	_ = g.Transformer()
-//
-//	roleIds := easygorm.GetRolesForUser(user.ID)
-//	var ris []int
-//	for _, roleId := range roleIds {
-//		ri, _ := strconv.Atoi(roleId)
-//		ris = append(ris, ri)
-//	}
-//	s := &easygorm.Search{
-//		Fields: []*easygorm.Field{
-//			{
-//				Key:       "id",
-//				Condition: "IN",
-//				Value:     ris,
-//			},
-//		},
-//	}
-//	roles, _, err := models.GetAllRoles(s)
-//	if err == nil {
-//		u.Roles = rolesTransform(roles)
-//	}
-//	return u
-//}

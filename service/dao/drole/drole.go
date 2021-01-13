@@ -31,14 +31,14 @@ func (r *RoleResponse) ModelName() string {
 	return modelName
 }
 
-func (u *RoleResponse) Model() *models.Role {
+func Model() *models.Role {
 	return &models.Role{}
 }
 
 func (r *RoleResponse) All(name, sort, orderBy string, page, pageSize int) (map[string]interface{}, error) {
 	var count int64
 	var roles []*RoleResponse
-	db := easygorm.GetEasyGormDb().Model(r.Model())
+	db := easygorm.GetEasyGormDb().Model(Model())
 	if len(name) > 0 {
 		db = db.Where("name", "like", fmt.Sprintf("%%%s%%", name))
 	}
@@ -57,7 +57,7 @@ func (r *RoleResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 }
 
 func (r *RoleResponse) FindByName(name string) error {
-	err := easygorm.GetEasyGormDb().Model(r.Model()).Where("name = ?", name).Find(r).Error
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("name = ?", name).Find(r).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find role by name get err ", err)
 		return err
@@ -78,7 +78,7 @@ func (r *RoleResponse) Create(object map[string]interface{}) error {
 		}
 	}
 
-	err := easygorm.GetEasyGormDb().Model(r.Model()).Create(object).Error
+	err := easygorm.GetEasyGormDb().Model(Model()).Create(object).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("create data err ", err)
 		return err
@@ -105,7 +105,7 @@ func (r *RoleResponse) Update(id uint, object map[string]interface{}) error {
 			return errors.New(fmt.Sprintf("name %s is being used", name))
 		}
 	}
-	err = easygorm.GetEasyGormDb().Model(r.Model()).Where("id = ?", id).Updates(object).Error
+	err = easygorm.GetEasyGormDb().Model(Model()).Where("id = ?", id).Updates(object).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("update role  get err ", err)
 		return err
@@ -114,7 +114,7 @@ func (r *RoleResponse) Update(id uint, object map[string]interface{}) error {
 }
 
 func (r *RoleResponse) Find(id uint) error {
-	err := easygorm.GetEasyGormDb().Model(r.Model()).Where("id = ?", id).Find(r).Error
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("id = ?", id).Find(r).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find role by id get  err ", err)
 		return err
@@ -123,12 +123,22 @@ func (r *RoleResponse) Find(id uint) error {
 }
 
 func (r *RoleResponse) Delete(id uint) error {
-	err := easygorm.GetEasyGormDb().Unscoped().Delete(r.Model(), id).Error
+	err := easygorm.GetEasyGormDb().Unscoped().Delete(Model(), id).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("delete role by id get  err ", err)
 		return err
 	}
 	return nil
+}
+
+func FindInId(ids []string) ([]*RoleResponse, error) {
+	var roles []*RoleResponse
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("id in ?", ids).Find(&roles).Error
+	if err != nil {
+		logging.ErrorLogger.Errorf("find role by id get  err ", err)
+		return nil, err
+	}
+	return roles, nil
 }
 
 // AddPermForRole add perms

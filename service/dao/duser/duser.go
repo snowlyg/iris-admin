@@ -3,6 +3,7 @@ package duser
 import (
 	"errors"
 	"fmt"
+	"github.com/snowlyg/blog/service/dao/drole"
 	"strconv"
 
 	"github.com/snowlyg/blog/application/libs"
@@ -23,6 +24,11 @@ type UserResponse struct {
 	CreatedAt string `json:"created_at"`
 }
 
+type UserListResponse struct {
+	UserResponse
+	Roles []string `gorm:"-" json:"roles"`
+}
+
 type UserReq struct {
 	Name     string `json:"name" `
 	Username string `json:"username"`
@@ -35,14 +41,14 @@ func (u *UserResponse) ModelName() string {
 	return ModelName
 }
 
-func (u *UserResponse) Model() *models.User {
+func Model() *models.User {
 	return &models.User{}
 }
 
 func (u *UserResponse) All(name, sort, orderBy string, page, pageSize int) (map[string]interface{}, error) {
 	var count int64
-	var users []*UserResponse
-	db := easygorm.GetEasyGormDb().Model(u.Model())
+	var users []*UserListResponse
+	db := easygorm.GetEasyGormDb().Model(Model())
 	if len(name) > 0 {
 		db = db.Where("name", "like", fmt.Sprintf("%%%s%%", name))
 	}
@@ -52,18 +58,46 @@ func (u *UserResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 		return nil, err
 	}
 
-	err = db.Scopes(easygorm.PaginateScope(page, pageSize, sort, orderBy)).Find(&users).Error
+	paginateScope := easygorm.PaginateScope(page, pageSize, sort, orderBy)
+	err = db.Scopes(paginateScope).
+		Find(&users).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("get list data err ", err)
 		return nil, err
 	}
+	// 查询用户角色
+	getRoles(users)
 
 	list := map[string]interface{}{"items": users, "total": count, "limit": pageSize}
 	return list, nil
 }
 
+func getRoles(users []*UserListResponse) {
+	var roleIds []string
+	userRoleIds := make(map[uint][]string, 10)
+	for _, user := range users {
+		userRoleId := easygorm.GetRolesForUser(user.Id)
+		userRoleIds[user.Id] = userRoleId
+		roleIds = append(roleIds, userRoleId...)
+	}
+
+	roles, err := drole.FindInId(roleIds)
+	if err != nil {
+		logging.ErrorLogger.Errorf("get role get err ", err)
+	}
+
+	for _, user := range users {
+		for _, role := range roles {
+			sRoleId := strconv.FormatInt(int64(role.Id), 10)
+			if libs.InArrayS(userRoleIds[user.Id], sRoleId) {
+				user.Roles = append(user.Roles, role.Name)
+			}
+		}
+	}
+}
+
 func (u *UserResponse) FindByUserName(username string) error {
-	err := easygorm.GetEasyGormDb().Model(u.Model()).Where("username = ?", username).Find(u).Error
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("username = ?", username).Find(u).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find user by username ", username, " err ", err)
 		return err
@@ -84,7 +118,7 @@ func (u *UserResponse) Create(object map[string]interface{}) error {
 		}
 	}
 
-	err := easygorm.GetEasyGormDb().Model(u.Model()).Create(object).Error
+	err := easygorm.GetEasyGormDb().Model(Model()).Create(object).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("create data err ", err)
 		return err
@@ -112,7 +146,7 @@ func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
 			return errors.New(fmt.Sprintf("username %s is being used", username))
 		}
 	}
-	err = easygorm.GetEasyGormDb().Model(u.Model()).Where("id = ?", id).Updates(object).Error
+	err = easygorm.GetEasyGormDb().Model(Model()).Where("id = ?", id).Updates(object).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("update user  get err ", err)
 		return err
@@ -121,7 +155,7 @@ func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
 }
 
 func (u *UserResponse) Find(id uint) error {
-	err := easygorm.GetEasyGormDb().Model(u.Model()).Where("id = ?", id).Find(u).Error
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("id = ?", id).Find(u).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find user err ", err)
 		return err
@@ -130,7 +164,7 @@ func (u *UserResponse) Find(id uint) error {
 }
 
 func (u *UserResponse) Delete(id uint) error {
-	err := easygorm.GetEasyGormDb().Unscoped().Delete(u.Model(), id).Error
+	err := easygorm.GetEasyGormDb().Unscoped().Delete(Model(), id).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("delete user by id get  err ", err)
 		return err

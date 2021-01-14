@@ -3,7 +3,11 @@ package application
 import (
 	stdContext "context"
 	"fmt"
+	"path/filepath"
+	"time"
+
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/middleware/pprof"
 	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/blog/application/controllers"
 	"github.com/snowlyg/blog/application/libs"
@@ -11,8 +15,6 @@ import (
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/middleware"
 	"github.com/snowlyg/blog/service/cache"
-	"path/filepath"
-	"time"
 )
 
 // HttpServer
@@ -35,6 +37,7 @@ func NewServer(config string) *HttpServer {
 		App:        app,
 		Status:     false,
 	}
+
 	httpServer._Init()
 	return httpServer
 }
@@ -87,6 +90,18 @@ func (s *HttpServer) RouteInit() {
 	s.App.UseRouter(middleware.CrsAuth())
 	app := s.App.Party("/").AllowMethods(iris.MethodOptions)
 	{
+
+		// 开启 pprof 调试
+		if libs.Config.Pprof {
+			app.Get("/", func(ctx iris.Context) {
+				ctx.HTML("<h1> Please click <a href='/debug/pprof'>here</a>")
+			})
+
+			p := pprof.New()
+			app.Any("/debug/pprof", p)
+			app.Any("/debug/pprof/{action:path}", p)
+		}
+
 		app.HandleDir("/uploads", iris.Dir(filepath.Join(libs.CWD(), "uploads")))
 		v1 := app.Party("api/v1")
 		{

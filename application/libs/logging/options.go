@@ -33,8 +33,8 @@ type Options struct {
 	Level string
 
 	// Set to true to bypass checking for a TTY before outputting colors.
-	//ForceColors bool
 
+	//ForceColors bool
 	Prefix string
 
 	// Enable logging the full timestamp when a TTY is attached instead of just

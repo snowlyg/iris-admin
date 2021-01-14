@@ -12,18 +12,21 @@ var InfoLogger *Logger
 
 func init() {
 	DebugLogger = NewLogger(&Options{
+		Level:       "debug",
 		Rolling:     DAILY,
 		TimesFormat: TIMESECOND,
 	}, path.Join(libs.LogDir(), "./debug.log"))
 	DebugLogger.SetLogPrefix("log_prefix")
 
 	ErrorLogger = NewLogger(&Options{
+		Level:       "error",
 		Rolling:     DAILY,
 		TimesFormat: TIMESECOND,
 	}, path.Join(libs.LogDir(), "./error.log"))
 	ErrorLogger.SetLogPrefix("log_prefix")
 
 	InfoLogger = NewLogger(&Options{
+		Level:       "info",
 		Rolling:     DAILY,
 		TimesFormat: TIMESECOND,
 	}, path.Join(libs.LogDir(), "./info.log"))

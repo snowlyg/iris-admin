@@ -1,6 +1,8 @@
 loglevel: debug # 日志级别 info debug disable error fatal warn 等等
 host: 127.0.0.1 # host 地址
 port: 80
+maxsize: 1024  # 文件上传限制
+pprof: false #  http://localhost:8086/debug/pprof/heap ...
 casbin:
   prefix: blog
   path: /Users/snowlyg/go/src/github.com/snowlyg/blog/rbac_model.conf # go run main.go 运行必须指定路径

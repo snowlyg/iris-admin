@@ -15,6 +15,7 @@ var Config = struct {
 	Host     string `env:"Host" default:"127.0.0.1" `
 	Port     int64  `env:"Port" default:"80"`
 	MaxSize  int64  `env:"MaxSize" default:""`
+	Pprof    bool   `env:"Pprof" default:"false"`
 	Cache    struct {
 		Driver string `env:"CacheDriver" default:"local"`
 	}

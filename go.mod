@@ -9,7 +9,6 @@ require (
 	github.com/casbin/casbin/v2 v2.19.2
 	github.com/casbin/gorm-adapter/v3 v3.0.4
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
-	github.com/fatih/color v1.10.0
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.3.0
@@ -21,7 +20,6 @@ require (
 	github.com/jameskeane/bcrypt v0.0.0-20120420032655-c3cd44c1e20f
 	github.com/jinzhu/configor v1.2.0
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
-	github.com/k0kubun/go-ansi v0.0.0-20180517002512-3bf9e2903213
 	github.com/kataras/iris/v12 v12.2.0-alpha.0.20201012125253-8e51a296b968
 	github.com/manveru/gobdd v0.0.0-20131210092515-f1a17fdd710b // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
@@ -34,7 +32,6 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.8.1
 	github.com/qiniu/api.v7/v7 v7.4.1
-	github.com/schollz/progressbar/v3 v3.7.2
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect

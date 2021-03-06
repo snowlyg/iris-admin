@@ -13,10 +13,7 @@
 主分支：
 [http://irisadminapi.snowlyg.com](http://irisadminapi.snowlyg.com)
 
-blog 分支:
-[http://www.snowlyg.com](http://www.snowlyg.com) 
-
-[IRIS V12 中文文档](https://www.snowlyg.com/chapter/1)
+[IRIS V12 中文文档](https://github.com/snowlyg/iris/wiki)
 
 
 账号/密码 ： username/123456
@@ -27,9 +24,9 @@ blog 分支:
 
 #### 项目开发过程详解
 
-1.[Iris-go 项目登陆 API 构建细节实现过程](https://www.snowlyg.com/#/detail/1)
+1.[Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/posts/iris-go-api-1/)
 
-2.[iris + casbin 从陌生到学会使用的过程](https://www.snowlyg.com/#/detail/2)
+2.[iris + casbin 从陌生到学会使用的过程](http://localhost:1313/posts/iris-go-api-2/)
 
 ---
 

@@ -5,7 +5,6 @@
     <a href="https://goreportcard.com/report/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
     <a href="https://godoc.org/github.com/snowlyg/IrisAdminApi"><img src="https://godoc.org/github.com/snowlyg/IrisAdminApi?status.svg" alt="GoDoc"></a>
     <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
-    <h5 align="center">IrisAdmin</h5>
 </div>
 
 > 简单项目仅供学习，欢迎指点！
@@ -13,17 +12,15 @@
 [IRIS V12 中文文档](https://www.snowlyg.com/chapter/1)
 
 
-账号/密码 ： username/123456
-
 ###### `Iris-go` 学习交流 QQ 群 ：`676717248`
 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
 ---
 
 #### 项目开发过程详解
 
-1.[Iris-go 项目登陆 API 构建细节实现过程](https://www.snowlyg.com/#/detail/1)
+1.[Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/posts/iris-go-api-1/)
 
-2.[iris + casbin 从陌生到学会使用的过程](https://www.snowlyg.com/#/detail/2)
+2.[iris + casbin 从陌生到学会使用的过程](http://localhost:1313/posts/iris-go-api-2/)
 
 ---
 

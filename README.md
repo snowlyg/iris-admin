@@ -9,13 +9,6 @@
 </div>
 
 > 简单项目仅供学习，欢迎指点！
->
-#### 演示地址
-主分支：
-[http://irisadminapi.snowlyg.com](http://irisadminapi.snowlyg.com)
-
-blog 分支:
-[http://www.snowlyg.com](http://www.snowlyg.com) 
 
 [IRIS V12 中文文档](https://www.snowlyg.com/chapter/1)
 

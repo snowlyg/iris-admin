@@ -54,6 +54,7 @@ cp application.example.yml application.yml
 - 运行项目
 >如果想使用 `go run main.go --config ` 命令运行,注意不用 --config 指定配置路径，将无法加载配置文件
 ```
+# your_config_path 指定配置文件绝对路径
  go run main.go --config your_config_path
 ```
 
@@ -70,6 +71,7 @@ air
 - 填充数据, 注意配置文件同项目配置文件，权限数据位于 tools/seed/data
 ```
 go build -o seed tools/seed/main.go 
+# youer_seed_data_path 指定目录即可
 ./seed --config your_config_path --path youer_seed_data_path
 ```
 

@@ -18,9 +18,9 @@
 
 #### 项目开发过程详解
 
-1.[Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/posts/iris-go-api-1/)
+1.[Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/iris-go-api-1/)
 
-2.[iris + casbin 从陌生到学会使用的过程](http://localhost:1313/posts/iris-go-api-2/)
+2.[iris + casbin 从陌生到学会使用的过程](https://blog.snowlyg.com/iris-go-api-2/)
 
 ---
 

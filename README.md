@@ -75,6 +75,9 @@ go build -o seed tools/seed/main.go
 ./seed --config your_config_path --path youer_seed_data_path
 ```
 
+#### 报错 Error 1071: Specified key was too long; max key length is 1000 bytes
+- 修改数据库引擎为 InnoDB
+
 #### postman 接口
 ```text
 https://www.getpostman.com/collections/048078cdfd16667352b0

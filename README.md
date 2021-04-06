@@ -9,7 +9,7 @@
 
 > 简单项目仅供学习，欢迎指点！
 
-[IRIS V12 中文文档](https://www.snowlyg.com/chapter/1)
+[IRIS V12 中文文档](https://github.com/snowlyg/iris/wiki)
 
 
 ###### `Iris-go` 学习交流 QQ 群 ：`676717248`

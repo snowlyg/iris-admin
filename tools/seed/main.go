@@ -3,6 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"math/rand"
+	"os"
+	"path/filepath"
+	"time"
+
 	"github.com/jinzhu/configor"
 	"github.com/snowlyg/blog/application/libs/easygorm"
 	"github.com/snowlyg/blog/application/models"
@@ -10,10 +15,6 @@ import (
 	"github.com/snowlyg/blog/service/dao/duser"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"math/rand"
-	"os"
-	"path/filepath"
-	"time"
 
 	"github.com/azumads/faker"
 	"github.com/snowlyg/blog/application/libs"
@@ -83,7 +84,6 @@ func main() {
 			&models.User{},
 			&models.Role{},
 			&models.Permission{},
-			&models.Config{},
 			&models.Oplog{},
 		},
 	})
@@ -245,7 +245,6 @@ func AutoMigrates() {
 		&models.User{},
 		&models.Role{},
 		&models.Permission{},
-		&models.Config{},
 	}); err != nil {
 		fmt.Println(fmt.Sprintf("seeder data  auto migrate  err：%+v\n", err))
 		return

@@ -141,13 +141,6 @@ func (s *HttpServer) RouteInit() {
 					permissions.Post("/{id:uint}", controllers.UpdatePermission).Name = "编辑权限"
 					permissions.Delete("/{id:uint}", controllers.DeletePermission).Name = "删除权限"
 				})
-				//admin.PartyFunc("/configs", func(configs iris.Party) {
-				//	configs.Get("/", controllers.GetAllConfigs).Name = "系统配置列表"
-				//	configs.Get("/{key:string}", controllers.GetConfig).Name = "系统配置详情"
-				//	configs.Post("/", controllers.CreateConfig).Name = "创建系统配置"
-				//	configs.Post("/{id:uint}", controllers.UpdateConfig).Name = "编辑系统配置"
-				//	configs.Delete("/{id:uint}", controllers.DeleteConfig).Name = "删除系统配置"
-				//})
 			})
 		}
 	}

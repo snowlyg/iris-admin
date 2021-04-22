@@ -3,10 +3,11 @@ package drole
 import (
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/snowlyg/blog/application/libs/easygorm"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/models"
-	"strconv"
 )
 
 const modelName = "角色管理"
@@ -40,7 +41,7 @@ func (r *RoleResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 	var roles []*RoleResponse
 	db := easygorm.GetEasyGormDb().Model(Model())
 	if len(name) > 0 {
-		db = db.Where("name", "like", fmt.Sprintf("%%%s%%", name))
+		db = db.Where("name LIKE ?", fmt.Sprintf("%%%s%%", name))
 	}
 	err := db.Count(&count).Error
 	if err != nil {

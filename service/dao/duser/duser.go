@@ -3,8 +3,9 @@ package duser
 import (
 	"errors"
 	"fmt"
-	"github.com/snowlyg/blog/service/dao/drole"
 	"strconv"
+
+	"github.com/snowlyg/blog/service/dao/drole"
 
 	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/easygorm"
@@ -50,7 +51,7 @@ func (u *UserResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 	var users []*UserListResponse
 	db := easygorm.GetEasyGormDb().Model(Model())
 	if len(name) > 0 {
-		db = db.Where("name", "like", fmt.Sprintf("%%%s%%", name))
+		db = db.Where("name LIKE ?", fmt.Sprintf("%%%s%%", name))
 	}
 	err := db.Count(&count).Error
 	if err != nil {

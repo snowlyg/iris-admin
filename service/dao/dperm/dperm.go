@@ -3,6 +3,7 @@ package dperm
 import (
 	"errors"
 	"fmt"
+
 	"github.com/snowlyg/blog/application/libs/easygorm"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/models"
@@ -39,7 +40,7 @@ func (p *PermResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 	var perms []*PermResponse
 	db := easygorm.GetEasyGormDb().Model(p.Model())
 	if len(name) > 0 {
-		db = db.Where("name", "like", fmt.Sprintf("%%%s%%", name))
+		db = db.Where("name LIKE ?", fmt.Sprintf("%%%s%%", name))
 	}
 	err := db.Count(&count).Error
 	if err != nil {

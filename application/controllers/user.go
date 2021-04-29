@@ -106,7 +106,6 @@ func CreateUser(ctx iris.Context) {
 	}
 
 	ctx.JSON(response.NewResponse(response.NoErr.Code, userReq, response.NoErr.Msg))
-	return
 }
 
 func UpdateUser(ctx iris.Context) {
@@ -136,7 +135,6 @@ func UpdateUser(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
-	return
 }
 
 func DeleteUser(ctx iris.Context) {
@@ -147,7 +145,6 @@ func DeleteUser(ctx iris.Context) {
 	}
 
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
-	return
 }
 
 // GetUsers
@@ -164,5 +161,4 @@ func GetUsers(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, list, response.NoErr.Msg))
-	return
 }

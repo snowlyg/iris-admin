@@ -1,15 +1,16 @@
 package controllers
 
 import (
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/libs/response"
 	"github.com/snowlyg/blog/service/dao"
 	"github.com/snowlyg/blog/service/dao/drole"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func GetRole(ctx iris.Context) {
@@ -51,7 +52,6 @@ func CreateRole(ctx iris.Context) {
 	}
 
 	ctx.JSON(response.NewResponse(response.NoErr.Code, roleReq, response.NoErr.Msg))
-	return
 }
 
 func UpdateRole(ctx iris.Context) {
@@ -81,7 +81,6 @@ func UpdateRole(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
-	return
 }
 
 func DeleteRole(ctx iris.Context) {
@@ -110,22 +109,4 @@ func GetAllRoles(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, list, response.NoErr.Msg))
-	return
 }
-
-//func rolesTransform(roles []*models.Role) []*transformer.Role {
-//	var rs []*transformer.Role
-//	for _, role := range roles {
-//		r := roleTransform(role)
-//		rs = append(rs, r)
-//	}
-//	return rs
-//}
-
-//func roleTransform(role *models.Role) *transformer.Role {
-//	r := &transformer.Role{}
-//	g := gf.NewTransform(r, role, time.RFC3339)
-//	_ = g.Transformer()
-//	r.Perms = permsTransform(role.RolePermissions())
-//	return r
-//}

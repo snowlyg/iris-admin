@@ -9,7 +9,6 @@ import (
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/service/auth"
-	"github.com/snowlyg/blog/service/dao"
 )
 
 // Login 登录
@@ -43,12 +42,6 @@ func Login(id uint64) (string, error) {
 		return "", err
 	}
 
-	err = dao.CreateOplog("认证", dao.ActionLogin, "", uint(id))
-	if err != nil {
-		logging.ErrorLogger.Errorf("login add oplog get err ", err)
-		return "", err
-	}
-
 	return tokenString, nil
 }
 
@@ -56,19 +49,9 @@ func Login(id uint64) (string, error) {
 func Logout(token string) error {
 	authDriver := auth.NewAuthDriver()
 	defer authDriver.Close()
-	id, err := authDriver.GetAuthId(token)
-	if err != nil {
-		logging.ErrorLogger.Errorf("logout get auth id err", err)
-		return err
-	}
-	err = authDriver.DelUserTokenCache(token)
+	err := authDriver.DelUserTokenCache(token)
 	if err != nil {
 		logging.ErrorLogger.Errorf("logout del user token err", err)
-		return err
-	}
-	err = dao.CreateOplog("认证", dao.ActionLogout, "", id)
-	if err != nil {
-		logging.ErrorLogger.Errorf("logout add oplog get err ", err)
 		return err
 	}
 	return nil

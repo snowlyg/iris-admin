@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/snowlyg/blog/service/dao/duser"
 	"strings"
+
+	"github.com/snowlyg/blog/service/dao"
+	"github.com/snowlyg/blog/service/dao/duser"
 
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/jameskeane/bcrypt"
@@ -73,39 +75,64 @@ func Login(ctx iris.Context) {
 		return
 	}
 
+	record := models.Oplog{
+		Ip:     ctx.RemoteAddr(),
+		Method: ctx.Method(),
+		Path:   ctx.Path(),
+		Agent:  ctx.Request().UserAgent(),
+		Status: ctx.GetStatusCode(),
+		Body:   "登录后台",
+		UserID: user.Id,
+	}
+
+	if err := dao.CreateOplog(record); err != nil {
+		logging.ErrorLogger.Errorf("create operation record error:", err)
+	}
+
 	logging.DebugLogger.Debugf("user token %s", token)
 
 	ctx.JSON(response.NewResponse(response.NoErr.Code, &Token{AccessToken: token}, response.NoErr.Msg))
-	return
 }
 
 func Logout(ctx iris.Context) {
-	value := ctx.Values().Get("jwt").(*jwt.Token)
-	err := duser.Logout(value.Raw)
+	jwt, ok := ctx.Values().Get("jwt").(*jwt.Token)
+	if !ok {
+		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, response.AuthErr.Msg))
+		ctx.StopExecution()
+		return
+	}
+	err := duser.Logout(jwt.Raw)
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
-	return
 }
 
 func Expire(ctx iris.Context) {
-	value := ctx.Values().Get("jwt").(*jwt.Token)
-	if err := duser.Expire(value.Raw); err != nil {
+	jwt, ok := ctx.Values().Get("jwt").(*jwt.Token)
+	if !ok {
+		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, response.AuthErr.Msg))
+		ctx.StopExecution()
+		return
+	}
+	if err := duser.Expire(jwt.Raw); err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
-	return
 }
 
 func Clear(ctx iris.Context) {
-	value := ctx.Values().Get("jwt").(*jwt.Token)
-	if err := duser.Clear(value.Raw); err != nil {
+	jwt, ok := ctx.Values().Get("jwt").(*jwt.Token)
+	if !ok {
+		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, response.AuthErr.Msg))
+		ctx.StopExecution()
+		return
+	}
+	if err := duser.Clear(jwt.Raw); err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
-	return
 }

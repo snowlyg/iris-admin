@@ -112,7 +112,7 @@ func (s *HttpServer) RouteInit() {
 			}
 			v1.Post("/admin/login", controllers.Login)
 			v1.PartyFunc("/admin", func(admin iris.Party) { //casbin for gorm                                                   // <- IMPORTANT, register the middleware.
-				admin.Use(middleware.JwtHandler().Serve, middleware.New().ServeHTTP) //登录验证
+				admin.Use(middleware.JwtHandler().Serve, middleware.New().ServeHTTP, middleware.OperationRecord()) //登录验证
 				admin.Get("/logout", controllers.Logout).Name = "退出"
 				admin.Get("/expire", controllers.Expire).Name = "刷新 token"
 				admin.Get("/clear", controllers.Clear).Name = "清空 token"

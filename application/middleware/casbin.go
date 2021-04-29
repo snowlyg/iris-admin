@@ -3,6 +3,8 @@ package middleware
 import (
 	"errors"
 	"fmt"
+	"net/http"
+
 	"github.com/casbin/casbin/v2"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
@@ -10,7 +12,6 @@ import (
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/libs/response"
 	"github.com/snowlyg/blog/service/dao/duser"
-	"net/http"
 )
 
 func New() *Casbin {
@@ -18,8 +19,13 @@ func New() *Casbin {
 }
 
 func (c *Casbin) ServeHTTP(ctx iris.Context) {
-	token := ctx.Values().Get("jwt").(*jwt.Token).Raw
-	sess, err := duser.Check(token)
+	jwt, ok := ctx.Values().Get("jwt").(*jwt.Token)
+	if !ok {
+		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, response.AuthErr.Msg))
+		ctx.StopExecution()
+		return
+	}
+	sess, err := duser.Check(jwt.Raw)
 	if err != nil {
 		_, _ = ctx.JSON(response.NewResponse(response.AuthErr.Code, nil, response.AuthErr.Msg))
 		ctx.StopExecution()

@@ -1,15 +1,16 @@
 package controllers
 
 import (
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/blog/application/libs"
 	"github.com/snowlyg/blog/application/libs/logging"
 	"github.com/snowlyg/blog/application/libs/response"
 	"github.com/snowlyg/blog/service/dao"
 	"github.com/snowlyg/blog/service/dao/dperm"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func GetPermission(ctx iris.Context) {
@@ -52,7 +53,6 @@ func CreatePermission(ctx iris.Context) {
 	}
 
 	ctx.JSON(response.NewResponse(response.NoErr.Code, permReq, response.NoErr.Msg))
-	return
 }
 
 func UpdatePermission(ctx iris.Context) {
@@ -82,7 +82,6 @@ func UpdatePermission(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
-	return
 }
 
 func DeletePermission(ctx iris.Context) {
@@ -94,7 +93,6 @@ func DeletePermission(ctx iris.Context) {
 	}
 
 	ctx.JSON(response.NewResponse(response.NoErr.Code, nil, response.NoErr.Msg))
-	return
 }
 
 func GetAllPermissions(ctx iris.Context) {
@@ -111,21 +109,4 @@ func GetAllPermissions(ctx iris.Context) {
 		return
 	}
 	ctx.JSON(response.NewResponse(response.NoErr.Code, list, response.NoErr.Msg))
-	return
 }
-
-////func permsTransform(perms []*models.Permission) []*transformer.Permission {
-////	var rs []*transformer.Permission
-////	for _, perm := range perms {
-////		r := permTransform(perm)
-////		rs = append(rs, r)
-////	}
-////	return rs
-////}
-////
-////func permTransform(perm *models.Permission) *transformer.Permission {
-////	r := &transformer.Permission{}
-////	g := gf.NewTransform(r, perm, time.RFC3339)
-////	_ = g.Transformer()
-////	return r
-////}

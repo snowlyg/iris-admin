@@ -98,7 +98,7 @@ func getRoles(users []*UserListResponse) {
 }
 
 func (u *UserResponse) FindByUserName(username string) error {
-	err := easygorm.GetEasyGormDb().Model(Model()).Where("username = ?", username).Find(u).Error
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("username = ?", username).First(u).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find user by username ", username, " err ", err)
 		return err
@@ -129,7 +129,7 @@ func (u *UserResponse) Create(object map[string]interface{}) error {
 }
 
 func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
-	err := u.Find(id)
+	err := u.First(id)
 	if err != nil {
 		return err
 	}
@@ -155,8 +155,8 @@ func (u *UserResponse) Update(id uint, object map[string]interface{}) error {
 	return nil
 }
 
-func (u *UserResponse) Find(id uint) error {
-	err := easygorm.GetEasyGormDb().Model(Model()).Where("id = ?", id).Find(u).Error
+func (u *UserResponse) First(id uint) error {
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("id = ?", id).First(u).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find user err ", err)
 		return err
@@ -208,5 +208,5 @@ func AddRoleForUser(user *models.User) error {
 }
 
 func (u *UserResponse) Profile(id uint) error {
-	return u.Find(id)
+	return u.First(id)
 }

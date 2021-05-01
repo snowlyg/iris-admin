@@ -55,7 +55,7 @@ cp application.example.yml application.yml
 >如果想使用 `go run main.go --config ` 命令运行,注意不用 --config 指定配置路径，将无法加载配置文件
 ```
 # --config 指定配置文件绝对路径
- go run main.go --config /Users/snowlyg/go/src/github.com/snowlyg/blog/application.yml
+ go run main.go --config /Users/snowlyg/go/src/github.com/snowlyg/IrisAdminApi/application.yml
 ```
 
 >推荐使用 air 热编译工具
@@ -72,7 +72,7 @@ air
 ```
 go build -o seed tools/seed/main.go 
 #  --path 指定目录即可
-./seed --config /Users/snowlyg/go/src/github.com/snowlyg/blog/application.yml --path /Users/snowlyg/go/src/github.com/snowlyg/blog/tools/seed/data
+./seed --config /Users/snowlyg/go/src/github.com/snowlyg/IrisAdminApi/application.yml --path /Users/snowlyg/go/src/github.com/snowlyg/IrisAdminApi/tools/seed/data
 ```
 
 #### 报错 Error 1071: Specified key was too long; max key length is 1000 bytes

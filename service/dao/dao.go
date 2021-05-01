@@ -11,16 +11,6 @@ import (
 	"github.com/snowlyg/blog/service/auth"
 )
 
-const (
-	ActionList   = "列表查询"
-	ActionOne    = "单个查询"
-	ActionAdd    = "添加"
-	ActionUpdate = "更新"
-	ActionDel    = "删除"
-	ActionLogin  = "登录"
-	ActionLogout = "登出"
-)
-
 // GetAuthId
 func GetAuthId(ctx iris.Context) (uint, error) {
 	authDriver := auth.NewAuthDriver()
@@ -77,9 +67,9 @@ func Update(d Dao, ctx iris.Context, object map[string]interface{}) error {
 	return nil
 }
 
-func Find(d Dao, ctx iris.Context) error {
+func First(d Dao, ctx iris.Context) error {
 	id, _ := getId(ctx)
-	err := d.Find(id)
+	err := d.First(id)
 	if err != nil {
 		logging.ErrorLogger.Errorf("dao find by id  get err ", err)
 		return err

@@ -58,7 +58,7 @@ func (r *RoleResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 }
 
 func (r *RoleResponse) FindByName(name string) error {
-	err := easygorm.GetEasyGormDb().Model(Model()).Where("name = ?", name).Find(r).Error
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("name = ?", name).First(r).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find role by name get err ", err)
 		return err
@@ -88,7 +88,7 @@ func (r *RoleResponse) Create(object map[string]interface{}) error {
 	return nil
 }
 func (r *RoleResponse) Update(id uint, object map[string]interface{}) error {
-	err := r.Find(id)
+	err := r.First(id)
 	if err != nil {
 		return err
 	}
@@ -114,8 +114,8 @@ func (r *RoleResponse) Update(id uint, object map[string]interface{}) error {
 	return nil
 }
 
-func (r *RoleResponse) Find(id uint) error {
-	err := easygorm.GetEasyGormDb().Model(Model()).Where("id = ?", id).Find(r).Error
+func (r *RoleResponse) First(id uint) error {
+	err := easygorm.GetEasyGormDb().Model(Model()).Where("id = ?", id).First(r).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find role by id get  err ", err)
 		return err

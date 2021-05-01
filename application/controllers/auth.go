@@ -49,8 +49,8 @@ func Login(ctx iris.Context) {
 		return
 	}
 
-	user := User{Username: loginReq.Username}
-	err := easygorm.GetEasyGormDb().Model(models.User{}).Find(&user).Error
+	user := User{}
+	err := easygorm.GetEasyGormDb().Model(models.User{}).Where("username = ?", loginReq.Username).First(&user).Error
 	if err != nil {
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))
 		return

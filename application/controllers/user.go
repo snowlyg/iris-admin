@@ -66,7 +66,7 @@ func ChangeAvatar(ctx iris.Context) {
 
 func GetUser(ctx iris.Context) {
 	info := duser.UserResponse{}
-	err := dao.Find(&info, ctx)
+	err := dao.First(&info, ctx)
 	if err != nil {
 		logging.ErrorLogger.Errorf("get user get err ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))

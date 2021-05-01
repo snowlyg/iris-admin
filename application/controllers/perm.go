@@ -15,7 +15,7 @@ import (
 
 func GetPermission(ctx iris.Context) {
 	info := dperm.PermResponse{}
-	err := dao.Find(&info, ctx)
+	err := dao.First(&info, ctx)
 	if err != nil {
 		logging.ErrorLogger.Errorf("get perm get err ", err)
 		ctx.JSON(response.NewResponse(response.SystemErr.Code, nil, err.Error()))

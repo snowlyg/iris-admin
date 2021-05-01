@@ -57,7 +57,7 @@ func (p *PermResponse) All(name, sort, orderBy string, page, pageSize int) (map[
 }
 
 func (p *PermResponse) FindByNameAndAct(name, act string) error {
-	err := easygorm.GetEasyGormDb().Model(p.Model()).Where("name = ?", name).Where("act = ?", act).Find(p).Error
+	err := easygorm.GetEasyGormDb().Model(p.Model()).Where("name = ?", name).Where("act = ?", act).First(p).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find perm by name get err ", err)
 		return err
@@ -81,7 +81,7 @@ func (p *PermResponse) Create(object map[string]interface{}) error {
 }
 
 func (p *PermResponse) Update(id uint, object map[string]interface{}) error {
-	err := p.Find(id)
+	err := p.First(id)
 	if err != nil {
 		logging.ErrorLogger.Errorf("find perm by id get err ", err)
 		return err
@@ -125,8 +125,8 @@ func (p *PermResponse) checkNameAndAct(object map[string]interface{}) error {
 	return nil
 }
 
-func (p *PermResponse) Find(id uint) error {
-	err := easygorm.GetEasyGormDb().Model(p.Model()).Where("id = ?", id).Find(p).Error
+func (p *PermResponse) First(id uint) error {
+	err := easygorm.GetEasyGormDb().Model(p.Model()).Where("id = ?", id).First(p).Error
 	if err != nil {
 		logging.ErrorLogger.Errorf("find perm err ", err)
 		return err

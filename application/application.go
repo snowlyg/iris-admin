@@ -27,7 +27,6 @@ type HttpServer struct {
 
 func NewServer(config string) *HttpServer {
 	app := iris.New()
-	app.Logger().SetLevel(libs.Config.LogLevel)
 	iris.RegisterOnInterrupt(func() {
 		sql, _ := easygorm.GetEasyGormDb().DB()
 		sql.Close()
@@ -39,6 +38,8 @@ func NewServer(config string) *HttpServer {
 	}
 
 	httpServer._Init()
+	// httpServer 初始化后才可以加载到配置文件，感谢 @ren-ming  https://github.com/ren-ming 的提醒
+	app.Logger().SetLevel(libs.Config.LogLevel)
 	return httpServer
 }
 

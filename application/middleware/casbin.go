@@ -8,10 +8,10 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/blog/application/libs/easygorm"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/application/libs/response"
-	"github.com/snowlyg/blog/service/dao/duser"
+	"github.com/snowlyg/iris-admin/application/libs/easygorm"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
+	"github.com/snowlyg/iris-admin/application/libs/response"
+	"github.com/snowlyg/iris-admin/service/dao/duser"
 )
 
 func New() *Casbin {

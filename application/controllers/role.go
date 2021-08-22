@@ -6,11 +6,11 @@ import (
 	"time"
 
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/blog/application/libs"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/application/libs/response"
-	"github.com/snowlyg/blog/service/dao"
-	"github.com/snowlyg/blog/service/dao/drole"
+	"github.com/snowlyg/iris-admin/application/libs"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
+	"github.com/snowlyg/iris-admin/application/libs/response"
+	"github.com/snowlyg/iris-admin/service/dao"
+	"github.com/snowlyg/iris-admin/service/dao/drole"
 )
 
 func GetRole(ctx iris.Context) {

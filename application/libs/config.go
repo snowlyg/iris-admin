@@ -2,12 +2,13 @@ package libs
 
 import (
 	"fmt"
-	"github.com/jinzhu/configor"
-	"github.com/snowlyg/blog/application/libs/easygorm"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 	"path/filepath"
 	"strings"
+
+	"github.com/jinzhu/configor"
+	"github.com/snowlyg/iris-admin/application/libs/easygorm"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 var Config = struct {

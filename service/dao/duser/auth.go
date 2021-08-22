@@ -7,8 +7,8 @@ import (
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/iris-contrib/middleware/jwt"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/service/auth"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
+	"github.com/snowlyg/iris-admin/service/auth"
 )
 
 // Login 登录

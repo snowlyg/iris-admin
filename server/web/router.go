@@ -1,96 +1,25 @@
-package application
+package web
 
 import (
-	stdContext "context"
-	"fmt"
 	"path/filepath"
 	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/pprof"
 	"github.com/kataras/iris/v12/middleware/rate"
-	"github.com/snowlyg/blog/application/controllers"
-	"github.com/snowlyg/blog/application/libs"
-	"github.com/snowlyg/blog/application/libs/easygorm"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/application/middleware"
-	"github.com/snowlyg/blog/service/cache"
+	"github.com/snowlyg/iris-admin/application/controllers"
+	"github.com/snowlyg/iris-admin/application/libs"
+	"github.com/snowlyg/iris-admin/application/middleware"
 )
 
-// HttpServer
-type HttpServer struct {
-	ConfigPath string
-	App        *iris.Application
-	Models     []interface{}
-	Status     bool
-}
-
-func NewServer(config string) *HttpServer {
-	app := iris.New()
-	iris.RegisterOnInterrupt(func() {
-		sql, _ := easygorm.GetEasyGormDb().DB()
-		sql.Close()
-	})
-	httpServer := &HttpServer{
-		ConfigPath: config,
-		App:        app,
-		Status:     false,
-	}
-
-	httpServer._Init()
-	// httpServer 初始化后才可以加载到配置文件，感谢 @ren-ming  https://github.com/ren-ming 的提醒
-	app.Logger().SetLevel(libs.Config.LogLevel)
-	return httpServer
-}
-
-// Start
-func (s *HttpServer) Start() error {
-	if err := s.App.Run(
-		iris.Addr(fmt.Sprintf("%s:%d", libs.Config.Host, libs.Config.Port)),
-		iris.WithoutServerError(iris.ErrServerClosed),
-		iris.WithOptimizations,
-		iris.WithTimeFormat(time.RFC3339),
-	); err != nil {
-		return err
-	}
-	s.Status = true
-	return nil
-}
-
-// Start close the server at 3-6 seconds
-func (s *HttpServer) Stop() {
-	go func() {
-		time.Sleep(3 * time.Second)
-		ctx, cancel := stdContext.WithTimeout(stdContext.TODO(), 3*time.Second)
-		defer cancel()
-		s.App.Shutdown(ctx)
-		s.Status = false
-	}()
-}
-
-func (s *HttpServer) _Init() error {
-	err := libs.InitConfig(s.ConfigPath)
-	if err != nil {
-		logging.ErrorLogger.Errorf("系统配置初始化失败:", err)
-		return err
-	}
-	if libs.Config.Cache.Driver == "redis" {
-		cache.InitRedisCluster(libs.GetRedisUris(), libs.Config.Redis.Password)
-	}
-	err = easygorm.Init(libs.GetGormConfig())
-	if err != nil {
-		logging.ErrorLogger.Errorf("数据库初始化失败:", err)
-		return err
-	}
-	s.RouteInit()
-	return nil
-}
-
-// RouteInit
-func (s *HttpServer) RouteInit() {
-	s.App.UseRouter(middleware.CrsAuth())
-	app := s.App.Party("/").AllowMethods(iris.MethodOptions)
+func (ws *WebServer) InitRouter() {
+	ws.app.UseRouter(middleware.CrsAuth())
+	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
+
+		for _, module := range ws.modules {
+			ws.app.PartyFunc(module.relativePath, module.handler)
+		}
 
 		// 开启 pprof 调试
 		if libs.Config.Pprof {

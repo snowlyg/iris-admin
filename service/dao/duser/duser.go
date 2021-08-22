@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/snowlyg/blog/service/dao/drole"
+	"github.com/snowlyg/iris-admin/service/dao/drole"
 
-	"github.com/snowlyg/blog/application/libs"
-	"github.com/snowlyg/blog/application/libs/easygorm"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/application/models"
+	"github.com/snowlyg/iris-admin/application/libs"
+	"github.com/snowlyg/iris-admin/application/libs/easygorm"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
+	"github.com/snowlyg/iris-admin/application/models"
 )
 
 const ModelName = "用户管理"

@@ -9,15 +9,15 @@ import (
 	"time"
 
 	"github.com/jinzhu/configor"
-	"github.com/snowlyg/blog/application/libs/easygorm"
-	"github.com/snowlyg/blog/application/models"
-	"github.com/snowlyg/blog/service/dao/drole"
-	"github.com/snowlyg/blog/service/dao/duser"
+	"github.com/snowlyg/iris-admin/application/libs/easygorm"
+	"github.com/snowlyg/iris-admin/application/models"
+	"github.com/snowlyg/iris-admin/service/dao/drole"
+	"github.com/snowlyg/iris-admin/service/dao/duser"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 
 	"github.com/azumads/faker"
-	"github.com/snowlyg/blog/application/libs"
+	"github.com/snowlyg/iris-admin/application/libs"
 )
 
 var Fake *faker.Faker

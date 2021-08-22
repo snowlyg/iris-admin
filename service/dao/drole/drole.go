@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/snowlyg/blog/application/libs/easygorm"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/application/models"
+	"github.com/snowlyg/iris-admin/application/libs/easygorm"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
+	"github.com/snowlyg/iris-admin/application/models"
 )
 
 const modelName = "角色管理"

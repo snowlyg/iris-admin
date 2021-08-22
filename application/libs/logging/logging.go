@@ -3,7 +3,7 @@ package logging
 import (
 	"path"
 
-	"github.com/snowlyg/blog/application/libs"
+	"github.com/snowlyg/iris-admin/application/libs"
 )
 
 var DebugLogger *Logger

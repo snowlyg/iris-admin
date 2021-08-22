@@ -17,11 +17,11 @@ func TestInitSqlite(t *testing.T) {
 				},
 			},
 			Casbin: &Casbin{
-				Path:   "/Users/snowlyg/go/src/github.com/snowlyg/blog/rbac_model.conf",
+				Path:   "/Users/snowlyg/go/src/github.com/snowlyg/iris-admin/rbac_model.conf",
 				Prefix: "casbin",
 			},
 			Adapter: "sqlite3", // 类型
-			Conn:    "/Users/snowlyg/go/src/github.com/snowlyg/blog/test.db",
+			Conn:    "/Users/snowlyg/go/src/github.com/snowlyg/iris-admin/test.db",
 		})
 
 		if err != nil {
@@ -66,11 +66,11 @@ func TestMigrate(t *testing.T) {
 				},
 			},
 			Casbin: &Casbin{
-				Path:   "/Users/snowlyg/go/src/github.com/snowlyg/blog/rbac_model.conf",
+				Path:   "/Users/snowlyg/go/src/github.com/snowlyg/iris-admin/rbac_model.conf",
 				Prefix: "casbin",
 			},
 			Adapter: "sqlite3", // 类型
-			Conn:    "/Users/snowlyg/go/src/github.com/snowlyg/blog/test.db",
+			Conn:    "/Users/snowlyg/go/src/github.com/snowlyg/iris-admin/test.db",
 		})
 
 		if err != nil {

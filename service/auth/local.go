@@ -2,12 +2,13 @@ package auth
 
 import (
 	"errors"
-	"github.com/patrickmn/go-cache"
-	"github.com/snowlyg/blog/application/libs"
-	"github.com/snowlyg/blog/application/libs/logging"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/patrickmn/go-cache"
+	"github.com/snowlyg/iris-admin/application/libs"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
 )
 
 type tokens []string

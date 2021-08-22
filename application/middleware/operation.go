@@ -7,9 +7,9 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/application/models"
-	"github.com/snowlyg/blog/service/dao"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
+	"github.com/snowlyg/iris-admin/application/models"
+	"github.com/snowlyg/iris-admin/service/dao"
 )
 
 func OperationRecord() iris.Handler {

@@ -5,10 +5,10 @@ import (
 
 	"github.com/iris-contrib/middleware/jwt"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/blog/application/libs/easygorm"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/application/models"
-	"github.com/snowlyg/blog/service/auth"
+	"github.com/snowlyg/iris-admin/application/libs/easygorm"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
+	"github.com/snowlyg/iris-admin/application/models"
+	"github.com/snowlyg/iris-admin/service/auth"
 )
 
 // GetAuthId

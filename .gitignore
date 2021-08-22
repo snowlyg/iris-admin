@@ -5,16 +5,10 @@
 *.out
 .air.conf
 coverage.txt
-application.yml
+config.yaml
 
 /cmd/
 /tmp/
 /views/
 /logs/
 /.idea/
-
-main
-main_lin
-seed
-
-

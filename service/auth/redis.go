@@ -1,14 +1,15 @@
 package auth
 
 import (
-	"github.com/gomodule/redigo/redis"
-	"github.com/pkg/errors"
-	"github.com/snowlyg/blog/application/libs"
-	"github.com/snowlyg/blog/application/libs/logging"
-	"github.com/snowlyg/blog/service/cache"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gomodule/redigo/redis"
+	"github.com/pkg/errors"
+	"github.com/snowlyg/iris-admin/application/libs"
+	"github.com/snowlyg/iris-admin/application/libs/logging"
+	"github.com/snowlyg/iris-admin/service/cache"
 )
 
 type RedisAuth struct {

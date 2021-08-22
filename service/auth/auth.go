@@ -1,6 +1,6 @@
 package auth
 
-import "github.com/snowlyg/blog/application/libs"
+import "github.com/snowlyg/iris-admin/application/libs"
 
 var authDriver Authentication
 

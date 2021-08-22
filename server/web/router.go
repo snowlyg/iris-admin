@@ -2,7 +2,7 @@ package web
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/application/middleware"
+	"github.com/snowlyg/iris-admin/middleware"
 )
 
 func (ws *WebServer) InitRouter() {

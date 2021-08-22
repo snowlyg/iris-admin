@@ -2,7 +2,6 @@ package web
 
 import (
 	stdContext "context"
-	"fmt"
 	"time"
 
 	"github.com/kataras/iris/v12"
@@ -52,7 +51,6 @@ func (ws *WebServer) Run() {
 	if ws.timeFormat == "" { // 默认 80
 		ws.timeFormat = time.RFC3339
 	}
-	fmt.Printf("listen on %s", ws.addr)
 	ws.InitRouter()
 	ws.app.Listen(
 		ws.addr,

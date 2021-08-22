@@ -43,6 +43,7 @@ system:
  addr: ""
  db-type: # 仅支持mysql
  cache-type:  # redis,local
+ time-format: "2006-01-02 15:04:05"
 zap:
  level: info
  format: console

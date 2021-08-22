@@ -1,4 +1,4 @@
-package pporf
+package debug
 
 import (
 	"github.com/kataras/iris/v12"
@@ -12,8 +12,9 @@ func Party() web.WebModule {
 		index.Get("/", func(ctx iris.Context) {
 			ctx.HTML("<h1>请点击<a href='/debug/pprof'>这里</a>进去调试页面")
 		})
-		index.Any("/debug/pprof", pprof.New())
-		index.Any("/debug/pprof/{action:path}", pprof.New())
+		p := pprof.New()
+		index.Any("/debug/pprof", p)
+		index.Any("/debug/pprof/{action:path}", p)
 	}
 	return web.NewModule("/debug", handler)
 }

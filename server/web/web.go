@@ -7,6 +7,7 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/snowlyg/iris-admin/g"
 )
 
 type WebServer struct {
@@ -20,6 +21,7 @@ type WebServer struct {
 
 func Init() *WebServer {
 	app := iris.New()
+	app.Logger().SetLevel(g.CONFIG.System.Level)
 	idleConnsClosed := make(chan struct{})
 	iris.RegisterOnInterrupt(func() { //优雅退出
 		timeout := 10 * time.Second
@@ -28,22 +30,18 @@ func Init() *WebServer {
 		app.Shutdown(ctx) // close all hosts
 		close(idleConnsClosed)
 	})
-	return &WebServer{app: app, idleConnsClosed: idleConnsClosed}
-}
-
-func (ws *WebServer) SetAddr(addr string) {
-	ws.addr = addr
+	return &WebServer{app: app, addr: g.CONFIG.System.Addr, timeFormat: g.CONFIG.System.TimeFormat, idleConnsClosed: idleConnsClosed}
 }
 
 func (ws *WebServer) GetAddr() string {
 	return ws.addr
 }
 
-func (ws *WebServer) AddModels(models []WebModule) {
-	ws.modules = append(ws.modules, models...)
+func (ws *WebServer) AddModule(module WebModule) {
+	ws.modules = append(ws.modules, module)
 }
 
-func (ws *WebServer) GetModels() []WebModule {
+func (ws *WebServer) GetModules() []WebModule {
 	return ws.modules
 }
 
@@ -55,6 +53,7 @@ func (ws *WebServer) Run() {
 		ws.timeFormat = time.RFC3339
 	}
 	fmt.Printf("listen on %s", ws.addr)
+	ws.InitRouter()
 	ws.app.Listen(
 		ws.addr,
 		iris.WithoutInterruptHandler,

@@ -3,6 +3,7 @@
 *.exe
 *.log
 *.out
+
 .air.conf
 coverage.txt
 config.yaml

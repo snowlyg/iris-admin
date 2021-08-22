@@ -4,9 +4,13 @@ import (
 	stdContext "context"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/cache"
+	"github.com/snowlyg/iris-admin/server/viper"
+	"github.com/snowlyg/iris-admin/server/zap"
 )
 
 type WebServer struct {
@@ -19,7 +23,12 @@ type WebServer struct {
 }
 
 func Init() *WebServer {
+	viper.Init()
+	zap.Init()
+	cache.Init()
+
 	app := iris.New()
+	app.Validator = validator.New() //参数验证
 	app.Logger().SetLevel(g.CONFIG.System.Level)
 	idleConnsClosed := make(chan struct{})
 	iris.RegisterOnInterrupt(func() { //优雅退出

@@ -8,9 +8,6 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/server/cache"
-	"github.com/snowlyg/iris-admin/server/viper"
-	"github.com/snowlyg/iris-admin/server/zap"
 )
 
 type WebServer struct {
@@ -23,10 +20,6 @@ type WebServer struct {
 }
 
 func Init() *WebServer {
-	viper.Init()
-	zap.Init()
-	cache.Init()
-
 	app := iris.New()
 	app.Validator = validator.New() //参数验证
 	app.Logger().SetLevel(g.CONFIG.System.Level)
@@ -60,6 +53,7 @@ func (ws *WebServer) Run() {
 	if ws.timeFormat == "" { // 默认 80
 		ws.timeFormat = time.RFC3339
 	}
+	ws.app.UseGlobal(ws.globalMiddlewares...)
 	ws.InitRouter()
 	ws.app.Listen(
 		ws.addr,

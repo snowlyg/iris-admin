@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Paginate
 func Paginate(db *gorm.DB, req ReqPaginate) (iris.Map, error) {
 	var count int64
 	var perms []*Response
@@ -65,6 +66,7 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 	return perm.ID, nil
 }
 
+// Update
 func Update(db *gorm.DB, id uint, req Request) error {
 	perm := Permission{BasePerission: req.BasePerission}
 	if !checkNameAndAct(req, id) {
@@ -78,14 +80,13 @@ func Update(db *gorm.DB, id uint, req Request) error {
 	return nil
 }
 
+// checkNameAndAct
 func checkNameAndAct(req Request, ids ...uint) bool {
 	_, err := FindByNameAndAct(database.Instance(), req.Name, req.Act, ids...)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return true
-	}
-	return false
+	return errors.Is(err, gorm.ErrRecordNotFound)
 }
 
+// FindById
 func FindById(db *gorm.DB, id uint) (Response, error) {
 	res := Response{}
 	err := db.Model(Permission{}).Where("id = ?", id).First(&res).Error
@@ -96,6 +97,7 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	return res, nil
 }
 
+// DeleteById
 func DeleteById(db *gorm.DB, id uint) error {
 	err := db.Unscoped().Delete(Permission{}, id).Error
 	if err != nil {

@@ -1,19 +1,24 @@
 package middleware
 
 import (
-	"github.com/iris-contrib/middleware/jwt"
+	"net/http"
+
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
+	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/multi"
 )
 
 /**
  * 验证 jwt
  * @method JwtHandler
  */
-func JwtHandler() *jwt.Middleware {
-	var mySecret = []byte("HS2JDFKhu7Y1av7b")
-	return jwt.New(jwt.Config{
-		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return mySecret, nil
-		},
-		SigningMethod: jwt.SigningMethodHS256,
-	})
+func JwtHandler() iris.Handler {
+	verifier := multi.NewVerifier()
+	verifier.Extractors = []multi.TokenExtractor{multi.FromHeader} // extract token only from Authorization: Bearer $token
+	verifier.ErrorHandler = func(ctx *context.Context, err error) {
+		ctx.JSON(g.Response{Code: g.AuthErr.Code, Data: nil, Msg: g.AuthErr.Msg})
+		ctx.StopWithError(http.StatusUnauthorized, err)
+	} // extract token only from Authorization: Bearer $token
+	return verifier.Verify()
 }

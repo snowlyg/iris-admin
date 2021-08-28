@@ -8,7 +8,7 @@ import (
 // Party 调试模块
 func Party() web.WebModule {
 	handler := func(index iris.Party) {
-		// index.Use(middleware.JwtHandler().Serve, middleware.New().ServeHTTP, middleware.OperationRecord())
+		// index.Use(middleware.JwtHandler().Serve, middleware.New().ServeHTTP)
 	}
-	return web.NewModule("/users", handler)
+	return web.NewModule("/oplog", handler)
 }

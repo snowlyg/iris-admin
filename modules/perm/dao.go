@@ -71,7 +71,8 @@ func Update(db *gorm.DB, id uint, req Request) error {
 	if !checkNameAndAct(req, id) {
 		return fmt.Errorf("权限[%s-%s]已存在", req.Name, req.Act)
 	}
-	err := db.Model(Permission{}).Where("id = ?", id).Updates(&req).Error
+	perm := Permission{BasePerission: req.BasePerission}
+	err := db.Model(Permission{}).Where("id = ?", id).Updates(&perm).Error
 	if err != nil {
 		g.ZAPLOG.Error("更新权限失败", zap.String("错误", err.Error()))
 		return err

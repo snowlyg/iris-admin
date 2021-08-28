@@ -14,7 +14,7 @@ import (
 // Paginate
 func Paginate(db *gorm.DB, req ReqPaginate) (iris.Map, error) {
 	var count int64
-	var perms []*Response
+	perms := []*Response{}
 	db = db.Model(Permission{})
 	if req.Name != "" {
 		db = db.Where("name LIKE ?", fmt.Sprintf("%s%%", req.Name))
@@ -68,11 +68,10 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 
 // Update
 func Update(db *gorm.DB, id uint, req Request) error {
-	perm := Permission{BasePerission: req.BasePerission}
 	if !checkNameAndAct(req, id) {
 		return fmt.Errorf("权限[%s-%s]已存在", req.Name, req.Act)
 	}
-	err := db.Model(Permission{}).Where("id = ?", id).Updates(&perm).Error
+	err := db.Model(Permission{}).Where("id = ?", id).Updates(&req).Error
 	if err != nil {
 		g.ZAPLOG.Error("更新权限失败", zap.String("错误", err.Error()))
 		return err

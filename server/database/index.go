@@ -17,7 +17,7 @@ var (
 	db   *gorm.DB
 )
 
-// Instance 数据库单列
+// Instance 数据库单例
 func Instance() *gorm.DB {
 	once.Do(func() {
 		switch g.CONFIG.System.DbType {

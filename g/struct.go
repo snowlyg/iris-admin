@@ -1,6 +1,6 @@
 package g
 
-type Id struct {
+type Model struct {
 	Id        uint   `json:"id"`
 	UpdatedAt string `json:"updatedAt"`
 	CreatedAt string `json:"createdAt"`

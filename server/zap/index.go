@@ -101,3 +101,19 @@ func getEncoderCore() (core zapcore.Core) {
 func CustomTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format(g.CONFIG.Zap.Prefix + "2006/01/02 - 15:04:05.000"))
 }
+
+type StringsArray [][]string
+
+func (ss StringsArray) MarshalLogArray(arr zapcore.ArrayEncoder) error {
+	for i := range ss {
+		for ii := range ss[i] {
+			arr.AppendString(ss[i][ii])
+		}
+	}
+	return nil
+}
+
+// Strings constructs a field that carries a slice of strings.
+func Strings(key string, ss [][]string) zap.Field {
+	return zap.Array(key, StringsArray(ss))
+}

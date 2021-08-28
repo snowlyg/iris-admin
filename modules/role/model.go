@@ -7,6 +7,8 @@ import (
 type Role struct {
 	gorm.Model
 	BaseRole
+
+	Perms [][]string `gorm:"-" json:"perms"`
 }
 
 type BaseRole struct {

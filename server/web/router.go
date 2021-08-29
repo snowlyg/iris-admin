@@ -1,8 +1,6 @@
 package web
 
 import (
-	"fmt"
-
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/pprof"
 	"github.com/snowlyg/iris-admin/g"
@@ -25,12 +23,13 @@ func (ws *WebServer) InitRouter() {
 }
 
 func (ws *WebServer) initModule() {
-	fmt.Printf("modules : %d \n", len(ws.modules))
 	if len(ws.modules) > 0 {
 		for _, module := range ws.modules {
 			sub := ws.app.PartyFunc(module.RelativePath, module.Handler)
 			if len(module.Modules) > 0 {
-				sub.PartyFunc(module.RelativePath, module.Handler)
+				for _, subModule := range module.Modules {
+					sub.PartyFunc(subModule.RelativePath, subModule.Handler)
+				}
 			}
 		}
 	}

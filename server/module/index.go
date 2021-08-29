@@ -4,6 +4,10 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
+type InitDBFunc interface {
+	Init() (err error)
+}
+
 type WebModule struct {
 	RelativePath string
 	Handler      func(p iris.Party)
@@ -16,4 +20,8 @@ func NewModule(relativePath string, handler func(index iris.Party), modules ...W
 		Handler:      handler,
 		Modules:      modules,
 	}
+}
+
+func (wm *WebModule) GetModules() []WebModule {
+	return wm.Modules
 }

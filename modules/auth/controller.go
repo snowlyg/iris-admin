@@ -1,15 +1,12 @@
-package user
+package auth
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/modules/user"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/multi"
-	"go.uber.org/zap"
 )
 
 // Login 登录
@@ -22,7 +19,7 @@ func Login(id uint) (string, error) {
 	claims := &multi.CustomClaims{
 		ID:            strconv.FormatUint(uint64(id), 10),
 		Username:      admin.Username,
-		AuthorityId:   admin.Roles[],
+		AuthorityId:   "",
 		AuthorityType: multi.AdminAuthority,
 		LoginType:     multi.LoginTypeWeb,
 		AuthType:      multi.AuthPwd,
@@ -36,4 +33,3 @@ func Login(id uint) (string, error) {
 
 	return token, nil
 }
-

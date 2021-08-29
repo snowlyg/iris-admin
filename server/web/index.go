@@ -38,8 +38,8 @@ func (ws *WebServer) GetAddr() string {
 	return ws.addr
 }
 
-func (ws *WebServer) AddModule(module WebModule) {
-	ws.modules = append(ws.modules, module)
+func (ws *WebServer) AddModule(module ...WebModule) {
+	ws.modules = append(ws.modules, module...)
 }
 
 func (ws *WebServer) GetModules() []WebModule {
@@ -54,6 +54,7 @@ func (ws *WebServer) Run() {
 		ws.timeFormat = time.RFC3339
 	}
 	ws.app.UseGlobal(ws.globalMiddlewares...)
+
 	ws.InitRouter()
 	ws.app.Listen(
 		ws.addr,

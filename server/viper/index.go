@@ -41,8 +41,8 @@ redis:
 system:
  level: debug # debug,release,test
  addr: ""
- db-type: # 仅支持mysql
- cache-type:  # redis,local
+ db-type: ""
+ cache-type: "" 
  time-format: "2006-01-02 15:04:05"
 zap:
  level: info

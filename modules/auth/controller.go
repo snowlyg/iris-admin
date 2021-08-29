@@ -1,35 +1,17 @@
 package auth
 
 import (
-	"strconv"
-	"time"
-
-	"github.com/snowlyg/iris-admin/modules/user"
-	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/multi"
 )
 
 // Login 登录
-func Login(id uint) (string, error) {
-	admin, err := user.FindById(database.Instance(), id)
+func Login(ctx iris.Context) {
+	token, err := GetAccessToken(multi.GetUserId(ctx))
 	if err != nil {
-		return "", err
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: g.SystemErr.Msg})
+		return
 	}
-
-	claims := &multi.CustomClaims{
-		ID:            strconv.FormatUint(uint64(id), 10),
-		Username:      admin.Username,
-		AuthorityId:   "",
-		AuthorityType: multi.AdminAuthority,
-		LoginType:     multi.LoginTypeWeb,
-		AuthType:      multi.AuthPwd,
-		CreationDate:  time.Now().Local().Unix(),
-		ExpiresIn:     multi.RedisSessionTimeoutWeb.Milliseconds(),
-	}
-	token, _, err := multi.AuthDriver.GenerateToken(claims)
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
+	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: iris.Map{"accessToken": token}, Msg: g.NoErr.Msg})
 }

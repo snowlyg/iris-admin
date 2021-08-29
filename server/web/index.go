@@ -8,11 +8,13 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/iris-admin/g"
+	v1 "github.com/snowlyg/iris-admin/modules/v1"
+	"github.com/snowlyg/iris-admin/server/module"
 )
 
 type WebServer struct {
-	app               *iris.Application // iris application
-	modules           []WebModule       // 数据模型
+	app               *iris.Application  // iris application
+	modules           []module.WebModule // 数据模型
 	idleConnsClosed   chan struct{}
 	addr              string //端口
 	timeFormat        string // 时间格式
@@ -38,11 +40,11 @@ func (ws *WebServer) GetAddr() string {
 	return ws.addr
 }
 
-func (ws *WebServer) AddModule(module ...WebModule) {
+func (ws *WebServer) AddModule(module ...module.WebModule) {
 	ws.modules = append(ws.modules, module...)
 }
 
-func (ws *WebServer) GetModules() []WebModule {
+func (ws *WebServer) GetModules() []module.WebModule {
 	return ws.modules
 }
 
@@ -54,7 +56,7 @@ func (ws *WebServer) Run() {
 		ws.timeFormat = time.RFC3339
 	}
 	ws.app.UseGlobal(ws.globalMiddlewares...)
-
+	ws.AddModule(v1.Party())
 	ws.InitRouter()
 	ws.app.Listen(
 		ws.addr,

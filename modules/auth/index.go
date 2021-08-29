@@ -2,11 +2,11 @@ package auth
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/module"
 )
 
-// Party 调试模块
-func Party() web.WebModule {
+// Party
+func Party() module.WebModule {
 	handler := func(public iris.Party) {
 		// 	v1.Post("/admin/login", controllers.Login)
 		// index.Use(middleware.JwtHandler().Serve, middleware.New().ServeHTTP, middleware.OperationRecord())
@@ -14,5 +14,5 @@ func Party() web.WebModule {
 
 		// index.Post("/upload_file", iris.LimitRequestBodySize(libs.Config.MaxSize+1<<20), controllers.UploadFile).Name = "上传文件"
 	}
-	return web.NewModule("/users", handler)
+	return module.NewModule("/users", handler)
 }

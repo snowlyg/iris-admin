@@ -2,13 +2,14 @@ package user
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/middleware"
+	"github.com/snowlyg/iris-admin/server/module"
 )
 
 // Party 调试模块
-func Party() web.WebModule {
+func Party() module.WebModule {
 	handler := func(index iris.Party) {
-		// index.Use(middleware.JwtHandler().Serve, middleware.New().ServeHTTP, middleware.OperationRecord())
+		index.Use(middleware.InitCheck())
 		index.Get("/", GetAllUsers).Name = "用户列表"
 		index.Get("/{id:uint}", GetUser).Name = "用户详情"
 		index.Post("/", CreateUser).Name = "创建用户"
@@ -20,5 +21,5 @@ func Party() web.WebModule {
 		// index.Get("/profile", controllers.Profile).Name = "个人信息"
 		// index.Post("/change_avatar", controllers.ChangeAvatar).Name = "修改头像"
 	}
-	return web.NewModule("/users", handler)
+	return module.NewModule("/users", handler)
 }

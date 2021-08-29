@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Init() *viper.Viper {
+func Init() {
 	config := g.ConfigFileName
 	fmt.Printf("您的配置文件路径为%s\n", config)
 
@@ -23,6 +23,10 @@ captcha:
  key-long: 6
  img-width: 240
  img-height: 80
+limit:
+ limit: true
+ limit: 1
+ burst: 5
 mysql:
  path: ""
  config: charset=utf8mb4&parseTime=True&loc=Local
@@ -66,7 +70,7 @@ zap:
 		if err := v.WriteConfigAs(config); err != nil {
 			panic(fmt.Errorf("写入配置文件错误: %w ", err))
 		}
-		return v
+		return
 	}
 
 	// 存在配置文件，读取配置文件内容
@@ -84,5 +88,8 @@ zap:
 			fmt.Println(err)
 		}
 	})
-	return v
+	if err := v.Unmarshal(&g.CONFIG); err != nil {
+		fmt.Println(err)
+	}
+	g.VIPER = v
 }

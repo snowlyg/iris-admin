@@ -2,18 +2,19 @@ package perm
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/middleware"
+	"github.com/snowlyg/iris-admin/server/module"
 )
 
 // Party 调试模块
-func Party() web.WebModule {
+func Party() module.WebModule {
 	handler := func(index iris.Party) {
-		// index.Use(middleware.JwtHandler().Serve, middleware.New().ServeHTTP, middleware.OperationRecord())
+		index.Use(middleware.InitCheck())
 		index.Get("/", GetAllPerms).Name = "权限列表"
 		index.Get("/{id:uint}", GetPerm).Name = "权限详情"
 		index.Post("/", CreatePerm).Name = "创建权限"
 		index.Post("/{id:uint}", UpdatePerm).Name = "编辑权限"
 		index.Delete("/{id:uint}", DeletePerm).Name = "删除权限"
 	}
-	return web.NewModule("/perms", handler)
+	return module.NewModule("/perms", handler)
 }

@@ -30,6 +30,7 @@ type ErrMsg struct {
 
 var (
 	NoErr         = ErrMsg{2000, "请求成功"}
+	NeedInitErr   = ErrMsg{2001, "前往初始化数据库"}
 	AuthErr       = ErrMsg{4001, "认证错误"}
 	AuthExpireErr = ErrMsg{4002, "token 过期，请刷新token"}
 	AuthActionErr = ErrMsg{4003, "权限错误"}

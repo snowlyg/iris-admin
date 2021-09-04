@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Init() {
+func init() {
 	config := g.ConfigFileName
 	fmt.Printf("您的配置文件路径为%s\n", config)
 

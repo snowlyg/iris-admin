@@ -1,8 +1,14 @@
 package web
 
 import (
+	"strings"
+	"sync"
+
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/context"
+	"github.com/kataras/iris/v12/core/router"
 	"github.com/kataras/iris/v12/middleware/pprof"
+	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/middleware"
 	"github.com/snowlyg/iris-admin/server/module"
@@ -18,19 +24,52 @@ func (ws *WebServer) InitRouter() {
 			app.PartyFunc(debug.RelativePath, debug.Handler)
 		}
 		ws.initModule()
+		ws.GetSources()
+	}
+}
+
+func (ws *WebServer) GetSources() {
+	var routes []map[string]string
+	for _, r := range ws.app.GetRoutes() {
+		// 去除非接口路径
+		handerNames := context.HandlersNames(r.Handlers)
+		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || r.IsStatic() || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi.(*Verifier).Verify") {
+			continue
+		}
+		ws.wg.Add(1)
+		go func(r *router.Route) {
+			g.PermRoutes = append(routes, map[string]string{
+				"path": r.Path,
+				"name": r.Name,
+				"act":  r.Method,
+			})
+			ws.wg.Done()
+		}(r)
+		ws.wg.Wait()
 	}
 }
 
 func (ws *WebServer) initModule() {
 	if len(ws.modules) > 0 {
-		for _, module := range ws.modules {
-			sub := ws.app.PartyFunc(module.RelativePath, module.Handler)
-			if len(module.Modules) > 0 {
-				for _, subModule := range module.Modules {
-					sub.PartyFunc(subModule.RelativePath, subModule.Handler)
+		for _, mod := range ws.modules {
+			ws.wg.Add(1)
+			go func(mod module.WebModule) {
+				sub := ws.app.PartyFunc(mod.RelativePath, mod.Handler)
+				if len(mod.Modules) > 0 {
+					var subWg sync.WaitGroup
+					for _, subModule := range mod.Modules {
+						subWg.Add(1)
+						go func(mod module.WebModule) {
+							sub.PartyFunc(mod.RelativePath, mod.Handler)
+							subWg.Done()
+						}(subModule)
+					}
+					subWg.Wait()
 				}
-			}
+				ws.wg.Done()
+			}(mod)
 		}
+		ws.wg.Wait()
 	}
 }
 

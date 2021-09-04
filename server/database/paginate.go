@@ -1,8 +1,7 @@
 package database
 
 import (
-	"fmt"
-
+	"github.com/snowlyg/helper/str"
 	"gorm.io/gorm"
 )
 
@@ -37,6 +36,6 @@ func PaginateScope(page, pageSize int, sort, orderBy string) func(db *gorm.DB) *
 		if page < 0 {
 			offset = -1
 		}
-		return db.Order(fmt.Sprintf("%s %s", orderBy, sort)).Offset(offset).Limit(pageSize)
+		return db.Order(str.Join(orderBy, " ", sort)).Offset(offset).Limit(pageSize)
 	}
 }

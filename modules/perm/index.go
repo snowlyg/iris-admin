@@ -9,7 +9,7 @@ import (
 // Party 调试模块
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
-		index.Use(middleware.InitCheck())
+		index.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())
 		index.Get("/", GetAllPerms).Name = "权限列表"
 		index.Get("/{id:uint}", GetPerm).Name = "权限详情"
 		index.Post("/", CreatePerm).Name = "创建权限"

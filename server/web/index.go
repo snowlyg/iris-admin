@@ -2,16 +2,18 @@ package web
 
 import (
 	stdContext "context"
+	"sync"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/modules/static"
 	v1 "github.com/snowlyg/iris-admin/modules/v1"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/module"
-	"github.com/snowlyg/iris-admin/server/viper"
+	_ "github.com/snowlyg/iris-admin/server/viper"
 	"github.com/snowlyg/iris-admin/server/zap"
 )
 
@@ -22,10 +24,10 @@ type WebServer struct {
 	addr              string //端口
 	timeFormat        string // 时间格式
 	globalMiddlewares []context.Handler
+	wg                sync.WaitGroup
 }
 
 func Init() *WebServer {
-	viper.Init()
 	zap.Init()
 	cache.Init()
 	app := iris.New()
@@ -63,6 +65,7 @@ func (ws *WebServer) Run() {
 	}
 	ws.app.UseGlobal(ws.globalMiddlewares...)
 	ws.AddModule(v1.Party())
+	ws.AddModule(static.Party())
 	ws.InitRouter()
 	ws.app.Listen(
 		ws.addr,

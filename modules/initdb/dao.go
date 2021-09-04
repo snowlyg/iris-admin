@@ -189,9 +189,9 @@ func InitDB(req Request) error {
 	}
 
 	err = initDB(
-		user.Source,
-		role.Source,
 		perm.Source,
+		role.Source,
+		user.Source,
 	)
 	if err != nil {
 		if err := refreshConfig(g.VIPER); err != nil {

@@ -1,16 +1,19 @@
+# ext
 *.dll
 *.db
 *.exe
 *.log
 *.out
 
+# file
 .air.conf
 coverage.txt
 config.yaml
 
-/cmd/
-/tmp/
-/example/tmp/
-/views/
-/logs/
-/.idea/
+#dir
+cmd/
+tmp/
+example/tmp/
+views/
+logs/
+.idea/

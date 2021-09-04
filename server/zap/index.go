@@ -60,7 +60,7 @@ func getEncoderConfig() (config zapcore.EncoderConfig) {
 		StacktraceKey:  g.CONFIG.Zap.StacktraceKey,
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,
-		EncodeTime:     CustomTimeEncoder,
+		EncodeTime:     customTimeEncoder,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.FullCallerEncoder,
 	}
@@ -98,7 +98,7 @@ func getEncoderCore() (core zapcore.Core) {
 }
 
 // 自定义日志输出时间格式
-func CustomTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
+func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format(g.CONFIG.Zap.Prefix + "2006/01/02 - 15:04:05.000"))
 }
 

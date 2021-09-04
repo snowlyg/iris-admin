@@ -66,6 +66,16 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 	return perm.ID, nil
 }
 
+// CreatenInBatches
+func CreatenInBatches(db *gorm.DB, perms []Permission) error {
+	err := db.Model(Permission{}).CreateInBatches(&perms, 500).Error
+	if err != nil {
+		g.ZAPLOG.Error("添加权限失败", zap.String("错误", err.Error()))
+		return err
+	}
+	return nil
+}
+
 // Update
 func Update(db *gorm.DB, id uint, req Request) error {
 	if !checkNameAndAct(req, id) {
@@ -105,4 +115,19 @@ func DeleteById(db *gorm.DB, id uint) error {
 		return err
 	}
 	return nil
+}
+
+// GetPermsForRole
+func GetPermsForRole() ([][]string, error) {
+	var permsForRoles [][]string
+	perms := []Permission{}
+	err := database.Instance().Model(&Permission{}).Find(&perms).Error
+	if err != nil {
+		return nil, fmt.Errorf("获取权限错误 %w", err)
+	}
+	for _, perm := range perms {
+		permsForRole := []string{perm.Name, perm.Act}
+		permsForRoles = append(permsForRoles, permsForRole)
+	}
+	return permsForRoles, nil
 }

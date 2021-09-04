@@ -71,6 +71,12 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 		return 0, err
 	}
 
+	err = AddPermForRole(role.ID, req.Perms)
+	if err != nil {
+		g.ZAPLOG.Error("添加权限到角色错误", zap.String("错误", err.Error()))
+		return 0, err
+	}
+
 	return role.ID, nil
 }
 
@@ -88,7 +94,12 @@ func Update(db *gorm.DB, id uint, req Request) error {
 	role := Role{BaseRole: req.BaseRole}
 	err = db.Model(Role{}).Where("id = ?", id).Updates(&role).Error
 	if err != nil {
-		g.ZAPLOG.Error("update role  get err ", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("更新角色错误", zap.String("错误", err.Error()))
+		return err
+	}
+	err = AddPermForRole(role.ID, req.Perms)
+	if err != nil {
+		g.ZAPLOG.Error("添加权限到角色错误", zap.String("错误", err.Error()))
 		return err
 	}
 	return nil
@@ -138,32 +149,23 @@ func FindInId(db *gorm.DB, ids []string) ([]*Response, error) {
 
 // AddPermForRole
 func AddPermForRole(id uint, perms [][]string) error {
+	roleId := strconv.FormatUint(uint64(id), 10)
+	oldPerms := casbin.GetPermissionsForUser(roleId)
+	_, err := casbin.Instance().RemovePolicies(oldPerms)
+	if err != nil {
+		g.ZAPLOG.Error("add policy err: %+v", zap.String("错误", err.Error()))
+		return err
+	}
+
 	if len(perms) == 0 {
 		g.ZAPLOG.Debug("没有权限")
 		return nil
 	}
-
 	var newPerms [][]string
-	roleId := strconv.FormatUint(uint64(id), 10)
-	oldPerms := casbin.GetPermissionsForUser(roleId)
-
 	for _, perm := range perms {
-		var in bool
-		for _, oldPerm := range oldPerms {
-			if roleId == oldPerm[0] && perm[0] == oldPerm[1] && perm[1] == oldPerm[2] {
-				in = true
-				continue
-			}
-		}
-
-		if !in {
-			newPerms = append(newPerms, append([]string{roleId}, perm...))
-		}
+		newPerms = append(newPerms, append([]string{roleId}, perm...))
 	}
-
 	g.ZAPLOG.Debug("添加权限到角色", customZap.Strings("新权限", newPerms))
-
-	var err error
 	_, err = casbin.Instance().AddPolicies(newPerms)
 	if err != nil {
 		g.ZAPLOG.Error("add policy err: %+v", zap.String("错误", err.Error()))
@@ -171,4 +173,13 @@ func AddPermForRole(id uint, perms [][]string) error {
 	}
 
 	return nil
+}
+
+func GetRoleIds() ([]uint, error) {
+	var roleIds []uint
+	err := database.Instance().Model(&Role{}).Find(&roleIds).Error
+	if err != nil {
+		return roleIds, fmt.Errorf("获取角色ids错误 %w", err)
+	}
+	return roleIds, nil
 }

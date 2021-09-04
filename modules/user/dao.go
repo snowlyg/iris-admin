@@ -89,10 +89,15 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 	if _, err := FindByUserName(db, req.Username); !errors.Is(err, gorm.ErrRecordNotFound) {
 		return 0, err
 	}
-	user := User{BaseUser: req.BaseUser}
+	user := User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
 	err := db.Model(User{}).Create(&user).Error
 	if err != nil {
 		g.ZAPLOG.Error("添加用户错误", zap.String("错误", err.Error()))
+		return 0, err
+	}
+
+	if err := AddRoleForUser(&user); err != nil {
+		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误", err.Error()))
 		return 0, err
 	}
 
@@ -115,6 +120,12 @@ func Update(db *gorm.DB, id uint, req Request) error {
 		g.ZAPLOG.Error("更新用户错误", zap.String("错误", err.Error()))
 		return err
 	}
+
+	if err := AddRoleForUser(&user); err != nil {
+		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误", err.Error()))
+		return err
+	}
+
 	return nil
 }
 
@@ -148,11 +159,6 @@ func DeleteById(db *gorm.DB, id uint) error {
 
 // AddRoleForUser add roles for user
 func AddRoleForUser(user *User) error {
-	if len(user.RoleIds) == 0 {
-		return nil
-	}
-
-	roleIds := []string{}
 	userId := strconv.FormatUint(uint64(user.ID), 10)
 	oldRoleIds, err := casbin.Instance().GetRolesForUser(userId)
 	if err != nil {
@@ -160,13 +166,19 @@ func AddRoleForUser(user *User) error {
 		return err
 	}
 
-	for _, roleId := range user.RoleIds {
-		roleId := strconv.FormatUint(uint64(roleId), 10)
-		if len(oldRoleIds) > 0 && arr.InArrayS(oldRoleIds, roleId) {
-			continue
+	if len(oldRoleIds) > 0 {
+		if _, err := casbin.Instance().DeleteRolesForUser(userId); err != nil {
+			g.ZAPLOG.Error("添加角色到用户错误", zap.String("错误", err.Error()))
+			return err
 		}
+	}
+	if len(user.RoleIds) == 0 {
+		return nil
+	}
 
-		roleIds = append(roleIds, roleId)
+	var roleIds []string
+	for _, userRoleId := range user.RoleIds {
+		roleIds = append(roleIds, strconv.FormatUint(uint64(userRoleId), 10))
 	}
 
 	if _, err := casbin.Instance().AddRolesForUser(userId, roleIds); err != nil {

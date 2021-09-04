@@ -2,6 +2,7 @@ package role
 
 import (
 	"github.com/gookit/color"
+	"github.com/snowlyg/iris-admin/modules/perm"
 	"github.com/snowlyg/iris-admin/server/database"
 	"gorm.io/gorm"
 )
@@ -10,16 +11,22 @@ var Source = new(source)
 
 type source struct{}
 
-func GetSources() []Role {
-	return []Role{
+func GetSources() ([]Request, error) {
+	perms, err := perm.GetPermsForRole()
+	if err != nil {
+		return []Request{}, err
+	}
+	sources := []Request{
 		{
 			BaseRole: BaseRole{
 				Name:        "SuperAdmin",
 				DisplayName: "超级管理员",
 				Description: "超级管理员",
 			},
+			Perms: perms,
 		},
 	}
+	return sources, err
 }
 
 func (s *source) Init() error {
@@ -28,10 +35,16 @@ func (s *source) Init() error {
 			color.Danger.Println("\n[Mysql] --> roles 表的初始数据已存在!")
 			return nil
 		}
-		userSources := GetSources()
-		if err := tx.Model(&Role{}).Create(&userSources).Error; err != nil { // 遇到错误时回滚事务
+		sources, err := GetSources()
+		if err != nil {
 			return err
 		}
+		for _, source := range sources {
+			if _, err := Create(tx, source); err != nil { // 遇到错误时回滚事务
+				return err
+			}
+		}
+
 		color.Info.Println("\n[Mysql] --> roles 表初始数据成功!")
 		return nil
 	})

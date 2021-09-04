@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/gookit/color"
-	"github.com/snowlyg/iris-admin/modules/role"
+	"github.com/snowlyg/iris-admin/modules/v1/role"
 	"github.com/snowlyg/iris-admin/server/database"
 	"gorm.io/gorm"
 )

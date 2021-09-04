@@ -4,16 +4,18 @@
 *.exe
 *.log
 *.out
+*.txt
+*.yaml
+.air.*
 
 # file
-.air.conf
-coverage.txt
-config.yaml
+example/simple/latest_log
+
 
 #dir
 cmd/
 tmp/
 example/tmp/
-views/
+example/simple/www/
 logs/
 .idea/

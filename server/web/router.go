@@ -2,7 +2,6 @@ package web
 
 import (
 	"strings"
-	"sync"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -56,15 +55,9 @@ func (ws *WebServer) initModule() {
 			go func(mod module.WebModule) {
 				sub := ws.app.PartyFunc(mod.RelativePath, mod.Handler)
 				if len(mod.Modules) > 0 {
-					var subWg sync.WaitGroup
 					for _, subModule := range mod.Modules {
-						subWg.Add(1)
-						go func(mod module.WebModule) {
-							sub.PartyFunc(mod.RelativePath, mod.Handler)
-							subWg.Done()
-						}(subModule)
+						sub.PartyFunc(subModule.RelativePath, subModule.Handler)
 					}
-					subWg.Wait()
 				}
 				ws.wg.Done()
 			}(mod)

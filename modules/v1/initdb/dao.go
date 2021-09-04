@@ -8,9 +8,9 @@ import (
 	"github.com/snowlyg/iris-admin/config"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/middleware"
-	"github.com/snowlyg/iris-admin/modules/perm"
-	"github.com/snowlyg/iris-admin/modules/role"
-	"github.com/snowlyg/iris-admin/modules/user"
+	"github.com/snowlyg/iris-admin/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/modules/v1/role"
+	"github.com/snowlyg/iris-admin/modules/v1/user"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/module"
@@ -90,10 +90,6 @@ func InitDB(req Request) error {
 	level := req.Level
 	if level == "" {
 		level = "release"
-	}
-	env := req.Level
-	if env == "" {
-		env = "pro"
 	}
 	addr := req.Addr
 	if addr == "" {

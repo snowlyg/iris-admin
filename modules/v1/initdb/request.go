@@ -5,8 +5,8 @@ type Request struct {
 	SqlType   string `json:"sqlType" validate:"required"`
 	Cache     Cache  `json:"cache"`
 	CacheType string `json:"cacheType"  validate:"required"`
-	Level     string `json:"level"  validate:"required"` // debug,release,test
-	Addr      string `json:"addr"  validate:"required"`
+	Level     string `json:"level"` // debug,release,test
+	Addr      string `json:"addr"`
 }
 
 type Sql struct {

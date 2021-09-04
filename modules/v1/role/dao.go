@@ -24,7 +24,7 @@ func GetAdminRoleName() string {
 func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
 	var count int64
 	var roles []*Response
-	db = db.Model(Role{})
+	db = db.Model(&Role{})
 	if req.Name != "" {
 		db = db.Where("name LIKE ?", fmt.Sprintf("%s%%", req.Name))
 	}
@@ -43,13 +43,13 @@ func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
 }
 
 // FindByName
-func FindByName(db *gorm.DB, name string, ids ...uint) (Role, error) {
-	role := Role{}
-	db = db.Model(Role{}).Where("name = ?", name)
+func FindByName(db *gorm.DB, name string, ids ...uint) (Response, error) {
+	role := Response{}
+	db = db.Model(&Role{}).Where("name = ?", name)
 	if len(ids) == 1 {
 		db.Where("id != ?", ids[0])
 	}
-	err := db.First(role).Error
+	err := db.First(&role).Error
 	if err != nil {
 		g.ZAPLOG.Error("根据名称查询角色错误", zap.String("错误", err.Error()))
 		return role, err
@@ -61,7 +61,7 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 	role := Role{BaseRole: req.BaseRole}
 	_, err := FindByName(db, req.Name)
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		g.ZAPLOG.Error("角色名称已经被使用", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("角色名称已经被使用")
 		return 0, err
 	}
 
@@ -88,11 +88,11 @@ func Update(db *gorm.DB, id uint, req Request) error {
 	}
 	_, err := FindByName(db, req.Name, id)
 	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		g.ZAPLOG.Error("角色名称已经被使用", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("角色名称已经被使用")
 		return err
 	}
 	role := Role{BaseRole: req.BaseRole}
-	err = db.Model(Role{}).Where("id = ?", id).Updates(&role).Error
+	err = db.Model(&Role{}).Where("id = ?", id).Updates(&role).Error
 	if err != nil {
 		g.ZAPLOG.Error("更新角色错误", zap.String("错误", err.Error()))
 		return err
@@ -113,9 +113,9 @@ func IsAdminRole(db *gorm.DB, id uint) (bool, error) {
 	return role.Name == GetAdminRoleName(), nil
 }
 
-func FindById(db *gorm.DB, id uint) (Role, error) {
-	role := Role{}
-	err := db.Model(Role{}).Where("id = ?", id).First(role).Error
+func FindById(db *gorm.DB, id uint) (Response, error) {
+	role := Response{}
+	err := db.Model(&Role{}).Where("id = ?", id).First(&role).Error
 	if err != nil {
 		g.ZAPLOG.Error("根据id查询角色错误", zap.String("错误", err.Error()))
 		return role, err
@@ -129,7 +129,7 @@ func DeleteById(db *gorm.DB, id uint) error {
 	} else if b {
 		return errors.New("不能删除超级管理员")
 	}
-	err := db.Unscoped().Delete(Role{}, id).Error
+	err := db.Unscoped().Delete(&Role{}, id).Error
 	if err != nil {
 		g.ZAPLOG.Error("删除角色错误", zap.String("错误", err.Error()))
 		return err
@@ -139,7 +139,7 @@ func DeleteById(db *gorm.DB, id uint) error {
 
 func FindInId(db *gorm.DB, ids []string) ([]*Response, error) {
 	roles := []*Response{}
-	err := db.Model(Role{}).Where("id in ?", ids).Find(&roles).Error
+	err := db.Model(&Role{}).Where("id in ?", ids).Find(&roles).Error
 	if err != nil {
 		g.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误", err.Error()))
 		return nil, err
@@ -177,7 +177,7 @@ func AddPermForRole(id uint, perms [][]string) error {
 
 func GetRoleIds() ([]uint, error) {
 	var roleIds []uint
-	err := database.Instance().Model(&Role{}).Find(&roleIds).Error
+	err := database.Instance().Model(&Role{}).Select("id").Find(&roleIds).Error
 	if err != nil {
 		return roleIds, fmt.Errorf("获取角色ids错误 %w", err)
 	}

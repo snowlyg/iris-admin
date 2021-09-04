@@ -6,10 +6,10 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/modules/initdb"
-	"github.com/snowlyg/iris-admin/modules/perm"
-	"github.com/snowlyg/iris-admin/modules/role"
-	"github.com/snowlyg/iris-admin/modules/user"
+	"github.com/snowlyg/iris-admin/modules/v1/initdb"
+	"github.com/snowlyg/iris-admin/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/modules/v1/role"
+	"github.com/snowlyg/iris-admin/modules/v1/user"
 	"github.com/snowlyg/iris-admin/server/module"
 )
 

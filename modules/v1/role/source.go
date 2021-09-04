@@ -2,7 +2,7 @@ package role
 
 import (
 	"github.com/gookit/color"
-	"github.com/snowlyg/iris-admin/modules/perm"
+	"github.com/snowlyg/iris-admin/modules/v1/perm"
 	"github.com/snowlyg/iris-admin/server/database"
 	"gorm.io/gorm"
 )

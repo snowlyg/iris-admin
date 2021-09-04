@@ -8,7 +8,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/modules/role"
+	"github.com/snowlyg/iris-admin/modules/v1/role"
 	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/multi"
@@ -19,7 +19,7 @@ import (
 func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
 	var count int64
 	users := []*Response{}
-	db = db.Model(User{})
+	db = db.Model(&User{})
 	if len(req.Name) > 0 {
 		db = db.Where("name LIKE ?", fmt.Sprintf("%s%%", req.Name))
 	}
@@ -71,13 +71,13 @@ func getRoles(db *gorm.DB, users ...*Response) {
 	}
 }
 
-func FindByUserName(db *gorm.DB, username string, ids ...uint) (User, error) {
-	user := User{}
-	db = db.Model(User{}).Where("username = ?", username)
+func FindByUserName(db *gorm.DB, username string, ids ...uint) (Response, error) {
+	user := Response{}
+	db = db.Model(&User{}).Where("username = ?", username)
 	if len(ids) == 1 {
 		db.Where("id != ?", ids[0])
 	}
-	err := db.First(user).Error
+	err := db.First(&user).Error
 	if err != nil {
 		g.ZAPLOG.Error("根据用户名查询用户错误", zap.String("错误", err.Error()))
 		return user, err
@@ -90,7 +90,7 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 		return 0, err
 	}
 	user := User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
-	err := db.Model(User{}).Create(&user).Error
+	err := db.Model(&User{}).Create(&user).Error
 	if err != nil {
 		g.ZAPLOG.Error("添加用户错误", zap.String("错误", err.Error()))
 		return 0, err
@@ -115,7 +115,7 @@ func Update(db *gorm.DB, id uint, req Request) error {
 	}
 
 	user := User{BaseUser: req.BaseUser}
-	err := db.Model(User{}).Where("id = ?", id).Updates(&user).Error
+	err := db.Model(&User{}).Where("id = ?", id).Updates(&user).Error
 	if err != nil {
 		g.ZAPLOG.Error("更新用户错误", zap.String("错误", err.Error()))
 		return err
@@ -139,7 +139,7 @@ func IsAdminUser(db *gorm.DB, id uint) (bool, error) {
 
 func FindById(db *gorm.DB, id uint) (Response, error) {
 	user := Response{}
-	err := db.Model(User{}).Where("id = ?", id).First(&user).Error
+	err := db.Model(&User{}).Where("id = ?", id).First(&user).Error
 	if err != nil {
 		g.ZAPLOG.Error("find user err ", zap.String("错误", err.Error()))
 		return user, err
@@ -149,7 +149,7 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 }
 
 func DeleteById(db *gorm.DB, id uint) error {
-	err := db.Unscoped().Delete(User{}, id).Error
+	err := db.Unscoped().Delete(&User{}, id).Error
 	if err != nil {
 		g.ZAPLOG.Error("delete user by id get  err ", zap.String("错误", err.Error()))
 		return err

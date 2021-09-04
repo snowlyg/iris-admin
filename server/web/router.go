@@ -11,6 +11,7 @@ import (
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/middleware"
 	"github.com/snowlyg/iris-admin/server/module"
+	_ "github.com/snowlyg/iris-admin/server/viper"
 )
 
 func (ws *WebServer) InitRouter() {
@@ -28,7 +29,6 @@ func (ws *WebServer) InitRouter() {
 }
 
 func (ws *WebServer) GetSources() {
-	var routes []map[string]string
 	for _, r := range ws.app.GetRoutes() {
 		// 去除非接口路径
 		handerNames := context.HandlersNames(r.Handlers)
@@ -37,7 +37,7 @@ func (ws *WebServer) GetSources() {
 		}
 		ws.wg.Add(1)
 		go func(r *router.Route) {
-			g.PermRoutes = append(routes, map[string]string{
+			g.PermRoutes = append(g.PermRoutes, map[string]string{
 				"path": r.Path,
 				"name": r.Name,
 				"act":  r.Method,

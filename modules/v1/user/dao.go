@@ -13,6 +13,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -25,14 +26,14 @@ func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
 	}
 	err := db.Count(&count).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取用户总数错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("获取用户总数错误", zap.String("错误:", err.Error()))
 		return nil, err
 	}
 
 	err = db.Scopes(database.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)).
 		Find(&users).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取用户分页数据错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("获取用户分页数据错误", zap.String("错误:", err.Error()))
 		return nil, err
 	}
 
@@ -58,7 +59,7 @@ func getRoles(db *gorm.DB, users ...*Response) {
 
 	roles, err := role.FindInId(db, roleIds)
 	if err != nil {
-		g.ZAPLOG.Error("get role get err ", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("get role get err ", zap.String("错误:", err.Error()))
 	}
 
 	for _, user := range users {
@@ -79,7 +80,7 @@ func FindByUserName(db *gorm.DB, username string, ids ...uint) (Response, error)
 	}
 	err := db.First(&user).Error
 	if err != nil {
-		g.ZAPLOG.Error("根据用户名查询用户错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("根据用户名查询用户错误", zap.String("用户名:", username), zap.Uints("ids:", ids), zap.String("错误:", err.Error()))
 		return user, err
 	}
 	return user, nil
@@ -90,14 +91,20 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 		return 0, err
 	}
 	user := User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
-	err := db.Model(&User{}).Create(&user).Error
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		g.ZAPLOG.Error("添加用户错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("密码加密错误", zap.String("错误:", err.Error()))
+		return 0, err
+	}
+	user.Password = string(hash)
+	err = db.Model(&User{}).Create(&user).Error
+	if err != nil {
+		g.ZAPLOG.Error("添加用户错误", zap.String("错误:", err.Error()))
 		return 0, err
 	}
 
 	if err := AddRoleForUser(&user); err != nil {
-		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误:", err.Error()))
 		return 0, err
 	}
 
@@ -117,12 +124,12 @@ func Update(db *gorm.DB, id uint, req Request) error {
 	user := User{BaseUser: req.BaseUser}
 	err := db.Model(&User{}).Where("id = ?", id).Updates(&user).Error
 	if err != nil {
-		g.ZAPLOG.Error("更新用户错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("更新用户错误", zap.String("错误:", err.Error()))
 		return err
 	}
 
 	if err := AddRoleForUser(&user); err != nil {
-		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误:", err.Error()))
 		return err
 	}
 
@@ -141,7 +148,7 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	user := Response{}
 	err := db.Model(&User{}).Where("id = ?", id).First(&user).Error
 	if err != nil {
-		g.ZAPLOG.Error("find user err ", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("find user err ", zap.String("错误:", err.Error()))
 		return user, err
 	}
 	getRoles(db, &user)
@@ -151,7 +158,7 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 func DeleteById(db *gorm.DB, id uint) error {
 	err := db.Unscoped().Delete(&User{}, id).Error
 	if err != nil {
-		g.ZAPLOG.Error("delete user by id get  err ", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("delete user by id get  err ", zap.String("错误:", err.Error()))
 		return err
 	}
 	return nil
@@ -162,13 +169,13 @@ func AddRoleForUser(user *User) error {
 	userId := strconv.FormatUint(uint64(user.ID), 10)
 	oldRoleIds, err := casbin.Instance().GetRolesForUser(userId)
 	if err != nil {
-		g.ZAPLOG.Error("获取用户角色错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("获取用户角色错误", zap.String("错误:", err.Error()))
 		return err
 	}
 
 	if len(oldRoleIds) > 0 {
 		if _, err := casbin.Instance().DeleteRolesForUser(userId); err != nil {
-			g.ZAPLOG.Error("添加角色到用户错误", zap.String("错误", err.Error()))
+			g.ZAPLOG.Error("添加角色到用户错误", zap.String("错误:", err.Error()))
 			return err
 		}
 	}
@@ -182,7 +189,7 @@ func AddRoleForUser(user *User) error {
 	}
 
 	if _, err := casbin.Instance().AddRolesForUser(userId, roleIds); err != nil {
-		g.ZAPLOG.Error("添加角色到用户错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("添加角色到用户错误", zap.String("错误:", err.Error()))
 		return err
 	}
 

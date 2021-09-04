@@ -2,6 +2,7 @@ package initdb
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/snowlyg/helper/str"
@@ -14,7 +15,6 @@ import (
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/module"
-	"github.com/snowlyg/multi"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -93,7 +93,7 @@ func InitDB(req Request) error {
 	}
 	addr := req.Addr
 	if addr == "" {
-		addr = ":80"
+		addr = ":8085"
 	}
 
 	g.CONFIG.System = config.System{
@@ -109,24 +109,12 @@ func InitDB(req Request) error {
 			Addr:     fmt.Sprintf("%s:%s", req.Cache.Host, req.Cache.Port),
 			Password: req.Cache.Password,
 		}
-		cache.Init() // redis缓存
-		err := multi.InitDriver(
-			&multi.Config{
-				DriverType:      g.CONFIG.System.CacheType,
-				UniversalClient: g.CACHE},
-		)
+		err := cache.Init() // redis缓存
 		if err != nil {
-			g.ZAPLOG.Error("初始化缓存驱动:", zap.Any("err", err))
+			g.ZAPLOG.Error("认证驱动初始化错误", zap.String("错误:", err.Error()))
 			if err := refreshConfig(g.VIPER); err != nil {
-				g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误", err.Error()))
+				g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
 			}
-			return fmt.Errorf("初始化缓存驱动失败 %w", err)
-		}
-		if multi.AuthDriver == nil {
-			if err := refreshConfig(g.VIPER); err != nil {
-				g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误", err.Error()))
-			}
-			return nil
 		}
 	}
 
@@ -143,10 +131,12 @@ func InitDB(req Request) error {
 
 	if err := createTable(dsn, "mysql", createSql); err != nil {
 		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误", err.Error()))
+			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
 		}
 		return err
 	}
+
+	g.ZAPLOG.Info("新建数据库", zap.String("库名", req.Sql.DBName))
 
 	g.CONFIG.Mysql = config.Mysql{
 		Path:     fmt.Sprintf("%s:%s", req.Sql.Host, req.Sql.Port),
@@ -159,16 +149,18 @@ func InitDB(req Request) error {
 	m := g.CONFIG.Mysql
 	if m.Dbname == "" {
 		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误", err.Error()))
+			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
 		}
-		return nil
+		g.ZAPLOG.Error("缺少数据库参数")
+		return errors.New("缺少数据库参数")
 	}
 
 	if database.Instance() == nil {
 		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误", err.Error()))
+			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
 		}
-		return nil
+		g.ZAPLOG.Error("数据库初始化错误")
+		return errors.New("数据库初始化错误")
 	}
 
 	err := database.Instance().AutoMigrate(
@@ -178,8 +170,9 @@ func InitDB(req Request) error {
 		&user.User{},
 	)
 	if err != nil {
+		g.ZAPLOG.Error("迁移数据表错误", zap.String("错误:", err.Error()))
 		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误", err.Error()))
+			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
 		}
 		return err
 	}
@@ -190,13 +183,14 @@ func InitDB(req Request) error {
 		user.Source,
 	)
 	if err != nil {
+		g.ZAPLOG.Error("填充数据错误", zap.String("错误:", err.Error()))
 		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误", err.Error()))
+			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
 		}
 		return err
 	}
 	if err := writeConfig(g.VIPER); err != nil {
-		g.ZAPLOG.Error("更新配置文件错误", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("更新配置文件错误", zap.String("错误:", err.Error()))
 	}
 	return nil
 }

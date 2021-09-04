@@ -2,21 +2,35 @@ package cache
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/multi"
 )
 
-func Init() {
+func Init() error{
 	universalOptions := &redis.UniversalOptions{
 		Addrs:       strings.Split(g.CONFIG.Redis.Addr, ","),
 		Password:    g.CONFIG.Redis.Password,
 		PoolSize:    g.CONFIG.Redis.PoolSize,
 		IdleTimeout: 300 * time.Second,
 	}
+	err := multi.InitDriver(
+		&multi.Config{
+			DriverType:      g.CONFIG.System.CacheType,
+			UniversalClient: g.CACHE},
+	)
+	if err !=nil{
+		return err
+	}
+	if multi.AuthDriver == nil {
+		return errors.New("初始化认证驱动失败")
+	}
 	g.CACHE = redis.NewUniversalClient(universalOptions)
+	return nil
 }
 
 // SetCache 缓存数据

@@ -13,7 +13,7 @@ import (
 func GetPerm(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
@@ -47,7 +47,7 @@ func CreatePerm(ctx iris.Context) {
 func UpdatePerm(ctx iris.Context) {
 	var reqId g.ReqId
 	if err := ctx.ReadParams(&reqId); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
@@ -73,7 +73,7 @@ func UpdatePerm(ctx iris.Context) {
 func DeletePerm(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}

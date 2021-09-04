@@ -34,7 +34,7 @@ func Check(r *http.Request, userId string) (bool, error) {
 	path := r.URL.Path
 	ok, err := casbinServer.Instance().Enforce(userId, path, method)
 	if err != nil {
-		g.ZAPLOG.Error(fmt.Sprintf("验证权限报错：%s-%s-%s", userId, path, method), zap.String("错误", err.Error()))
+		g.ZAPLOG.Error(fmt.Sprintf("验证权限报错：%s-%s-%s", userId, path, method), zap.String("错误:", err.Error()))
 		return false, err
 	}
 

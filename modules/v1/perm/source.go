@@ -1,6 +1,8 @@
 package perm
 
 import (
+	"fmt"
+
 	"github.com/gookit/color"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
@@ -13,6 +15,7 @@ type source struct{}
 
 func GetSources() []Permission {
 	var perms []Permission
+	fmt.Println(g.PermRoutes)
 	for _, permRoute := range g.PermRoutes {
 		perms = append(perms, Permission{BasePermission: BasePermission{
 			Name:        permRoute["path"],

@@ -13,16 +13,16 @@ import (
 func GetRole(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
-	perm, err := FindById(database.Instance(), req.Id)
+	role, err := FindById(database.Instance(), req.Id)
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: g.SystemErr.Msg})
 		return
 	}
-	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: perm, Msg: g.NoErr.Msg})
+	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: role, Msg: g.NoErr.Msg})
 }
 
 func CreateRole(ctx iris.Context) {
@@ -47,7 +47,7 @@ func CreateRole(ctx iris.Context) {
 func UpdateRole(ctx iris.Context) {
 	var reqId g.ReqId
 	if err := ctx.ReadParams(&reqId); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
@@ -73,7 +73,7 @@ func UpdateRole(ctx iris.Context) {
 func DeleteRole(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}

@@ -11,19 +11,28 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetUser(ctx iris.Context) {
-	var req g.ReqId
-	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
-		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
-		return
-	}
-	perm, err := FindById(database.Instance(), req.Id)
+func Profile(ctx iris.Context) {
+	user, err := FindById(database.Instance(), multi.GetUserId(ctx))
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: g.SystemErr.Msg})
 		return
 	}
-	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: perm, Msg: g.NoErr.Msg})
+	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: user, Msg: g.NoErr.Msg})
+}
+
+func GetUser(ctx iris.Context) {
+	var req g.ReqId
+	if err := ctx.ReadParams(&req); err != nil {
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
+		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
+		return
+	}
+	user, err := FindById(database.Instance(), req.Id)
+	if err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: g.SystemErr.Msg})
+		return
+	}
+	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: user, Msg: g.NoErr.Msg})
 }
 
 func CreateUser(ctx iris.Context) {
@@ -48,7 +57,7 @@ func CreateUser(ctx iris.Context) {
 func UpdateUser(ctx iris.Context) {
 	var reqId g.ReqId
 	if err := ctx.ReadParams(&reqId); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
@@ -74,7 +83,7 @@ func UpdateUser(ctx iris.Context) {
 func DeleteUser(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误", err.Error()))
+		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}

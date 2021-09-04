@@ -12,6 +12,7 @@ require (
 	github.com/go-redis/redis/v8 v8.8.2
 	github.com/golang/mock v1.5.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gookit/color v1.4.2
 	github.com/iris-contrib/middleware/cors v0.0.0-20200810001613-32cf668f999f
 	github.com/jackc/pgx/v4 v4.9.2 // indirect
 	github.com/jonboulle/clockwork v0.2.2 // indirect

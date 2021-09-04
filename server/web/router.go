@@ -18,7 +18,6 @@ func (ws *WebServer) InitRouter() {
 			app.PartyFunc(debug.RelativePath, debug.Handler)
 		}
 		ws.initModule()
-		// app.HandleDir("/uploads", iris.Dir(filepath.Join(libs.CWD(), "uploads")))
 	}
 }
 

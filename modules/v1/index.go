@@ -6,7 +6,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/modules/init_db"
+	"github.com/snowlyg/iris-admin/modules/initdb"
 	"github.com/snowlyg/iris-admin/modules/perm"
 	"github.com/snowlyg/iris-admin/modules/role"
 	"github.com/snowlyg/iris-admin/modules/user"
@@ -22,7 +22,7 @@ func Party() module.WebModule {
 		}
 	}
 	modules := []module.WebModule{
-		init_db.Party(),
+		initdb.Party(),
 		role.Party(),
 		perm.Party(),
 		user.Party(),

@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Role struct {
+type 	Role struct {
 	gorm.Model
 	BaseRole
 

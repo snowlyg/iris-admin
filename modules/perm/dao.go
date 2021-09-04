@@ -54,7 +54,7 @@ func FindByNameAndAct(db *gorm.DB, name, act string, ids ...uint) (Permission, e
 
 // Create
 func Create(db *gorm.DB, req Request) (uint, error) {
-	perm := Permission{BasePerission: req.BasePerission}
+	perm := Permission{BasePermission: req.BasePermission}
 	if !checkNameAndAct(req) {
 		return perm.ID, fmt.Errorf("权限[%s-%s]已存在", req.Name, req.Act)
 	}
@@ -71,7 +71,7 @@ func Update(db *gorm.DB, id uint, req Request) error {
 	if !checkNameAndAct(req, id) {
 		return fmt.Errorf("权限[%s-%s]已存在", req.Name, req.Act)
 	}
-	perm := Permission{BasePerission: req.BasePerission}
+	perm := Permission{BasePermission: req.BasePermission}
 	err := db.Model(Permission{}).Where("id = ?", id).Updates(&perm).Error
 	if err != nil {
 		g.ZAPLOG.Error("更新权限失败", zap.String("错误", err.Error()))

@@ -3,7 +3,7 @@ package perm
 import "github.com/snowlyg/iris-admin/g"
 
 type Request struct {
-	BasePerission
+	BasePermission
 }
 
 type ReqPaginate struct {

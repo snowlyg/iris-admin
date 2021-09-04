@@ -10,6 +10,7 @@ config.yaml
 
 /cmd/
 /tmp/
+/example/tmp/
 /views/
 /logs/
 /.idea/

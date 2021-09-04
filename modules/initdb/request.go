@@ -1,4 +1,4 @@
-package init_db
+package initdb
 
 type Request struct {
 	Sql       Sql    `json:"sql"`

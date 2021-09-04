@@ -1,9 +1,8 @@
-package init_db
+package initdb
 
 import (
 	"database/sql"
 	"fmt"
-	"os/user"
 
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/config"
@@ -11,6 +10,7 @@ import (
 	"github.com/snowlyg/iris-admin/middleware"
 	"github.com/snowlyg/iris-admin/modules/perm"
 	"github.com/snowlyg/iris-admin/modules/role"
+	"github.com/snowlyg/iris-admin/modules/user"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/module"
@@ -188,7 +188,11 @@ func InitDB(req Request) error {
 		return err
 	}
 
-	err = initDB()
+	err = initDB(
+		user.Source,
+		role.Source,
+		perm.Source,
+	)
 	if err != nil {
 		if err := refreshConfig(g.VIPER); err != nil {
 			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误", err.Error()))

@@ -9,13 +9,13 @@
 .air.*
 
 # file
-example/simple/latest_log
+latest_log
 
 
 #dir
 cmd/
 tmp/
 example/tmp/
-example/simple/www/
+example/single_with_vue/www/
 logs/
 .idea/

@@ -155,6 +155,10 @@ func InitDB(req Request) error {
 		return errors.New("缺少数据库参数")
 	}
 
+	if err := writeConfig(g.VIPER); err != nil {
+		g.ZAPLOG.Error("更新配置文件错误", zap.String("错误:", err.Error()))
+	}
+
 	if database.Instance() == nil {
 		if err := refreshConfig(g.VIPER); err != nil {
 			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
@@ -188,9 +192,6 @@ func InitDB(req Request) error {
 			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
 		}
 		return err
-	}
-	if err := writeConfig(g.VIPER); err != nil {
-		g.ZAPLOG.Error("更新配置文件错误", zap.String("错误:", err.Error()))
 	}
 	return nil
 }

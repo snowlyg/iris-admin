@@ -2,6 +2,7 @@ package perm
 
 import (
 	"fmt"
+	"sync"
 
 	"github.com/gookit/color"
 	"github.com/snowlyg/iris-admin/g"
@@ -15,15 +16,21 @@ type source struct{}
 
 func GetSources() []Permission {
 	var perms []Permission
-	fmt.Println(g.PermRoutes)
+	var wg sync.WaitGroup
 	for _, permRoute := range g.PermRoutes {
-		perms = append(perms, Permission{BasePermission: BasePermission{
-			Name:        permRoute["path"],
-			DisplayName: permRoute["name"],
-			Description: permRoute["name"],
-			Act:         permRoute["act"],
-		}})
+		wg.Add(1)
+		go func(permRoute map[string]string) {
+			perms = append(perms, Permission{BasePermission: BasePermission{
+				Name:        permRoute["path"],
+				DisplayName: permRoute["name"],
+				Description: permRoute["name"],
+				Act:         permRoute["act"],
+			}})
+			wg.Done()
+		}(permRoute)
 	}
+	wg.Wait()
+	fmt.Println(perms)
 	return perms
 }
 

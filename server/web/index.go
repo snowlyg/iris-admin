@@ -2,17 +2,20 @@ package web
 
 import (
 	stdContext "context"
+	"path/filepath"
 	"sync"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/kataras/iris/v12/core/router"
+	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/modules/static"
 	v1 "github.com/snowlyg/iris-admin/modules/v1"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/module"
+	"github.com/snowlyg/iris-admin/server/viper"
 	"github.com/snowlyg/iris-admin/server/zap"
 )
 
@@ -27,6 +30,7 @@ type WebServer struct {
 }
 
 func Init() *WebServer {
+	viper.Init()
 	zap.Init()
 	err := cache.Init()
 	if err != nil {
@@ -60,6 +64,10 @@ func (ws *WebServer) AddModule(module ...module.WebModule) {
 	ws.modules = append(ws.modules, module...)
 }
 
+func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...router.DirOptions) {
+	ws.app.HandleDir(requestPath, fsOrDir, opts...)
+}
+
 func (ws *WebServer) GetModules() []module.WebModule {
 	return ws.modules
 }
@@ -73,7 +81,7 @@ func (ws *WebServer) Run() {
 	}
 	ws.app.UseGlobal(ws.globalMiddlewares...)
 	ws.AddModule(v1.Party())
-	ws.AddModule(static.Party())
+	ws.app.HandleDir("/static", iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "static")))
 	ws.InitRouter()
 	ws.app.Listen(
 		ws.addr,

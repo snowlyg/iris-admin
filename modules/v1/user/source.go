@@ -23,7 +23,7 @@ func GetSources() ([]Request, error) {
 				Username: "admin",
 				Password: "123456",
 				Intro:    "超级管理员",
-				Avatar:   "static/images/avatar.jpg",
+				Avatar:   "/static/images/avatar.jpg",
 			},
 			RoleIds: roleIds,
 		},

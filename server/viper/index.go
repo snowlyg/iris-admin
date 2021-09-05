@@ -3,6 +3,7 @@ package viper
 import (
 	"bytes"
 	"fmt"
+	"path/filepath"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/snowlyg/helper/dir"
@@ -10,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func init() {
+func Init() {
 	config := g.ConfigFileName
 	fmt.Printf("您的配置文件路径为%s\n", config)
 
@@ -92,4 +93,28 @@ zap:
 		fmt.Println(err)
 	}
 	g.VIPER = v
+
+	casbinPath := filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName)
+	fmt.Printf("casbin rbac_model.conf 位于： %s\n\n", casbinPath)
+	if !dir.IsExist(casbinPath) { // casbin rbac_model.conf 文件
+		var rbacModelConf = []byte(`[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && keyMatch3(r.obj, p.obj) && (r.act == p.act || p.act == "*")`)
+
+		_, err = dir.WriteBytes(casbinPath, rbacModelConf)
+		if err != nil {
+			panic(fmt.Errorf("初始化 casbin rbac_model.conf 文件错误: %w ", err))
+		}
+	}
 }

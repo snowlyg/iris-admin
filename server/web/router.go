@@ -11,7 +11,6 @@ import (
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/middleware"
 	"github.com/snowlyg/iris-admin/server/module"
-	_ "github.com/snowlyg/iris-admin/server/viper"
 )
 
 func (ws *WebServer) InitRouter() {
@@ -32,7 +31,7 @@ func (ws *WebServer) GetSources() {
 	for _, r := range ws.app.GetRoutes() {
 		// 去除非接口路径
 		handerNames := context.HandlersNames(r.Handlers)
-		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || r.IsStatic() || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi.(*Verifier).Verify") {
+		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi.(*Verifier).Verify") {
 			continue
 		}
 		ws.wg.Add(1)

@@ -18,7 +18,7 @@
 If you don't have a QQ account, you can into the [iris-go-tenancy/community](https://gitter.im/iris-go-tenancy/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link) .
 
 [![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) 
-#### 项目开发过程详解
+#### iris 学习记录分享
 
 1.[Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/iris-go-api-1/)
 
@@ -26,69 +26,88 @@ If you don't have a QQ account, you can into the [iris-go-tenancy/community](htt
 
 ---
 
-- 安装项目依赖
+#### 简单实用
+```go
+package main
 
->加载依赖管理包 (解决国内下载依赖太慢问题)
->使用国内七牛云的 go module 镜像。
->
->参考 https://github.com/goproxy/goproxy.cn。
->
->阿里： https://mirrors.aliyun.com/goproxy/
->
->官方： https://goproxy.io/
->
->中国：https://goproxy.cn
->
->其他：https://gocenter.io
+import (
+	"github.com/snowlyg/iris-admin/server/web"
+)
 
-##### golang 1.13+ 可以直接执行：
-```shell script
-go env -w GO111MODULE=on
-go env -w GOPROXY=https://goproxy.cn,direct
-```
-- 复制配置文件
-```
-cp application.example.yml application.yml
+func main() {
+	webServer := web.Init()
+	webServer.Run()
+}
 ```
 
->  修改配置文件 `application.yml` 
-
-- 运行项目
->如果想使用 `go run main.go --config ` 命令运行,注意不用 --config 指定配置路径，将无法加载配置文件
-```
-# --config 指定配置文件绝对路径
- go run main.go --config /Users/snowlyg/go/src/github.com/snowlyg/IrisAdminApi/application.yml
+#### 启动项目
+- 第一次启动项目后会，自动生成 `config.yaml` 和 `rbac_model.conf` 两个配置文件
+```sh
+go run main.go
 ```
 
->推荐使用 air 热编译工具
-```
-# 安装工具 air     
-go get -u github.com/cosmtrek/air
+#### 添加模块
+- 框架默认内置了v1 版本的基础认证模块
+- 可以使用 AddModule() 增加其他 admin模块
+```go
+package main
 
-cp .air.example.conf  .air.conf # 复制后修改 .air.conf 文件，默认为 mac 环境
+import (
+  	"github.com/snowlyg/iris-admin/server/web"
+  "github.com/kataras/iris/v12"
+	"github.com/snowlyg/iris-admin/middleware"
+	"github.com/snowlyg/iris-admin/server/module"
+)
 
-air
+// Party admin模块
+func Party() module.WebModule {
+  handler := func(admin iris.Party) {
+    // 中间件
+    admin.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())
+		admin.Get("/", GetAllAdmins).Name = "admin列表"
+	}
+	return module.NewModule("/admins", handler)
+}
+
+func GetAllAdmins(ctx iris.Context) {
+  // 处理业务逻辑
+  // ... 
+	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: list, Msg: g.NoErr.Msg})
+}
+
+func main() {
+	webServer := web.Init()
+  webServer.AddModule(Party())
+	webServer.Run()
+}
 ```
 
-- 填充数据, 注意配置文件同项目配置文件，权限数据位于 tools/seed/data
-```
-go build -o seed tools/seed/main.go 
-#  --path 指定目录即可
-./seed --config /Users/snowlyg/go/src/github.com/snowlyg/IrisAdminApi/application.yml --path /Users/snowlyg/go/src/github.com/snowlyg/IrisAdminApi/tools/seed/data
+#### 配合前端单页面使用
+- 编译前端页面到 admim 目录
+```go
+package main
+
+import (
+	"path/filepath"
+
+	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/helper/dir"
+	"github.com/snowlyg/iris-admin/server/web"
+)
+
+func main() {
+	webServer := web.Init()
+	webServer.AddStatic("/admin", iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "admin")))
+	webServer.Run()
+}
 ```
 
-#### 报错 Error 1071: Specified key was too long; max key length is 1000 bytes
-- 修改数据库引擎为 InnoDB
+#### 简单用例
+- [简单实用]()
+- [添加模块]()
+- [配合单页面]()
 
-#### postman 接口
-```text
-https://www.getpostman.com/collections/048078cdfd16667352b0
-```
-
-#### 运行测试
-```
-go test ./...
-```
+#### 单元测试和接口文档[待更新]
 
 #### 感谢 
 

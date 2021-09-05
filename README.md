@@ -41,7 +41,7 @@ func main() {
 ```
 
 #### 启动项目
-- 第一次启动项目后会，自动生成 `config.yaml` 和 `rbac_model.conf` 两个配置文件
+- 第一次启动项目后,会自动生成 `config.yaml` 和 `rbac_model.conf` 两个配置文件
 ```sh
 go run main.go
 ```

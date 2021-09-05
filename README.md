@@ -26,7 +26,7 @@ If you don't have a QQ account, you can into the [iris-go-tenancy/community](htt
 
 ---
 
-#### 简单实用
+#### 简单使用
 ```go
 package main
 
@@ -82,7 +82,7 @@ func main() {
 }
 ```
 
-#### 配合前端单页面使用
+#### 配合前端使用
 - 编译前端页面到 admim 目录
 ```go
 package main
@@ -103,9 +103,9 @@ func main() {
 ```
 
 #### 简单用例
-- [简单实用]()
-- [添加模块]()
-- [配合单页面]()
+- [简单使用](https://github.com/snowlyg/IrisAdminApi/tree/master/example/simple)
+- [添加模块](https://github.com/snowlyg/IrisAdminApi/tree/master/example/add_moule)
+- [配合前端](https://github.com/snowlyg/IrisAdminApi/tree/master/example/single_with_vue)
 
 #### 单元测试和接口文档[待更新]
 

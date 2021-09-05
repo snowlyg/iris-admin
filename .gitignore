@@ -13,4 +13,12 @@ latest_log
 rbac_model.conf
 
 
-config.yaml
+
+#dir
+cmd/
+tmp/
+example/tmp/
+example/single_with_vue/www/
+logs/
+.idea/
+>>>>>>> dev

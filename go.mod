@@ -8,6 +8,7 @@ require (
 	github.com/casbin/gorm-adapter/v3 v3.0.4
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9
+	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis/v8 v8.8.2
 	github.com/golang/mock v1.5.0 // indirect

@@ -97,7 +97,7 @@ import (
 
 func main() {
 	webServer := web.Init()
-	webServer.AddStatic("/admin", iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "admin")))
+	webServer.AddStatic("/", iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "dist")))
 	webServer.Run()
 }
 ```

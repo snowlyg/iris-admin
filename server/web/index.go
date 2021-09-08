@@ -2,6 +2,7 @@ package web
 
 import (
 	stdContext "context"
+	"net/http"
 	"path/filepath"
 	"sync"
 	"time"
@@ -9,7 +10,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/kataras/iris/v12/core/router"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/iris-admin/g"
 	v1 "github.com/snowlyg/iris-admin/modules/v1"
@@ -64,8 +64,12 @@ func (ws *WebServer) AddModule(module ...module.WebModule) {
 	ws.modules = append(ws.modules, module...)
 }
 
-func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...router.DirOptions) {
-	ws.app.HandleDir(requestPath, fsOrDir, opts...)
+func (ws *WebServer) AddStatic(templatesFS, publicFS http.FileSystem) {
+	ws.app.RegisterView(iris.HTML(templatesFS, ".html"))
+	ws.app.HandleDir("/", publicFS)
+	ws.app.Get("/", func(ctx iris.Context) {
+		ctx.View("index.html")
+	})
 }
 
 func (ws *WebServer) GetModules() []module.WebModule {
@@ -81,7 +85,7 @@ func (ws *WebServer) Run() {
 	}
 	ws.app.UseGlobal(ws.globalMiddlewares...)
 	ws.AddModule(v1.Party())
-	ws.app.HandleDir("/static", iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "static")))
+	ws.app.HandleDir("/upload", iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "upload")))
 	ws.InitRouter()
 	ws.app.Listen(
 		ws.addr,

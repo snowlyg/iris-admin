@@ -88,19 +88,23 @@ func main() {
 package main
 
 import (
-	"path/filepath"
-
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/iris-admin/server/web"
 )
 
 func main() {
 	webServer := web.Init()
-	webServer.AddStatic("/", iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "dist")))
+	webServer.AddStatic("/", iris.Dir("./dist"), iris.DirOptions{
+		IndexName: "index.html",
+		SPA:       true,
+	})
 	webServer.Run()
 }
 ```
+- 前端页面参考/借用：
+- [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin/tree/master/web)
+- [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
+
 
 #### 简单用例
 - [简单使用](https://github.com/snowlyg/IrisAdminApi/tree/master/example/simple)

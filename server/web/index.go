@@ -64,11 +64,10 @@ func (ws *WebServer) AddModule(module ...module.WebModule) {
 	ws.modules = append(ws.modules, module...)
 }
 
-func (ws *WebServer) AddStatic(templatesFS, publicFS http.FileSystem) {
-	ws.app.RegisterView(iris.HTML(templatesFS, ".html"))
-	ws.app.HandleDir("/", publicFS)
-	ws.app.Get("/", func(ctx iris.Context) {
-		ctx.View("index.html")
+func (ws *WebServer) AddStatic( requestPath string,dir http.Dir,dirOptions iris.DirOptions) {
+	ws.app.HandleDir(requestPath, iris.Dir("./public"), iris.DirOptions{
+		IndexName: "index.html",
+		SPA:       true,
 	})
 }
 

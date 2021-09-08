@@ -104,7 +104,7 @@ func main() {
 
 #### 简单用例
 - [简单使用](https://github.com/snowlyg/IrisAdminApi/tree/master/example/simple)
-- [添加模块](https://github.com/snowlyg/IrisAdminApi/tree/master/example/add_moule)
+- [添加模块](https://github.com/snowlyg/IrisAdminApi/tree/master/example/add_module)
 - [配合前端](https://github.com/snowlyg/IrisAdminApi/tree/master/example/single_with_vue)
 
 #### 单元测试和接口文档[待更新]

@@ -2,7 +2,6 @@ package web
 
 import (
 	stdContext "context"
-	"net/http"
 	"path/filepath"
 	"sync"
 	"time"
@@ -64,11 +63,8 @@ func (ws *WebServer) AddModule(module ...module.WebModule) {
 	ws.modules = append(ws.modules, module...)
 }
 
-func (ws *WebServer) AddStatic( requestPath string,dir http.Dir,dirOptions iris.DirOptions) {
-	ws.app.HandleDir(requestPath, iris.Dir("./public"), iris.DirOptions{
-		IndexName: "index.html",
-		SPA:       true,
-	})
+func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...iris.DirOptions) {
+	ws.app.HandleDir(requestPath, fsOrDir, opts...)
 }
 
 func (ws *WebServer) GetModules() []module.WebModule {

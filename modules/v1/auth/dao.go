@@ -42,3 +42,4 @@ func GetAccessToken(req LoginRequest) (string, error) {
 
 	return token, nil
 }
+

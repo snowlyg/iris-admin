@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gavv/httpexpect/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
@@ -79,20 +78,26 @@ func (ws *WebServer) GetModules() []module.WebModule {
 	return ws.modules
 }
 
+var client *tests.Client
+
 func (ws *WebServer) GetTestAuth(t *testing.T) *tests.Client {
-	client := tests.New(str.Join("http://", ws.addr), t, ws.app)
-	if client == nil {
-		t.Fatalf("client is nil")
-	}
+	var once sync.Once
+	once.Do(
+		func() {
+			client = tests.New(str.Join("http://", ws.addr), t, ws.app)
+			if client == nil {
+				t.Fatalf("client is nil")
+			}
+		},
+	)
+
 	return client
 }
 
-func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *httpexpect.Expect {
-	return ws.GetTestAuth(t).Login(url, res, datas...)
-}
-
-func (ws *WebServer) GetTestLogout(t *testing.T, url string, res tests.Responses) {
-	ws.GetTestAuth(t).Logout(url, res)
+func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client {
+	client := ws.GetTestAuth(t)
+	client.Login(url, res, datas...)
+	return client
 }
 
 func (ws *WebServer) Run() {

@@ -45,7 +45,7 @@ redis:
  pool-size: 0
 system:
  level: debug # debug,release,test
- addr: ":8085"
+ addr: "127.0.0.1:8085"
  db-type: ""
  cache-type: "" 
  time-format: "2006-01-02 15:04:05"

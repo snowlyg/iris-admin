@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/kataras/iris/v12"
@@ -13,7 +14,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
-func (ws *WebServer) InitRouter() {
+func (ws *WebServer) InitRouter() error {
 	ws.app.UseRouter(middleware.CrsAuth())
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
@@ -24,6 +25,11 @@ func (ws *WebServer) InitRouter() {
 		}
 		ws.initModule()
 		ws.GetSources()
+	 err :=	ws.app.Build()
+	 if err !=nil{
+		 return fmt.Errorf("build router %w",err)
+	 }
+	 return nil
 	}
 }
 

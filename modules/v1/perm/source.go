@@ -1,7 +1,6 @@
 package perm
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/gookit/color"
@@ -30,7 +29,6 @@ func GetSources() []Permission {
 		}(permRoute)
 	}
 	wg.Wait()
-	fmt.Println(perms)
 	return perms
 }
 

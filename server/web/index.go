@@ -2,16 +2,18 @@ package web
 
 import (
 	stdContext "context"
-	"path/filepath"
+	"fmt"
 	"sync"
+	"testing"
 	"time"
 
+	"github.com/gavv/httpexpect/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/snowlyg/helper/dir"
+	"github.com/snowlyg/helper/str"
+	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/g"
-	v1 "github.com/snowlyg/iris-admin/modules/v1"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/module"
 	"github.com/snowlyg/iris-admin/server/viper"
@@ -46,6 +48,12 @@ func Init() *WebServer {
 		app.Shutdown(ctx) // close all hosts
 		close(idleConnsClosed)
 	})
+	if g.CONFIG.System.Addr == "" { // 默认 8085
+		g.CONFIG.System.Addr = "127.0.0.1:8085"
+	}
+	if g.CONFIG.System.TimeFormat == "" { // 默认 80
+		g.CONFIG.System.TimeFormat = time.RFC3339
+	}
 	return &WebServer{
 		app:               app,
 		addr:              g.CONFIG.System.Addr,
@@ -71,17 +79,29 @@ func (ws *WebServer) GetModules() []module.WebModule {
 	return ws.modules
 }
 
+func (ws *WebServer) GetTestAuth(t *testing.T) *tests.Client {
+	client := tests.New(str.Join("http://", ws.addr), t, ws.app)
+	if client == nil {
+		t.Fatalf("client is nil")
+	}
+	return client
+}
+
+func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *httpexpect.Expect {
+	return ws.GetTestAuth(t).Login(url, res, datas...)
+}
+
+func (ws *WebServer) GetTestLogout(t *testing.T, url string, res tests.Responses) {
+	ws.GetTestAuth(t).Logout(url, res)
+}
+
 func (ws *WebServer) Run() {
-	if ws.addr == "" { // 默认 8085
-		ws.addr = "127.0.0.1:8085"
-	}
-	if ws.timeFormat == "" { // 默认 80
-		ws.timeFormat = time.RFC3339
-	}
 	ws.app.UseGlobal(ws.globalMiddlewares...)
-	ws.AddModule(v1.Party())
-	ws.app.HandleDir("/upload", iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "upload")))
-	ws.InitRouter()
+	err := ws.InitRouter()
+	if err != nil {
+		fmt.Printf("初始化路由错误： %v\n", err)
+		panic(err)
+	}
 	ws.app.Listen(
 		ws.addr,
 		iris.WithoutInterruptHandler,

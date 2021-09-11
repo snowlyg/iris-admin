@@ -14,7 +14,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
-// Party
+// Party v1
 func Party() module.WebModule {
 	handler := func(v1 iris.Party) {
 		if !g.CONFIG.Limit.Disable {

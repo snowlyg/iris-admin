@@ -21,4 +21,5 @@ type Cache struct {
 	Port     string `json:"port"  validate:"required"`
 	Password string `json:"password"`
 	PoolSize int    `json:"poolSize"`
+	DB       int    `json:"db"`
 }

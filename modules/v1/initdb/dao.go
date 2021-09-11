@@ -23,7 +23,7 @@ var (
 	baseSystem = config.System{
 		CacheType: "",
 		Level:     "debug",
-		Addr:      ":80",
+		Addr:      "127.0.0.1:80",
 		DbType:    "",
 	}
 	baseCache = config.Redis{
@@ -93,7 +93,7 @@ func InitDB(req Request) error {
 	}
 	addr := req.Addr
 	if addr == "" {
-		addr = ":8085"
+		addr = "127.0.0.1:8085"
 	}
 
 	g.CONFIG.System = config.System{
@@ -105,7 +105,7 @@ func InitDB(req Request) error {
 
 	if g.CONFIG.System.CacheType == "redis" {
 		g.CONFIG.Redis = config.Redis{
-			DB:       0,
+			DB:       req.Cache.DB,
 			Addr:     fmt.Sprintf("%s:%s", req.Cache.Host, req.Cache.Port),
 			Password: req.Cache.Password,
 		}
@@ -115,6 +115,7 @@ func InitDB(req Request) error {
 			if err := refreshConfig(g.VIPER); err != nil {
 				g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
 			}
+			return err
 		}
 	}
 

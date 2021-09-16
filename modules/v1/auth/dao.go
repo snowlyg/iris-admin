@@ -15,7 +15,7 @@ import (
 
 // GetAccessToken 登录
 func GetAccessToken(req LoginRequest) (string, error) {
-	admin, err := user.FindByUserName(database.Instance(), req.Username)
+	admin, err := user.FindPasswordByUserName(database.Instance(), req.Username)
 	if err != nil {
 		return "", err
 	}
@@ -27,7 +27,7 @@ func GetAccessToken(req LoginRequest) (string, error) {
 
 	claims := &multi.CustomClaims{
 		ID:            strconv.FormatUint(uint64(admin.Id), 10),
-		Username:      admin.Username,
+		Username:      req.Username,
 		AuthorityId:   "",
 		AuthorityType: multi.AdminAuthority,
 		LoginType:     multi.LoginTypeWeb,
@@ -42,4 +42,3 @@ func GetAccessToken(req LoginRequest) (string, error) {
 
 	return token, nil
 }
-

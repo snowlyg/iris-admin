@@ -98,7 +98,7 @@ func DeleteUser(ctx iris.Context) {
 
 func GetAllUsers(ctx iris.Context) {
 	var req ReqPaginate
-	if err := ctx.ReadJSON(&req); err != nil {
+	if err := ctx.ReadQuery(&req); err != nil {
 		errs := validate.ValidRequest(err)
 		if len(errs) > 0 {
 			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))

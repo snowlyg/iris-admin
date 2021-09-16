@@ -17,6 +17,7 @@ func GetSources() []Permission {
 	var perms []Permission
 	var wg sync.WaitGroup
 	for _, permRoute := range g.PermRoutes {
+		p := permRoute
 		wg.Add(1)
 		go func(permRoute map[string]string) {
 			perms = append(perms, Permission{BasePermission: BasePermission{
@@ -26,7 +27,7 @@ func GetSources() []Permission {
 				Act:         permRoute["act"],
 			}})
 			wg.Done()
-		}(permRoute)
+		}(p)
 	}
 	wg.Wait()
 	return perms

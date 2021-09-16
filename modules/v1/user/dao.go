@@ -40,7 +40,7 @@ func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
 	// 查询用户角色
 	getRoles(db, users...)
 
-	list := iris.Map{"items": users, "total": count, "limit": req.PageSize}
+	list := iris.Map{"items": users, "total": count, "pageSize": req.PageSize, "page": req.Page}
 	return list, nil
 }
 
@@ -86,16 +86,33 @@ func FindByUserName(db *gorm.DB, username string, ids ...uint) (Response, error)
 	return user, nil
 }
 
+func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (LoginResponse, error) {
+	user := LoginResponse{}
+	db = db.Model(&User{}).Select("id,password").Where("username = ?", username)
+	if len(ids) == 1 {
+		db.Where("id != ?", ids[0])
+	}
+	err := db.First(&user).Error
+	if err != nil {
+		g.ZAPLOG.Error("根据用户名查询用户错误", zap.String("用户名:", username), zap.Uints("ids:", ids), zap.String("错误:", err.Error()))
+		return user, err
+	}
+	return user, nil
+}
+
 func Create(db *gorm.DB, req Request) (uint, error) {
 	if _, err := FindByUserName(db, req.Username); !errors.Is(err, gorm.ErrRecordNotFound) {
 		return 0, err
 	}
 	user := User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
-	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		g.ZAPLOG.Error("密码加密错误", zap.String("错误:", err.Error()))
 		return 0, err
 	}
+
+	g.ZAPLOG.Info("添加用户", zap.String("hash:", req.Password), zap.ByteString("hash:", hash))
+
 	user.Password = string(hash)
 	err = db.Model(&User{}).Create(&user).Error
 	if err != nil {

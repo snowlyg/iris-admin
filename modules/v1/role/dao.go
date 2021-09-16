@@ -38,7 +38,7 @@ func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
 		g.ZAPLOG.Error("获取角色分页数据错误", zap.String("错误:", err.Error()))
 		return nil, err
 	}
-	list := iris.Map{"items": roles, "total": count, "limit": req.PageSize}
+	list := iris.Map{"items": roles, "total": count, "pageSize": req.PageSize, "page": req.Page}
 	return list, nil
 }
 

@@ -15,13 +15,14 @@ func ValidRequest(err interface{}) []string {
 	}
 	if validateErrs, ok := err.(validator.ValidationErrors); ok {
 		for _, e := range validateErrs {
+			ve := e
 			wg.Add(1)
-			go func() {
+			go func(e validator.FieldError) {
 				sErr := fmt.Errorf("%s 参数错误: %v", e.Namespace(), e.Value())
 				errs = append(errs, sErr.Error())
 
 				wg.Done()
-			}()
+			}(ve)
 		}
 		wg.Wait()
 	}

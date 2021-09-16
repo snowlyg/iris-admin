@@ -96,7 +96,10 @@ func (ws *WebServer) GetTestAuth(t *testing.T) *tests.Client {
 
 func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client {
 	client := ws.GetTestAuth(t)
-	client.Login(url, res, datas...)
+	err := client.Login(url, res, datas...)
+	if err != nil {
+		t.Fatal(err)
+	}
 	return client
 }
 

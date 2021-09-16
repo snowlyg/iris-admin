@@ -21,11 +21,11 @@ func GetSources() ([]Request, error) {
 			BaseUser: BaseUser{
 				Name:     "超级管理员",
 				Username: "admin",
-				Password: "123456",
 				Intro:    "超级管理员",
 				Avatar:   "/static/images/avatar.jpg",
 			},
-			RoleIds: roleIds,
+			Password: "123456",
+			RoleIds:  roleIds,
 		},
 	}
 	return users, nil

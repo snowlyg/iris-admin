@@ -9,3 +9,8 @@ type Response struct {
 	BaseUser
 	Roles []string `gorm:"-" json:"roles"`
 }
+
+type LoginResponse struct {
+	g.ReqId
+	Password string `json:"password"`
+}

@@ -15,6 +15,7 @@ type Sql struct {
 	UserName string `json:"userName" validate:"required"`
 	Password string `json:"password"  validate:"required"`
 	DBName   string `json:"dbName" validate:"required"`
+	LogMode  bool   `json:"logMode"`
 }
 type Cache struct {
 	Host     string `json:"host"  validate:"required"`

@@ -37,6 +37,7 @@ var (
 		Username: "",
 		Password: "",
 		Config:   "charset=utf8mb4&parseTime=True&loc=Local",
+		LogMode:  true,
 	}
 )
 
@@ -145,6 +146,7 @@ func InitDB(req Request) error {
 		Username: req.Sql.UserName,
 		Password: req.Sql.Password,
 		Config:   "charset=utf8mb4&parseTime=True&loc=Local",
+		LogMode:  req.Sql.LogMode,
 	}
 
 	m := g.CONFIG.Mysql

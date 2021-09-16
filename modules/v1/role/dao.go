@@ -51,7 +51,7 @@ func FindByName(db *gorm.DB, name string, ids ...uint) (Response, error) {
 	}
 	err := db.First(&role).Error
 	if err != nil {
-		g.ZAPLOG.Error("根据名称查询角色错误", zap.String("错误:", err.Error()))
+		g.ZAPLOG.Error("根据名称查询角色错误", zap.String("名称:", name), zap.String("错误:", err.Error()))
 		return role, err
 	}
 	return role, nil

@@ -29,7 +29,7 @@ func Instance() *casbin.Enforcer {
 // GetEnforcer
 func GetEnforcer() *casbin.Enforcer {
 	if database.Instance() == nil {
-		color.Danger.Println("数据库初始化为空")
+		color.Danger.Println("数据库未初始化")
 		return nil
 	}
 	c, err := gormadapter.NewAdapterByDBUseTableName(database.Instance(), "", "casbin_rule") // Your driver and data source.

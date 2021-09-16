@@ -36,7 +36,7 @@ mysql:
  password: ""
  max-idle-conns: 0
  max-open-conns: 0
- log-mode: false
+ log-mode: true
  log-zap: ""
 redis:
  db: 0
@@ -55,7 +55,7 @@ zap:
  prefix: '[OP-ONLINE]'
  director: log
  link-name: latest_log
- showLine: false
+ show-line: true
  encode-level: LowercaseColorLevelEncoder
  stacktrace-key: stacktrace
  log-in-console: true`)

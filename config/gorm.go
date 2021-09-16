@@ -2,7 +2,7 @@ package config
 
 import "fmt"
 
-type Mysql struct {
+type 	Mysql struct {
 	Path         string `mapstructure:"path" json:"path" yaml:"path"`
 	Config       string `mapstructure:"config" json:"config" yaml:"config"`
 	Dbname       string `mapstructure:"db-name" json:"dbname" yaml:"db-name"`

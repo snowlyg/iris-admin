@@ -23,7 +23,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/satori/go.uuid v1.2.0
-	github.com/snowlyg/helper v0.0.0-20210905142643-9a865711e3d5
+	github.com/snowlyg/helper v0.0.0-20210916161839-1f6b30a86819
 	github.com/snowlyg/multi v0.0.0-20210828154328-14d6bfb7d0a6
 	github.com/spf13/viper v1.3.2
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
@@ -35,4 +35,4 @@ require (
 	gorm.io/gorm v1.20.7
 )
 
-replace github.com/snowlyg/helper => /Users/snowlyg/go/src/github.com/snowlyg/helper
+// replace github.com/snowlyg/helper => /Users/snowlyg/go/src/github.com/snowlyg/helper···

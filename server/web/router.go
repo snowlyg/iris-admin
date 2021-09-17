@@ -24,38 +24,47 @@ func (ws *WebServer) InitRouter() error {
 			app.PartyFunc(debug.RelativePath, debug.Handler)
 		}
 		ws.initModule()
-		ws.GetSources()
-	 err :=	ws.app.Build()
-	 if err !=nil{
-		 return fmt.Errorf("build router %w",err)
-	 }
-	 return nil
+		err := ws.app.Build()
+		if err != nil {
+			return fmt.Errorf("build router %w", err)
+		}
+		g.PermRoutes = ws.GetSources()
+		return nil
 	}
 }
 
-func (ws *WebServer) GetSources() {
+func (ws *WebServer) GetSources() []map[string]string {
+	routeLen := len(ws.app.GetRoutes())
+	ch := make(chan map[string]string, routeLen)
 	for _, r := range ws.app.GetRoutes() {
+		r := r
 		// 去除非接口路径
 		handerNames := context.HandlersNames(r.Handlers)
 		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi.(*Verifier).Verify") {
+			routeLen--
 			continue
 		}
-		ws.wg.Add(1)
 		go func(r *router.Route) {
-			g.PermRoutes = append(g.PermRoutes, map[string]string{
+			route := map[string]string{
 				"path": r.Path,
 				"name": r.Name,
 				"act":  r.Method,
-			})
-			ws.wg.Done()
+			}
+			ch <- route
 		}(r)
-		ws.wg.Wait()
 	}
+
+	routes := make([]map[string]string, routeLen)
+	for i := 0; i < routeLen; i++ {
+		routes[i] = <-ch
+	}
+	return routes
 }
 
 func (ws *WebServer) initModule() {
 	if len(ws.modules) > 0 {
 		for _, mod := range ws.modules {
+			mod := mod
 			ws.wg.Add(1)
 			go func(mod module.WebModule) {
 				sub := ws.app.PartyFunc(mod.RelativePath, mod.Handler)

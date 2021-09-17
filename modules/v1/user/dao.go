@@ -102,7 +102,7 @@ func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (LoginRes
 
 func Create(db *gorm.DB, req Request) (uint, error) {
 	if _, err := FindByUserName(db, req.Username); !errors.Is(err, gorm.ErrRecordNotFound) {
-		return 0, err
+		return 0, fmt.Errorf("用户名 %s 已经被使用", req.Username)
 	}
 	user := User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)

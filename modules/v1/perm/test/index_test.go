@@ -7,10 +7,15 @@ import (
 	"github.com/snowlyg/helper/tests"
 )
 
+var (
+	loginUrl  = "/api/v1/auth/login"
+	logoutUrl = "/api/v1/users/logout"
+	url       = "/api/v1/perms"
+)
+
 func TestList(t *testing.T) {
-	client := TestServer.GetTestLogin(t, "/api/v1/auth/login", nil)
-	defer client.Logout("/api/v1/users/logout", nil)
-	url := "/api/v1/users"
+	client := TestServer.GetTestLogin(t, loginUrl, nil)
+	defer client.Logout(logoutUrl, nil)
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
@@ -36,8 +41,8 @@ func TestList(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	client := TestServer.GetTestLogin(t, "/api/v1/auth/login", nil)
-	defer client.Logout("/api/v1/users/logout", nil)
+	client := TestServer.GetTestLogin(t, loginUrl, nil)
+	defer client.Logout(logoutUrl, nil)
 	data := map[string]interface{}{
 		"name":     "测试名称",
 		"username": "test_username",
@@ -45,16 +50,16 @@ func TestCreate(t *testing.T) {
 		"avatar":   "",
 		"password": "123456",
 	}
-	userId := CreateUser(client, data)
+	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)
 	}
-	defer DeleteUser(client, userId)
+	defer Delete(client, userId)
 }
 
 func TestUpdate(t *testing.T) {
-	client := TestServer.GetTestLogin(t, "/api/v1/auth/login", nil)
-	defer client.Logout("/api/v1/users/logout", nil)
+	client := TestServer.GetTestLogin(t, loginUrl, nil)
+	defer client.Logout(logoutUrl, nil)
 	data := map[string]interface{}{
 		"name":     "测试名称",
 		"username": "test_username",
@@ -62,11 +67,11 @@ func TestUpdate(t *testing.T) {
 		"avatar":   "",
 		"password": "123456",
 	}
-	userId := CreateUser(client, data)
+	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)
 	}
-	defer DeleteUser(client, userId)
+	defer Delete(client, userId)
 
 	update := map[string]interface{}{
 		"name":     "更新测试名称",
@@ -76,17 +81,16 @@ func TestUpdate(t *testing.T) {
 		"password": "123456",
 	}
 
-	url := fmt.Sprintf("/api/v1/users/%d", userId)
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
 	}
-	client.POST(url, pageKeys, update)
+	client.POST(fmt.Sprintf("%s/%d", url, userId), pageKeys, update)
 }
 
 func TestGetById(t *testing.T) {
-	client := TestServer.GetTestLogin(t, "/api/v1/auth/login", nil)
-	defer client.Logout("/api/v1/users/logout", nil)
+	client := TestServer.GetTestLogin(t, loginUrl, nil)
+	defer client.Logout(logoutUrl, nil)
 	data := map[string]interface{}{
 		"name":     "测试名称",
 		"username": "test_username",
@@ -94,12 +98,12 @@ func TestGetById(t *testing.T) {
 		"avatar":   "",
 		"password": "123456",
 	}
-	userId := CreateUser(client, data)
+	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)
 	}
-	defer DeleteUser(client, userId)
-	url := fmt.Sprintf("/api/v1/users/%d", userId)
+	defer Delete(client, userId)
+
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
@@ -116,11 +120,10 @@ func TestGetById(t *testing.T) {
 		},
 		},
 	}
-	client.GET(url, pageKeys)
+	client.GET(fmt.Sprintf("%s/%d", url, userId), pageKeys)
 }
 
-func CreateUser(client *tests.Client, data map[string]interface{}) uint {
-	url := "/api/v1/users"
+func Create(client *tests.Client, data map[string]interface{}) uint {
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
@@ -132,11 +135,10 @@ func CreateUser(client *tests.Client, data map[string]interface{}) uint {
 	return client.POST(url, pageKeys, data).GetId()
 }
 
-func DeleteUser(client *tests.Client, id uint) {
-	url := fmt.Sprintf("/api/v1/users/%d", id)
+func Delete(client *tests.Client, id uint) {
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
 	}
-	client.DELETE(url, pageKeys)
+	client.DELETE(fmt.Sprintf("%s/%d", url, id), pageKeys)
 }

@@ -8,7 +8,6 @@ require (
 	github.com/casbin/gorm-adapter/v3 v3.0.4
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9
-	github.com/gavv/httpexpect/v2 v2.3.1
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis/v8 v8.8.2
 	github.com/golang/mock v1.5.0 // indirect
@@ -35,4 +34,4 @@ require (
 	gorm.io/gorm v1.20.7
 )
 
-// replace github.com/snowlyg/helper => /Users/snowlyg/go/src/github.com/snowlyg/helper···
+replace github.com/snowlyg/helper => /Users/snowlyg/go/src/github.com/snowlyg/helper

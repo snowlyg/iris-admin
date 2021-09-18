@@ -110,7 +110,7 @@ func main() {
 - [简单使用](https://github.com/snowlyg/IrisAdminApi/tree/master/example)
 
 #### 单元测试和接口文档[待更新]
-- [接口单元](https://github.com/snowlyg/IrisAdminApi/tree/master/example/test)
+- [接口单元](https://github.com/snowlyg/IrisAdminApi/tree/master/modules/v1/user/test)
 
 #### 感谢 
 

@@ -7,22 +7,30 @@
     <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
 </div>
 
+简体中文 | [English](./README_EN.md) 
+
+#### 项目地址
+[GITHUB](https://github.com/snowlyg/IrisAdminApi) | [GITEE](https://gitee.com/snowlyg/IrisAdminApi) 
+
 > 简单项目仅供学习，欢迎指点！
 
-[IRIS V12 中文文档](https://github.com/snowlyg/iris/wiki)
+#### 相关文档
+- [IRIS V12 中文文档](https://github.com/snowlyg/iris/wiki)
+- []()
 
-
-###### `Iris-go` 学习交流 QQ 群 ：`676717248`
+#### 交流方式
+- `Iris-go` 学习交流 QQ 群 ：`676717248`
 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
 
-If you don't have a QQ account, you can into the [iris-go-tenancy/community](https://gitter.im/iris-go-tenancy/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link) .
+- If you don't have a QQ account, you can into the [iris-go-tenancy/community](https://gitter.im/iris-go-tenancy/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link) .
+- 微信群请加微信号: `c25vd2x5Z19jaGluYQ==`
 
 [![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) 
 #### iris 学习记录分享
 
-1.[Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/iris-go-api-1/)
+- [Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/iris-go-api-1/)
 
-2.[iris + casbin 从陌生到学会使用的过程](https://blog.snowlyg.com/iris-go-api-2/)
+- [iris + casbin 从陌生到学会使用的过程](https://blog.snowlyg.com/iris-go-api-2/)
 
 ---
 
@@ -77,7 +85,7 @@ func GetAllAdmins(ctx iris.Context) {
 
 func main() {
 	webServer := web.Init()
-  webServer.AddModule(Party())
+    webServer.AddModule(Party())
 	webServer.Run()
 }
 ```
@@ -110,7 +118,7 @@ import (
 
 func main() {
 	webServer := web.Init()
-  fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
+    fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
 	webServer.AddStatic("/other",fsOrDir)
 	webServer.Run()
 }
@@ -133,7 +141,7 @@ func main() {
 	webServer.Run()
 }
 ```
-- 前端页面参考/借用：
+- 前端页面参考/借用：【前端只简单实现预览效果】
 - [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin/tree/master/web)
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
 
@@ -149,4 +157,5 @@ func main() {
 #### 感谢 
 
 [JetBrains](https://www.jetbrains.com/?from=IrisAdminApi) 对本项目的支持。
+
 

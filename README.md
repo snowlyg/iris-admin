@@ -143,8 +143,8 @@ func main() {
 
 #### 单元测试和接口文档[待更新] 
 - 测试前在 `main_test.go` 文件所在目录新建 `redis_pwd.txt `和 `redis_pwd.txt` 两个文件,分别填入 `redis` 和 `mysql` 的密码
-- 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
-- [接口单元](https://github.com/snowlyg/IrisAdminApi/tree/master/modules/v1/user/test)
+- 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
+- [接口单元测试例子](https://github.com/snowlyg/IrisAdminApi/tree/master/modules/v1/user/test)
 
 #### 感谢 
 

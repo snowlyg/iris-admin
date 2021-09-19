@@ -4,13 +4,13 @@
     <a href="https://codecov.io/gh/snowlyg/IrisAdminApi"><img src="https://codecov.io/gh/snowlyg/IrisAdminApi/branch/master/graph/badge.svg" alt="Code Coverage"></a>
     <a href="https://goreportcard.com/report/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
     <a href="https://godoc.org/github.com/snowlyg/IrisAdminApi"><img src="https://godoc.org/github.com/snowlyg/IrisAdminApi?status.svg" alt="GoDoc"></a>
-    <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
+    <a href="https://github.com/snowlyg/iris-admin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
 </div>
 
 简体中文 | [English](./README_EN.md) 
 
 #### 项目地址
-[GITHUB](https://github.com/snowlyg/IrisAdminApi) | [GITEE](https://gitee.com/snowlyg/IrisAdminApi) 
+[GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin) 
 
 > 简单项目仅供学习，欢迎指点！
 
@@ -147,12 +147,12 @@ func main() {
 
 
 #### 简单用例
-- [简单使用](https://github.com/snowlyg/IrisAdminApi/tree/master/example)
+- [简单使用](https://github.com/snowlyg/iris-admin/tree/master/example)
 
 #### 单元测试和接口文档[待更新] 
 - 测试前在 `main_test.go` 文件所在目录新建 `redis_pwd.txt `和 `redis_pwd.txt` 两个文件,分别填入 `redis` 和 `mysql` 的密码
 - 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
-- [接口单元测试例子](https://github.com/snowlyg/IrisAdminApi/tree/master/modules/v1/user/test)
+- [接口单元测试例子](https://github.com/snowlyg/iris-admin/tree/master/modules/v1/user/test)
 
 #### 感谢 
 

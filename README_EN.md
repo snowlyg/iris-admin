@@ -2,15 +2,15 @@
 
 <div align="center">
     <a href="https://codecov.io/gh/snowlyg/IrisAdminApi"><img src="https://codecov.io/gh/snowlyg/IrisAdminApi/branch/master/graph/badge.svg" alt="Code Coverage"></a>
-    <a href="https://goreportcard.com/report/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
+    <a href="hhttps://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi"><img src="https://goreportcard.com/badge/github.com/snowlyg/IrisAdminApi" alt="Go Report Card"></a>
     <a href="https://godoc.org/github.com/snowlyg/IrisAdminApi"><img src="https://godoc.org/github.com/snowlyg/IrisAdminApi?status.svg" alt="GoDoc"></a>
-    <a href="https://github.com/snowlyg/IrisAdminApi/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
+    <a href="https://github.com/snowlyg/iris-admin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/IrisAdminApi" alt="Licenses"></a>
 </div>
 
 [简体中文](./README.md)  | English
 
 #### Project url
-[GITHUB](https://github.com/snowlyg/IrisAdminApi) | [GITEE](https://gitee.com/snowlyg/IrisAdminApi) 
+[GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin) 
 ****
 > This project just for learning golang, welcome to give your suggestions!
 
@@ -148,12 +148,12 @@ func main() {
 
 
 #### Example
-- [example](https://github.com/snowlyg/IrisAdminApi/tree/master/example)
+- [example](https://github.com/snowlyg/iris-admin/tree/master/example)
 
 #### Unit test and documentation: [to be updated]
 - Before start unit tests,you must create two files which is named `redis_pwd.txt `and `redis_pwd.txt` ,fill `redis` and `mysql` 's password in to these two files separately, on the directory the `main_test.go` file is located.
 - [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) package the unit test used, it's  simple package base on [httpexpect/v2](https://github.com/gavv/httpexpect).
-- [example for unit test](https://github.com/snowlyg/IrisAdminApi/tree/master/modules/v1/user/test)
+- [example for unit test](https://github.com/snowlyg/iris-admin/tree/master/modules/v1/user/test)
 
 #### Thanks 
 

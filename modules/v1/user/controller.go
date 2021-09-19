@@ -142,8 +142,6 @@ func Clear(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
-
-
 func ChangeAvatar(ctx iris.Context) {
 	avatar := &Avatar{}
 	if err := ctx.ReadJSON(avatar); err != nil {

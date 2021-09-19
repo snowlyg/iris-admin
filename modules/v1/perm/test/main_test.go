@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	uuid "github.com/satori/go.uuid"
+	"github.com/snowlyg/helper/dir"
+	"github.com/snowlyg/helper/str"
 	v1 "github.com/snowlyg/iris-admin/modules/v1"
 	"github.com/snowlyg/iris-admin/modules/v1/initdb"
 	"github.com/snowlyg/iris-admin/server/database"
@@ -51,12 +53,16 @@ func TestMain(m *testing.M) {
 	TestServer.AddModule(v1.Party())
 	err := TestServer.InitRouter()
 	if err != nil {
-		fmt.Printf("初始化路由错误： %v\n", err)
+		text := str.Join("初始化路由错误：'", err.Error(), err.Error(), "\n")
+		fmt.Println(text)
+		dir.WriteString("error.txt", text)
 		panic(err)
 	}
 	err = initdb.InitDB(config)
 	if err != nil {
-		fmt.Printf("初始化数据库错误： %v\n", err)
+		text := str.Join("初始化数据库错误：'", err.Error(), err.Error(), "\n")
+		fmt.Println(text)
+		dir.WriteString("error.txt", text)
 		panic(err)
 	}
 
@@ -64,7 +70,9 @@ func TestMain(m *testing.M) {
 
 	err = dorpDB(uuid)
 	if err != nil {
-		fmt.Printf("删除数据库 '%s' 错误： %v\n", uuid, err)
+		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
+		fmt.Println(text)
+		dir.WriteString("error.txt", text)
 		panic(err)
 	}
 
@@ -72,6 +80,7 @@ func TestMain(m *testing.M) {
 	if db != nil {
 		db.Close()
 	}
+
 	if multi.AuthDriver != nil {
 		multi.AuthDriver.Close()
 	}

@@ -3,6 +3,7 @@ package web
 import (
 	stdContext "context"
 	"fmt"
+	"path/filepath"
 	"sync"
 	"testing"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/g"
@@ -27,6 +29,9 @@ type WebServer struct {
 	timeFormat        string // 时间格式
 	globalMiddlewares []context.Handler
 	wg                sync.WaitGroup
+	staticPrefix      string //静态文件访问地址前缀
+	staticPath        string //静态文件地址
+	webPath           string //前端文件地址
 }
 
 func Init() *WebServer {
@@ -50,6 +55,15 @@ func Init() *WebServer {
 	if g.CONFIG.System.Addr == "" { // 默认 8085
 		g.CONFIG.System.Addr = "127.0.0.1:8085"
 	}
+	if g.CONFIG.System.StaticPath == "" { // 默认 /static/upload
+		g.CONFIG.System.StaticPath = "/static/upload"
+	}
+	if g.CONFIG.System.StaticPrefix == "" { // 默认 /upload
+		g.CONFIG.System.StaticPrefix = "/upload"
+	}
+	if g.CONFIG.System.WebPath == "" { // 默认 /./dist
+		g.CONFIG.System.WebPath = "./dist"
+	}
 	if g.CONFIG.System.TimeFormat == "" { // 默认 80
 		g.CONFIG.System.TimeFormat = time.RFC3339
 	}
@@ -57,9 +71,20 @@ func Init() *WebServer {
 		app:               app,
 		addr:              g.CONFIG.System.Addr,
 		timeFormat:        g.CONFIG.System.TimeFormat,
+		staticPrefix:      g.CONFIG.System.StaticPrefix,
+		staticPath:        g.CONFIG.System.StaticPath,
+		webPath:           g.CONFIG.System.WebPath,
 		idleConnsClosed:   idleConnsClosed,
 		globalMiddlewares: []context.Handler{},
 	}
+}
+
+func (ws *WebServer) GetStaticPath() string {
+	return ws.staticPath
+}
+
+func (ws *WebServer) GetWebPath() string {
+	return ws.webPath
 }
 
 func (ws *WebServer) GetAddr() string {
@@ -72,6 +97,19 @@ func (ws *WebServer) AddModule(module ...module.WebModule) {
 
 func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...iris.DirOptions) {
 	ws.app.HandleDir(requestPath, fsOrDir, opts...)
+}
+
+func (ws *WebServer) AddWebStatic(requestPath string) {
+	fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), ws.webPath))
+	ws.AddStatic(requestPath, fsOrDir, iris.DirOptions{
+		IndexName: "index.html",
+		SPA:       true,
+	})
+}
+
+func (ws *WebServer) AddUploadStatic() {
+	fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), ws.staticPath))
+	ws.AddStatic(ws.staticPrefix, fsOrDir)
 }
 
 func (ws *WebServer) GetModules() []module.WebModule {
@@ -110,6 +148,7 @@ func (ws *WebServer) Run() {
 		fmt.Printf("初始化路由错误： %v\n", err)
 		panic(err)
 	}
+	// 添加上传文件路径
 	ws.app.Listen(
 		ws.addr,
 		iris.WithoutInterruptHandler,

@@ -17,3 +17,7 @@ type BaseUser struct {
 	Intro    string `gorm:"not null; type:varchar(512)" json:"intro"`
 	Avatar   string `gorm:"type:varchar(1024)" json:"avatar"`
 }
+
+type Avatar struct {
+	Avatar string `json:"avatar"`
+}

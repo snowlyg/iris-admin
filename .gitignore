@@ -7,18 +7,19 @@
 *.txt
 *.yaml
 .air.*
+*.jpg
 
 # file
 latest_log
 rbac_model.conf
-example/www
+
 
 
 #dir
 cmd/
 tmp/
 example/tmp/
-example/single_with_vue/www/
+example/www
 logs/
 .idea/
 

@@ -82,8 +82,24 @@ func main() {
 }
 ```
 
-#### 配合前端使用
-- 编译前端页面到 admim 目录
+#### 设置静态文件路径
+- 已经默认内置了一个静态文件访问路径
+- 静态文件将会上传到 `/static/upload` 目录
+- 可以修改配置项 `static-path` 修改默认目录
+```yaml
+system:
+  addr: 127.0.0.1:8085
+  cache-type: ""
+  db-type: ""
+  level: debug
+  static-path: /static/upload
+  static-prefix: /upload
+  time-format: "2006-01-02 15:04:05"
+  web-path: ./dist
+```
+
+#### 设置其他静态文件路径
+- 设置其他静态文件路径，可以使用 `AddStatic` 方法
 ```go
 package main
 
@@ -94,10 +110,26 @@ import (
 
 func main() {
 	webServer := web.Init()
-	webServer.AddStatic("/", iris.Dir("./dist"), iris.DirOptions{
-		IndexName: "index.html",
-		SPA:       true,
-	})
+  fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
+	webServer.AddStatic("/other",fsOrDir)
+	webServer.Run()
+}
+```
+
+#### 配合前端使用
+- 编译前端页面默认 `dist` 目录
+- 可以修改配置项 `web-path` 修改默认目录
+```go
+package main
+
+import (
+	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/iris-admin/server/web"
+)
+
+func main() {
+	webServer := web.Init()
+	webServer.AddWebStatic("/")
 	webServer.Run()
 }
 ```
@@ -111,7 +143,7 @@ func main() {
 
 #### 单元测试和接口文档[待更新] 
 - 测试前在 `main_test.go` 文件所在目录新建 `redis_pwd.txt `和 `redis_pwd.txt` 两个文件,分别填入 `redis` 和 `mysql` 的密码
-- 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect/v2) 的简单封装
+- 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
 - [接口单元](https://github.com/snowlyg/IrisAdminApi/tree/master/modules/v1/user/test)
 
 #### 感谢 

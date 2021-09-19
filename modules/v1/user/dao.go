@@ -52,6 +52,7 @@ func getRoles(db *gorm.DB, users ...*Response) {
 		return
 	}
 	for _, user := range users {
+		user.ToString()
 		userRoleId := casbin.GetRolesForUser(user.Id)
 		userRoleIds[user.Id] = userRoleId
 		roleIds = append(roleIds, userRoleId...)
@@ -83,6 +84,7 @@ func FindByUserName(db *gorm.DB, username string, ids ...uint) (Response, error)
 		g.ZAPLOG.Error("根据用户名查询用户错误", zap.String("用户名:", username), zap.Uints("ids:", ids), zap.String("错误:", err.Error()))
 		return user, err
 	}
+	getRoles(db, &user)
 	return user, nil
 }
 
@@ -168,7 +170,9 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 		g.ZAPLOG.Error("find user err ", zap.String("错误:", err.Error()))
 		return user, err
 	}
+
 	getRoles(db, &user)
+
 	return user, nil
 }
 
@@ -230,5 +234,9 @@ func CleanToken(authorityType int, userId string) error {
 		g.ZAPLOG.Error("clean token", zap.Any("err", err))
 		return fmt.Errorf("clean token %w", err)
 	}
+	return nil
+}
+
+func UpdateAvatar(db *gorm.DB, id uint, avatar string) error {
 	return nil
 }

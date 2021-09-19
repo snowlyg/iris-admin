@@ -6,7 +6,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
-// Party 调试模块
+// Party 用户
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
 		index.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())
@@ -18,8 +18,8 @@ func Party() module.WebModule {
 		index.Get("/logout", Logout).Name = "退出"
 		index.Get("/clear", Clear).Name = "清空 token"
 		index.Get("/profile", Profile).Name = "个人信息"
+		index.Post("/change_avatar", ChangeAvatar).Name = "修改头像"
 		// index.Get("/expire", controllers.Expire).Name = "刷新 token"
-		// index.Post("/change_avatar", ChangeAvatar).Name = "修改头像"
 	}
 	return module.NewModule("/users", handler)
 }

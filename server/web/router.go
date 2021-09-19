@@ -16,6 +16,7 @@ import (
 
 func (ws *WebServer) InitRouter() error {
 	ws.app.UseRouter(middleware.CrsAuth())
+
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
 		app.Use(middleware.InitCheck())
@@ -24,6 +25,8 @@ func (ws *WebServer) InitRouter() error {
 			app.PartyFunc(debug.RelativePath, debug.Handler)
 		}
 		ws.initModule()
+		ws.AddUploadStatic()
+		ws.AddWebStatic("/")
 		err := ws.app.Build()
 		if err != nil {
 			return fmt.Errorf("build router %w", err)

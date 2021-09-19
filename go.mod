@@ -34,4 +34,4 @@ require (
 	gorm.io/gorm v1.20.7
 )
 
-// replace github.com/snowlyg/helper => /Users/snowlyg/go/src/github.com/snowlyg/helper
+replace github.com/snowlyg/helper => /Users/snowlyg/go/src/github.com/snowlyg/helper

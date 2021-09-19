@@ -12,9 +12,9 @@ var (
 	logoutUrl = "/api/v1/users/logout" // 登出 URL
 	url       = "/api/v1/roles"        // url
 	data      = map[string]interface{}{
-		"name":         "测试名称",
-		"display_name": "test_display_name",
-		"description":  "测试描述信息",
+		"name":        "测试名称",
+		"displayName": "test_display_name",
+		"description": "测试描述信息",
 	}
 )
 
@@ -31,7 +31,7 @@ func TestList(t *testing.T) {
 				{
 					{Key: "id", Value: 1, Type: "ge"},
 					{Key: "name", Value: "SuperAdmin"},
-					{Key: "display_name", Value: "超级管理员"},
+					{Key: "displayName", Value: "超级管理员"},
 					{Key: "description", Value: "超级管理员"},
 					{Key: "updatedAt", Value: "", Type: "notempty"},
 					{Key: "createdAt", Value: "", Type: "notempty"},
@@ -65,9 +65,9 @@ func TestUpdate(t *testing.T) {
 	defer Delete(client, userId)
 
 	update := map[string]interface{}{
-		"name":         "更新测试名称",
-		"display_name": "update_test_udisplay_name",
-		"description":  "更新测试描述信息",
+		"name":        "更新测试名称",
+		"displayName": "update_test_udisplay_name",
+		"description": "更新测试描述信息",
 	}
 
 	pageKeys := tests.Responses{
@@ -93,7 +93,7 @@ func TestGetById(t *testing.T) {
 		{Key: "data", Value: tests.Responses{
 			{Key: "id", Value: 1, Type: "ge"},
 			{Key: "name", Value: data["name"].(string)},
-			{Key: "display_name", Value: data["display_name"].(string)},
+			{Key: "displayName", Value: data["displayName"].(string)},
 			{Key: "description", Value: data["description"].(string)},
 			{Key: "updatedAt", Value: "", Type: "notempty"},
 			{Key: "createdAt", Value: "", Type: "notempty"},

@@ -141,3 +141,23 @@ func Clear(ctx iris.Context) {
 	}
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
+
+
+
+func ChangeAvatar(ctx iris.Context) {
+	avatar := &Avatar{}
+	if err := ctx.ReadJSON(avatar); err != nil {
+		errs := validate.ValidRequest(err)
+		if len(errs) > 0 {
+			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
+			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
+			return
+		}
+	}
+	err := UpdateAvatar(database.Instance(), multi.GetUserId(ctx), avatar.Avatar)
+	if err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+		return
+	}
+	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
+}

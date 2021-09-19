@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"io/ioutil"
+	"strings"
 	"time"
 
 	"github.com/kataras/iris/v12"
@@ -18,11 +19,15 @@ func OperationRecord() iris.Handler {
 	return func(ctx iris.Context) {
 		var body []byte
 		var err error
-		body, err = ctx.GetBody()
-		if err != nil {
-			g.ZAPLOG.Error("获取请求内容错误", zap.String("错误:", err.Error()))
-		} else {
-			ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(body))
+
+		// 上传文件记录日志文件数据太大
+		if !strings.Contains(ctx.Path(), "/api/v1/upload") {
+			body, err = ctx.GetBody()
+			if err != nil {
+				g.ZAPLOG.Error("获取请求内容错误", zap.String("错误:", err.Error()))
+			} else {
+				ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(body))
+			}
 		}
 
 		userId := multi.GetUserId(ctx)

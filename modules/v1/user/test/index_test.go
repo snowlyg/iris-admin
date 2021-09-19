@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/helper/tests"
+	"github.com/snowlyg/iris-admin/g"
 )
 
 var (
@@ -35,7 +37,7 @@ func TestList(t *testing.T) {
 					{Key: "name", Value: "超级管理员"},
 					{Key: "username", Value: "admin"},
 					{Key: "intro", Value: "超级管理员"},
-					{Key: "avatar", Value: "/static/images/avatar.jpg"},
+					{Key: "avatar", Value: str.Join("http://", g.CONFIG.System.Addr, g.CONFIG.System.StaticPrefix, "/images/avatar.jpg")},
 					{Key: "roles", Value: []string{"超级管理员"}},
 					{Key: "updatedAt", Value: "", Type: "notempty"},
 					{Key: "createdAt", Value: "", Type: "notempty"},

@@ -16,10 +16,12 @@ func Init() {
 	fmt.Printf("您的配置文件路径为%s\n", config)
 
 	v := viper.New()
-	v.SetConfigType("yaml")
+	g.VIPER = v
+	g.VIPER.SetConfigType("yaml")
 
 	if !dir.IsExist(config) { //没有配置文件，写入默认配置
 		var yamlDefault = []byte(`
+max-size: 1024
 captcha:
  key-long: 6
  img-width: 240
@@ -46,6 +48,9 @@ redis:
 system:
  level: debug # debug,release,test
  addr: "127.0.0.1:8085"
+ static-prefix: "/upload"
+ static-path: "/static/upload"
+ web-path: "./dist"
  db-type: ""
  cache-type: "" 
  time-format: "2006-01-02 15:04:05"
@@ -60,39 +65,38 @@ zap:
  stacktrace-key: stacktrace
  log-in-console: true`)
 
-		if err := v.ReadConfig(bytes.NewBuffer(yamlDefault)); err != nil {
+		if err := g.VIPER.ReadConfig(bytes.NewBuffer(yamlDefault)); err != nil {
 			panic(fmt.Errorf("读取默认配置文件错误: %w ", err))
 		}
 
-		if err := v.Unmarshal(&g.CONFIG); err != nil {
+		if err := g.VIPER.Unmarshal(&g.CONFIG); err != nil {
 			panic(fmt.Errorf("同步配置文件错误: %w ", err))
 		}
 
-		if err := v.WriteConfigAs(config); err != nil {
+		if err := g.VIPER.WriteConfigAs(config); err != nil {
 			panic(fmt.Errorf("写入配置文件错误: %w ", err))
 		}
 		return
 	}
 
 	// 存在配置文件，读取配置文件内容
-	v.SetConfigFile(config)
-	err := v.ReadInConfig()
+	g.VIPER.SetConfigFile(config)
+	err := g.VIPER.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("读取配置错误: %w ", err))
 	}
 
 	// 监控配置文件变化
-	v.WatchConfig()
-	v.OnConfigChange(func(e fsnotify.Event) {
+	g.VIPER.WatchConfig()
+	g.VIPER.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("配置发生变化:", e.Name)
-		if err := v.Unmarshal(&g.CONFIG); err != nil {
+		if err := g.VIPER.Unmarshal(&g.CONFIG); err != nil {
 			fmt.Println(err)
 		}
 	})
 	if err := v.Unmarshal(&g.CONFIG); err != nil {
 		fmt.Println(err)
 	}
-	g.VIPER = v
 
 	casbinPath := filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName)
 	fmt.Printf("casbin rbac_model.conf 位于： %s\n\n", casbinPath)

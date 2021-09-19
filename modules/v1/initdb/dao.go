@@ -21,10 +21,13 @@ import (
 
 var (
 	baseSystem = config.System{
-		CacheType: "",
-		Level:     "debug",
-		Addr:      "127.0.0.1:8085",
-		DbType:    "",
+		CacheType:    "",
+		Level:        "debug",
+		Addr:         "127.0.0.1:8085",
+		DbType:       "",
+		StaticPrefix: "/upload",
+		StaticPath:   "/static/upload",
+		WebPath:      "./dist",
 	}
 	baseCache = config.Redis{
 		DB:       0,
@@ -39,6 +42,7 @@ var (
 		Config:   "charset=utf8mb4&parseTime=True&loc=Local",
 		LogMode:  true,
 	}
+	ErrViperEmpty = errors.New("配置服务未初始化")
 )
 
 func writeConfig(viper *viper.Viper) error {
@@ -57,7 +61,12 @@ func refreshConfig(viper *viper.Viper) error {
 	for k, v := range cs {
 		viper.Set(k, v)
 	}
-	return viper.WriteConfig()
+	err := viper.WriteConfig()
+	if err != nil {
+		g.ZAPLOG.Error("还原配置文件设置错误", zap.String("refreshConfig(g.VIPER)", err.Error()))
+		return err
+	}
+	return nil
 }
 
 // createTable 创建数据库(mysql)
@@ -88,6 +97,11 @@ func initDB(InitDBFunctions ...module.InitDBFunc) error {
 
 // InitDB 创建数据库并初始化
 func InitDB(req Request) error {
+	if g.VIPER == nil {
+		g.ZAPLOG.Error("初始化错误", zap.String("InitDB", ErrViperEmpty.Error()))
+		return ErrViperEmpty
+	}
+
 	level := req.Level
 	if level == "" {
 		level = "release"
@@ -98,10 +112,14 @@ func InitDB(req Request) error {
 	}
 
 	g.CONFIG.System = config.System{
-		CacheType: req.CacheType,
-		Level:     level,
-		Addr:      addr,
-		DbType:    req.SqlType,
+		CacheType:    req.CacheType,
+		Level:        level,
+		Addr:         addr,
+		DbType:       req.SqlType,
+		StaticPrefix: g.CONFIG.System.StaticPrefix,
+		StaticPath:   g.CONFIG.System.StaticPath,
+		WebPath:      g.CONFIG.System.WebPath,
+		TimeFormat:   g.CONFIG.System.TimeFormat,
 	}
 
 	if g.CONFIG.System.CacheType == "redis" {
@@ -112,10 +130,8 @@ func InitDB(req Request) error {
 		}
 		err := cache.Init() // redis缓存
 		if err != nil {
-			g.ZAPLOG.Error("认证驱动初始化错误", zap.String("错误:", err.Error()))
-			if err := refreshConfig(g.VIPER); err != nil {
-				g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
-			}
+			g.ZAPLOG.Error("认证驱动初始化错误", zap.String("cache.Init() ", err.Error()))
+			refreshConfig(g.VIPER)
 			return err
 		}
 	}
@@ -132,9 +148,7 @@ func InitDB(req Request) error {
 	createSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;", req.Sql.DBName)
 
 	if err := createTable(dsn, "mysql", createSql); err != nil {
-		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
-		}
+		refreshConfig(g.VIPER)
 		return err
 	}
 
@@ -151,22 +165,18 @@ func InitDB(req Request) error {
 
 	m := g.CONFIG.Mysql
 	if m.Dbname == "" {
-		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
-		}
 		g.ZAPLOG.Error("缺少数据库参数")
+		refreshConfig(g.VIPER)
 		return errors.New("缺少数据库参数")
 	}
 
 	if err := writeConfig(g.VIPER); err != nil {
-		g.ZAPLOG.Error("更新配置文件错误", zap.String("错误:", err.Error()))
+		g.ZAPLOG.Error("更新配置文件错误", zap.String("writeConfig(g.VIPER)", err.Error()))
 	}
 
 	if database.Instance() == nil {
-		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
-		}
 		g.ZAPLOG.Error("数据库初始化错误")
+		refreshConfig(g.VIPER)
 		return errors.New("数据库初始化错误")
 	}
 
@@ -178,9 +188,7 @@ func InitDB(req Request) error {
 	)
 	if err != nil {
 		g.ZAPLOG.Error("迁移数据表错误", zap.String("错误:", err.Error()))
-		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
-		}
+		refreshConfig(g.VIPER)
 		return err
 	}
 
@@ -191,9 +199,7 @@ func InitDB(req Request) error {
 	)
 	if err != nil {
 		g.ZAPLOG.Error("填充数据错误", zap.String("错误:", err.Error()))
-		if err := refreshConfig(g.VIPER); err != nil {
-			g.ZAPLOG.Error("还原配置文件设置错误", zap.String("错误:", err.Error()))
-		}
+		refreshConfig(g.VIPER)
 		return err
 	}
 	return nil

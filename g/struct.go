@@ -1,15 +1,18 @@
 package g
 
+// Model
 type Model struct {
 	Id        uint   `json:"id"`
 	UpdatedAt string `json:"updatedAt"`
 	CreatedAt string `json:"createdAt"`
 }
 
+// ReqId
 type ReqId struct {
 	Id uint `json:"id" param:"id"`
 }
 
+// Paginate
 type Paginate struct {
 	Page     int    `json:"page"`
 	PageSize int    `json:"pageSize"`
@@ -17,12 +20,14 @@ type Paginate struct {
 	Sort     string `json:"sort"`
 }
 
+// Response
 type Response struct {
 	Code int64       `json:"code"`
 	Msg  string      `json:"message"`
 	Data interface{} `json:"data"`
 }
 
+// ErrMsg
 type ErrMsg struct {
 	Code int64  `json:"code"`
 	Msg  string `json:"message"`

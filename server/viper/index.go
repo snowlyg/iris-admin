@@ -11,6 +11,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Init 初始化系统配置
+// - 第一次初始化系统配置，会自动生成配置文件 config.yaml 和 casbin 的规则文件 rbac_model.conf
+// - 热监控系统配置项，如果发生变化会重写配置文件内的配置项
 func Init() {
 	config := g.ConfigFileName
 	fmt.Printf("您的配置文件路径为%s\n", config)
@@ -28,7 +31,7 @@ captcha:
  img-height: 80
 limit:
  limit: true
- limit: 1
+ limit: 0
  burst: 5
 mysql:
  path: ""

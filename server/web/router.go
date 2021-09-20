@@ -14,6 +14,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
+// InitRouter 初始化模块路由
 func (ws *WebServer) InitRouter() error {
 	ws.app.UseRouter(middleware.CrsAuth())
 
@@ -36,6 +37,7 @@ func (ws *WebServer) InitRouter() error {
 	}
 }
 
+// GetSources 获取web服务需要认证的权限
 func (ws *WebServer) GetSources() []map[string]string {
 	routeLen := len(ws.app.GetRoutes())
 	ch := make(chan map[string]string, routeLen)
@@ -64,6 +66,7 @@ func (ws *WebServer) GetSources() []map[string]string {
 	return routes
 }
 
+// initModule 初始化web服务模块，包括子模块
 func (ws *WebServer) initModule() {
 	if len(ws.modules) > 0 {
 		for _, mod := range ws.modules {

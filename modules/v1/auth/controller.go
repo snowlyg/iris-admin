@@ -5,7 +5,7 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/server/validate"
+	"github.com/snowlyg/iris-admin/server/web/validate"
 	"go.uber.org/zap"
 )
 
@@ -15,7 +15,7 @@ func Login(ctx iris.Context) {
 	if err := ctx.ReadJSON(&req); err != nil {
 		errs := validate.ValidRequest(err)
 		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
+			g.ZAPLOG.Error("参数验证失败", zap.String("ValidRequest()", strings.Join(errs, ";")))
 			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
 			return
 		}

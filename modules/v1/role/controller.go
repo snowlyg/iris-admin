@@ -6,7 +6,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/validate"
+	"github.com/snowlyg/iris-admin/server/web/validate"
 	"go.uber.org/zap"
 )
 

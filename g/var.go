@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	CONFIG     config.Config
-	ZAPLOG     *zap.Logger
-	VIPER      *viper.Viper
-	CACHE      redis.UniversalClient
-	PermRoutes []map[string]string
+	CONFIG     config.Config         // 配置
+	ZAPLOG     *zap.Logger           // 日志
+	VIPER      *viper.Viper          // viper
+	CACHE      redis.UniversalClient // 缓存
+	PermRoutes []map[string]string   // 权限路由
 )

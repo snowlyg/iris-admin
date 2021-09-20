@@ -11,6 +11,7 @@ import (
 	"github.com/snowlyg/multi"
 )
 
+// Init 初始化缓存服务
 func Init() error {
 	universalOptions := &redis.UniversalOptions{
 		Addrs:       strings.Split(g.CONFIG.Redis.Addr, ","),

@@ -7,10 +7,10 @@ import (
 
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	"github.com/gookit/color"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
+	"go.uber.org/zap"
 )
 
 var (
@@ -26,27 +26,32 @@ func Instance() *casbin.Enforcer {
 	return enforcer
 }
 
-// GetEnforcer
+// GetEnforcer 获取 casbin.Enforcer
 func GetEnforcer() *casbin.Enforcer {
 	if database.Instance() == nil {
-		color.Danger.Println("数据库未初始化")
+		g.ZAPLOG.Error("数据库未初始化")
 		return nil
 	}
 	c, err := gormadapter.NewAdapterByDBUseTableName(database.Instance(), "", "casbin_rule") // Your driver and data source.
 	if err != nil {
-		color.Danger.Printf("Casbin 驱动初始化错误 %v \n", err)
+		g.ZAPLOG.Error("驱动初始化错误", zap.String("gormadapter.NewAdapterByDBUseTableName()", err.Error()))
 		return nil
 	}
 
 	enforcer, err := casbin.NewEnforcer(filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName), c)
 	if err != nil {
-		color.Danger.Printf("Casbin 初始化失败 %v\n", err)
+		g.ZAPLOG.Error("初始化失败", zap.String("casbin.NewEnforcer()", err.Error()))
+		return nil
+	}
+
+	if enforcer == nil {
+		g.ZAPLOG.Error("Casbin 未初始化")
 		return nil
 	}
 
 	err = enforcer.LoadPolicy()
 	if err != nil {
-		color.Danger.Printf("Casbin 加载规则失败 %\n", err)
+		g.ZAPLOG.Error("加载规则失败", zap.String("casbin.LoadPolicy()", err.Error()))
 		return nil
 	}
 

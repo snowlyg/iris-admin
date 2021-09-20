@@ -6,6 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// ValidRequest 请求参数验证
 func ValidRequest(err interface{}) []string {
 	var errs []string
 	if err == nil {

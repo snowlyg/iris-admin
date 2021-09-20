@@ -15,6 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// OperationRecord 操作日志中间件
 func OperationRecord() iris.Handler {
 	return func(ctx iris.Context) {
 		var body []byte
@@ -85,12 +86,13 @@ func CreateOplog(ol Oplog) error {
 	return nil
 }
 
+// Oplog 中间件 model
 type Oplog struct {
 	gorm.Model
 	Ip           string        `json:"ip" form:"ip" gorm:"column:ip;comment:请求ip"`
-	Method       string        `json:"method" form:"method" gorm:"column:method;comment:请求方法"`
-	Path         string        `json:"path" form:"path" gorm:"column:path;comment:请求路径"`
-	Status       int           `json:"status" form:"status" gorm:"column:status;comment:请求状态"`
+	Method       string        `json:"method" form:"method" gorm:"column:method;comment:请求方法" validate:"required"`
+	Path         string        `json:"path" form:"path" gorm:"column:path;comment:请求路径" validate:"required"`
+	Status       int           `json:"status" form:"status" gorm:"column:status;comment:请求状态" validate:"required"`
 	Latency      time.Duration `json:"latency" form:"latency" gorm:"column:latency;comment:延迟"`
 	Agent        string        `json:"agent" form:"agent" gorm:"column:agent;comment:代理"`
 	ErrorMessage string        `json:"error_message" form:"error_message" gorm:"column:error_message;comment:错误信息"`

@@ -10,8 +10,10 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// level 日志级别
 var level zapcore.Level
 
+// Init 初始化日志服务
 func Init() {
 	var logger *zap.Logger
 
@@ -104,6 +106,7 @@ func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 
 type StringsArray [][]string
 
+// MarshalLogArray 序列化数组日志
 func (ss StringsArray) MarshalLogArray(arr zapcore.ArrayEncoder) error {
 	for i := range ss {
 		for ii := range ss[i] {

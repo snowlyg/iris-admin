@@ -7,11 +7,11 @@ import (
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/validate"
+	"github.com/snowlyg/iris-admin/server/web/validate"
 	"go.uber.org/zap"
 )
 
-// InitDB 初始化
+// InitDB 初始化项目接口
 func Init(ctx iris.Context) {
 	req := Request{}
 	if err := ctx.ReadJSON(&req); err != nil {
@@ -30,6 +30,7 @@ func Init(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// Check 检测是否需要初始化项目
 func Check(ctx iris.Context) {
 	if database.Instance() == nil {
 		ctx.JSON(g.Response{Code: g.NeedInitErr.Code, Data: iris.Map{

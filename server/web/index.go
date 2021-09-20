@@ -21,19 +21,33 @@ import (
 	"github.com/snowlyg/iris-admin/server/zap"
 )
 
+var client *tests.Client
+
+// WebServer web 服务
+// - app iris application
+// - modules 服务的模块
+// - idleConnsClosed
+// - addr  服务访问地址
+// - timeFormat  时间格式
+// - globalMiddlewares  全局中间件
+// - wg  sync.WaitGroup
+// - staticPrefix  静态文件访问地址前缀
+// - staticPath  静态文件地址
+// - webPath  前端文件地址
 type WebServer struct {
-	app               *iris.Application  // iris application
-	modules           []module.WebModule // 数据模型
+	app               *iris.Application
+	modules           []module.WebModule
 	idleConnsClosed   chan struct{}
-	addr              string //端口
-	timeFormat        string // 时间格式
+	addr              string
+	timeFormat        string
 	globalMiddlewares []context.Handler
 	wg                sync.WaitGroup
-	staticPrefix      string //静态文件访问地址前缀
-	staticPath        string //静态文件地址
-	webPath           string //前端文件地址
+	staticPrefix      string
+	staticPath        string
+	webPath           string
 }
 
+// Init 初始化web服务
 func Init() *WebServer {
 	viper.Init()
 	zap.Init()
@@ -41,6 +55,7 @@ func Init() *WebServer {
 	if err != nil {
 		panic(err)
 	}
+
 	app := iris.New()
 	app.Validator = validator.New() //参数验证
 	app.Logger().SetLevel(g.CONFIG.System.Level)
@@ -52,21 +67,27 @@ func Init() *WebServer {
 		app.Shutdown(ctx) // close all hosts
 		close(idleConnsClosed)
 	})
+
 	if g.CONFIG.System.Addr == "" { // 默认 8085
 		g.CONFIG.System.Addr = "127.0.0.1:8085"
 	}
+
 	if g.CONFIG.System.StaticPath == "" { // 默认 /static/upload
 		g.CONFIG.System.StaticPath = "/static/upload"
 	}
+
 	if g.CONFIG.System.StaticPrefix == "" { // 默认 /upload
 		g.CONFIG.System.StaticPrefix = "/upload"
 	}
+
 	if g.CONFIG.System.WebPath == "" { // 默认 /./dist
 		g.CONFIG.System.WebPath = "./dist"
 	}
+
 	if g.CONFIG.System.TimeFormat == "" { // 默认 80
 		g.CONFIG.System.TimeFormat = time.RFC3339
 	}
+
 	return &WebServer{
 		app:               app,
 		addr:              g.CONFIG.System.Addr,
@@ -79,26 +100,32 @@ func Init() *WebServer {
 	}
 }
 
+// GetStaticPath 获取静态路径
 func (ws *WebServer) GetStaticPath() string {
 	return ws.staticPath
 }
 
+// GetWebPath 获取前端路径
 func (ws *WebServer) GetWebPath() string {
 	return ws.webPath
 }
 
+// GetAddr 获取web服务地址
 func (ws *WebServer) GetAddr() string {
 	return ws.addr
 }
 
+// AddModule 添加模块
 func (ws *WebServer) AddModule(module ...module.WebModule) {
 	ws.modules = append(ws.modules, module...)
 }
 
+// AddStatic 添加静态文件
 func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...iris.DirOptions) {
 	ws.app.HandleDir(requestPath, fsOrDir, opts...)
 }
 
+// AddWebStatic 添加前端访问地址
 func (ws *WebServer) AddWebStatic(requestPath string) {
 	fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), ws.webPath))
 	ws.AddStatic(requestPath, fsOrDir, iris.DirOptions{
@@ -107,17 +134,18 @@ func (ws *WebServer) AddWebStatic(requestPath string) {
 	})
 }
 
+// AddUploadStatic 添加上传文件访问地址
 func (ws *WebServer) AddUploadStatic() {
 	fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), ws.staticPath))
 	ws.AddStatic(ws.staticPrefix, fsOrDir)
 }
 
+// GetModules 获取模块
 func (ws *WebServer) GetModules() []module.WebModule {
 	return ws.modules
 }
 
-var client *tests.Client
-
+// GetTestAuth 获取测试验证客户端
 func (ws *WebServer) GetTestAuth(t *testing.T) *tests.Client {
 	var once sync.Once
 	once.Do(
@@ -132,6 +160,7 @@ func (ws *WebServer) GetTestAuth(t *testing.T) *tests.Client {
 	return client
 }
 
+// GetTestLogin 测试登录web服务
 func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client {
 	client := ws.GetTestAuth(t)
 	err := client.Login(url, res, datas...)
@@ -141,6 +170,7 @@ func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses,
 	return client
 }
 
+// Run 启动web服务
 func (ws *WebServer) Run() {
 	ws.app.UseGlobal(ws.globalMiddlewares...)
 	err := ws.InitRouter()

@@ -5,7 +5,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
-// Party
+// Party 初始化模块
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
 		index.Post("/initdb", Init)

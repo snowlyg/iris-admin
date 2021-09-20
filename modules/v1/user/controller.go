@@ -6,11 +6,12 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/validate"
+	"github.com/snowlyg/iris-admin/server/web/validate"
 	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
 )
 
+// Profile 个人信息
 func Profile(ctx iris.Context) {
 	user, err := FindById(database.Instance(), multi.GetUserId(ctx))
 	if err != nil {
@@ -20,6 +21,7 @@ func Profile(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: user, Msg: g.NoErr.Msg})
 }
 
+// GetUser 详情
 func GetUser(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
@@ -35,6 +37,7 @@ func GetUser(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: user, Msg: g.NoErr.Msg})
 }
 
+// CreateUser 添加
 func CreateUser(ctx iris.Context) {
 	req := Request{}
 	if err := ctx.ReadJSON(&req); err != nil {
@@ -54,6 +57,7 @@ func CreateUser(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: iris.Map{"id": id}, Msg: g.NoErr.Msg})
 }
 
+// UpdateUser 更新
 func UpdateUser(ctx iris.Context) {
 	var reqId g.ReqId
 	if err := ctx.ReadParams(&reqId); err != nil {
@@ -80,6 +84,7 @@ func UpdateUser(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// DeleteUser 删除
 func DeleteUser(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
@@ -96,6 +101,7 @@ func DeleteUser(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// GetAllUsers 分页列表
 func GetAllUsers(ctx iris.Context) {
 	var req ReqPaginate
 	if err := ctx.ReadQuery(&req); err != nil {
@@ -115,6 +121,7 @@ func GetAllUsers(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: list, Msg: g.NoErr.Msg})
 }
 
+// Logout 退出
 func Logout(ctx iris.Context) {
 	token := multi.GetVerifiedToken(ctx)
 	if token == nil {
@@ -129,6 +136,7 @@ func Logout(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// Clear 清空 token
 func Clear(ctx iris.Context) {
 	token := multi.GetVerifiedToken(ctx)
 	if token == nil {
@@ -142,6 +150,7 @@ func Clear(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// ChangeAvatar 修改头像
 func ChangeAvatar(ctx iris.Context) {
 	avatar := &Avatar{}
 	if err := ctx.ReadJSON(avatar); err != nil {

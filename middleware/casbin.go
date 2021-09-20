@@ -14,6 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// Casbin Casbin 权鉴中间件
 func Casbin() iris.Handler {
 	return func(ctx *context.Context) {
 		check, err := Check(ctx.Request(), strconv.FormatUint(uint64(multi.GetUserId(ctx)), 10))
@@ -30,11 +31,12 @@ func Casbin() iris.Handler {
 // Check checks the username, request's method and path and
 // returns true if permission grandted otherwise false.
 func Check(r *http.Request, userId string) (bool, error) {
+
 	method := r.Method
 	path := r.URL.Path
 	ok, err := casbinServer.Instance().Enforce(userId, path, method)
 	if err != nil {
-		g.ZAPLOG.Error(fmt.Sprintf("验证权限报错：%s-%s-%s", userId, path, method), zap.String("错误:", err.Error()))
+		g.ZAPLOG.Error(fmt.Sprintf("验证权限报错：%s-%s-%s", userId, path, method), zap.String("casbinServer.Instance().Enforce()", err.Error()))
 		return false, err
 	}
 

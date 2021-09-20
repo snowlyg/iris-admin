@@ -9,7 +9,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database"
 )
 
-// InitCheck 初始化检测
+// InitCheck 初始化检测中间件
 func InitCheck() iris.Handler {
 	return func(ctx *context.Context) {
 		if database.Instance() == nil || (g.CONFIG.System.CacheType == "redis" && g.CACHE == nil) {

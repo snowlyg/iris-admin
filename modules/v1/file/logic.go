@@ -14,9 +14,10 @@ import (
 )
 
 var (
-	ErrEmptyErr = errors.New("请上传正确的文件")
+	ErrEmpty = errors.New("请上传正确的文件")
 )
 
+// UploadFile 上传文件
 func UploadFile(ctx iris.Context, fh *multipart.FileHeader) (iris.Map, error) {
 	filename, err := GetFileName(fh.Filename)
 	if err != nil {
@@ -57,11 +58,12 @@ func UploadFile(ctx iris.Context, fh *multipart.FileHeader) (iris.Map, error) {
 	return iris.Map{"local": path, "qiniu": qiniuUrl}, nil
 }
 
+// GetFileName 获取文件名称
 func GetFileName(name string) (string, error) {
 	fns := strings.Split(strings.TrimLeft(name, "./"), ".")
 	if len(fns) != 2 {
 		g.ZAPLOG.Error("文件上传失败", zap.String("trings.Split", name))
-		return "", ErrEmptyErr
+		return "", ErrEmpty
 	}
 	ext := fns[1]
 	md5, err := dir.MD5(name)
@@ -72,6 +74,7 @@ func GetFileName(name string) (string, error) {
 	return str.Join(md5, ".", ext), nil
 }
 
+// GetPath 获取文件路径
 func GetPath(filename string) string {
 	return filepath.Join("upload", "images", filename)
 }

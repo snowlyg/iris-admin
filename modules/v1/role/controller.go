@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// GetRole 详情
 func GetRole(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
@@ -25,6 +26,7 @@ func GetRole(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: role, Msg: g.NoErr.Msg})
 }
 
+// CreateRole 添加
 func CreateRole(ctx iris.Context) {
 	req := Request{}
 	if err := ctx.ReadJSON(&req); err != nil {
@@ -44,6 +46,7 @@ func CreateRole(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: iris.Map{"id": id}, Msg: g.NoErr.Msg})
 }
 
+// UpdateRole 更新
 func UpdateRole(ctx iris.Context) {
 	var reqId g.ReqId
 	if err := ctx.ReadParams(&reqId); err != nil {
@@ -70,6 +73,7 @@ func UpdateRole(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// DeleteRole 删除
 func DeleteRole(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
@@ -86,6 +90,7 @@ func DeleteRole(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// GetAllRoles 分页列表
 func GetAllRoles(ctx iris.Context) {
 	var req ReqPaginate
 	if err := ctx.ReadQuery(&req); err != nil {

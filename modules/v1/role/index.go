@@ -6,7 +6,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
-// Party 角色
+// Party 角色模块
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
 		index.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())

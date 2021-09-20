@@ -7,7 +7,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
-// Party 上传文件
+// Party 上传文件模块
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
 		index.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())

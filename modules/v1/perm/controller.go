@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// GetPerm 详情
 func GetPerm(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
@@ -25,6 +26,7 @@ func GetPerm(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: perm, Msg: g.NoErr.Msg})
 }
 
+// CreatePerm 添加
 func CreatePerm(ctx iris.Context) {
 	req := Request{}
 	if err := ctx.ReadJSON(&req); err != nil {
@@ -44,6 +46,7 @@ func CreatePerm(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: iris.Map{"id": id}, Msg: g.NoErr.Msg})
 }
 
+// UpdatePerm 更新
 func UpdatePerm(ctx iris.Context) {
 	var reqId g.ReqId
 	if err := ctx.ReadParams(&reqId); err != nil {
@@ -70,6 +73,7 @@ func UpdatePerm(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// DeletePerm 删除
 func DeletePerm(ctx iris.Context) {
 	var req g.ReqId
 	if err := ctx.ReadParams(&req); err != nil {
@@ -86,6 +90,7 @@ func DeletePerm(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
+// GetAllPerms 分页列表
 func GetAllPerms(ctx iris.Context) {
 	var req ReqPaginate
 	if err := ctx.ReadQuery(&req); err != nil {

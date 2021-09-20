@@ -13,6 +13,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var (
+	ErrUserNameOrPassword = errors.New("用户名或密码错误")
+)
+
 // GetAccessToken 登录
 func GetAccessToken(req LoginRequest) (string, error) {
 	admin, err := user.FindPasswordByUserName(database.Instance(), req.Username)
@@ -21,8 +25,8 @@ func GetAccessToken(req LoginRequest) (string, error) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(req.Password)); err != nil {
-		g.ZAPLOG.Error("用户名或密码错误 ", zap.String("密码:", req.Password), zap.String("hash:", admin.Password), zap.String("错误:", err.Error()))
-		return "", errors.New("用户名或密码错误")
+		g.ZAPLOG.Error("用户名或密码错误", zap.String("密码:", req.Password), zap.String("hash:", admin.Password), zap.String("bcrypt.CompareHashAndPassword()", err.Error()))
+		return "", ErrUserNameOrPassword
 	}
 
 	claims := &multi.CustomClaims{

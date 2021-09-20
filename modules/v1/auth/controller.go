@@ -10,6 +10,9 @@ import (
 )
 
 // Login 登录
+// - LoginRequest 登录需要提交 uesrname 和 password 字段到接口
+// - validate.ValidRequest 验证接口提交参数，需要在 LoginRequest 的字段设置 validate:"required"
+// - GetAccessToken 生成验证 token
 func Login(ctx iris.Context) {
 	var req LoginRequest
 	if err := ctx.ReadJSON(&req); err != nil {

@@ -6,13 +6,12 @@ import (
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
-// Party
+// Party 认证模块
 func Party() module.WebModule {
 	handler := func(public iris.Party) {
 		public.Use(middleware.InitCheck())
 		public.Post("/login", Login)
 		public.Use(middleware.JwtHandler(), middleware.Casbin(), middleware.OperationRecord())
-		// public.Post("/upload_file", iris.LimitRequestBodySize(libs.Config.MaxSize+1<<20), UploadFile).Name = "上传文件"
 	}
 	return module.NewModule("/auth", handler)
 }

@@ -6,6 +6,8 @@ import (
 	"go.uber.org/zap"
 )
 
+// Upload 上传文件
+// - 需要 file 表单文件字段
 func Upload(ctx iris.Context) {
 	f, fh, err := ctx.FormFile("file")
 	if err != nil {

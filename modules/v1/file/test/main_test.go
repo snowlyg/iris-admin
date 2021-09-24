@@ -17,11 +17,11 @@ import (
 	"github.com/snowlyg/multi"
 )
 
-//go:embed mysql_pwd.txt
-var mysql_pwd string
+//go:embed mysqlPwd.txt
+var mysqlPwd string
 
-//go:embed redis_pwd.txt
-var redis_pwd string
+//go:embed redisPwd.txt
+var redisPwd string
 
 var TestServer *web.WebServer
 
@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 			Host:     "127.0.0.1",
 			Port:     "3306",
 			UserName: "root",
-			Password: strings.TrimSpace(mysql_pwd),
+			Password: strings.TrimSpace(mysqlPwd),
 			DBName:   uuid,
 			LogMode:  true,
 		},
@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 		Cache: initdb.Cache{
 			Host:     "127.0.0.1",
 			Port:     "6379",
-			Password: strings.TrimSpace(redis_pwd),
+			Password: strings.TrimSpace(redisPwd),
 			PoolSize: 1000,
 			DB:       1,
 		},

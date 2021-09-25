@@ -11,23 +11,22 @@ var Source = new(source)
 
 type source struct{}
 
-func GetSources() ([]Request, error) {
+func GetSources() ([]*Request, error) {
 	roleIds, err := role.GetRoleIds()
 	if err != nil {
-		return []Request{}, err
+		return []*Request{}, err
 	}
-	users := []Request{
-		{
-			BaseUser: BaseUser{
-				Name:     "超级管理员",
-				Username: "admin",
-				Intro:    "超级管理员",
-				Avatar:   "images/avatar.jpg",
-			},
-			Password: "123456",
-			RoleIds:  roleIds,
+	var users []*Request
+	users = append(users, &Request{
+		BaseUser: BaseUser{
+			Name:     "超级管理员",
+			Username: "admin",
+			Intro:    "超级管理员",
+			Avatar:   "images/avatar.jpg",
 		},
-	}
+		Password: "123456",
+		RoleIds:  roleIds,
+	})
 	return users, nil
 }
 
@@ -42,7 +41,7 @@ func (s *source) Init() error {
 			return err
 		}
 		for _, source := range sources {
-			if _, err := Create(tx, source); err != nil { // 遇到错误时回滚事务
+			if _, err := Create(source); err != nil { // 遇到错误时回滚事务
 				return err
 			}
 		}

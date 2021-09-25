@@ -18,7 +18,7 @@ var (
 )
 
 // GetAccessToken 登录
-func GetAccessToken(req LoginRequest) (string, error) {
+func GetAccessToken(req *LoginRequest) (string, error) {
 	admin, err := user.FindPasswordByUserName(database.Instance(), req.Username)
 	if err != nil {
 		return "", err

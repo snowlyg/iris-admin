@@ -1,4 +1,4 @@
-package perm
+package role
 
 import "gorm.io/gorm"
 
@@ -7,13 +7,5 @@ import "gorm.io/gorm"
 func NameScope(name string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("name = ?", name)
-	}
-}
-
-// ActScope 根据 act 查询
-// - act 名称
-func ActScope(act string) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("act = ?", act)
 	}
 }

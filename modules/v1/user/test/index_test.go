@@ -52,11 +52,11 @@ func TestCreate(t *testing.T) {
 		"avatar":   "",
 		"password": "123456",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 }
 
 func TestUpdate(t *testing.T) {
@@ -69,11 +69,11 @@ func TestUpdate(t *testing.T) {
 		"avatar":   "",
 		"password": "123456",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 
 	update := map[string]interface{}{
 		"name":     "更新测试名称",
@@ -87,7 +87,7 @@ func TestUpdate(t *testing.T) {
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
 	}
-	client.POST(fmt.Sprintf("%s/%d", url, userId), pageKeys, update)
+	client.POST(fmt.Sprintf("%s/%d", url, id), pageKeys, update)
 }
 
 func TestGetById(t *testing.T) {
@@ -100,11 +100,11 @@ func TestGetById(t *testing.T) {
 		"avatar":   "",
 		"password": "123456",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
@@ -122,7 +122,7 @@ func TestGetById(t *testing.T) {
 		},
 		},
 	}
-	client.GET(fmt.Sprintf("%s/%d", url, userId), pageKeys)
+	client.GET(fmt.Sprintf("%s/%d", url, id), pageKeys)
 }
 
 func Create(client *tests.Client, data map[string]interface{}) uint {

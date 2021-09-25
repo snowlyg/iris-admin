@@ -1,10 +1,10 @@
 package g
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/validate"
 	"go.uber.org/zap"
@@ -18,15 +18,15 @@ type Model struct {
 	CreatedAt string `json:"createdAt"`
 }
 
-// ReqId 验证请求参数
+// ReqId 获取id请求参数
 type ReqId struct {
 	Id uint `json:"id" param:"id"`
 }
 
 func (req *ReqId) Request(ctx iris.Context) error {
 	if err := ctx.ReadParams(req); err != nil {
-		ZAPLOG.Error("参数验证失败", zap.String("ReadParams()", err.Error()))
-		return orm.ErrParamValidate
+		ZAPLOG.Error("id参数获取失败", zap.String("ReadParams()", err.Error()))
+		return ErrParamValidate
 	}
 	return nil
 }
@@ -44,7 +44,7 @@ func (req *Paginate) Request(ctx iris.Context) error {
 		errs := validate.ValidRequest(err)
 		if len(errs) > 0 {
 			ZAPLOG.Error("参数验证失败", zap.String("ValidRequest()", strings.Join(errs, ";")))
-			return orm.ErrParamValidate
+			return ErrParamValidate
 		}
 	}
 	return nil
@@ -78,4 +78,7 @@ var (
 	SystemErr     = ErrMsg{5000, "系统错误，请联系管理员"}
 	DataEmptyErr  = ErrMsg{5001, "数据为空"}
 	TokenCacheErr = ErrMsg{5002, "TOKEN CACHE 错误"}
+
+	ErrParamValidate = errors.New("参数验证失败")
+	ErrPaginateParam = errors.New("分页查询参数缺失")
 )

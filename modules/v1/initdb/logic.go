@@ -69,7 +69,7 @@ func initDB(InitDBFunctions ...database.InitDBFunc) error {
 }
 
 // InitDB 创建数据库并初始化
-func InitDB(req Request) error {
+func InitDB(req *Request) error {
 	defaultConfig := g.CONFIG
 	if g.VIPER == nil {
 		g.ZAPLOG.Error("初始化错误", zap.String("InitDB", ErrViperEmpty.Error()))

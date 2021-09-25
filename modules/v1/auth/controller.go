@@ -1,12 +1,8 @@
 package auth
 
 import (
-	"strings"
-
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/server/web/validate"
-	"go.uber.org/zap"
 )
 
 // Login 登录
@@ -14,14 +10,10 @@ import (
 // - validate.ValidRequest 验证接口提交参数，需要在 LoginRequest 的字段设置 validate:"required"
 // - GetAccessToken 生成验证 token
 func Login(ctx iris.Context) {
-	var req LoginRequest
-	if err := ctx.ReadJSON(&req); err != nil {
-		errs := validate.ValidRequest(err)
-		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("ValidRequest()", strings.Join(errs, ";")))
-			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
-			return
-		}
+	req := &LoginRequest{}
+	if err := req.Request(ctx); err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+		return
 	}
 	token, err := GetAccessToken(req)
 	if err != nil {

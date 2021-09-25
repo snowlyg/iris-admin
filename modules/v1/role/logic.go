@@ -5,113 +5,60 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	customZap "github.com/snowlyg/iris-admin/server/zap"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
-const adminRoleName = "admin"
+var ErrRoleNameInvalide = errors.New("角色名称已经被使用")
 
+// GetAdminRoleName 获管理员角色名称
 func GetAdminRoleName() string {
-	return adminRoleName
+	return "admin"
 }
 
-// Paginate
-func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
-	var count int64
-	var roles []*Response
-	db = db.Model(&Role{})
-	if req.Name != "" {
-		db = db.Where("name LIKE ?", fmt.Sprintf("%s%%", req.Name))
+// Create 添加
+func Create(req *Request) (uint, error) {
+	if _, err := FindByName(NameScope(req.Name)); !errors.Is(err, gorm.ErrRecordNotFound) {
+		return 0, ErrRoleNameInvalide
 	}
-	err := db.Count(&count).Error
+	role := &Role{BaseRole: req.BaseRole}
+	id, err := orm.Create(database.Instance(), role)
 	if err != nil {
-		g.ZAPLOG.Error("获取角色总数错误", zap.String("错误:", err.Error()))
-		return nil, err
+		return 0, err
 	}
-	err = db.Scopes(scope.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)).Find(&roles).Error
+	err = AddPermForRole(id, req.Perms)
 	if err != nil {
-		g.ZAPLOG.Error("获取角色分页数据错误", zap.String("错误:", err.Error()))
-		return nil, err
+		return 0, err
 	}
-	list := iris.Map{"items": roles, "total": count, "pageSize": req.PageSize, "page": req.Page}
-	return list, nil
+	return id, nil
 }
 
 // FindByName
-func FindByName(db *gorm.DB, name string, ids ...uint) (Response, error) {
-	role := Response{}
-	db = db.Model(&Role{}).Where("name = ?", name)
-	if len(ids) == 1 {
-		db.Where("id != ?", ids[0])
-	}
-	err := db.First(&role).Error
+func FindByName(scopes ...func(db *gorm.DB) *gorm.DB) (*Response, error) {
+	role := &Response{}
+	err := role.First(database.Instance(), scopes...)
 	if err != nil {
-		g.ZAPLOG.Error("根据名称查询角色错误", zap.String("名称:", name), zap.String("错误:", err.Error()))
-		return role, err
+		return nil, err
 	}
 	return role, nil
 }
 
-func Create(db *gorm.DB, req Request) (uint, error) {
-	role := Role{BaseRole: req.BaseRole}
-	_, err := FindByName(db, req.Name)
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		g.ZAPLOG.Error("角色名称已经被使用")
-		return 0, err
-	}
-
-	err = db.Create(&role).Error
+func IsAdminRole(id uint) error {
+	role := &Response{}
+	err := role.First(database.Instance(), scope.IdScope(id))
 	if err != nil {
-		g.ZAPLOG.Error("create data err ", zap.String("错误:", err.Error()))
-		return 0, err
-	}
-
-	err = AddPermForRole(role.ID, req.Perms)
-	if err != nil {
-		g.ZAPLOG.Error("添加权限到角色错误", zap.String("错误:", err.Error()))
-		return 0, err
-	}
-
-	return role.ID, nil
-}
-
-func Update(db *gorm.DB, id uint, req Request) error {
-	if b, err := IsAdminRole(db, id); err != nil {
-		return err
-	} else if b {
-		return errors.New("不能编辑超级管理员")
-	}
-	_, err := FindByName(db, req.Name, id)
-	if !errors.Is(err, gorm.ErrRecordNotFound) {
-		g.ZAPLOG.Error("角色名称已经被使用")
 		return err
 	}
-	role := Role{BaseRole: req.BaseRole}
-	err = db.Model(&Role{}).Where("id = ?", id).Updates(&role).Error
-	if err != nil {
-		g.ZAPLOG.Error("更新角色错误", zap.String("错误:", err.Error()))
-		return err
-	}
-	err = AddPermForRole(role.ID, req.Perms)
-	if err != nil {
-		g.ZAPLOG.Error("添加权限到角色错误", zap.String("错误:", err.Error()))
-		return err
+	if role.Name == GetAdminRoleName() {
+		return errors.New("不能操作超级管理员")
 	}
 	return nil
-}
-
-func IsAdminRole(db *gorm.DB, id uint) (bool, error) {
-	role, err := FindById(db, id)
-	if err != nil {
-		return false, err
-	}
-	return role.Name == GetAdminRoleName(), nil
 }
 
 func FindById(db *gorm.DB, id uint) (Response, error) {
@@ -124,23 +71,9 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	return role, nil
 }
 
-func DeleteById(db *gorm.DB, id uint) error {
-	if b, err := IsAdminRole(db, id); err != nil {
-		return err
-	} else if b {
-		return errors.New("不能删除超级管理员")
-	}
-	err := db.Unscoped().Delete(&Role{}, id).Error
-	if err != nil {
-		g.ZAPLOG.Error("删除角色错误", zap.String("错误:", err.Error()))
-		return err
-	}
-	return nil
-}
-
 func FindInId(db *gorm.DB, ids []string) ([]*Response, error) {
-	roles := []*Response{}
-	err := db.Model(&Role{}).Where("id in ?", ids).Find(&roles).Error
+	roles := PageResponse{}
+	err := roles.Find(database.Instance(), scope.InIdsScope(ids))
 	if err != nil {
 		g.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误:", err.Error()))
 		return nil, err
@@ -149,7 +82,7 @@ func FindInId(db *gorm.DB, ids []string) ([]*Response, error) {
 }
 
 // AddPermForRole
-func AddPermForRole(id uint, perms [][]string) error {
+func AddPermForRole(id uint, perms casbin.PermsCollection) error {
 	roleId := strconv.FormatUint(uint64(id), 10)
 	oldPerms := casbin.GetPermissionsForUser(roleId)
 	_, err := casbin.Instance().RemovePolicies(oldPerms)
@@ -162,11 +95,11 @@ func AddPermForRole(id uint, perms [][]string) error {
 		g.ZAPLOG.Debug("没有权限")
 		return nil
 	}
-	var newPerms [][]string
+	var newPerms casbin.PermsCollection
 	for _, perm := range perms {
 		newPerms = append(newPerms, append([]string{roleId}, perm...))
 	}
-	g.ZAPLOG.Debug("添加权限到角色", customZap.Strings("新权限", newPerms))
+	g.ZAPLOG.Info("添加权限到角色", customZap.Strings("新权限", newPerms))
 	_, err = casbin.Instance().AddPolicies(newPerms)
 	if err != nil {
 		g.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))

@@ -1,46 +1,43 @@
 package role
 
 import (
-	"strings"
+	"errors"
 
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/web/validate"
-	"go.uber.org/zap"
+	"github.com/snowlyg/iris-admin/server/database/orm"
+	"github.com/snowlyg/iris-admin/server/database/scope"
+	"gorm.io/gorm"
 )
 
-// GetRole 详情
-func GetRole(ctx iris.Context) {
-	var req g.ReqId
-	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
+// First 详情
+func First(ctx iris.Context) {
+	req := &g.ReqId{}
+	if err := req.Request(ctx); err != nil {
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
-	role, err := FindById(database.Instance(), req.Id)
+	perm := &Response{}
+	err := orm.First(database.Instance(), perm, scope.IdScope(req.Id))
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: g.SystemErr.Msg})
 		return
 	}
-	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: role, Msg: g.NoErr.Msg})
+	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: perm, Msg: g.NoErr.Msg})
 }
 
 // CreateRole 添加
 func CreateRole(ctx iris.Context) {
-	req := Request{}
-	if err := ctx.ReadJSON(&req); err != nil {
-		errs := validate.ValidRequest(err)
-		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
-			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
-			return
-		}
-	}
-	id, err := Create(database.Instance(), req)
-	if err != nil {
+	req := &Request{}
+	if err := req.Request(ctx); err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
+	}
+
+	id, err := Create(req)
+	if err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 	}
 
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: iris.Map{"id": id}, Msg: g.NoErr.Msg})
@@ -48,40 +45,57 @@ func CreateRole(ctx iris.Context) {
 
 // UpdateRole 更新
 func UpdateRole(ctx iris.Context) {
-	var reqId g.ReqId
-	if err := ctx.ReadParams(&reqId); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
+	reqId := &g.ReqId{}
+	if err := reqId.Request(ctx); err != nil {
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
 
-	var req Request
-	if err := ctx.ReadJSON(&req); err != nil {
-		errs := validate.ValidRequest(err)
-		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
-			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
-			return
-		}
+	err := IsAdminRole(reqId.Id)
+	if err != nil {
+		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 	}
 
-	err := Update(database.Instance(), reqId.Id, req)
+	req := &Request{}
+	if err := req.Request(ctx); err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+		return
+	}
+
+	if _, err := FindByName(NameScope(req.Name), scope.NeIdScope(reqId.Id)); !errors.Is(err, gorm.ErrRecordNotFound) {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: "角色名称已经被使用"})
+		return
+	}
+
+	role := &Role{BaseRole: req.BaseRole}
+	err = orm.Update(database.Instance(), reqId.Id, role)
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
+
+	err = AddPermForRole(reqId.Id, req.Perms)
+	if err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+	}
+
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
 // DeleteRole 删除
 func DeleteRole(ctx iris.Context) {
-	var req g.ReqId
-	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
+	reqId := &g.ReqId{}
+	if err := reqId.Request(ctx); err != nil {
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
-	err := DeleteById(database.Instance(), req.Id)
+
+	err := IsAdminRole(reqId.Id)
+	if err != nil {
+		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
+	}
+
+	err = orm.Delete(database.Instance(), reqId.Id, &Role{})
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
@@ -90,22 +104,20 @@ func DeleteRole(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
-// GetAllRoles 分页列表
-func GetAllRoles(ctx iris.Context) {
-	var req ReqPaginate
-	if err := ctx.ReadQuery(&req); err != nil {
-		errs := validate.ValidRequest(err)
-		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
-			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
-			return
-		}
+// GetAll 分页列表
+func GetAll(ctx iris.Context) {
+	req := &g.Paginate{}
+	if err := req.Request(ctx); err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+		return
 	}
 
-	list, err := Paginate(database.Instance(), req)
+	items := &PageResponse{}
+	total, err := orm.Paginate(database.Instance(), items, req.PaginateScope())
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
+	list := iris.Map{"items": items, "total": total, "pageSize": req.PageSize, "page": req.Page}
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: list, Msg: g.NoErr.Msg})
 }

@@ -42,34 +42,34 @@ func TestCreate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
 	data := map[string]interface{}{
-		"name":        "测试名称",
-		"displayName": "test_display_name",
+		"name":        "test_display_name",
+		"displayName": "测试名称",
 		"description": "测试描述信息",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 }
 
 func TestUpdate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
 	data := map[string]interface{}{
-		"name":        "测试名称",
-		"displayName": "update_test_display_name",
+		"name":        "update_test_display_name",
+		"displayName": "测试名称",
 		"description": "测试描述信息",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 
 	update := map[string]interface{}{
-		"name":        "更新测试名称",
-		"displayName": "update_test_udisplay_name",
+		"name":        "update_test_udisplay_name",
+		"displayName": "更新测试名称",
 		"description": "更新测试描述信息",
 	}
 
@@ -77,22 +77,22 @@ func TestUpdate(t *testing.T) {
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
 	}
-	client.POST(fmt.Sprintf("%s/%d", url, userId), pageKeys, update)
+	client.POST(fmt.Sprintf("%s/%d", url, id), pageKeys, update)
 }
 
 func TestGetById(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
 	data := map[string]interface{}{
-		"name":        "测试名称",
-		"displayName": "getbyid_test_display_name",
+		"name":        "getbyid_test_display_name",
+		"displayName": "更新测试名称",
 		"description": "测试描述信息",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
@@ -108,7 +108,7 @@ func TestGetById(t *testing.T) {
 		},
 		},
 	}
-	client.GET(fmt.Sprintf("%s/%d", url, userId), pageKeys)
+	client.GET(fmt.Sprintf("%s/%d", url, id), pageKeys)
 }
 
 func Create(client *tests.Client, data map[string]interface{}) uint {

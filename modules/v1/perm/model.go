@@ -2,7 +2,6 @@ package perm
 
 import (
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/server/database"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -24,30 +23,30 @@ type BasePermission struct {
 }
 
 // Create 添加
-func (perm *Permission) Create() (uint, error) {
-	err := database.Instance().Model(&Permission{}).Create(perm).Error
+func (item *Permission) Create(db *gorm.DB) (uint, error) {
+	err := db.Model(item).Create(item).Error
 	if err != nil {
-		g.ZAPLOG.Error("添加权限失败", zap.String("(perm *Permission) Create()", err.Error()))
-		return perm.ID, err
+		g.ZAPLOG.Error("添加失败", zap.String("(item *Permission) Create()", err.Error()))
+		return item.ID, err
 	}
-	return perm.ID, nil
+	return item.ID, nil
 }
 
 // Update 更新
-func (perm *Permission) Update(scopes ...func(db *gorm.DB) *gorm.DB) error {
-	err := database.Instance().Model(&Permission{}).Scopes(scopes...).Updates(perm).Error
+func (item *Permission) Update(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	err := db.Model(item).Scopes(scopes...).Updates(item).Error
 	if err != nil {
-		g.ZAPLOG.Error("更新权限失败", zap.String("(perm *Permission) Update() ", err.Error()))
+		g.ZAPLOG.Error("更新失败", zap.String("(item *Permission) Update() ", err.Error()))
 		return err
 	}
 	return nil
 }
 
 // Delete 删除
-func (perm *Permission) Delete(scopes ...func(db *gorm.DB) *gorm.DB) error {
-	err := database.Instance().Model(&Permission{}).Unscoped().Scopes(scopes...).Delete(perm).Error
+func (item *Permission) Delete(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	err := db.Model(item).Unscoped().Scopes(scopes...).Delete(item).Error
 	if err != nil {
-		g.ZAPLOG.Error("删除权限失败", zap.String("(perm *Permission) Delete()", err.Error()))
+		g.ZAPLOG.Error("删除失败", zap.String("(item *Permission) Delete()", err.Error()))
 		return err
 	}
 	return nil

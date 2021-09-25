@@ -28,7 +28,7 @@ var TestServer *web.WebServer
 func TestMain(m *testing.M) {
 	TestServer = web.Init()
 	uuid := uuid.NewV3(uuid.NewV4(), uuid.NamespaceOID.String()).String()
-	config := initdb.Request{
+	config := &initdb.Request{
 		SqlType: "mysql",
 		Sql: initdb.Sql{
 			Host:     "127.0.0.1",

@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/modules/v1/role"
 	"github.com/snowlyg/iris-admin/server/casbin"
+	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
@@ -17,32 +18,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
-	var count int64
-	users := []*Response{}
-	db = db.Model(&User{})
-	if len(req.Name) > 0 {
-		db = db.Where("name LIKE ?", fmt.Sprintf("%s%%", req.Name))
-	}
-	err := db.Count(&count).Error
-	if err != nil {
-		g.ZAPLOG.Error("获取用户总数错误", zap.String("错误:", err.Error()))
-		return nil, err
-	}
-
-	err = db.Scopes(scope.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)).
-		Find(&users).Error
-	if err != nil {
-		g.ZAPLOG.Error("获取用户分页数据错误", zap.String("错误:", err.Error()))
-		return nil, err
-	}
-
-	// 查询用户角色
-	getRoles(db, users...)
-
-	list := iris.Map{"items": users, "total": count, "pageSize": req.PageSize, "page": req.Page}
-	return list, nil
-}
+var ErrUserNameInvalide = errors.New("用户名名称已经被使用")
 
 // getRoles
 func getRoles(db *gorm.DB, users ...*Response) {
@@ -67,25 +43,19 @@ func getRoles(db *gorm.DB, users ...*Response) {
 		for _, role := range roles {
 			sRoleId := strconv.FormatInt(int64(role.Id), 10)
 			if arr.InArrayS(userRoleIds[user.Id], sRoleId) {
-				user.Roles = append(user.Roles, role.Name)
+				user.Roles = append(user.Roles, role.DisplayName)
 			}
 		}
 	}
 }
 
-func FindByUserName(db *gorm.DB, username string, ids ...uint) (Response, error) {
-	user := Response{}
-	db = db.Model(&User{}).
-		Where("username = ?", username)
-	if len(ids) == 1 {
-		db.Where("id != ?", ids[0])
-	}
-	err := db.First(&user).Error
+// FindByName
+func FindByUserName(scopes ...func(db *gorm.DB) *gorm.DB) (*Response, error) {
+	user := &Response{}
+	err := user.First(database.Instance(), scopes...)
 	if err != nil {
-		g.ZAPLOG.Error("根据用户名查询用户错误", zap.String("用户名:", username), zap.Uints("ids:", ids), zap.String("错误:", err.Error()))
-		return user, err
+		return nil, err
 	}
-	getRoles(db, &user)
 	return user, nil
 }
 
@@ -104,11 +74,11 @@ func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (LoginRes
 	return user, nil
 }
 
-func Create(db *gorm.DB, req Request) (uint, error) {
-	if _, err := FindByUserName(db, req.Username); !errors.Is(err, gorm.ErrRecordNotFound) {
-		return 0, fmt.Errorf("用户名 %s 已经被使用", req.Username)
+func Create(req *Request) (uint, error) {
+	if _, err := FindByUserName(UserNameScope(req.Username)); !errors.Is(err, gorm.ErrRecordNotFound) {
+		return 0, ErrUserNameInvalide
 	}
-	user := User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
+	user := &User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		g.ZAPLOG.Error("密码加密错误", zap.String("错误:", err.Error()))
@@ -118,51 +88,29 @@ func Create(db *gorm.DB, req Request) (uint, error) {
 	g.ZAPLOG.Info("添加用户", zap.String("hash:", req.Password), zap.ByteString("hash:", hash))
 
 	user.Password = string(hash)
-	err = db.Model(&User{}).Create(&user).Error
+	id, err := orm.Create(database.Instance(), user)
 	if err != nil {
-		g.ZAPLOG.Error("添加用户错误", zap.String("错误:", err.Error()))
 		return 0, err
 	}
 
-	if err := AddRoleForUser(&user); err != nil {
+	if err := AddRoleForUser(user); err != nil {
 		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误:", err.Error()))
 		return 0, err
 	}
 
-	return user.ID, nil
+	return id, nil
 }
 
-func Update(db *gorm.DB, id uint, req Request) error {
-	if b, err := IsAdminUser(db, id); err != nil {
-		return err
-	} else if b {
-		return errors.New("不能编辑超级管理员")
-	}
-	if _, err := FindByUserName(db, req.Username, id); !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-
-	user := User{BaseUser: req.BaseUser}
-	err := db.Model(&User{}).Where("id = ?", id).Updates(&user).Error
+func IsAdminUser(id uint) error {
+	user := &Response{}
+	err := user.First(database.Instance(), scope.IdScope(id))
 	if err != nil {
-		g.ZAPLOG.Error("更新用户错误", zap.String("错误:", err.Error()))
 		return err
 	}
-
-	if err := AddRoleForUser(&user); err != nil {
-		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误:", err.Error()))
-		return err
+	if arr.InArrayS(user.Roles, role.GetAdminRoleName()) {
+		return errors.New("不能操作超级管理员")
 	}
-
 	return nil
-}
-
-func IsAdminUser(db *gorm.DB, id uint) (bool, error) {
-	user, err := FindById(db, id)
-	if err != nil {
-		return false, err
-	}
-	return arr.InArrayS(user.Roles, role.GetAdminRoleName()), nil
 }
 
 func FindById(db *gorm.DB, id uint) (Response, error) {
@@ -176,15 +124,6 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	getRoles(db, &user)
 
 	return user, nil
-}
-
-func DeleteById(db *gorm.DB, id uint) error {
-	err := db.Unscoped().Delete(&User{}, id).Error
-	if err != nil {
-		g.ZAPLOG.Error("delete user by id get  err ", zap.String("错误:", err.Error()))
-		return err
-	}
-	return nil
 }
 
 // AddRoleForUser add roles for user

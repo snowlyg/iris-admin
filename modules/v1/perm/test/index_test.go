@@ -7,6 +7,7 @@ import (
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/server/database"
 )
 
 var (
@@ -60,11 +61,11 @@ func TestCreate(t *testing.T) {
 		"description": "测试描述信息",
 		"act":         "GET",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 }
 
 func TestUpdate(t *testing.T) {
@@ -76,11 +77,11 @@ func TestUpdate(t *testing.T) {
 		"description": "测试描述信息",
 		"act":         "GET",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 
 	update := map[string]interface{}{
 		"name":        "update_test_route_name",
@@ -93,7 +94,7 @@ func TestUpdate(t *testing.T) {
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
 	}
-	client.POST(fmt.Sprintf("%s/%d", url, userId), pageKeys, update)
+	client.POST(fmt.Sprintf("%s/%d", url, id), pageKeys, update)
 }
 
 func TestGetById(t *testing.T) {
@@ -105,11 +106,11 @@ func TestGetById(t *testing.T) {
 		"description": "测试描述信息",
 		"act":         "GET",
 	}
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
 	}
-	defer Delete(client, userId)
+	defer Delete(client, id)
 
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
@@ -125,7 +126,7 @@ func TestGetById(t *testing.T) {
 		},
 		},
 	}
-	client.GET(fmt.Sprintf("%s/%d", url, userId), pageKeys)
+	client.GET(fmt.Sprintf("%s/%d", url, id), pageKeys)
 }
 
 func Create(client *tests.Client, data map[string]interface{}) uint {
@@ -156,7 +157,7 @@ func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 		PageSize: pageParam.PageSize,
 	}
 	perms := perm.PageResponse{}
-	_, err := perms.Paginate(req.PaginateScope())
+	_, err := perms.Paginate(database.Instance(), req.PaginateScope())
 	if err != nil {
 		return routes, err
 	}

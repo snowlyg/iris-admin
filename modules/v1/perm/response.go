@@ -2,8 +2,6 @@ package perm
 
 import (
 	"github.com/snowlyg/iris-admin/g"
-	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/database/orm"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -14,12 +12,8 @@ type Response struct {
 	BasePermission
 }
 
-func GetResponse() *Response {
-	return &Response{}
-}
-
-func (res *Response) First(scopes ...func(db *gorm.DB) *gorm.DB) error {
-	err := database.Instance().Model(&Permission{}).Scopes(scopes...).First(res).Error
+func (res *Response) First(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	err := db.Model(&Permission{}).Model(&Permission{}).Scopes(scopes...).First(res).Error
 	if err != nil {
 		g.ZAPLOG.Error("获取权限失败", zap.String("First()", err.Error()))
 		return err
@@ -30,11 +24,11 @@ func (res *Response) First(scopes ...func(db *gorm.DB) *gorm.DB) error {
 // Paginate 分页
 type PageResponse []*Response
 
-func (res PageResponse) Paginate(scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
-	db := database.Instance().Model(&Permission{})
+func (res *PageResponse) Paginate(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
+	db = db.Model(&Permission{})
 	var count int64
 	if len(scopes) == 0 {
-		return count, orm.ErrPaginateParam
+		return count, g.ErrPaginateParam
 	}
 	if len(scopes) > 1 {
 		db = db.Scopes(scopes[1:]...)

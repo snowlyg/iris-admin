@@ -9,6 +9,7 @@ import (
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/database/scope"
 	customZap "github.com/snowlyg/iris-admin/server/zap"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -33,7 +34,7 @@ func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
 		g.ZAPLOG.Error("获取角色总数错误", zap.String("错误:", err.Error()))
 		return nil, err
 	}
-	err = db.Scopes(database.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)).Find(&roles).Error
+	err = db.Scopes(scope.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)).Find(&roles).Error
 	if err != nil {
 		g.ZAPLOG.Error("获取角色分页数据错误", zap.String("错误:", err.Error()))
 		return nil, err

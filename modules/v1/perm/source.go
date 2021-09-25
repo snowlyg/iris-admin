@@ -11,7 +11,7 @@ var Source = new(source)
 
 type source struct{}
 
-func GetSources() []Permission {
+func GetSources() PermCollection {
 	permRouteLen := len(g.PermRoutes)
 	ch := make(chan Permission, permRouteLen)
 	for _, permRoute := range g.PermRoutes {
@@ -26,7 +26,7 @@ func GetSources() []Permission {
 			ch <- perm
 		}(p)
 	}
-	perms := make([]Permission, permRouteLen)
+	perms := make(PermCollection, permRouteLen)
 	for i := 0; i < permRouteLen; i++ {
 		perms[i] = <-ch
 	}
@@ -36,7 +36,7 @@ func GetSources() []Permission {
 func (s *source) Init() error {
 	sources := GetSources()
 	return database.Instance().Transaction(func(tx *gorm.DB) error {
-		if tx.Model(&Permission{}).Where("id IN ?", []int{1}).Find(&[]Permission{}).RowsAffected == 1 {
+		if tx.Model(&Permission{}).Where("id IN ?", []int{1}).Find(&PermCollection{}).RowsAffected == 1 {
 			color.Danger.Println("\n[Mysql] --> permssions 表的初始数据已存在!")
 			return nil
 		}

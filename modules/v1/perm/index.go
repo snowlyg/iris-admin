@@ -7,6 +7,11 @@ import (
 )
 
 // Party 权限模块
+// - 定义模型 struct
+// - 定义请求 struct
+// - 定义响应 struct
+// - 定义 module
+// - 实现控制器逻辑
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
 		index.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())

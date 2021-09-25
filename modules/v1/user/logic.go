@@ -10,7 +10,7 @@ import (
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/modules/v1/role"
 	"github.com/snowlyg/iris-admin/server/casbin"
-	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -30,7 +30,7 @@ func Paginate(db *gorm.DB, req ReqPaginate) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	err = db.Scopes(database.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)).
+	err = db.Scopes(scope.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)).
 		Find(&users).Error
 	if err != nil {
 		g.ZAPLOG.Error("获取用户分页数据错误", zap.String("错误:", err.Error()))
@@ -75,7 +75,8 @@ func getRoles(db *gorm.DB, users ...*Response) {
 
 func FindByUserName(db *gorm.DB, username string, ids ...uint) (Response, error) {
 	user := Response{}
-	db = db.Model(&User{}).Where("username = ?", username)
+	db = db.Model(&User{}).
+		Where("username = ?", username)
 	if len(ids) == 1 {
 		db.Where("id != ?", ids[0])
 	}
@@ -90,7 +91,8 @@ func FindByUserName(db *gorm.DB, username string, ids ...uint) (Response, error)
 
 func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (LoginResponse, error) {
 	user := LoginResponse{}
-	db = db.Model(&User{}).Select("id,password").Where("username = ?", username)
+	db = db.Model(&User{}).Select("id,password").
+		Where("username = ?", username)
 	if len(ids) == 1 {
 		db.Where("id != ?", ids[0])
 	}

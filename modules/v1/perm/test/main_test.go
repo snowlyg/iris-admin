@@ -66,6 +66,10 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
+	if multi.AuthDriver != nil {
+		multi.AuthDriver.SetUserTokenMaxCount(1000)
+	}
+
 	code := m.Run()
 
 	err = dorpDB(uuid)

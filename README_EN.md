@@ -16,6 +16,7 @@
 
 #### Documentation
 - [IRIS V12 document for chinese](https://github.com/snowlyg/iris/wiki)
+- [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
 
 #### COMMUNICATIONS
 - `Iris-go`  QQ group for communication：`676717248`

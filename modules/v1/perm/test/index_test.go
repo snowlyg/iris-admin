@@ -7,19 +7,12 @@ import (
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/modules/v1/perm"
-	"github.com/snowlyg/iris-admin/server/database"
 )
 
 var (
 	loginUrl  = "/api/v1/auth/login"
 	logoutUrl = "/api/v1/users/logout"
 	url       = "/api/v1/perms"
-	data      = map[string]interface{}{
-		"name":        "test_route_name",
-		"displayName": "测试描述信息",
-		"description": "测试描述信息",
-		"act":         "GET",
-	}
 )
 
 type PageParam struct {
@@ -61,6 +54,12 @@ func TestList(t *testing.T) {
 func TestCreate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
+	data := map[string]interface{}{
+		"name":        "test_route_name",
+		"displayName": "测试描述信息",
+		"description": "测试描述信息",
+		"act":         "GET",
+	}
 	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)
@@ -71,6 +70,12 @@ func TestCreate(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
+	data := map[string]interface{}{
+		"name":        "update_test_route_name",
+		"displayName": "测试描述信息",
+		"description": "测试描述信息",
+		"act":         "GET",
+	}
 	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)
@@ -94,6 +99,12 @@ func TestUpdate(t *testing.T) {
 func TestGetById(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
+	data := map[string]interface{}{
+		"name":        "getbyid_test_route_name",
+		"displayName": "测试描述信息",
+		"description": "测试描述信息",
+		"act":         "GET",
+	}
 	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)
@@ -140,17 +151,16 @@ func Delete(client *tests.Client, id uint) {
 func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 	l := pageParam.PageLen
 	routes := make([]tests.Responses, 0, l)
-	req := perm.ReqPaginate{
-		Paginate: g.Paginate{
-			Page:     pageParam.Page,
-			PageSize: pageParam.PageSize,
-		},
+	req := &g.Paginate{
+		Page:     pageParam.Page,
+		PageSize: pageParam.PageSize,
 	}
-	perms, err := perm.Paginate(database.Instance(), req)
+	perms := perm.PageResponse{}
+	_, err := perms.Paginate(req.PaginateScope())
 	if err != nil {
 		return routes, err
 	}
-	for _, route := range perms["items"].([]*perm.Response) {
+	for _, route := range perms {
 		perm := tests.Responses{
 			{Key: "id", Value: route.Id},
 			{Key: "name", Value: route.Name},

@@ -13,13 +13,6 @@ var (
 	loginUrl  = "/api/v1/auth/login"
 	logoutUrl = "/api/v1/users/logout"
 	url       = "/api/v1/users"
-	data      = map[string]interface{}{
-		"name":     "测试名称",
-		"username": "test_username",
-		"intro":    "测试描述信息",
-		"avatar":   "",
-		"password": "123456",
-	}
 )
 
 func TestList(t *testing.T) {
@@ -52,7 +45,13 @@ func TestList(t *testing.T) {
 func TestCreate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
-
+	data := map[string]interface{}{
+		"name":     "测试名称",
+		"username": "create_test_username",
+		"intro":    "测试描述信息",
+		"avatar":   "",
+		"password": "123456",
+	}
 	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)
@@ -63,6 +62,13 @@ func TestCreate(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
+	data := map[string]interface{}{
+		"name":     "测试名称",
+		"username": "update_test_username",
+		"intro":    "测试描述信息",
+		"avatar":   "",
+		"password": "123456",
+	}
 	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)
@@ -87,6 +93,13 @@ func TestUpdate(t *testing.T) {
 func TestGetById(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
+	data := map[string]interface{}{
+		"name":     "测试名称",
+		"username": "getbyid_test_username",
+		"intro":    "测试描述信息",
+		"avatar":   "",
+		"password": "123456",
+	}
 	userId := Create(client, data)
 	if userId == 0 {
 		t.Fatalf("测试添加用户失败 id=%d", userId)

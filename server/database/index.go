@@ -87,3 +87,8 @@ func gormConfig(mod bool) *gorm.Config {
 	}
 	return config
 }
+
+// InitDBFunc 数据化初始化接口
+type InitDBFunc interface {
+	Init() (err error)
+}

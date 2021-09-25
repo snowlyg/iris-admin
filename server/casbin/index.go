@@ -68,7 +68,9 @@ func GetRolesForUser(uid uint) []string {
 	return uids
 }
 
+type PermsCollection [][]string
+
 // GetPermissionsForUser 获取角色权限
-func GetPermissionsForUser(id string) [][]string {
+func GetPermissionsForUser(id string) PermsCollection {
 	return Instance().GetPermissionsForUser(id)
 }

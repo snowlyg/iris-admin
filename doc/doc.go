@@ -1,16 +1,17 @@
+/*
+本项目基于 go iris 框架二次开发，主要用于快速构建网站管理后台。
+- 项目实现了一些基础功能：项目配置、gorm 集成、zap 日志集成、casbin 权鉴认证集成、redis 缓存驱动集成。
+- 项目内置了管理后台必须的 RBAC 基础模块 [v1](https://github.com/snowlyg/iris-admin/tree/master/modules/v1)。
+- 项目使用了一些自有开发的 package ：
+- - [multi](https://github.com/snowlyg/multi) 多角色多点登录认证
+- - [helper](https://github.com/snowlyg/helper) 封装了一些通用的辅助方法
+
 <h1 align="center">IrisAdmin</h1>
 
-<div align="center">
-    <a href="https://codecov.io/gh/snowlyg/iris-admin"><img src="https://codecov.io/gh/snowlyg/iris-admin/branch/master/graph/badge.svg" alt="Code Coverage"></a>
-    <a href="https://goreportcard.com/report/github.com/snowlyg/iris-admin"><img src="https://goreportcard.com/badge/github.com/snowlyg/iris-admin" alt="Go Report Card"></a>
-    <a href="https://godoc.org/github.com/snowlyg/iris-admin"><img src="https://godoc.org/github.com/snowlyg/iris-admin?status.svg" alt="GoDoc"></a>
-    <a href="https://github.com/snowlyg/iris-admin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/iris-admin" alt="Licenses"></a>
-</div>
-
-简体中文 | [English](./README_EN.md) 
+简体中文 | [English](./README_EN.md)
 
 #### 项目地址
-[GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin) 
+[GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin)
 
 > 简单项目仅供学习，欢迎指点！
 
@@ -25,7 +26,7 @@
 - If you don't have a QQ account, you can into the [iris-go-tenancy/community](https://gitter.im/iris-go-tenancy/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link) .
 - 微信群请加微信号: `c25vd2x5Z19jaGluYQ==`
 
-[![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) 
+[![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 #### iris 学习记录分享
 
 - [Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/iris-go-api-1/)
@@ -79,7 +80,7 @@ func Party() module.WebModule {
 
 func GetAllAdmins(ctx iris.Context) {
   // 处理业务逻辑
-  // ... 
+  // ...
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: list, Msg: g.NoErr.Msg})
 }
 
@@ -149,13 +150,10 @@ func main() {
 #### 简单用例
 - [简单使用](https://github.com/snowlyg/iris-admin/tree/master/example)
 
-#### 单元测试和接口文档[待更新] 
+#### 单元测试和接口文档[待更新]
 - 测试前在 `main_test.go` 文件所在目录新建 `redis_pwd.txt `和 `redis_pwd.txt` 两个文件,分别填入 `redis` 和 `mysql` 的密码
 - 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
 - [接口单元测试例子](https://github.com/snowlyg/iris-admin/tree/master/modules/v1/user/test)
 
-#### 感谢 
-
-[JetBrains](https://www.jetbrains.com/?from=iris-admin) 对本项目的支持。
-
-
+*/
+package doc

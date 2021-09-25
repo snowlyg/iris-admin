@@ -1,5 +1,11 @@
 package initdb
 
+import (
+	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/iris-admin/g"
+	"go.uber.org/zap"
+)
+
 type Request struct {
 	Sql       Sql    `json:"sql"`
 	SqlType   string `json:"sqlType" validate:"required"`
@@ -7,6 +13,14 @@ type Request struct {
 	CacheType string `json:"cacheType"  validate:"required"`
 	Level     string `json:"level"` // debug,release,test
 	Addr      string `json:"addr"`
+}
+
+func (req *Request) Request(ctx iris.Context) error {
+	if err := ctx.ReadJSON(req); err != nil {
+		g.ZAPLOG.Error("参数验证失败", zap.String("ReadParams()", err.Error()))
+		return g.ErrParamValidate
+	}
+	return nil
 }
 
 type Sql struct {

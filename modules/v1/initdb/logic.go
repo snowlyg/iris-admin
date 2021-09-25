@@ -14,7 +14,6 @@ import (
 	"github.com/snowlyg/iris-admin/modules/v1/user"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/module"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
@@ -59,7 +58,7 @@ func createTable(dsn string, driver string, createSql string) error {
 }
 
 // initDB 初始化数据
-func initDB(InitDBFunctions ...module.InitDBFunc) error {
+func initDB(InitDBFunctions ...database.InitDBFunc) error {
 	for _, v := range InitDBFunctions {
 		err := v.Init()
 		if err != nil {
@@ -70,7 +69,7 @@ func initDB(InitDBFunctions ...module.InitDBFunc) error {
 }
 
 // InitDB 创建数据库并初始化
-func InitDB(req Request) error {
+func InitDB(req *Request) error {
 	defaultConfig := g.CONFIG
 	if g.VIPER == nil {
 		g.ZAPLOG.Error("初始化错误", zap.String("InitDB", ErrViperEmpty.Error()))

@@ -11,21 +11,20 @@ var Source = new(source)
 
 type source struct{}
 
-func GetSources() ([]Request, error) {
+func GetSources() ([]*Request, error) {
 	perms, err := perm.GetPermsForRole()
 	if err != nil {
-		return []Request{}, err
+		return []*Request{}, err
 	}
-	sources := []Request{
-		{
-			BaseRole: BaseRole{
-				Name:        "SuperAdmin",
-				DisplayName: "超级管理员",
-				Description: "超级管理员",
-			},
-			Perms: perms,
+	var sources []*Request
+	sources = append(sources, &Request{
+		BaseRole: BaseRole{
+			Name:        "SuperAdmin",
+			DisplayName: "超级管理员",
+			Description: "超级管理员",
 		},
-	}
+		Perms: perms,
+	})
 	return sources, err
 }
 
@@ -40,7 +39,7 @@ func (s *source) Init() error {
 			return err
 		}
 		for _, source := range sources {
-			if _, err := Create(tx, source); err != nil { // 遇到错误时回滚事务
+			if _, err := Create(source); err != nil { // 遇到错误时回滚事务
 				return err
 			}
 		}

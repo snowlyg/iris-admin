@@ -1,35 +1,40 @@
 package user
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/database/orm"
+	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/validate"
 	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 // Profile 个人信息
 func Profile(ctx iris.Context) {
-	user, err := FindById(database.Instance(), multi.GetUserId(ctx))
+	item := &Response{}
+	err := orm.First(database.Instance(), item, scope.IdScope(multi.GetUserId(ctx)))
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: g.SystemErr.Msg})
 		return
 	}
-	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: user, Msg: g.NoErr.Msg})
+	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: item, Msg: g.NoErr.Msg})
 }
 
 // GetUser 详情
 func GetUser(ctx iris.Context) {
-	var req g.ReqId
-	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
+	req := &g.ReqId{}
+	if err := req.Request(ctx); err != nil {
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
-	user, err := FindById(database.Instance(), req.Id)
+	user := &Response{}
+	err := orm.First(database.Instance(), user, scope.IdScope(req.Id))
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: g.SystemErr.Msg})
 		return
@@ -39,19 +44,15 @@ func GetUser(ctx iris.Context) {
 
 // CreateUser 添加
 func CreateUser(ctx iris.Context) {
-	req := Request{}
-	if err := ctx.ReadJSON(&req); err != nil {
-		errs := validate.ValidRequest(err)
-		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
-			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
-			return
-		}
-	}
-	id, err := Create(database.Instance(), req)
-	if err != nil {
+	req := &Request{}
+	if err := req.Request(ctx); err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
+	}
+
+	id, err := Create(req)
+	if err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 	}
 
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: iris.Map{"id": id}, Msg: g.NoErr.Msg})
@@ -59,40 +60,48 @@ func CreateUser(ctx iris.Context) {
 
 // UpdateUser 更新
 func UpdateUser(ctx iris.Context) {
-	var reqId g.ReqId
-	if err := ctx.ReadParams(&reqId); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
+	reqId := &g.ReqId{}
+	if err := reqId.Request(ctx); err != nil {
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
 
-	var req Request
-	if err := ctx.ReadJSON(&req); err != nil {
-		errs := validate.ValidRequest(err)
-		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
-			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
-			return
-		}
+	if err := IsAdminUser(reqId.Id); err != nil {
+		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 	}
 
-	err := Update(database.Instance(), reqId.Id, req)
+	req := &Request{}
+	if err := req.Request(ctx); err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+		return
+	}
+
+	if _, err := FindByUserName(UserNameScope(req.Username), scope.NeIdScope(reqId.Id)); !errors.Is(err, gorm.ErrRecordNotFound) {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+	}
+
+	user := &User{BaseUser: req.BaseUser}
+	err := orm.Update(database.Instance(), reqId.Id, user)
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
+
+	if err := AddRoleForUser(user); err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+	}
+
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
 // DeleteUser 删除
 func DeleteUser(ctx iris.Context) {
-	var req g.ReqId
-	if err := ctx.ReadParams(&req); err != nil {
-		g.ZAPLOG.Error("参数解析失败", zap.String("错误:", err.Error()))
+	reqId := &g.ReqId{}
+	if err := reqId.Request(ctx); err != nil {
 		ctx.JSON(g.Response{Code: g.ParamErr.Code, Data: nil, Msg: g.ParamErr.Msg})
 		return
 	}
-	err := DeleteById(database.Instance(), req.Id)
+	err := orm.Delete(database.Instance(), reqId.Id, &User{})
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
@@ -101,23 +110,23 @@ func DeleteUser(ctx iris.Context) {
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: nil, Msg: g.NoErr.Msg})
 }
 
-// GetAllUsers 分页列表
-func GetAllUsers(ctx iris.Context) {
-	var req ReqPaginate
-	if err := ctx.ReadQuery(&req); err != nil {
-		errs := validate.ValidRequest(err)
-		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
-			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
-			return
-		}
+// GetAll 分页列表
+func GetAll(ctx iris.Context) {
+	req := &g.Paginate{}
+	if err := req.Request(ctx); err != nil {
+		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+		return
 	}
 
-	list, err := Paginate(database.Instance(), req)
+	items := &PageResponse{}
+	total, err := orm.Paginate(database.Instance(), items, req.PaginateScope())
 	if err != nil {
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
+	// 查询用户角色
+	getRoles(database.Instance(), *items...)
+	list := iris.Map{"items": items, "total": total, "pageSize": req.PageSize, "page": req.Page}
 	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: list, Msg: g.NoErr.Msg})
 }
 

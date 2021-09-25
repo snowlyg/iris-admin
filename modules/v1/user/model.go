@@ -1,6 +1,8 @@
 package user
 
 import (
+	"github.com/snowlyg/iris-admin/g"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -20,4 +22,34 @@ type BaseUser struct {
 
 type Avatar struct {
 	Avatar string `json:"avatar"`
+}
+
+// Create 添加
+func (item *User) Create(db *gorm.DB) (uint, error) {
+	err := db.Model(item).Create(item).Error
+	if err != nil {
+		g.ZAPLOG.Error("添加失败", zap.String("(item *User) Create()", err.Error()))
+		return item.ID, err
+	}
+	return item.ID, nil
+}
+
+// Update 更新
+func (item *User) Update(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	err := db.Model(item).Scopes(scopes...).Updates(item).Error
+	if err != nil {
+		g.ZAPLOG.Error("更新失败", zap.String("(item *User) Update() ", err.Error()))
+		return err
+	}
+	return nil
+}
+
+// Delete 删除
+func (item *User) Delete(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	err := db.Model(item).Unscoped().Scopes(scopes...).Delete(item).Error
+	if err != nil {
+		g.ZAPLOG.Error("删除失败", zap.String("(item *User) Delete()", err.Error()))
+		return err
+	}
+	return nil
 }

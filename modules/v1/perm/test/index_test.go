@@ -14,12 +14,6 @@ var (
 	loginUrl  = "/api/v1/auth/login"
 	logoutUrl = "/api/v1/users/logout"
 	url       = "/api/v1/perms"
-	data      = map[string]interface{}{
-		"name":        "test_route_name",
-		"displayName": "测试描述信息",
-		"description": "测试描述信息",
-		"act":         "GET",
-	}
 )
 
 type PageParam struct {
@@ -61,21 +55,33 @@ func TestList(t *testing.T) {
 func TestCreate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	data := map[string]interface{}{
+		"name":        "test_route_name",
+		"displayName": "测试描述信息",
+		"description": "测试描述信息",
+		"act":         "GET",
 	}
-	defer Delete(client, userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
+	}
+	defer Delete(client, id)
 }
 
 func TestUpdate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	data := map[string]interface{}{
+		"name":        "update_test_route_name",
+		"displayName": "测试描述信息",
+		"description": "测试描述信息",
+		"act":         "GET",
 	}
-	defer Delete(client, userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
+	}
+	defer Delete(client, id)
 
 	update := map[string]interface{}{
 		"name":        "update_test_route_name",
@@ -88,17 +94,23 @@ func TestUpdate(t *testing.T) {
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
 	}
-	client.POST(fmt.Sprintf("%s/%d", url, userId), pageKeys, update)
+	client.POST(fmt.Sprintf("%s/%d", url, id), pageKeys, update)
 }
 
 func TestGetById(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
-	userId := Create(client, data)
-	if userId == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", userId)
+	data := map[string]interface{}{
+		"name":        "getbyid_test_route_name",
+		"displayName": "测试描述信息",
+		"description": "测试描述信息",
+		"act":         "GET",
 	}
-	defer Delete(client, userId)
+	id := Create(client, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
+	}
+	defer Delete(client, id)
 
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
@@ -114,7 +126,7 @@ func TestGetById(t *testing.T) {
 		},
 		},
 	}
-	client.GET(fmt.Sprintf("%s/%d", url, userId), pageKeys)
+	client.GET(fmt.Sprintf("%s/%d", url, id), pageKeys)
 }
 
 func Create(client *tests.Client, data map[string]interface{}) uint {
@@ -140,17 +152,16 @@ func Delete(client *tests.Client, id uint) {
 func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 	l := pageParam.PageLen
 	routes := make([]tests.Responses, 0, l)
-	req := perm.ReqPaginate{
-		Paginate: g.Paginate{
-			Page:     pageParam.Page,
-			PageSize: pageParam.PageSize,
-		},
+	req := &g.Paginate{
+		Page:     pageParam.Page,
+		PageSize: pageParam.PageSize,
 	}
-	perms, err := perm.Paginate(database.Instance(), req)
+	perms := perm.PageResponse{}
+	_, err := perms.Paginate(database.Instance(), req.PaginateScope())
 	if err != nil {
 		return routes, err
 	}
-	for _, route := range perms["items"].([]*perm.Response) {
+	for _, route := range perms {
 		perm := tests.Responses{
 			{Key: "id", Value: route.Id},
 			{Key: "name", Value: route.Name},

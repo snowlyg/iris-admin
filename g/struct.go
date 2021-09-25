@@ -1,5 +1,16 @@
 package g
 
+import (
+	"errors"
+	"strings"
+
+	"github.com/kataras/iris/v12"
+	"github.com/snowlyg/iris-admin/server/database/scope"
+	"github.com/snowlyg/iris-admin/server/web/validate"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+)
+
 // Model
 type Model struct {
 	Id        uint   `json:"id"`
@@ -7,17 +18,41 @@ type Model struct {
 	CreatedAt string `json:"createdAt"`
 }
 
-// ReqId
+// ReqId 获取id请求参数
 type ReqId struct {
 	Id uint `json:"id" param:"id"`
 }
 
-// Paginate
+func (req *ReqId) Request(ctx iris.Context) error {
+	if err := ctx.ReadParams(req); err != nil {
+		ZAPLOG.Error("id参数获取失败", zap.String("ReadParams()", err.Error()))
+		return ErrParamValidate
+	}
+	return nil
+}
+
+// Paginate 验证请求参数
 type Paginate struct {
 	Page     int    `json:"page"`
 	PageSize int    `json:"pageSize"`
 	OrderBy  string `json:"orderBy"`
 	Sort     string `json:"sort"`
+}
+
+func (req *Paginate) Request(ctx iris.Context) error {
+	if err := ctx.ReadQuery(req); err != nil {
+		errs := validate.ValidRequest(err)
+		if len(errs) > 0 {
+			ZAPLOG.Error("参数验证失败", zap.String("ValidRequest()", strings.Join(errs, ";")))
+			return ErrParamValidate
+		}
+	}
+	return nil
+}
+
+// PaginateScope 分页 scope
+func (req *Paginate) PaginateScope() func(db *gorm.DB) *gorm.DB {
+	return scope.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)
 }
 
 // Response
@@ -43,4 +78,7 @@ var (
 	SystemErr     = ErrMsg{5000, "系统错误，请联系管理员"}
 	DataEmptyErr  = ErrMsg{5001, "数据为空"}
 	TokenCacheErr = ErrMsg{5002, "TOKEN CACHE 错误"}
+
+	ErrParamValidate = errors.New("参数验证失败")
+	ErrPaginateParam = errors.New("分页查询参数缺失")
 )

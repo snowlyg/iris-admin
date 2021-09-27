@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
-	customZap "github.com/snowlyg/iris-admin/server/zap"
+	myzap "github.com/snowlyg/iris-admin/server/zap"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -65,7 +64,7 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	role := Response{}
 	err := db.Model(&Role{}).Where("id = ?", id).First(&role).Error
 	if err != nil {
-		g.ZAPLOG.Error("根据id查询角色错误", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("根据id查询角色错误", zap.String("错误:", err.Error()))
 		return role, err
 	}
 	return role, nil
@@ -75,34 +74,34 @@ func FindInId(db *gorm.DB, ids []string) ([]*Response, error) {
 	roles := PageResponse{}
 	err := roles.Find(database.Instance(), scope.InIdsScope(ids))
 	if err != nil {
-		g.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误:", err.Error()))
 		return nil, err
 	}
 	return roles, nil
 }
 
 // AddPermForRole
-func AddPermForRole(id uint, perms casbin.PermsCollection) error {
+func AddPermForRole(id uint, perms [][]string) error {
 	roleId := strconv.FormatUint(uint64(id), 10)
 	oldPerms := casbin.GetPermissionsForUser(roleId)
 	_, err := casbin.Instance().RemovePolicies(oldPerms)
 	if err != nil {
-		g.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))
 		return err
 	}
 
 	if len(perms) == 0 {
-		g.ZAPLOG.Debug("没有权限")
+		myzap.ZAPLOG.Debug("没有权限")
 		return nil
 	}
-	var newPerms casbin.PermsCollection
+	var newPerms [][]string
 	for _, perm := range perms {
 		newPerms = append(newPerms, append([]string{roleId}, perm...))
 	}
-	g.ZAPLOG.Info("添加权限到角色", customZap.Strings("新权限", newPerms))
+	myzap.ZAPLOG.Info("添加权限到角色", myzap.Strings("新权限", newPerms))
 	_, err = casbin.Instance().AddPolicies(newPerms)
 	if err != nil {
-		g.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))
 		return err
 	}
 

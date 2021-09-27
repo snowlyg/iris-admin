@@ -4,7 +4,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/snowlyg/iris-admin/g"
+	con "github.com/snowlyg/iris-admin/server/config"
+	myzap "github.com/snowlyg/iris-admin/server/zap"
 
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
@@ -20,7 +21,7 @@ var (
 // Instance 数据库单例
 func Instance() *gorm.DB {
 	once.Do(func() {
-		switch g.CONFIG.System.DbType {
+		switch con.CONFIG.System.DbType {
 		case "mysql":
 			db = GormMysql()
 		default:
@@ -34,15 +35,15 @@ func Instance() *gorm.DB {
 func MysqlTables(db *gorm.DB) {
 	err := db.AutoMigrate()
 	if err != nil {
-		g.ZAPLOG.Error("注册数据表错误", zap.Any("err", err))
+		myzap.ZAPLOG.Error("注册数据表错误", zap.Any("err", err))
 		os.Exit(0)
 	}
-	g.ZAPLOG.Info("注册数据表成功")
+	myzap.ZAPLOG.Info("注册数据表成功")
 }
 
 // GormMysql 初始化Mysql数据库
 func GormMysql() *gorm.DB {
-	m := g.CONFIG.Mysql
+	m := con.CONFIG.Mysql
 	if m.Dbname == "" {
 		return nil
 	}
@@ -67,7 +68,7 @@ func GormMysql() *gorm.DB {
 // gormConfig 根据配置决定是否开启日志
 func gormConfig(mod bool) *gorm.Config {
 	var config = &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
-	switch g.CONFIG.Mysql.LogZap {
+	switch con.CONFIG.Mysql.LogZap {
 	case "silent", "Silent":
 		config.Logger = Default.LogMode(logger.Silent)
 	case "error", "Error":

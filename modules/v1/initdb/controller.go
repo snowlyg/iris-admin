@@ -4,6 +4,8 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/cache"
+	"github.com/snowlyg/iris-admin/server/config"
 	"github.com/snowlyg/iris-admin/server/database"
 )
 
@@ -29,7 +31,7 @@ func Check(ctx iris.Context) {
 			"needInit": true,
 		}, Msg: str.Join(g.NeedInitErr.Msg, ":数据库初始化失败")})
 		return
-	} else if g.CONFIG.System.CacheType == "redis" && g.CACHE == nil {
+	} else if config.CONFIG.System.CacheType == "redis" && cache.Instance() == nil {
 		ctx.JSON(g.Response{Code: g.NeedInitErr.Code, Data: iris.Map{
 			"needInit": true,
 		}, Msg: str.Join(g.NeedInitErr.Msg, ":缓存驱动初始化失败")})

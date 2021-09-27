@@ -3,6 +3,7 @@ package file
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/g"
+	myzap "github.com/snowlyg/iris-admin/server/zap"
 	"go.uber.org/zap"
 )
 
@@ -11,7 +12,7 @@ import (
 func Upload(ctx iris.Context) {
 	f, fh, err := ctx.FormFile("file")
 	if err != nil {
-		g.ZAPLOG.Error("文件上传失败", zap.String("ctx.FormFile(\"file\")", err.Error()))
+		myzap.ZAPLOG.Error("文件上传失败", zap.String("ctx.FormFile(\"file\")", err.Error()))
 		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}

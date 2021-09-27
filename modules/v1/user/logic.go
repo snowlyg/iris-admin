@@ -6,12 +6,12 @@ import (
 	"strconv"
 
 	"github.com/snowlyg/helper/arr"
-	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/modules/v1/role"
 	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
+	myzap "github.com/snowlyg/iris-admin/server/zap"
 	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -36,7 +36,7 @@ func getRoles(db *gorm.DB, users ...*Response) {
 
 	roles, err := role.FindInId(db, roleIds)
 	if err != nil {
-		g.ZAPLOG.Error("get role get err ", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("get role get err ", zap.String("错误:", err.Error()))
 	}
 
 	for _, user := range users {
@@ -68,7 +68,7 @@ func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (LoginRes
 	}
 	err := db.First(&user).Error
 	if err != nil {
-		g.ZAPLOG.Error("根据用户名查询用户错误", zap.String("用户名:", username), zap.Uints("ids:", ids), zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("根据用户名查询用户错误", zap.String("用户名:", username), zap.Uints("ids:", ids), zap.String("错误:", err.Error()))
 		return user, err
 	}
 	return user, nil
@@ -81,11 +81,11 @@ func Create(req *Request) (uint, error) {
 	user := &User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		g.ZAPLOG.Error("密码加密错误", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("密码加密错误", zap.String("错误:", err.Error()))
 		return 0, err
 	}
 
-	g.ZAPLOG.Info("添加用户", zap.String("hash:", req.Password), zap.ByteString("hash:", hash))
+	myzap.ZAPLOG.Info("添加用户", zap.String("hash:", req.Password), zap.ByteString("hash:", hash))
 
 	user.Password = string(hash)
 	id, err := orm.Create(database.Instance(), user)
@@ -94,7 +94,7 @@ func Create(req *Request) (uint, error) {
 	}
 
 	if err := AddRoleForUser(user); err != nil {
-		g.ZAPLOG.Error("添加用户角色错误", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("添加用户角色错误", zap.String("错误:", err.Error()))
 		return 0, err
 	}
 
@@ -117,7 +117,7 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	user := Response{}
 	err := db.Model(&User{}).Where("id = ?", id).First(&user).Error
 	if err != nil {
-		g.ZAPLOG.Error("find user err ", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("find user err ", zap.String("错误:", err.Error()))
 		return user, err
 	}
 
@@ -131,13 +131,13 @@ func AddRoleForUser(user *User) error {
 	userId := strconv.FormatUint(uint64(user.ID), 10)
 	oldRoleIds, err := casbin.Instance().GetRolesForUser(userId)
 	if err != nil {
-		g.ZAPLOG.Error("获取用户角色错误", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("获取用户角色错误", zap.String("错误:", err.Error()))
 		return err
 	}
 
 	if len(oldRoleIds) > 0 {
 		if _, err := casbin.Instance().DeleteRolesForUser(userId); err != nil {
-			g.ZAPLOG.Error("添加角色到用户错误", zap.String("错误:", err.Error()))
+			myzap.ZAPLOG.Error("添加角色到用户错误", zap.String("错误:", err.Error()))
 			return err
 		}
 	}
@@ -151,7 +151,7 @@ func AddRoleForUser(user *User) error {
 	}
 
 	if _, err := casbin.Instance().AddRolesForUser(userId, roleIds); err != nil {
-		g.ZAPLOG.Error("添加角色到用户错误", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("添加角色到用户错误", zap.String("错误:", err.Error()))
 		return err
 	}
 
@@ -162,7 +162,7 @@ func AddRoleForUser(user *User) error {
 func DelToken(token string) error {
 	err := multi.AuthDriver.DelUserTokenCache(token)
 	if err != nil {
-		g.ZAPLOG.Error("del token", zap.Any("err", err))
+		myzap.ZAPLOG.Error("del token", zap.Any("err", err))
 		return fmt.Errorf("del token %w", err)
 	}
 	return nil
@@ -172,7 +172,7 @@ func DelToken(token string) error {
 func CleanToken(authorityType int, userId string) error {
 	err := multi.AuthDriver.CleanUserTokenCache(authorityType, userId)
 	if err != nil {
-		g.ZAPLOG.Error("clean token", zap.Any("err", err))
+		myzap.ZAPLOG.Error("clean token", zap.Any("err", err))
 		return fmt.Errorf("clean token %w", err)
 	}
 	return nil

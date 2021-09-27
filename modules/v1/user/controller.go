@@ -11,7 +11,6 @@ import (
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/validate"
 	"github.com/snowlyg/multi"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -165,7 +164,6 @@ func ChangeAvatar(ctx iris.Context) {
 	if err := ctx.ReadJSON(avatar); err != nil {
 		errs := validate.ValidRequest(err)
 		if len(errs) > 0 {
-			g.ZAPLOG.Error("参数验证失败", zap.String("错误", strings.Join(errs, ";")))
 			ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: strings.Join(errs, ";")})
 			return
 		}

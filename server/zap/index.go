@@ -5,23 +5,26 @@ import (
 	"time"
 
 	"github.com/snowlyg/helper/dir"
-	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 // level 日志级别
-var level zapcore.Level
+var (
+	level  zapcore.Level
+	ZAPLOG *zap.Logger
+)
 
 // Init 初始化日志服务
 func Init() {
 	var logger *zap.Logger
 
-	if dir.IsExist(g.CONFIG.Zap.Director) { // 判断是否有Director文件夹
-		dir.InsureDir(g.CONFIG.Zap.Director)
+	if dir.IsExist(config.CONFIG.Zap.Director) { // 判断是否有Director文件夹
+		dir.InsureDir(config.CONFIG.Zap.Director)
 	}
 
-	switch g.CONFIG.Zap.Level { // 初始化配置文件的Level
+	switch config.CONFIG.Zap.Level { // 初始化配置文件的Level
 	case "debug":
 		level = zap.DebugLevel
 	case "info":
@@ -45,21 +48,21 @@ func Init() {
 	} else {
 		logger = zap.New(getEncoderCore())
 	}
-	if g.CONFIG.Zap.ShowLine {
+	if config.CONFIG.Zap.ShowLine {
 		logger = logger.WithOptions(zap.AddCaller())
 	}
-	g.ZAPLOG = logger
+	ZAPLOG = logger
 }
 
 // getEncoderConfig 获取zapcore.EncoderConfig
-func getEncoderConfig() (config zapcore.EncoderConfig) {
-	config = zapcore.EncoderConfig{
+func getEncoderConfig() (conf zapcore.EncoderConfig) {
+	conf = zapcore.EncoderConfig{
 		MessageKey:     "message",
 		LevelKey:       "level",
 		TimeKey:        "time",
 		NameKey:        "logger",
 		CallerKey:      "caller",
-		StacktraceKey:  g.CONFIG.Zap.StacktraceKey,
+		StacktraceKey:  config.CONFIG.Zap.StacktraceKey,
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,
 		EncodeTime:     customTimeEncoder,
@@ -67,23 +70,23 @@ func getEncoderConfig() (config zapcore.EncoderConfig) {
 		EncodeCaller:   zapcore.FullCallerEncoder,
 	}
 	switch {
-	case g.CONFIG.Zap.EncodeLevel == "LowercaseLevelEncoder": // 小写编码器(默认)
-		config.EncodeLevel = zapcore.LowercaseLevelEncoder
-	case g.CONFIG.Zap.EncodeLevel == "LowercaseColorLevelEncoder": // 小写编码器带颜色
-		config.EncodeLevel = zapcore.LowercaseColorLevelEncoder
-	case g.CONFIG.Zap.EncodeLevel == "CapitalLevelEncoder": // 大写编码器
-		config.EncodeLevel = zapcore.CapitalLevelEncoder
-	case g.CONFIG.Zap.EncodeLevel == "CapitalColorLevelEncoder": // 大写编码器带颜色
-		config.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	case config.CONFIG.Zap.EncodeLevel == "LowercaseLevelEncoder": // 小写编码器(默认)
+		conf.EncodeLevel = zapcore.LowercaseLevelEncoder
+	case config.CONFIG.Zap.EncodeLevel == "LowercaseColorLevelEncoder": // 小写编码器带颜色
+		conf.EncodeLevel = zapcore.LowercaseColorLevelEncoder
+	case config.CONFIG.Zap.EncodeLevel == "CapitalLevelEncoder": // 大写编码器
+		conf.EncodeLevel = zapcore.CapitalLevelEncoder
+	case config.CONFIG.Zap.EncodeLevel == "CapitalColorLevelEncoder": // 大写编码器带颜色
+		conf.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	default:
-		config.EncodeLevel = zapcore.LowercaseLevelEncoder
+		conf.EncodeLevel = zapcore.LowercaseLevelEncoder
 	}
-	return config
+	return conf
 }
 
 // getEncoder 获取zapcore.Encoder
 func getEncoder() zapcore.Encoder {
-	if g.CONFIG.Zap.Format == "json" {
+	if config.CONFIG.Zap.Format == "json" {
 		return zapcore.NewJSONEncoder(getEncoderConfig())
 	}
 	return zapcore.NewConsoleEncoder(getEncoderConfig())
@@ -101,7 +104,7 @@ func getEncoderCore() (core zapcore.Core) {
 
 // 自定义日志输出时间格式
 func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-	enc.AppendString(t.Format(g.CONFIG.Zap.Prefix + "2006/01/02 - 15:04:05.000"))
+	enc.AppendString(t.Format(config.CONFIG.Zap.Prefix + "2006/01/02 - 15:04:05.000"))
 }
 
 type StringsArray [][]string

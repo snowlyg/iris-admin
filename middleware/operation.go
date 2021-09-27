@@ -8,8 +8,8 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
+	myzap "github.com/snowlyg/iris-admin/server/zap"
 	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -25,7 +25,7 @@ func OperationRecord() iris.Handler {
 		if !strings.Contains(ctx.Path(), "/api/v1/upload") {
 			body, err = ctx.GetBody()
 			if err != nil {
-				g.ZAPLOG.Error("获取请求内容错误", zap.String("错误:", err.Error()))
+				myzap.ZAPLOG.Error("获取请求内容错误", zap.String("错误:", err.Error()))
 			} else {
 				ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(body))
 			}
@@ -61,7 +61,7 @@ func OperationRecord() iris.Handler {
 		record.Resp = writer.body.String()
 
 		if err := CreateOplog(record); err != nil {
-			g.ZAPLOG.Error("生成日志错误", zap.String("错误:", err.Error()))
+			myzap.ZAPLOG.Error("生成日志错误", zap.String("错误:", err.Error()))
 		}
 	}
 }
@@ -80,7 +80,7 @@ func (r responseBodyWriter) Write(b []byte) (int, error) {
 func CreateOplog(ol Oplog) error {
 	err := database.Instance().Model(&Oplog{}).Create(&ol).Error
 	if err != nil {
-		g.ZAPLOG.Error("生成系统日志错误", zap.String("错误:", err.Error()))
+		myzap.ZAPLOG.Error("生成系统日志错误", zap.String("错误:", err.Error()))
 		return err
 	}
 	return nil

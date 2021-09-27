@@ -11,6 +11,7 @@ import (
 	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/middleware"
+	"github.com/snowlyg/iris-admin/server/config"
 	"github.com/snowlyg/iris-admin/server/module"
 )
 
@@ -21,7 +22,7 @@ func (ws *WebServer) InitRouter() error {
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
 		app.Use(middleware.InitCheck())
-		if g.CONFIG.System.Level == "debug" {
+		if config.CONFIG.System.Level == "debug" {
 			debug := DebugParty()
 			app.PartyFunc(debug.RelativePath, debug.Handler)
 		}

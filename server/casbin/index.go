@@ -10,6 +10,7 @@ import (
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
+	myzap "github.com/snowlyg/iris-admin/server/zap"
 	"go.uber.org/zap"
 )
 
@@ -29,29 +30,29 @@ func Instance() *casbin.Enforcer {
 // GetEnforcer 获取 casbin.Enforcer
 func GetEnforcer() *casbin.Enforcer {
 	if database.Instance() == nil {
-		g.ZAPLOG.Error("数据库未初始化")
+		myzap.ZAPLOG.Error("数据库未初始化")
 		return nil
 	}
 	c, err := gormadapter.NewAdapterByDBUseTableName(database.Instance(), "", "casbin_rule") // Your driver and data source.
 	if err != nil {
-		g.ZAPLOG.Error("驱动初始化错误", zap.String("gormadapter.NewAdapterByDBUseTableName()", err.Error()))
+		myzap.ZAPLOG.Error("驱动初始化错误", zap.String("gormadapter.NewAdapterByDBUseTableName()", err.Error()))
 		return nil
 	}
 
 	enforcer, err := casbin.NewEnforcer(filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName), c)
 	if err != nil {
-		g.ZAPLOG.Error("初始化失败", zap.String("casbin.NewEnforcer()", err.Error()))
+		myzap.ZAPLOG.Error("初始化失败", zap.String("casbin.NewEnforcer()", err.Error()))
 		return nil
 	}
 
 	if enforcer == nil {
-		g.ZAPLOG.Error("Casbin 未初始化")
+		myzap.ZAPLOG.Error("Casbin 未初始化")
 		return nil
 	}
 
 	err = enforcer.LoadPolicy()
 	if err != nil {
-		g.ZAPLOG.Error("加载规则失败", zap.String("casbin.LoadPolicy()", err.Error()))
+		myzap.ZAPLOG.Error("加载规则失败", zap.String("casbin.LoadPolicy()", err.Error()))
 		return nil
 	}
 
@@ -68,9 +69,7 @@ func GetRolesForUser(uid uint) []string {
 	return uids
 }
 
-type PermsCollection [][]string
-
 // GetPermissionsForUser 获取角色权限
-func GetPermissionsForUser(id string) PermsCollection {
+func GetPermissionsForUser(id string) [][]string {
 	return Instance().GetPermissionsForUser(id)
 }

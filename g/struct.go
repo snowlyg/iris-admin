@@ -7,6 +7,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/validate"
+	myzap "github.com/snowlyg/iris-admin/server/zap"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -25,7 +26,7 @@ type ReqId struct {
 
 func (req *ReqId) Request(ctx iris.Context) error {
 	if err := ctx.ReadParams(req); err != nil {
-		ZAPLOG.Error("id参数获取失败", zap.String("ReadParams()", err.Error()))
+		myzap.ZAPLOG.Error("id参数获取失败", zap.String("ReadParams()", err.Error()))
 		return ErrParamValidate
 	}
 	return nil
@@ -43,7 +44,7 @@ func (req *Paginate) Request(ctx iris.Context) error {
 	if err := ctx.ReadQuery(req); err != nil {
 		errs := validate.ValidRequest(err)
 		if len(errs) > 0 {
-			ZAPLOG.Error("参数验证失败", zap.String("ValidRequest()", strings.Join(errs, ";")))
+			myzap.ZAPLOG.Error("参数验证失败", zap.String("ValidRequest()", strings.Join(errs, ";")))
 			return ErrParamValidate
 		}
 	}

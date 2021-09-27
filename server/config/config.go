@@ -1,5 +1,7 @@
 package config
 
+var CONFIG Config
+
 type Config struct {
 	MaxSize int64   `mapstructure:"max-size" json:"burst" yaml:"max-size"`
 	System  System  `mapstructure:"system" json:"system" yaml:"system"`

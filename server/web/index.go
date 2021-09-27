@@ -14,11 +14,12 @@ import (
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/helper/tests"
-	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/cache"
+	"github.com/snowlyg/iris-admin/server/config"
 	"github.com/snowlyg/iris-admin/server/module"
 	"github.com/snowlyg/iris-admin/server/viper"
 	"github.com/snowlyg/iris-admin/server/zap"
+	"github.com/snowlyg/multi"
 )
 
 var client *tests.Client
@@ -51,14 +52,20 @@ type WebServer struct {
 func Init() *WebServer {
 	viper.Init()
 	zap.Init()
-	err := cache.Init()
-	if err != nil {
-		panic(err)
+
+	// 初始化认证
+	err := multi.InitDriver(
+		&multi.Config{
+			DriverType:      config.CONFIG.System.CacheType,
+			UniversalClient: cache.Instance()},
+	)
+	if err != nil || multi.AuthDriver == nil {
+		panic(fmt.Sprintf("认证驱动初始化失败 %v \n", err))
 	}
 
 	app := iris.New()
 	app.Validator = validator.New() //参数验证
-	app.Logger().SetLevel(g.CONFIG.System.Level)
+	app.Logger().SetLevel(config.CONFIG.System.Level)
 	idleConnsClosed := make(chan struct{})
 	iris.RegisterOnInterrupt(func() { //优雅退出
 		timeout := 10 * time.Second
@@ -68,33 +75,33 @@ func Init() *WebServer {
 		close(idleConnsClosed)
 	})
 
-	if g.CONFIG.System.Addr == "" { // 默认 8085
-		g.CONFIG.System.Addr = "127.0.0.1:8085"
+	if config.CONFIG.System.Addr == "" { // 默认 8085
+		config.CONFIG.System.Addr = "127.0.0.1:8085"
 	}
 
-	if g.CONFIG.System.StaticPath == "" { // 默认 /static/upload
-		g.CONFIG.System.StaticPath = "/static/upload"
+	if config.CONFIG.System.StaticPath == "" { // 默认 /static/upload
+		config.CONFIG.System.StaticPath = "/static/upload"
 	}
 
-	if g.CONFIG.System.StaticPrefix == "" { // 默认 /upload
-		g.CONFIG.System.StaticPrefix = "/upload"
+	if config.CONFIG.System.StaticPrefix == "" { // 默认 /upload
+		config.CONFIG.System.StaticPrefix = "/upload"
 	}
 
-	if g.CONFIG.System.WebPath == "" { // 默认 /./dist
-		g.CONFIG.System.WebPath = "./dist"
+	if config.CONFIG.System.WebPath == "" { // 默认 /./dist
+		config.CONFIG.System.WebPath = "./dist"
 	}
 
-	if g.CONFIG.System.TimeFormat == "" { // 默认 80
-		g.CONFIG.System.TimeFormat = time.RFC3339
+	if config.CONFIG.System.TimeFormat == "" { // 默认 80
+		config.CONFIG.System.TimeFormat = time.RFC3339
 	}
 
 	return &WebServer{
 		app:               app,
-		addr:              g.CONFIG.System.Addr,
-		timeFormat:        g.CONFIG.System.TimeFormat,
-		staticPrefix:      g.CONFIG.System.StaticPrefix,
-		staticPath:        g.CONFIG.System.StaticPath,
-		webPath:           g.CONFIG.System.WebPath,
+		addr:              config.CONFIG.System.Addr,
+		timeFormat:        config.CONFIG.System.TimeFormat,
+		staticPrefix:      config.CONFIG.System.StaticPrefix,
+		staticPath:        config.CONFIG.System.StaticPath,
+		webPath:           config.CONFIG.System.WebPath,
 		idleConnsClosed:   idleConnsClosed,
 		globalMiddlewares: []context.Handler{},
 	}

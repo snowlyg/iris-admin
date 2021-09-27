@@ -5,6 +5,7 @@ import (
 
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/g"
+	myzap "github.com/snowlyg/iris-admin/server/zap"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -33,7 +34,7 @@ type LoginResponse struct {
 func (res *Response) First(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
 	err := db.Model(&User{}).Scopes(scopes...).First(res).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取失败", zap.String("First()", err.Error()))
+		myzap.ZAPLOG.Error("获取失败", zap.String("First()", err.Error()))
 		return err
 	}
 	return nil
@@ -47,12 +48,12 @@ func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm
 	var count int64
 	err := db.Scopes(scopes...).Count(&count).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取总数失败", zap.String("Count()", err.Error()))
+		myzap.ZAPLOG.Error("获取总数失败", zap.String("Count()", err.Error()))
 		return count, err
 	}
 	err = db.Scopes(pageScope).Find(&res).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取分页数据失败", zap.String("Find()", err.Error()))
+		myzap.ZAPLOG.Error("获取分页数据失败", zap.String("Find()", err.Error()))
 		return count, err
 	}
 
@@ -63,7 +64,7 @@ func (res *PageResponse) Find(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB)
 	db = db.Model(&User{})
 	err := db.Scopes(scopes...).Find(&res).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取数据失败", zap.String("Find()", err.Error()))
+		myzap.ZAPLOG.Error("获取数据失败", zap.String("Find()", err.Error()))
 		return err
 	}
 

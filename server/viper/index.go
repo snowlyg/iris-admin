@@ -8,21 +8,24 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/config"
 	"github.com/spf13/viper"
 )
+
+var VIPER *viper.Viper
 
 // Init 初始化系统配置
 // - 第一次初始化系统配置，会自动生成配置文件 config.yaml 和 casbin 的规则文件 rbac_model.conf
 // - 热监控系统配置项，如果发生变化会重写配置文件内的配置项
 func Init() {
-	config := g.ConfigFileName
-	fmt.Printf("您的配置文件路径为%s\n", config)
+	configName := g.ConfigFileName
+	fmt.Printf("您的配置文件路径为%s\n", configName)
 
 	v := viper.New()
-	g.VIPER = v
-	g.VIPER.SetConfigType("yaml")
+	VIPER = v
+	VIPER.SetConfigType("yaml")
 
-	if !dir.IsExist(config) { //没有配置文件，写入默认配置
+	if !dir.IsExist(configName) { //没有配置文件，写入默认配置
 		var yamlDefault = []byte(`
 max-size: 1024
 captcha:
@@ -68,36 +71,36 @@ zap:
  stacktrace-key: stacktrace
  log-in-console: true`)
 
-		if err := g.VIPER.ReadConfig(bytes.NewBuffer(yamlDefault)); err != nil {
+		if err := VIPER.ReadConfig(bytes.NewBuffer(yamlDefault)); err != nil {
 			panic(fmt.Errorf("读取默认配置文件错误: %w ", err))
 		}
 
-		if err := g.VIPER.Unmarshal(&g.CONFIG); err != nil {
+		if err := VIPER.Unmarshal(&config.CONFIG); err != nil {
 			panic(fmt.Errorf("同步配置文件错误: %w ", err))
 		}
 
-		if err := g.VIPER.WriteConfigAs(config); err != nil {
+		if err := VIPER.WriteConfigAs(configName); err != nil {
 			panic(fmt.Errorf("写入配置文件错误: %w ", err))
 		}
 		return
 	}
 
 	// 存在配置文件，读取配置文件内容
-	g.VIPER.SetConfigFile(config)
-	err := g.VIPER.ReadInConfig()
+	VIPER.SetConfigFile(configName)
+	err := VIPER.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("读取配置错误: %w ", err))
 	}
 
 	// 监控配置文件变化
-	g.VIPER.WatchConfig()
-	g.VIPER.OnConfigChange(func(e fsnotify.Event) {
+	VIPER.WatchConfig()
+	VIPER.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("配置发生变化:", e.Name)
-		if err := g.VIPER.Unmarshal(&g.CONFIG); err != nil {
+		if err := VIPER.Unmarshal(&config.CONFIG); err != nil {
 			fmt.Println(err)
 		}
 	})
-	if err := v.Unmarshal(&g.CONFIG); err != nil {
+	if err := v.Unmarshal(&config.CONFIG); err != nil {
 		fmt.Println(err)
 	}
 

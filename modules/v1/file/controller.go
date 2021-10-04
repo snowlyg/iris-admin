@@ -2,8 +2,8 @@ package file
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/g"
-	myzap "github.com/snowlyg/iris-admin/server/zap"
+	"github.com/snowlyg/iris-admin/server/database/orm"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 )
 
@@ -12,16 +12,16 @@ import (
 func Upload(ctx iris.Context) {
 	f, fh, err := ctx.FormFile("file")
 	if err != nil {
-		myzap.ZAPLOG.Error("文件上传失败", zap.String("ctx.FormFile(\"file\")", err.Error()))
-		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+		zap_server.ZAPLOG.Error("文件上传失败", zap.String("ctx.FormFile(\"file\")", err.Error()))
+		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
 	defer f.Close()
 
 	data, err := UploadFile(ctx, fh)
 	if err != nil {
-		ctx.JSON(g.Response{Code: g.SystemErr.Code, Data: nil, Msg: err.Error()})
+		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
-	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: data, Msg: g.NoErr.Msg})
+	ctx.JSON(orm.Response{Code: orm.NoErr.Code, Data: data, Msg: orm.NoErr.Msg})
 }

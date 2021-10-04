@@ -1,6 +1,7 @@
 package g
 
 const (
-	ConfigFileName = "config.yaml"     // 配置文件名称
+	ConfigType     = "yaml"            // 配置文件类型
+	ConfigDir      = "config"          // 配置目录
 	CasbinFileName = "rbac_model.conf" // casbin 规则文件名称
 )

@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/snowlyg/iris-admin/server/config"
+	"github.com/snowlyg/iris-admin/server/viper_server"
 )
 
 var (
@@ -18,17 +18,17 @@ var (
 // Instance 初始化缓存服务
 func Instance() redis.UniversalClient {
 	once.Do(func() {
+		viper_server.Init(getViperConfig())
 		universalOptions := &redis.UniversalOptions{
-			Addrs:       strings.Split(config.CONFIG.Redis.Addr, ","),
-			Password:    config.CONFIG.Redis.Password,
-			PoolSize:    config.CONFIG.Redis.PoolSize,
+			Addrs:       strings.Split(CONFIG.Addr, ","),
+			Password:    CONFIG.Password,
+			PoolSize:    CONFIG.PoolSize,
 			IdleTimeout: 300 * time.Second,
 		}
 		cacheClient = redis.NewUniversalClient(universalOptions)
 	})
 
 	return cacheClient
-
 }
 
 // SetCache 缓存数据
@@ -47,7 +47,11 @@ func DeleteCache(key string) (int64, error) {
 
 // GetCacheString 获取字符串类型数据
 func GetCacheString(key string) (string, error) {
-	return Instance().Get(context.Background(), key).Result()
+	value, err := GetCacheBytes(key)
+	if err != nil {
+		return "", err
+	}
+	return string(value), nil
 }
 
 // GetCacheBytes 获取bytes类型数据

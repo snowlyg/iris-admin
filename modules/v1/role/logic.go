@@ -9,7 +9,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
-	myzap "github.com/snowlyg/iris-admin/server/zap"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -64,7 +64,7 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	role := Response{}
 	err := db.Model(&Role{}).Where("id = ?", id).First(&role).Error
 	if err != nil {
-		myzap.ZAPLOG.Error("根据id查询角色错误", zap.String("错误:", err.Error()))
+		zap_server.ZAPLOG.Error("根据id查询角色错误", zap.String("错误:", err.Error()))
 		return role, err
 	}
 	return role, nil
@@ -74,7 +74,7 @@ func FindInId(db *gorm.DB, ids []string) ([]*Response, error) {
 	roles := PageResponse{}
 	err := roles.Find(database.Instance(), scope.InIdsScope(ids))
 	if err != nil {
-		myzap.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误:", err.Error()))
+		zap_server.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误:", err.Error()))
 		return nil, err
 	}
 	return roles, nil
@@ -86,22 +86,22 @@ func AddPermForRole(id uint, perms [][]string) error {
 	oldPerms := casbin.GetPermissionsForUser(roleId)
 	_, err := casbin.Instance().RemovePolicies(oldPerms)
 	if err != nil {
-		myzap.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))
+		zap_server.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))
 		return err
 	}
 
 	if len(perms) == 0 {
-		myzap.ZAPLOG.Debug("没有权限")
+		zap_server.ZAPLOG.Debug("没有权限")
 		return nil
 	}
 	var newPerms [][]string
 	for _, perm := range perms {
 		newPerms = append(newPerms, append([]string{roleId}, perm...))
 	}
-	myzap.ZAPLOG.Info("添加权限到角色", myzap.Strings("新权限", newPerms))
+	zap_server.ZAPLOG.Info("添加权限到角色", zap_server.Strings("新权限", newPerms))
 	_, err = casbin.Instance().AddPolicies(newPerms)
 	if err != nil {
-		myzap.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))
+		zap_server.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))
 		return err
 	}
 

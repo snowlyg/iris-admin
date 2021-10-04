@@ -8,8 +8,7 @@ import (
 	"os"
 	"time"
 
-	con "github.com/snowlyg/iris-admin/server/config"
-	myzap "github.com/snowlyg/iris-admin/server/zap"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
@@ -134,18 +133,18 @@ func (c *customLogger) Trace(ctx context.Context, begin time.Time, fc func() (st
 }
 
 func (c *customLogger) Printf(message string, data ...interface{}) {
-	if con.CONFIG.Mysql.LogZap != "" {
+	if CONFIG.LogZap != "" {
 		switch len(data) {
 		case 0:
-			myzap.ZAPLOG.Info(message)
+			zap_server.ZAPLOG.Info(message)
 		case 1:
-			myzap.ZAPLOG.Info("gorm", zap.Any("src", data[0]))
+			zap_server.ZAPLOG.Info("gorm", zap.Any("src", data[0]))
 		case 2:
-			myzap.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]))
+			zap_server.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]))
 		case 3:
-			myzap.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]), zap.Any("rows", data[2]))
+			zap_server.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]), zap.Any("rows", data[2]))
 		case 4:
-			myzap.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]), zap.Any("rows", data[2]), zap.Any("sql", data[3]))
+			zap_server.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]), zap.Any("rows", data[2]), zap.Any("sql", data[3]))
 		}
 		return
 	}

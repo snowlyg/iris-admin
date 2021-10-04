@@ -1,7 +1,7 @@
 package role
 
 import (
-	myzap "github.com/snowlyg/iris-admin/server/zap"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -25,7 +25,7 @@ type BaseRole struct {
 func (item *Role) Create(db *gorm.DB) (uint, error) {
 	err := db.Model(item).Create(item).Error
 	if err != nil {
-		myzap.ZAPLOG.Error("添加失败", zap.String("(item *Role) Create()", err.Error()))
+		zap_server.ZAPLOG.Error("添加失败", zap.String("(item *Role) Create()", err.Error()))
 		return item.ID, err
 	}
 	return item.ID, nil
@@ -35,7 +35,7 @@ func (item *Role) Create(db *gorm.DB) (uint, error) {
 func (item *Role) Update(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
 	err := db.Model(item).Scopes(scopes...).Updates(item).Error
 	if err != nil {
-		myzap.ZAPLOG.Error("更新失败", zap.String("(item *Role) Update() ", err.Error()))
+		zap_server.ZAPLOG.Error("更新失败", zap.String("(item *Role) Update() ", err.Error()))
 		return err
 	}
 	return nil
@@ -45,7 +45,7 @@ func (item *Role) Update(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) erro
 func (item *Role) Delete(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
 	err := db.Model(item).Unscoped().Scopes(scopes...).Delete(item).Error
 	if err != nil {
-		myzap.ZAPLOG.Error("删除失败", zap.String("(item *Role) Delete()", err.Error()))
+		zap_server.ZAPLOG.Error("删除失败", zap.String("(item *Role) Delete()", err.Error()))
 		return err
 	}
 	return nil

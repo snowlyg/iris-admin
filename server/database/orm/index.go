@@ -38,8 +38,8 @@ func Delete(db *gorm.DB, id uint, cud CUDFunc) error {
 	return cud.Delete(db, scope.IdScope(id))
 }
 
-// Paginate 分页
-func Paginate(db *gorm.DB, prf PageResponseFunc, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
+// Pagination 分页
+func Pagination(db *gorm.DB, prf PageResponseFunc, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
 	return prf.Paginate(db, pageScope, scopes...)
 }
 

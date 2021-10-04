@@ -7,7 +7,7 @@ import (
 
 	"github.com/snowlyg/iris-admin/modules/v1/user"
 	"github.com/snowlyg/iris-admin/server/database"
-	myzap "github.com/snowlyg/iris-admin/server/zap"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -25,7 +25,7 @@ func GetAccessToken(req *LoginRequest) (string, error) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(admin.Password), []byte(req.Password)); err != nil {
-		myzap.ZAPLOG.Error("用户名或密码错误", zap.String("密码:", req.Password), zap.String("hash:", admin.Password), zap.String("bcrypt.CompareHashAndPassword()", err.Error()))
+		zap_server.ZAPLOG.Error("用户名或密码错误", zap.String("密码:", req.Password), zap.String("hash:", admin.Password), zap.String("bcrypt.CompareHashAndPassword()", err.Error()))
 		return "", ErrUserNameOrPassword
 	}
 

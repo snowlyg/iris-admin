@@ -5,17 +5,16 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/cache"
-	"github.com/snowlyg/iris-admin/server/config"
 	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/database/orm"
 )
 
 // InitCheck 初始化检测中间件
 func InitCheck() iris.Handler {
 	return func(ctx *context.Context) {
-		if database.Instance() == nil || (config.CONFIG.System.CacheType == "redis" && cache.Instance() == nil) {
-			ctx.StopWithJSON(http.StatusOK, g.Response{Code: g.NeedInitErr.Code, Data: nil, Msg: g.NeedInitErr.Msg})
+		if database.Instance() == nil || cache.Instance() == nil {
+			ctx.StopWithJSON(http.StatusOK, orm.Response{Code: orm.NeedInitErr.Code, Data: nil, Msg: orm.NeedInitErr.Msg})
 		} else {
 			ctx.Next()
 		}

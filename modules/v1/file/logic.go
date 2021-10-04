@@ -9,7 +9,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
-	myzap "github.com/snowlyg/iris-admin/server/zap"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 )
 
@@ -27,12 +27,12 @@ func UploadFile(ctx iris.Context, fh *multipart.FileHeader) (iris.Map, error) {
 	path := filepath.Join(dir.GetCurrentAbPath(), "static", "upload", "images")
 	err = dir.InsureDir(path)
 	if err != nil {
-		myzap.ZAPLOG.Error("文件上传失败", zap.String("dir.InsureDir", err.Error()))
+		zap_server.ZAPLOG.Error("文件上传失败", zap.String("dir.InsureDir", err.Error()))
 		return nil, err
 	}
 	_, err = ctx.SaveFormFile(fh, filepath.Join(path, filename))
 	if err != nil {
-		myzap.ZAPLOG.Error("文件上传失败", zap.String("ctx.SaveFormFile", "保存文件到本地"))
+		zap_server.ZAPLOG.Error("文件上传失败", zap.String("ctx.SaveFormFile", "保存文件到本地"))
 		return nil, err
 	}
 
@@ -62,13 +62,13 @@ func UploadFile(ctx iris.Context, fh *multipart.FileHeader) (iris.Map, error) {
 func GetFileName(name string) (string, error) {
 	fns := strings.Split(strings.TrimLeft(name, "./"), ".")
 	if len(fns) != 2 {
-		myzap.ZAPLOG.Error("文件上传失败", zap.String("trings.Split", name))
+		zap_server.ZAPLOG.Error("文件上传失败", zap.String("trings.Split", name))
 		return "", ErrEmpty
 	}
 	ext := fns[1]
 	md5, err := dir.MD5(name)
 	if err != nil {
-		myzap.ZAPLOG.Error("文件上传失败", zap.String("dir.MD5", err.Error()))
+		zap_server.ZAPLOG.Error("文件上传失败", zap.String("dir.MD5", err.Error()))
 		return "", err
 	}
 	return str.Join(md5, ".", ext), nil

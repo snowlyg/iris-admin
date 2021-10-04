@@ -15,10 +15,9 @@ import (
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/server/cache"
-	"github.com/snowlyg/iris-admin/server/config"
 	"github.com/snowlyg/iris-admin/server/module"
-	"github.com/snowlyg/iris-admin/server/viper"
-	"github.com/snowlyg/iris-admin/server/zap"
+	"github.com/snowlyg/iris-admin/server/viper_server"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"github.com/snowlyg/multi"
 )
 
@@ -50,13 +49,13 @@ type WebServer struct {
 
 // Init 初始化web服务
 func Init() *WebServer {
-	viper.Init()
-	zap.Init()
+	viper_server.Init(getViperConfig())
+	zap_server.Init()
 
 	// 初始化认证
 	err := multi.InitDriver(
 		&multi.Config{
-			DriverType:      config.CONFIG.System.CacheType,
+			DriverType:      CONFIG.System.CacheType,
 			UniversalClient: cache.Instance()},
 	)
 	if err != nil || multi.AuthDriver == nil {
@@ -65,7 +64,7 @@ func Init() *WebServer {
 
 	app := iris.New()
 	app.Validator = validator.New() //参数验证
-	app.Logger().SetLevel(config.CONFIG.System.Level)
+	app.Logger().SetLevel(CONFIG.System.Level)
 	idleConnsClosed := make(chan struct{})
 	iris.RegisterOnInterrupt(func() { //优雅退出
 		timeout := 10 * time.Second
@@ -75,33 +74,33 @@ func Init() *WebServer {
 		close(idleConnsClosed)
 	})
 
-	if config.CONFIG.System.Addr == "" { // 默认 8085
-		config.CONFIG.System.Addr = "127.0.0.1:8085"
+	if CONFIG.System.Addr == "" { // 默认 8085
+		CONFIG.System.Addr = "127.0.0.1:8085"
 	}
 
-	if config.CONFIG.System.StaticPath == "" { // 默认 /static/upload
-		config.CONFIG.System.StaticPath = "/static/upload"
+	if CONFIG.System.StaticPath == "" { // 默认 /static/upload
+		CONFIG.System.StaticPath = "/static/upload"
 	}
 
-	if config.CONFIG.System.StaticPrefix == "" { // 默认 /upload
-		config.CONFIG.System.StaticPrefix = "/upload"
+	if CONFIG.System.StaticPrefix == "" { // 默认 /upload
+		CONFIG.System.StaticPrefix = "/upload"
 	}
 
-	if config.CONFIG.System.WebPath == "" { // 默认 /./dist
-		config.CONFIG.System.WebPath = "./dist"
+	if CONFIG.System.WebPath == "" { // 默认 /./dist
+		CONFIG.System.WebPath = "./dist"
 	}
 
-	if config.CONFIG.System.TimeFormat == "" { // 默认 80
-		config.CONFIG.System.TimeFormat = time.RFC3339
+	if CONFIG.System.TimeFormat == "" { // 默认 80
+		CONFIG.System.TimeFormat = time.RFC3339
 	}
 
 	return &WebServer{
 		app:               app,
-		addr:              config.CONFIG.System.Addr,
-		timeFormat:        config.CONFIG.System.TimeFormat,
-		staticPrefix:      config.CONFIG.System.StaticPrefix,
-		staticPath:        config.CONFIG.System.StaticPath,
-		webPath:           config.CONFIG.System.WebPath,
+		addr:              CONFIG.System.Addr,
+		timeFormat:        CONFIG.System.TimeFormat,
+		staticPrefix:      CONFIG.System.StaticPrefix,
+		staticPath:        CONFIG.System.StaticPath,
+		webPath:           CONFIG.System.WebPath,
 		idleConnsClosed:   idleConnsClosed,
 		globalMiddlewares: []context.Handler{},
 	}

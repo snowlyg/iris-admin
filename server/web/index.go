@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/context"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/helper/tests"
@@ -23,7 +22,7 @@ import (
 
 var client *tests.Client
 
-// WebServer web 服务
+// WebServer web服务
 // - app iris application
 // - modules 服务的模块
 // - idleConnsClosed
@@ -35,19 +34,20 @@ var client *tests.Client
 // - staticPath  静态文件地址
 // - webPath  前端文件地址
 type WebServer struct {
-	app               *iris.Application
-	modules           []module.WebModule
-	idleConnsClosed   chan struct{}
-	addr              string
-	timeFormat        string
-	globalMiddlewares []context.Handler
-	wg                sync.WaitGroup
-	staticPrefix      string
-	staticPath        string
-	webPath           string
+	// app *iris.Application
+	// modules           []module.WebModule
+	// globalMiddlewares []context.Handler
+	// idleConnsClosed chan struct{}
+	addr            string
+	timeFormat      string
+	wg              sync.WaitGroup
+	staticPrefix    string
+	staticPath      string
+	webPath         string
 }
 
 // Init 初始化web服务
+// 先初始化基础服务 config , zap , database , casbin  e.g.
 func Init() *WebServer {
 	viper_server.Init(getViperConfig())
 	zap_server.Init()
@@ -91,18 +91,18 @@ func Init() *WebServer {
 	}
 
 	if CONFIG.System.TimeFormat == "" { // 默认 80
-		CONFIG.System.TimeFormat = time.RFC3339
+		CONFIG.System.TimeFormat = "2006-01-02 15:04:05"
 	}
 
 	return &WebServer{
-		app:               app,
-		addr:              CONFIG.System.Addr,
-		timeFormat:        CONFIG.System.TimeFormat,
-		staticPrefix:      CONFIG.System.StaticPrefix,
-		staticPath:        CONFIG.System.StaticPath,
-		webPath:           CONFIG.System.WebPath,
-		idleConnsClosed:   idleConnsClosed,
-		globalMiddlewares: []context.Handler{},
+		// app:             app,
+		addr:            CONFIG.System.Addr,
+		timeFormat:      CONFIG.System.TimeFormat,
+		staticPrefix:    CONFIG.System.StaticPrefix,
+		staticPath:      CONFIG.System.StaticPath,
+		webPath:         CONFIG.System.WebPath,
+		// idleConnsClosed: idleConnsClosed,
+		// globalMiddlewares: []context.Handler{},
 	}
 }
 
@@ -123,7 +123,7 @@ func (ws *WebServer) GetAddr() string {
 
 // AddModule 添加模块
 func (ws *WebServer) AddModule(module ...module.WebModule) {
-	ws.modules = append(ws.modules, module...)
+	// ws.modules = append(ws.modules, module...)
 }
 
 // AddStatic 添加静态文件
@@ -147,9 +147,9 @@ func (ws *WebServer) AddUploadStatic() {
 }
 
 // GetModules 获取模块
-func (ws *WebServer) GetModules() []module.WebModule {
-	return ws.modules
-}
+// func (ws *WebServer) GetModules() []module.WebModule {
+// 	return ws.modules
+// }
 
 // GetTestAuth 获取测试验证客户端
 func (ws *WebServer) GetTestAuth(t *testing.T) *tests.Client {
@@ -178,13 +178,12 @@ func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses,
 
 // Run 启动web服务
 func (ws *WebServer) Run() {
-	ws.app.UseGlobal(ws.globalMiddlewares...)
+	// ws.app.UseGlobal(ws.globalMiddlewares...)
 	err := ws.InitRouter()
 	if err != nil {
 		fmt.Printf("初始化路由错误： %v\n", err)
 		panic(err)
 	}
-	// 添加上传文件路径
 	ws.app.Listen(
 		ws.addr,
 		iris.WithoutInterruptHandler,

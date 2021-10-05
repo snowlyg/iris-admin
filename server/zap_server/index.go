@@ -20,10 +20,10 @@ var (
 
 // Init 初始化日志服务
 func Init() {
-	viper_server.Init(getViperConfig())
 	var logger *zap.Logger
+	viper_server.Init(getViperConfig())
 
-	if dir.IsExist(CONFIG.Director) { // 判断是否有Director文件夹
+	if !dir.IsExist(CONFIG.Director) { // 判断是否有Director文件夹
 		dir.InsureDir(CONFIG.Director)
 	}
 	switch CONFIG.Level { // 初始化配置文件的Level

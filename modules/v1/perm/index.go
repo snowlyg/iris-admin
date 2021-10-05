@@ -4,6 +4,7 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/middleware"
 	"github.com/snowlyg/iris-admin/server/module"
+	"github.com/snowlyg/iris-admin/server/operation"
 )
 
 // Party 权限模块
@@ -14,7 +15,7 @@ import (
 // - 实现控制器逻辑
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())
+		index.Use(middleware.InitCheck(), middleware.JwtHandler(), operation.OperationRecord(), middleware.Casbin())
 		index.Get("/", GetAll).Name = "权限列表"
 		index.Get("/{id:uint}", First).Name = "权限详情"
 		index.Post("/", CreatePerm).Name = "创建权限"

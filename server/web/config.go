@@ -71,17 +71,17 @@ captcha:
  img-width: 240
  img-height: 80
 limit:
- limit: true
+ limit: false
  limit: 0
  burst: 5
 system:
- level: debug # debug,release,test
- addr: "127.0.0.1:8085"
- static-prefix: "/upload"
- static-path: "/static/upload"
- web-path: "./dist"
+ level: debug 
+ addr: ""
+ static-prefix: ""
+ static-path: ""
+ web-path: ""
  db-type: ""
  cache-type: "" 
- time-format: "2006-01-02 15:04:05"`),
+ time-format: ""`),
 	}
 }

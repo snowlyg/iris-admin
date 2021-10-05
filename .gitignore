@@ -20,6 +20,5 @@ cmd/
 tmp/
 example/tmp/
 example/www
-logs/
 .idea/
 

@@ -72,7 +72,7 @@ import (
 func Party() module.WebModule {
   handler := func(admin iris.Party) {
     // middlewares
-    admin.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())
+    admin.Use(middleware.InitCheck(), middleware.JwtHandler(),operation.OperationRecord(), middleware.Casbin())
 		admin.Get("/", GetAllAdmins).Name = "Admins"
 	}
 	return module.NewModule("/admins", handler)

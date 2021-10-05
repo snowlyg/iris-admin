@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"path/filepath"
 
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
@@ -24,7 +25,7 @@ type ViperConfig struct {
 
 // getConfigFilePath 获取配置文件路径
 func (vc ViperConfig) getConfigFilePath() string {
-	return str.Join(vc.Directory, "/", vc.Name, ".", vc.Type)
+	return filepath.Join(dir.GetCurrentAbPath(), vc.Directory, str.Join(vc.Name, ".", vc.Type))
 }
 
 // getConfigFileDir 获取配置文件目录

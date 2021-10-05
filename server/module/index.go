@@ -13,6 +13,8 @@ type InitSourceFunc interface {
 }
 
 // WebModule web 模块结构
+// 框架功能模块化,数据迁移集中处理.
+// 主要是方便项目线上升级项目时候,方便数据迁移和回滚.
 // - RelativePath 关联路径
 // - Handler 模块 Handler
 // - Modules 子模块

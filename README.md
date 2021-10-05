@@ -71,7 +71,7 @@ import (
 func Party() module.WebModule {
   handler := func(admin iris.Party) {
     // 中间件
-    admin.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())
+    admin.Use(middleware.InitCheck(), middleware.JwtHandler(),operation.OperationRecord(), middleware.Casbin())
 		admin.Get("/", GetAllAdmins).Name = "admin列表"
 	}
 	return module.NewModule("/admins", handler)

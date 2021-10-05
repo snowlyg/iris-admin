@@ -32,7 +32,6 @@ func Casbin() iris.Handler {
 // Check checks the username, request's method and path and
 // returns true if permission grandted otherwise false.
 func Check(r *http.Request, userId string) (bool, error) {
-
 	method := r.Method
 	path := r.URL.Path
 	ok, err := casbinServer.Instance().Enforce(userId, path, method)

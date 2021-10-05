@@ -63,7 +63,7 @@ func TestSetCacheString(t *testing.T) {
 		if get != want {
 			t.Errorf("set cache want [%s] but get [%s]\n", want, get)
 		}
-		time.Sleep(time.Second * 3)
+		time.Sleep(time.Second * 5)
 		_, err = GetCacheString(key)
 		if err == nil {
 			t.Error("set cache want error but get nil\n")
@@ -96,7 +96,7 @@ func TestSetCacheUint(t *testing.T) {
 		if get != want {
 			t.Errorf("set cache want [%d] but get [%d]\n", want, get)
 		}
-		time.Sleep(time.Second * 3)
+		time.Sleep(time.Second * 5)
 		_, err = GetCacheUint(key)
 		if err == nil {
 			t.Error("set cache want error but get nil\n")
@@ -128,7 +128,7 @@ func TestSetCacheBytes(t *testing.T) {
 		if !reflect.DeepEqual(get, want) {
 			t.Errorf("set cache want [%s] but get [%s]\n", want, get)
 		}
-		time.Sleep(time.Second * 3)
+		time.Sleep(time.Second * 5)
 		_, err = GetCacheBytes(key)
 		if err == nil {
 			t.Error("set cache want error but get nil\n")

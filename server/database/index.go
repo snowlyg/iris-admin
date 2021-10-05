@@ -22,7 +22,7 @@ var (
 func Instance() *gorm.DB {
 	once.Do(func() {
 		viper_server.Init(getViperConfig())
-		db = GormMysql()
+		db = gormMysql()
 	})
 	return db
 }
@@ -37,8 +37,8 @@ func MysqlTables(db *gorm.DB) {
 	zap_server.ZAPLOG.Info("注册数据表成功")
 }
 
-// GormMysql 初始化Mysql数据库
-func GormMysql() *gorm.DB {
+// gormMysql 初始化Mysql数据库
+func gormMysql() *gorm.DB {
 	if CONFIG.Dbname == "" {
 		return nil
 	}

@@ -18,8 +18,8 @@ var (
 	ZAPLOG *zap.Logger
 )
 
-// Init 初始化日志服务
-func Init() {
+// init 初始化日志服务
+func init() {
 	var logger *zap.Logger
 	viper_server.Init(getViperConfig())
 

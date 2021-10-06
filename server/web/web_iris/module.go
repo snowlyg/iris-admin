@@ -1,22 +1,4 @@
-package web
-
-import (
-	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/middleware/pprof"
-	"github.com/snowlyg/iris-admin/server/module"
-)
-
-// Party 调试模块
-func DebugParty() module.WebModule {
-	handler := func(index iris.Party) {
-		index.Get("/", func(ctx iris.Context) {
-			ctx.HTML("<h1>请点击<a href='/debug/pprof'>这里</a>打开调试页面")
-		})
-		index.Any("/pprof", pprof.New())
-		index.Any("/pprof/{action:path}", pprof.New())
-	}
-	return module.NewModule("/debug", handler)
-}
+package web_iris
 
 // // InitParty 初始化模块
 // // 分离操作和数据,使用命令行处理项目初始化

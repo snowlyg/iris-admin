@@ -83,7 +83,7 @@ func FindInId(db *gorm.DB, ids []string) ([]*Response, error) {
 // AddPermForRole
 func AddPermForRole(id uint, perms [][]string) error {
 	roleId := strconv.FormatUint(uint64(id), 10)
-	oldPerms := casbin.GetPermissionsForUser(roleId)
+	oldPerms := casbin.Instance().GetPermissionsForUser(roleId)
 	_, err := casbin.Instance().RemovePolicies(oldPerms)
 	if err != nil {
 		zap_server.ZAPLOG.Error("add policy err: %+v", zap.String("错误:", err.Error()))

@@ -43,7 +43,7 @@ func getViperConfig() viper_server.ViperConfig {
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
 db: 0
-addr: ""
+addr: "127.0.0.1:6379"
 password: ""
 pool-size: 0`),
 	}

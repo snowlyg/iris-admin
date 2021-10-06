@@ -11,7 +11,7 @@ import (
 // Party 上传文件模块
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.JwtHandler(), operation.OperationRecord(), middleware.Casbin())
+		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), middleware.Casbin())
 		index.Post("/", iris.LimitRequestBodySize(web.CONFIG.MaxSize+1<<20), Upload).Name = "上传文件"
 	}
 	return module.NewModule("/upload", handler)

@@ -10,7 +10,7 @@ import (
 // Party 用户
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.JwtHandler(), operation.OperationRecord(), middleware.Casbin())
+		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), middleware.Casbin())
 		index.Get("/", GetAll).Name = "用户列表"
 		index.Get("/{id:uint}", GetUser).Name = "用户详情"
 		index.Post("/", CreateUser).Name = "创建用户"

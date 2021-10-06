@@ -1,4 +1,4 @@
-package web
+package web_iris
 
 import (
 	"fmt"
@@ -35,6 +35,7 @@ type System struct {
 	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
 	StaticPrefix string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
 	StaticPath   string `mapstructure:"static-path" json:"staticPath" yaml:"static-path"`
+	WebPrefix    string `mapstructure:"web-prefix" json:"webPPrefix" yaml:"web-prefix"`
 	WebPath      string `mapstructure:"web-path" json:"webPath" yaml:"web-path"`
 	DbType       string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
 	CacheType    string `mapstructure:"cache-type" json:"cacheType" yaml:"cache-type"`
@@ -75,13 +76,14 @@ limit:
  limit: 0
  burst: 5
 system:
- level: debug 
- addr: ""
- static-prefix: ""
- static-path: ""
- web-path: ""
- db-type: ""
- cache-type: "" 
- time-format: ""`),
+ level: debug
+ addr: 127.0.0.1:8085
+ db-type: mysql
+ cache-type: local
+ static-path: /static/upload
+ static-prefix: /upload
+ time-format: "2006-01-02 15:04:05"
+ web-prefix: /
+ web-path: ./dist`),
 	}
 }

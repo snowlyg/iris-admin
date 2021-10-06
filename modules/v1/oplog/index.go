@@ -10,7 +10,7 @@ import (
 // Party 操作日志
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.JwtHandler(), operation.OperationRecord(), middleware.Casbin())
+		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), middleware.Casbin())
 	}
 	return module.NewModule("/oplog", handler)
 }

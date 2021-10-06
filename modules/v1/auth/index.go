@@ -12,7 +12,7 @@ func Party() module.WebModule {
 	handler := func(public iris.Party) {
 		public.Use(middleware.InitCheck())
 		public.Post("/login", Login)
-		public.Use(middleware.JwtHandler(), middleware.Casbin(), operation.OperationRecord())
+		public.Use(middleware.MultiHandler(), middleware.Casbin(), operation.OperationRecord())
 	}
 	return module.NewModule("/auth", handler)
 }

@@ -15,7 +15,7 @@ import (
 // - 实现控制器逻辑
 func Party() module.WebModule {
 	handler := func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.JwtHandler(), operation.OperationRecord(), middleware.Casbin())
+		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), middleware.Casbin())
 		index.Get("/", GetAll).Name = "权限列表"
 		index.Get("/{id:uint}", First).Name = "权限详情"
 		index.Post("/", CreatePerm).Name = "创建权限"

@@ -16,9 +16,8 @@ rbac_model.conf
 
 
 #dir
-cmd/
-tmp/
-example/tmp/
-example/www
+example/iris/tmp
+example/iris/www
+example/iris/config
 .idea/
 

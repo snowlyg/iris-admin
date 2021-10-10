@@ -8,7 +8,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
-	"github.com/snowlyg/iris-admin/server/web/validate"
+	"github.com/snowlyg/iris-admin/server/web/web_iris/validate"
 	"github.com/snowlyg/multi"
 	"gorm.io/gorm"
 )

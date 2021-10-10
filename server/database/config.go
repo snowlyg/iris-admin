@@ -23,13 +23,36 @@ type Mysql struct {
 	LogZap       string `mapstructure:"log-zap" json:"logZap" yaml:"log-zap"` //silent,error,warn,info,zap
 }
 
+// Dsn 获取 mysql dsn
 func (m *Mysql) Dsn() string {
-	return fmt.Sprintf("%s:%s@tcp(%s)/%s?%s", m.Username, m.Password, m.Path, m.Dbname, m.Config)
+	return fmt.Sprintf("%s%s?%s", m.BaseDsn(), m.Dbname, m.Config)
+}
+
+// Dsn 获取 mysql dsn
+func (m *Mysql) BaseDsn() string {
+	return fmt.Sprintf("%s:%s@tcp(%s)/", m.Username, m.Password, m.Path)
+}
+
+// IsExist 配置文件是否存在
+func IsExist() bool {
+	return getViperConfig().IsFileExist()
+}
+
+// Remove 删除配置文件
+func Remove() error {
+	err := getViperConfig().Remove()
+	if err != nil {
+		return fmt.Errorf("remove file %s failed %w", getViperConfig().GetConfigFileDir(), err)
+	}
+	return nil
 }
 
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
 	configName := "mysql"
+	mxIdleConns := fmt.Sprintf("%d", CONFIG.MaxIdleConns)
+	mxOpenConns := fmt.Sprintf("%d", CONFIG.MaxOpenConns)
+	logMode := fmt.Sprintf("%t", CONFIG.LogMode)
 	return viper_server.ViperConfig{
 		Directory: g.ConfigDir,
 		Name:      configName,
@@ -51,14 +74,14 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-path: ""
+path: "` + CONFIG.Path + `"
 config: charset=utf8mb4&parseTime=True&loc=Local
-db-name: ""
-username: ""
-password: ""
-max-idle-conns: 0
-max-open-conns: 0
-log-mode: true
-log-zap: ""`),
+db-name: "` + CONFIG.Dbname + `"
+username: "` + CONFIG.Username + `"
+password: "` + CONFIG.Password + `"
+max-idle-conns: ` + mxIdleConns + `
+max-open-conns: ` + mxOpenConns + `
+log-mode: ` + logMode + `
+log-zap: "` + CONFIG.LogZap + `"`),
 	}
 }

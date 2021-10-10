@@ -42,6 +42,21 @@ type System struct {
 	TimeFormat   string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
 }
 
+// IsExist 配置文件是否存在
+func IsExist() bool {
+	return getViperConfig().IsFileExist()
+}
+
+// Remove 删除配置文件
+func Remove() error {
+	err := getViperConfig().Remove()
+	if err != nil {
+		return fmt.Errorf("remove file %s failed %w", getViperConfig().GetConfigFileDir(), err)
+	}
+	return nil
+}
+
+
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
 	configName := "web"
@@ -78,8 +93,8 @@ limit:
 system:
  level: debug
  addr: 127.0.0.1:8085
- db-type: mysql
- cache-type: local
+ db-type: ` + CONFIG.System.DbType + `
+ cache-type: ` + CONFIG.System.CacheType + `
  static-path: /static/upload
  static-prefix: /upload
  time-format: "2006-01-02 15:04:05"

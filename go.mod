@@ -17,11 +17,10 @@ require (
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
 	github.com/snowlyg/helper v0.0.0-20210919081922-08e1fd247338
 	github.com/snowlyg/multi v0.0.0-20210828154328-14d6bfb7d0a6
+	github.com/spf13/cobra v1.2.1 // indirect
 	github.com/spf13/viper v1.8.1
 	go.uber.org/zap v1.19.1
 	golang.org/x/crypto v0.0.0-20210915214749-c084706c2272
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.15
 )
-
-replace github.com/snowlyg/helper v0.0.0-20210919081922-08e1fd247338 => /Users/snowlyg/go/src/github.com/snowlyg/helper

@@ -28,12 +28,22 @@ func (vc ViperConfig) getConfigFilePath() string {
 	return filepath.Join(dir.GetCurrentAbPath(), vc.Directory, str.Join(vc.Name, ".", vc.Type))
 }
 
-// getConfigFileDir 获取配置文件目录
+// GetConfigFileDir 获取配置文件目录
 func (vc ViperConfig) GetConfigFileDir() string {
 	if vc.Directory == "" {
 		return "config"
 	}
 	return vc.Directory
+}
+
+// IsFileExist 获取配置文件目录
+func (vc ViperConfig) IsFileExist() bool {
+	return dir.IsExist(vc.getConfigFilePath())
+}
+
+// Remove 删除配置文件
+func (vc ViperConfig) Remove() error {
+	return dir.Remove(vc.getConfigFilePath())
 }
 
 // Init 初始化系统配置
@@ -94,26 +104,4 @@ func Init(viperConfig ViperConfig) error {
 	}
 
 	return nil
-	// 	casbinPath := filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName)
-	// 	fmt.Printf("casbin rbac_model.conf 位于： %s\n\n", casbinPath)
-	// 	if !dir.IsExist(casbinPath) { // casbin rbac_model.conf 文件
-	// 		var rbacModelConf = []byte(`[request_definition]
-	// r = sub, obj, act
-
-	// [policy_definition]
-	// p = sub, obj, act
-
-	// [role_definition]
-	// g = _, _
-
-	// [policy_effect]
-	// e = some(where (p.eft == allow))
-
-	// [matchers]
-	// m = g(r.sub, p.sub) && keyMatch2(r.obj, p.obj) && (r.act == p.act || p.act == "*")`)
-	// 		_, err = dir.WriteBytes(casbinPath, rbacModelConf)
-	// 		if err != nil {
-	// 			panic(fmt.Errorf("初始化 casbin rbac_model.conf 文件错误: %w ", err))
-	// 		}
-	// 	}
 }

@@ -2,11 +2,13 @@ package web_iris
 
 import (
 	"strings"
+	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/core/router"
 	"github.com/kataras/iris/v12/middleware/pprof"
+	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/middleware"
 )
@@ -22,6 +24,10 @@ func (ws *WebServer) InitRouter() error {
 	{
 		app.UseRouter(middleware.CrsAuth())
 		app.Use(middleware.InitCheck())
+		if !CONFIG.Limit.Disable {
+			limitV1 := rate.Limit(CONFIG.Limit.Limit, CONFIG.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
+			app.Use(limitV1)
+		}
 		if CONFIG.System.Level == "debug" {
 			debug := func(index iris.Party) {
 				index.Get("/", func(ctx iris.Context) {
@@ -31,6 +37,10 @@ func (ws *WebServer) InitRouter() error {
 				index.Any("/pprof/{action:path}", pprof.New())
 			}
 			app.PartyFunc("/debug", debug)
+		}
+		
+		for _, party := range ws.parties {
+			app.PartyFunc(party.Perfix, party.PartyFunc)
 		}
 		// app.PartyFunc("/init", InitParty().Handler)
 	}

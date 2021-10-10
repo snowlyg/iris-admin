@@ -18,9 +18,25 @@ type Redis struct {
 	PoolSize int    `mapstructure:"pool-size" json:"poolSize" yaml:"pool-size"`
 }
 
+// IsExist 配置文件是否存在
+func IsExist() bool {
+	return getViperConfig().IsFileExist()
+}
+
+// Remove 删除配置文件
+func Remove() error {
+	err := getViperConfig().Remove()
+	if err != nil {
+		return fmt.Errorf("remove file %s failed %w", getViperConfig().GetConfigFileDir(), err)
+	}
+	return nil
+}
+
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
 	configName := "redis"
+	db := fmt.Sprintf("%d", CONFIG.DB)
+	poolSize := fmt.Sprintf("%d", CONFIG.PoolSize)
 	return viper_server.ViperConfig{
 		Directory: g.ConfigDir,
 		Name:      configName,
@@ -42,9 +58,9 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-db: 0
-addr: "127.0.0.1:6379"
-password: ""
-pool-size: 0`),
+db: ` + db + `
+addr: "` + CONFIG.Addr + `"
+password: "` + CONFIG.Password + `"
+pool-size: ` + poolSize),
 	}
 }

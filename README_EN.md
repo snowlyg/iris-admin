@@ -41,16 +41,17 @@ package main
 
 import (
 	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
 func main() {
-	webServer := web.Init()
-	webServer.Run()
+	web.Start(web_iris.Init())
 }
 ```
 
 #### Run project 
-- When you first run this cmd , you can see two files ,`config.yaml` and `rbac_model.conf` will be created in your project root directory.
+- When you first run this cmd `go run main.go` , you can see some config files in  the `config` directory,
+- and `rbac_model.conf` will be created in your project root directory.
 ```sh
 go run main.go
 ```
@@ -62,32 +63,19 @@ go run main.go
 package main
 
 import (
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/middleware"
-	"github.com/snowlyg/iris-admin/server/module"
+	v1 "github.com/snowlyg/iris-admin/modules/v1"
+	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
-// Party admin
-func Party() module.WebModule {
-  handler := func(admin iris.Party) {
-    // middlewares
-    admin.Use(middleware.InitCheck(), middleware.JwtHandler(),operation.OperationRecord(), middleware.Casbin())
-		admin.Get("/", GetAllAdmins).Name = "Admins"
-	}
-	return module.NewModule("/admins", handler)
-}
-
-func GetAllAdmins(ctx iris.Context) {
-  // do somethings 
-  // ... 
-	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: list, Msg: g.NoErr.Msg})
-}
-
 func main() {
-	webServer := web.Init()
-    webServer.AddModule(Party())
-	webServer.Run()
+	wi := web_iris.Init()
+	v1Party := web_iris.Party{
+		Perfix:    "/api/v1",
+		PartyFunc: v1.Party(),
+	}
+	wi.AddModule(v1Party)
+	web.Start(web_iris.Init())
 }
 ```
 
@@ -118,7 +106,7 @@ import (
 )
 
 func main() {
-	webServer := web.Init()
+	webServer := web_iris.Init()
     fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
 	webServer.AddStatic("/other",fsOrDir)
 	webServer.Run()
@@ -137,7 +125,7 @@ import (
 )
 
 func main() {
-	webServer := web.Init()
+	webServer := web_iris.Init()
 	webServer.AddWebStatic("/")
 	webServer.Run()
 }

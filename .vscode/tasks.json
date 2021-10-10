@@ -1,0 +1,12 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "生成工具命令",
+      "type": "shell",
+      "command": "go build -ldflags '-w -s' -o ./example/iris/iris-admin ./example/iris/cmd/main.go && upx -9 ./example/iris/iris-admin"
+    }
+  ]
+}

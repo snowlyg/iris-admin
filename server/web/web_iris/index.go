@@ -32,12 +32,21 @@ var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
 type WebServer struct {
 	app             *iris.Application
 	idleConnsClosed chan struct{}
+	parties         []Party
 	addr            string
 	timeFormat      string
 	staticPrefix    string
 	staticPath      string
 	webPrefix       string
 	webPath         string
+}
+
+// Party 功能模块
+// - perfix 模块路由路径
+// - partyFunc 模块
+type Party struct {
+	Perfix    string
+	PartyFunc func(index iris.Party)
 }
 
 // Init 初始化web服务
@@ -95,6 +104,11 @@ func Init() *WebServer {
 // AddStatic 添加静态文件
 func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...iris.DirOptions) {
 	ws.app.HandleDir(requestPath, fsOrDir, opts...)
+}
+
+// AddModule 添加模块
+func (ws *WebServer) AddModule(parties ...Party) {
+	ws.parties = append(ws.parties, parties...)
 }
 
 // InitDriver 初始化认证

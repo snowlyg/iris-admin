@@ -1,6 +1,9 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
+	"fmt"
 	"os"
 	"sync"
 
@@ -11,6 +14,10 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+)
+
+var (
+	ErrDatabaseNotInit = errors.New("数据库未初始化")
 )
 
 var (
@@ -40,6 +47,12 @@ func MysqlTables(db *gorm.DB) {
 // gormMysql 初始化Mysql数据库
 func gormMysql() *gorm.DB {
 	if CONFIG.Dbname == "" {
+		fmt.Println("config dbname is empty")
+		return nil
+	}
+	err := createTable(CONFIG.BaseDsn(), "mysql", CONFIG.Dbname)
+	if err != nil {
+		fmt.Printf("create database %s is failed %v \n", CONFIG.Dbname, err)
 		return nil
 	}
 	mysqlConfig := mysql.Config{
@@ -51,6 +64,7 @@ func gormMysql() *gorm.DB {
 		SkipInitializeWithVersion: false,        // 根据版本自动配置
 	}
 	if db, err := gorm.Open(mysql.New(mysqlConfig), gormConfig(CONFIG.LogMode)); err != nil {
+		fmt.Printf("open mysql is failed %v \n", err)
 		return nil
 	} else {
 		sqlDB, _ := db.DB()
@@ -82,4 +96,21 @@ func gormConfig(mod bool) *gorm.Config {
 		config.Logger = Default.LogMode(logger.Silent)
 	}
 	return config
+}
+
+// createTable 创建数据库(mysql)
+func createTable(dsn string, driver string, dbName string) error {
+	createSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;", dbName)
+	db, err := sql.Open(driver, dsn)
+	if err != nil {
+		return err
+	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
+	if err = db.Ping(); err != nil {
+		return err
+	}
+	_, err = db.Exec(createSql)
+	return err
 }

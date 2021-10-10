@@ -3,7 +3,7 @@ package perm
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/middleware"
-	"github.com/snowlyg/iris-admin/server/module"
+	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/operation"
 )
 
@@ -13,14 +13,13 @@ import (
 // - 定义响应 struct
 // - 定义 module
 // - 实现控制器逻辑
-func Party() module.WebModule {
-	handler := func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), middleware.Casbin())
+func Party() func(index iris.Party) {
+	return func(index iris.Party) {
+		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
 		index.Get("/", GetAll).Name = "权限列表"
 		index.Get("/{id:uint}", First).Name = "权限详情"
 		index.Post("/", CreatePerm).Name = "创建权限"
 		index.Post("/{id:uint}", UpdatePerm).Name = "编辑权限"
 		index.Delete("/{id:uint}", DeletePerm).Name = "删除权限"
 	}
-	return module.NewModule("/perms", handler)
 }

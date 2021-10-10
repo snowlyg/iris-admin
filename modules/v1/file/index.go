@@ -11,7 +11,7 @@ import (
 // Party 上传文件模块
 func Party() func(index iris.Party) {
 	return func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
+		index.Use(middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
 		index.Post("/", iris.LimitRequestBodySize(web_iris.CONFIG.MaxSize+1<<20), Upload).Name = "上传文件"
 	}
 }

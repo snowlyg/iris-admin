@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// InitMysql 初始化 mysql 配置
-func InitMysql() error {
+// InitConfig 初始化 mysql 配置
+func InitConfig() error {
 	var cover string
 	if IsExist() {
 		fmt.Println("Your database config is initialized , reinitialized database will cover your database config.")
@@ -54,12 +54,12 @@ func InitMysql() error {
 			CONFIG.Password = dbPwd
 
 			fmt.Println("Please input your database log zap: ")
-			fmt.Println("Database log zap default is debug")
+			fmt.Println("Database log zap default is error")
 			fmt.Scanln(&dbLogZap)
 			if dbLogZap == "" {
-				dbLogZap = "debug"
+				dbLogZap = "error"
 			}
-			CONFIG.LogZap = "debug"
+			CONFIG.LogZap = dbLogZap
 
 			fmt.Println("Please input your database log mode: [Y/N]")
 			fmt.Println("Database log mode default is N")

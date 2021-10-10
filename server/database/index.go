@@ -25,10 +25,15 @@ var (
 	db   *gorm.DB
 )
 
+// InitMysql 初始化数据库
+func InitMysql() {
+	viper_server.Init(getViperConfig())
+}
+
 // Instance 数据库单例
 func Instance() *gorm.DB {
 	once.Do(func() {
-		viper_server.Init(getViperConfig())
+		InitMysql()
 		db = gormMysql()
 	})
 	return db
@@ -99,7 +104,7 @@ func gormConfig(mod bool) *gorm.Config {
 }
 
 // createTable 创建数据库(mysql)
-func createTable(dsn string, driver string, dbName string) error {
+func createTable(dsn, driver, dbName string) error {
 	createSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;", dbName)
 	db, err := sql.Open(driver, dsn)
 	if err != nil {
@@ -112,5 +117,21 @@ func createTable(dsn string, driver string, dbName string) error {
 		return err
 	}
 	_, err = db.Exec(createSql)
+	return err
+}
+
+func DorpDB(dsn, driver, dbName string) error {
+	execSql := fmt.Sprintf("DROP database if exists `%s`;", dbName)
+	db, err := sql.Open(driver, dsn)
+	if err != nil {
+		return err
+	}
+	defer func(db *sql.DB) {
+		_ = db.Close()
+	}(db)
+	if err = db.Ping(); err != nil {
+		return err
+	}
+	_, err = db.Exec(execSql)
 	return err
 }

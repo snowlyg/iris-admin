@@ -6,7 +6,6 @@ import (
 
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/snowlyg/multi"
 )
 
@@ -31,12 +30,12 @@ func InitConfig() error {
 			switch dbType {
 			case "1":
 				CONFIG.System.DbType = "mysql"
-				if err := database.InitMysql(); err != nil {
+				if err := database.InitConfig(); err != nil {
 					return err
 				}
 			default:
 				CONFIG.System.DbType = "mysql"
-				if err := database.InitMysql(); err != nil {
+				if err := database.InitConfig(); err != nil {
 					return err
 				}
 			}
@@ -50,7 +49,7 @@ func InitConfig() error {
 				CONFIG.System.CacheType = "local"
 			case "2":
 				CONFIG.System.CacheType = "redis"
-				if err := cache.InitRedis(); err != nil {
+				if err := cache.InitConfig(); err != nil {
 					return err
 				}
 			default:
@@ -68,7 +67,7 @@ func InitConfig() error {
 			if multi.AuthDriver == nil {
 				return ErrAuthDriverEmpty
 			}
-			viper_server.Init(getViperConfig())
+			InitWeb()
 		case "N":
 			return nil
 		default:

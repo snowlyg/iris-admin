@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// InitRedis 初始化 redis 配置
-func InitRedis() error {
+// InitConfig 初始化 redis 配置
+func InitConfig() error {
 	var cover string
 	if IsExist() {
 		fmt.Println("Your redis config is initialized , reinitialized redis will cover your redis config.")

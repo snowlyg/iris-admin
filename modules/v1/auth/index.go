@@ -10,7 +10,6 @@ import (
 // Party 认证模块
 func Party() func(public iris.Party) {
 	return func(public iris.Party) {
-		public.Use(middleware.InitCheck())
 		public.Post("/login", Login)
 		public.Use(middleware.MultiHandler(), casbin.Casbin(), operation.OperationRecord())
 	}

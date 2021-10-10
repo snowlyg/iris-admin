@@ -10,6 +10,6 @@ import (
 // Party 操作日志
 func Party() func(index iris.Party) {
 	return func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
+		index.Use(middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
 	}
 }

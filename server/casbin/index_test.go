@@ -24,12 +24,9 @@ func TestGetEnforcer(t *testing.T) {
 func TestGetRolesForUser(t *testing.T) {
 	userId := "888"
 	roleId := "2"
-	b, err := Instance().AddRoleForUser(userId, roleId)
+	_, err := Instance().AddRoleForUser(userId, roleId)
 	if err != nil {
 		t.Errorf("add role for user get %v", err.Error())
-	}
-	if !b {
-		t.Errorf("add role for user get %t", b)
 	}
 	userUid, err := strconv.ParseUint(userId, 10, 64)
 	if err != nil {

@@ -16,6 +16,7 @@ import (
 type WebFunc interface {
 	GetTestClient(t *testing.T) *tests.Client
 	GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client
+
 	AddWebStatic(perfix string)
 	AddUploadStatic()
 	InitDriver() error
@@ -34,4 +35,16 @@ func Start(wf WebFunc) {
 		panic(err)
 	}
 	wf.Run()
+}
+
+// StartTest 启动 web 服务
+func StartTest(wf WebFunc) {
+	err := wf.InitDriver()
+	if err != nil {
+		panic(err)
+	}
+	err = wf.InitRouter()
+	if err != nil {
+		panic(err)
+	}
 }

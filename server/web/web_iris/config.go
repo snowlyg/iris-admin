@@ -56,7 +56,6 @@ func Remove() error {
 	return nil
 }
 
-
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
 	configName := "web"
@@ -92,7 +91,7 @@ limit:
  burst: 5
 system:
  level: debug
- addr: 127.0.0.1:8085
+ addr: ` + CONFIG.System.Addr + `
  db-type: ` + CONFIG.System.DbType + `
  cache-type: ` + CONFIG.System.CacheType + `
  static-path: /static/upload

@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -10,14 +11,17 @@ import (
 )
 
 func TestStart(t *testing.T) {
+	addr := "127.0.0.1:8086"
+	web_iris.CONFIG.System.Addr = addr
+	wi := web_iris.Init()
 	go func() {
-		Start(web_iris.Init())
+		Start(wi)
 	}()
 
 	time.Sleep(3 * time.Second)
 
 	t.Run("test web start", func(t *testing.T) {
-		resp, err := http.Get("http://127.0.0.1:8085")
+		resp, err := http.Get(fmt.Sprintf("http://%s", addr))
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}

@@ -10,7 +10,7 @@ import (
 // Party 用户
 func Party() func(index iris.Party) {
 	return func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
+		index.Use(middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
 		index.Get("/", GetAll).Name = "用户列表"
 		index.Get("/{id:uint}", GetUser).Name = "用户详情"
 		index.Post("/", CreateUser).Name = "创建用户"

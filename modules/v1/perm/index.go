@@ -15,7 +15,7 @@ import (
 // - 实现控制器逻辑
 func Party() func(index iris.Party) {
 	return func(index iris.Party) {
-		index.Use(middleware.InitCheck(), middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
+		index.Use(middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
 		index.Get("/", GetAll).Name = "权限列表"
 		index.Get("/{id:uint}", First).Name = "权限详情"
 		index.Post("/", CreatePerm).Name = "创建权限"

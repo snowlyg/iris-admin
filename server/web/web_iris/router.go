@@ -23,7 +23,6 @@ func (ws *WebServer) InitRouter() error {
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
 		app.UseRouter(middleware.CrsAuth())
-		app.Use(middleware.InitCheck())
 		if !CONFIG.Limit.Disable {
 			limitV1 := rate.Limit(CONFIG.Limit.Limit, CONFIG.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
 			app.Use(limitV1)
@@ -38,7 +37,7 @@ func (ws *WebServer) InitRouter() error {
 			}
 			app.PartyFunc("/debug", debug)
 		}
-		
+
 		for _, party := range ws.parties {
 			app.PartyFunc(party.Perfix, party.PartyFunc)
 		}

@@ -34,6 +34,149 @@
 
 ---
 
+
+#### Program introduction
+
+##### The project consists of multiple services, each with different functions.
+
+- [viper_server]
+- - The service configuration is initialized and generate a local configuration file.
+- - Use [github.com/spf13/viper](https://github.com/spf13/viper) third party package.
+- - Need implement  `func getViperConfig() viper_server.ViperConfig` function.
+
+```go
+package cache
+
+import (
+	"fmt"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/viper_server"
+	"github.com/spf13/viper"
+)
+
+var CONFIG Redis
+
+type Redis struct {
+	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
+	Addr     string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	Password string `mapstructure:"password" json:"password" yaml:"password"`
+	PoolSize int    `mapstructure:"pool-size" json:"poolSize" yaml:"pool-size"`
+}
+
+// getViperConfig get initialize config
+func getViperConfig() viper_server.ViperConfig {
+	configName := "redis"
+	db := fmt.Sprintf("%d", CONFIG.DB)
+	poolSize := fmt.Sprintf("%d", CONFIG.PoolSize)
+	return viper_server.ViperConfig{
+		Directory: g.ConfigDir,
+		Name:      configName,
+		Type:      g.ConfigType,
+		Watch: func(vi *viper.Viper) error {
+			if err := vi.Unmarshal(&CONFIG); err != nil {
+				return fmt.Errorf("deserialization data error: %v", err)
+			}
+			// config file change
+			vi.SetConfigName(configName)
+			vi.WatchConfig()
+			vi.OnConfigChange(func(e fsnotify.Event) {
+				fmt.Println("config file change:", e.Name)
+				if err := vi.Unmarshal(&CONFIG); err != nil {
+					fmt.Printf("deserialization data error: %v \n", err)
+				}
+			})
+			return nil
+		},
+		// Note: When setting the default configuration value, there can be no other symbols such as spaces in front. It must be close to the left
+		Default: []byte(`
+db: ` + db + `
+addr: "` + CONFIG.Addr + `"
+password: "` + CONFIG.Password + `"
+pool-size: ` + poolSize),
+	}
+}
+```
+
+- [zap_server] 
+- - Service logging.
+- - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
+- - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
+```go
+  zap_server.ZAPLOG.Info("Registration data table error", zap.Any("err", err))
+  zap_server.ZAPLOG.Debug("Registration data table error", zap.Any("err", err))
+  zap_server.ZAPLOG.Error("Registration data table error", zap.Any("err", err))
+  ...
+```
+
+- [database]
+- - database service [only support mysql now].
+- - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
+- - Through single instance `database.Instance()` operating data.
+```go
+  database.Instance().Model(&User{}).Where("name = ?","name").Find(&user)
+  ...
+```
+
+- [casbin]
+- - Access control management service.
+- - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
+- - Through use `index.Use(casbin.Casbin())` middleware on route,implement interface authority authentication
+
+
+- [cache]
+- - Cache-driven service
+- - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
+- - Through single instance `cache.Instance()` operating data.
+```go
+// InitDriver Initial authentication
+func (ws *WebServer) InitDriver() error {
+	err := multi.InitDriver(
+		&multi.Config{
+			DriverType:      CONFIG.System.CacheType,
+			UniversalClient: cache.Instance()},
+	)
+	if err != nil {
+		return fmt.Errorf("Initialize authentication driver error %w", err)
+	}
+	if multi.AuthDriver == nil {
+		return ErrAuthDriverEmpty
+	}
+	return nil
+}
+
+```
+
+- [operation]
+- - System operation log service.
+- - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
+
+- [web]
+- - web_iris Go-Iris web framework service.
+- - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
+- - web framework service need implement `type WebFunc interface {}`  interface.
+```go
+// WebFunc web framework service interface
+// - GetTestClient test client
+// - GetTestLogin login for test
+// - AddWebStatic add web static file 
+// - InitDriver initialize authentication driver
+// - AddUploadStatic add upload file api
+// - Run start program
+type WebFunc interface {
+	GetTestClient(t *testing.T) *tests.Client
+	GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client
+	AddWebStatic(perfix string)
+	AddUploadStatic()
+	InitDriver() error
+	InitRouter() error
+	Run()
+}
+```
+  
+---
+
 #### Getting started
 
 ```go

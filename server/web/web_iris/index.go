@@ -49,10 +49,15 @@ type Party struct {
 	PartyFunc func(index iris.Party)
 }
 
+// InitWeb 初始化配置
+func InitWeb() {
+	viper_server.Init(getViperConfig())
+}
+
 // Init 初始化web服务
 // 先初始化基础服务 config , zap , database , casbin  e.g.
 func Init() *WebServer {
-	viper_server.Init(getViperConfig())
+	InitWeb()
 	app := iris.New()
 	app.Validator = validator.New() //参数验证
 	app.Logger().SetLevel(CONFIG.System.Level)
@@ -163,6 +168,7 @@ func (ws *WebServer) GetTestClient(t *testing.T) *tests.Client {
 func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client {
 	client := ws.GetTestClient(t)
 	if client == nil {
+		t.Error("登录失败")
 		return nil
 	}
 	err := client.Login(url, res, datas...)
@@ -175,11 +181,6 @@ func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses,
 
 // Run 启动web服务
 func (ws *WebServer) Run() {
-	err := ws.InitRouter()
-	if err != nil {
-		fmt.Printf("初始化路由错误： %v\n", err)
-		panic(err)
-	}
 	ws.app.Listen(
 		ws.addr,
 		iris.WithoutInterruptHandler,

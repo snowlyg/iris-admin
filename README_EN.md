@@ -174,6 +174,30 @@ type WebFunc interface {
 	Run()
 }
 ```
+#### Initialize database
+
+##### Simple
+- Use gorm's `AutoMigrate()` function to auto migrate database. 
+```go
+package main
+
+import (
+	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/modules/v1/role"
+	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/operation"
+)
+
+func main() {
+  	database.Instance().AutoMigrate(&perm.Permission{},&role.Role{},&user.User{},&operation.Oplog{})
+}
+```
+
+##### Custom migrate tools
+- Use `gormigrate` third party package. Tt's helpful for database migrate and program development.
+- Detail is see  [iris-admin-cmd](https://github.com/snowlyg/iris-admin/tree/master/example/iris/cmd).
   
 ---
 

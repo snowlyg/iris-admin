@@ -175,6 +175,31 @@ type WebFunc interface {
 ```
   
 ---
+#### 数据初始化
+
+##### 简单初始化.
+- 使用原生方法 `AutoMigrate()` 自动迁移初始化数据表
+```go
+package main
+
+import (
+	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/modules/v1/role"
+	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/operation"
+)
+
+func main() {
+  	database.Instance().AutoMigrate(&perm.Permission{},&role.Role{},&user.User{},&operation.Oplog{})
+}
+```
+
+##### 自定义迁移工具初始化.
+- 使用 `gormigrate` 第三方依赖包实现数据的迁移控制，方便后续的升级和开发
+- 使用方法详情见 [iris-admin-cmd](https://github.com/snowlyg/iris-admin/tree/master/example/iris/cmd)
+---
 
 #### 简单使用
 ```go

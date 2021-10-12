@@ -11,8 +11,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func Gormigrate() *gormigrate.Gormigrate {
-	return gormigrate.New(database.Instance(), gormigrate.DefaultOptions, []*gormigrate.Migration{
+// GetMigrateions 获取迁移集合
+func GetMigrateions() []*gormigrate.Migration {
+	return []*gormigrate.Migration{
 		{
 			ID: "20211010114612_create_permissons_table",
 			Migrate: func(tx *gorm.DB) error {
@@ -49,5 +50,15 @@ func Gormigrate() *gormigrate.Gormigrate {
 				return tx.Migrator().DropTable("oplogs")
 			},
 		},
-	})
+	}
+}
+
+// GetFirstMigrateion
+func GetFirstMigrateion() *gormigrate.Migration {
+	return GetMigrateions()[0]
+}
+
+// Gormigrate get gormigrate
+func Gormigrate() *gormigrate.Gormigrate {
+	return gormigrate.New(database.Instance(), gormigrate.DefaultOptions, GetMigrateions())
 }

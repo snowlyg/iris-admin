@@ -202,7 +202,11 @@ func main() {
 ---
 
 #### Getting started
-
+- Get master package , Notice must use `master` version.
+```sh
+ go get github.com/snowlyg/iris-admin@master
+```
+- Add main.go file.
 ```go
 package main
 
@@ -212,7 +216,8 @@ import (
 )
 
 func main() {
-	web.Start(web_iris.Init())
+  wi := web_iris.Init()
+	web.Start(wi)
 }
 ```
 

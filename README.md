@@ -202,6 +202,11 @@ func main() {
 ---
 
 #### 简单使用
+- 获取依赖包,注意必须带上 `master` 版本
+```sh
+ go get github.com/snowlyg/iris-admin@master
+```
+- 添加 main.go 文件
 ```go
 package main
 
@@ -211,7 +216,8 @@ import (
 )
 
 func main() {
-	web.Start(web_iris.Init())
+  wi := web_iris.Init()
+	web.Start(wi)
 }
 ```
 

@@ -19,7 +19,8 @@ type ResponseFunc interface {
 
 // PageResponseFunc 分页接口
 type PageResponseFunc interface {
-	Paginate(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error)
+	Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error)
+	Find(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error
 }
 
 // Create 添加
@@ -37,9 +38,14 @@ func Delete(db *gorm.DB, id uint, cud CUDFunc) error {
 	return cud.Delete(db, scope.IdScope(id))
 }
 
-// Paginate 分页
-func Paginate(db *gorm.DB, prf PageResponseFunc, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
-	return prf.Paginate(db, scopes...)
+// Pagination 分页
+func Pagination(db *gorm.DB, prf PageResponseFunc, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
+	return prf.Paginate(db, pageScope, scopes...)
+}
+
+// Find 分页
+func Find(db *gorm.DB, prf PageResponseFunc, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	return prf.Find(db, scopes...)
 }
 
 func First(db *gorm.DB, rf ResponseFunc, scopes ...func(db *gorm.DB) *gorm.DB) error {

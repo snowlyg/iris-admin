@@ -5,9 +5,10 @@ import (
 	"testing"
 
 	"github.com/snowlyg/helper/tests"
-	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/modules/v1/perm"
 	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/database/orm"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
 var (
@@ -42,7 +43,7 @@ func TestList(t *testing.T) {
 					{Key: "pageSize", Value: pageParam.PageSize},
 					{Key: "page", Value: pageParam.Page},
 					{Key: "items", Value: items},
-					{Key: "total", Value: len(g.PermRoutes)},
+					{Key: "total", Value: len(web_iris.PermRoutes)},
 				}},
 			}
 			requestParams := map[string]interface{}{"page": pageParam.Page, "pageSize": pageParam.PageSize}
@@ -152,7 +153,7 @@ func Delete(client *tests.Client, id uint) {
 func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 	l := pageParam.PageLen
 	routes := make([]tests.Responses, 0, l)
-	req := &g.Paginate{
+	req := &orm.Paginate{
 		Page:     pageParam.Page,
 		PageSize: pageParam.PageSize,
 	}
@@ -183,8 +184,8 @@ func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 
 func getPageParams() []PageParam {
 	pageSize := 10
-	size := len(g.PermRoutes) / pageSize
-	other := len(g.PermRoutes) % pageSize
+	size := len(web_iris.PermRoutes) / pageSize
+	other := len(web_iris.PermRoutes) % pageSize
 	if other > 0 {
 		size++
 	}

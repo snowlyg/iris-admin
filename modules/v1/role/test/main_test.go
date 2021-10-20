@@ -7,13 +7,15 @@ import (
 	"strings"
 	"testing"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
+	"github.com/snowlyg/iris-admin/modules/migration"
 	v1 "github.com/snowlyg/iris-admin/modules/v1"
-	"github.com/snowlyg/iris-admin/modules/v1/initdb"
+	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
 	"github.com/snowlyg/multi"
 )
 
@@ -23,56 +25,48 @@ var mysqlPwd string
 //go:embed redisPwd.txt
 var redisPwd string
 
-var TestServer *web.WebServer
+var TestServer *web_iris.WebServer
 
 func TestMain(m *testing.M) {
-	TestServer = web.Init()
-	uuid := uuid.NewV3(uuid.NewV4(), uuid.NamespaceOID.String()).String()
-	config := &initdb.Request{
-		SqlType: "mysql",
-		Sql: initdb.Sql{
-			Host:     "127.0.0.1",
-			Port:     "3306",
-			UserName: "root",
-			Password: strings.TrimSpace(mysqlPwd),
-			DBName:   uuid,
-			LogMode:  true,
-		},
-		CacheType: "redis",
-		Cache: initdb.Cache{
-			Host:     "127.0.0.1",
-			Port:     "6379",
-			Password: strings.TrimSpace(redisPwd),
-			PoolSize: 1000,
-			DB:       3,
-		},
-		Addr:  "127.0.0.1:8085",
-		Level: "test",
-	}
+	uuid := uuid.New().String()
 
-	TestServer.AddModule(v1.Party())
-	err := TestServer.InitRouter()
-	if err != nil {
-		text := str.Join("初始化路由错误：'", err.Error(), err.Error(), "\n")
-		fmt.Println(text)
-		dir.WriteString("error.txt", text)
-		panic(err)
-	}
-	err = initdb.InitDB(config)
-	if err != nil {
-		text := str.Join("初始化数据库错误：'", err.Error(), err.Error(), "\n")
-		fmt.Println(text)
-		dir.WriteString("error.txt", text)
-		panic(err)
-	}
+	web_iris.CONFIG.System.CacheType = "redis"
+	web_iris.CONFIG.System.DbType = "mysql"
+	web_iris.InitWeb()
 
-	if multi.AuthDriver != nil {
-		multi.AuthDriver.SetUserTokenMaxCount(1000)
+	database.CONFIG = database.Mysql{
+		Path:         "127.0.0.1:3306",
+		Config:       "charset=utf8mb4&parseTime=True&loc=Local",
+		Dbname:       uuid,
+		Username:     "root",
+		Password:     strings.TrimSpace(mysqlPwd),
+		MaxIdleConns: 0,
+		MaxOpenConns: 0,
+		LogMode:      true,
+		LogZap:       "error",
 	}
+	database.InitMysql()
+
+	cache.CONFIG = cache.Redis{
+		DB:       1,
+		Addr:     "127.0.0.1:6379",
+		Password: strings.TrimSpace(redisPwd),
+		PoolSize: 0,
+	}
+	cache.InitCache()
+	migration.Gormigrate().Migrate()
+
+	TestServer = web_iris.Init()
+	v1Party := web_iris.Party{
+		Perfix:    "/api/v1",
+		PartyFunc: v1.Party(),
+	}
+	TestServer.AddModule(v1Party)
+	web.StartTest(TestServer)
 
 	code := m.Run()
 
-	err = dorpDB(uuid)
+	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {
 		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
 		fmt.Println(text)
@@ -90,12 +84,4 @@ func TestMain(m *testing.M) {
 	}
 
 	os.Exit(code)
-}
-
-func dorpDB(uuid string) error {
-	if err := database.Instance().Exec(fmt.Sprintf("drop database if exists `%s`;", uuid)).Error; err != nil {
-		return err
-	}
-
-	return nil
 }

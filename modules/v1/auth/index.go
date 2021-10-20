@@ -3,15 +3,14 @@ package auth
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/middleware"
-	"github.com/snowlyg/iris-admin/server/module"
+	"github.com/snowlyg/iris-admin/server/casbin"
+	"github.com/snowlyg/iris-admin/server/operation"
 )
 
 // Party 认证模块
-func Party() module.WebModule {
-	handler := func(public iris.Party) {
-		public.Use(middleware.InitCheck())
+func Party() func(public iris.Party) {
+	return func(public iris.Party) {
 		public.Post("/login", Login)
-		public.Use(middleware.JwtHandler(), middleware.Casbin(), middleware.OperationRecord())
+		public.Use(middleware.MultiHandler(), casbin.Casbin(), operation.OperationRecord())
 	}
-	return module.NewModule("/auth", handler)
 }

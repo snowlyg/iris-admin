@@ -34,22 +34,196 @@
 
 ---
 
-#### 简单使用
+#### 项目介绍
+
+##### 项目由多个服务构成,每个服务有不同的功能.
+
+- [viper_server]
+- - 服务配置初始化,并生成本地配置文件 
+- - 使用 [github.com/spf13/viper](https://github.com/spf13/viper) 第三方包实现
+- - 需要实现 `func getViperConfig() viper_server.ViperConfig` 方法
+
+```go
+package cache
+
+import (
+	"fmt"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/viper_server"
+	"github.com/spf13/viper"
+)
+
+var CONFIG Redis
+
+type Redis struct {
+	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
+	Addr     string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	Password string `mapstructure:"password" json:"password" yaml:"password"`
+	PoolSize int    `mapstructure:"pool-size" json:"poolSize" yaml:"pool-size"`
+}
+
+// getViperConfig 获取初始化配置
+func getViperConfig() viper_server.ViperConfig {
+	configName := "redis"
+	db := fmt.Sprintf("%d", CONFIG.DB)
+	poolSize := fmt.Sprintf("%d", CONFIG.PoolSize)
+	return viper_server.ViperConfig{
+		Directory: g.ConfigDir,
+		Name:      configName,
+		Type:      g.ConfigType,
+		Watch: func(vi *viper.Viper) error {
+			if err := vi.Unmarshal(&CONFIG); err != nil {
+				return fmt.Errorf("反序列化错误: %v", err)
+			}
+			// 监控配置文件变化
+			vi.SetConfigName(configName)
+			vi.WatchConfig()
+			vi.OnConfigChange(func(e fsnotify.Event) {
+				fmt.Println("配置发生变化:", e.Name)
+				if err := vi.Unmarshal(&CONFIG); err != nil {
+					fmt.Printf("反序列化错误: %v \n", err)
+				}
+			})
+			return nil
+		},
+		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
+		Default: []byte(`
+db: ` + db + `
+addr: "` + CONFIG.Addr + `"
+password: "` + CONFIG.Password + `"
+pool-size: ` + poolSize),
+	}
+}
+```
+
+- [zap_server] 
+- - 服务日志记录
+- - 使用 [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) 第三方包实现
+- - 通过全局变量 `zap_server.ZAPLOG` 记录对应级别的日志
+```go
+  zap_server.ZAPLOG.Info("注册数据表错误", zap.Any("err", err))
+  zap_server.ZAPLOG.Debug("注册数据表错误", zap.Any("err", err))
+  zap_server.ZAPLOG.Error("注册数据表错误", zap.Any("err", err))
+  ...
+```
+
+- [database]
+- - 数据服务 [目前仅支持 mysql]
+- - 使用 [gorm.io/gorm](https://github.com/go-gorm/gorm) 第三方包实现
+- - 通过单列 `database.Instance()` 操作数据
+```go
+  database.Instance().Model(&User{}).Where("name = ?","name").Find(&user)
+  ...
+```
+
+- [casbin]
+- - 权限控制管理服务
+- - 使用 [casbin](github.com/casbin/casbin/v2 ) 第三方包实现
+- - 并通过 `index.Use(casbin.Casbin())` 使用中间件,实现接口权限认证
+
+
+- [cache]
+- - 缓存驱动服务
+- - 使用 [github.com/go-redis/redis](https://github.com/go-redis/redis) 第三方包实现
+- - 通过单列 `cache.Instance()` 操作数据
+```go
+// InitDriver 初始化认证
+func (ws *WebServer) InitDriver() error {
+	err := multi.InitDriver(
+		&multi.Config{
+			DriverType:      CONFIG.System.CacheType,
+			UniversalClient: cache.Instance()},
+	)
+	if err != nil {
+		return fmt.Errorf("初始化认证驱动错误 %w", err)
+	}
+	if multi.AuthDriver == nil {
+		return ErrAuthDriverEmpty
+	}
+	return nil
+}
+
+```
+
+- [operation]
+- - 系统操作日志服务
+- - 并通过 `index.Use(operation.OperationRecord())` 使用中间件,实现接口自动生成操作日志
+
+- [web]
+- - web_iris Go-Iris 框架服务
+- - 使用 [github.com/kataras/iris/v12](https://github.com/kataras/iris) 第三方包实现
+- - web 框架服务需要实现 `type WebFunc interface {}`  接口
+```go
+// WebFunc 框架服务接口
+// - GetTestClient 测试客户端
+// - GetTestLogin 测试登录
+// - AddWebStatic 添加静态页面
+// - InitDriver 初始化认证
+// - AddUploadStatic 上传文件路径
+// - Run 启动
+type WebFunc interface {
+	GetTestClient(t *testing.T) *tests.Client
+	GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client
+	AddWebStatic(perfix string)
+	AddUploadStatic()
+	InitDriver() error
+	InitRouter() error
+	Run()
+}
+```
+  
+---
+#### 数据初始化
+
+##### 简单初始化.
+- 使用原生方法 `AutoMigrate()` 自动迁移初始化数据表
 ```go
 package main
 
 import (
 	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/modules/v1/role"
+	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/operation"
 )
 
 func main() {
-	webServer := web.Init()
-	webServer.Run()
+  	database.Instance().AutoMigrate(&perm.Permission{},&role.Role{},&user.User{},&operation.Oplog{})
+}
+```
+
+##### 自定义迁移工具初始化.
+- 使用 `gormigrate` 第三方依赖包实现数据的迁移控制，方便后续的升级和开发
+- 使用方法详情见 [iris-admin-cmd](https://github.com/snowlyg/iris-admin/tree/master/example/iris/cmd)
+---
+
+#### 简单使用
+- 获取依赖包,注意必须带上 `master` 版本
+```sh
+ go get github.com/snowlyg/iris-admin@master
+```
+- 添加 main.go 文件
+```go
+package main
+
+import (
+	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
+)
+
+func main() {
+  wi := web_iris.Init()
+	web.Start(wi)
 }
 ```
 
 #### 启动项目
-- 第一次启动项目后,会自动生成 `config.yaml` 和 `rbac_model.conf` 两个配置文件
+- 第一次启动项目后,配置文件会自动生成到 `config` 目录下.
+- 同时会生成一个 `rbac_model.conf` 文件到项目根目录,该文件用于 casbin 权鉴的规则.
 ```sh
 go run main.go
 ```
@@ -61,32 +235,19 @@ go run main.go
 package main
 
 import (
-  	"github.com/snowlyg/iris-admin/server/web"
-  "github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/middleware"
-	"github.com/snowlyg/iris-admin/server/module"
+	v1 "github.com/snowlyg/iris-admin/modules/v1"
+	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
-// Party admin模块
-func Party() module.WebModule {
-  handler := func(admin iris.Party) {
-    // 中间件
-    admin.Use(middleware.InitCheck(), middleware.JwtHandler(), middleware.OperationRecord(), middleware.Casbin())
-		admin.Get("/", GetAllAdmins).Name = "admin列表"
-	}
-	return module.NewModule("/admins", handler)
-}
-
-func GetAllAdmins(ctx iris.Context) {
-  // 处理业务逻辑
-  // ... 
-	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: list, Msg: g.NoErr.Msg})
-}
-
 func main() {
-	webServer := web.Init()
-    webServer.AddModule(Party())
-	webServer.Run()
+	wi := web_iris.Init()
+	v1Party := web_iris.Party{
+		Perfix:    "/api/v1",
+		PartyFunc: v1.Party(),
+	}
+	wi.AddModule(v1Party)
+	web.Start(web_iris.Init())
 }
 ```
 
@@ -103,6 +264,7 @@ system:
   static-path: /static/upload
   static-prefix: /upload
   time-format: "2006-01-02 15:04:05"
+  web-prefix: /
   web-path: ./dist
 ```
 
@@ -117,7 +279,7 @@ import (
 )
 
 func main() {
-	webServer := web.Init()
+	webServer := web_iris.Init()
     fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
 	webServer.AddStatic("/other",fsOrDir)
 	webServer.Run()
@@ -136,7 +298,7 @@ import (
 )
 
 func main() {
-	webServer := web.Init()
+	webServer := web_iris.Init()
 	webServer.AddWebStatic("/")
 	webServer.Run()
 }

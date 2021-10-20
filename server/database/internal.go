@@ -8,17 +8,18 @@ import (
 	"os"
 	"time"
 
-	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
 )
 
-// writer log writer interface
+// writer  日志打印接口
 type writer interface {
 	Printf(string, ...interface{})
 }
 
+// config 配置
 type config struct {
 	SlowThreshold time.Duration
 	Colorful      bool
@@ -35,6 +36,7 @@ var (
 	Recorder = traceRecorder{Interface: Default, BeginAt: time.Now()}
 )
 
+// New
 func New(writer writer, config config) logger.Interface {
 	var (
 		infoStr      = "%s\n[info] "
@@ -66,6 +68,7 @@ func New(writer writer, config config) logger.Interface {
 	}
 }
 
+// customLogger 自定义日志
 type customLogger struct {
 	writer
 	config
@@ -73,7 +76,7 @@ type customLogger struct {
 	traceStr, traceErrStr, traceWarnStr string
 }
 
-// LogMode log mode
+// LogMode 日志模式
 func (c *customLogger) LogMode(level logger.LogLevel) logger.Interface {
 	newLogger := *c
 	newLogger.LogLevel = level
@@ -132,19 +135,20 @@ func (c *customLogger) Trace(ctx context.Context, begin time.Time, fc func() (st
 	}
 }
 
+// Printf 
 func (c *customLogger) Printf(message string, data ...interface{}) {
-	if g.CONFIG.Mysql.LogZap != "" {
+	if CONFIG.LogZap != "" {
 		switch len(data) {
 		case 0:
-			g.ZAPLOG.Info(message)
+			zap_server.ZAPLOG.Info(message)
 		case 1:
-			g.ZAPLOG.Info("gorm", zap.Any("src", data[0]))
+			zap_server.ZAPLOG.Info("gorm", zap.Any("src", data[0]))
 		case 2:
-			g.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]))
+			zap_server.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]))
 		case 3:
-			g.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]), zap.Any("rows", data[2]))
+			zap_server.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]), zap.Any("rows", data[2]))
 		case 4:
-			g.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]), zap.Any("rows", data[2]), zap.Any("sql", data[3]))
+			zap_server.ZAPLOG.Info("gorm", zap.Any("src", data[0]), zap.Any("duration", data[1]), zap.Any("rows", data[2]), zap.Any("sql", data[3]))
 		}
 		return
 	}

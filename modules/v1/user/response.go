@@ -4,13 +4,14 @@ import (
 	"regexp"
 
 	"github.com/snowlyg/helper/str"
-	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/database/orm"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 type Response struct {
-	g.Model
+	orm.Model
 	BaseUser
 	Roles []string `gorm:"-" json:"roles"`
 }
@@ -26,14 +27,14 @@ func (res *Response) ToString() {
 }
 
 type LoginResponse struct {
-	g.ReqId
+	orm.ReqId
 	Password string `json:"password"`
 }
 
 func (res *Response) First(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
 	err := db.Model(&User{}).Scopes(scopes...).First(res).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取失败", zap.String("First()", err.Error()))
+		zap_server.ZAPLOG.Error("获取失败", zap.String("First()", err.Error()))
 		return err
 	}
 	return nil
@@ -42,25 +43,30 @@ func (res *Response) First(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) er
 // Paginate 分页
 type PageResponse []*Response
 
-func (res *PageResponse) Paginate(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
+func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
 	db = db.Model(&User{})
 	var count int64
-	if len(scopes) == 0 {
-		return count, g.ErrPaginateParam
-	}
-	if len(scopes) > 1 {
-		db = db.Scopes(scopes[1:]...)
-	}
-	err := db.Count(&count).Error
+	err := db.Scopes(scopes...).Count(&count).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取总数失败", zap.String("Count()", err.Error()))
+		zap_server.ZAPLOG.Error("获取总数失败", zap.String("Count()", err.Error()))
 		return count, err
 	}
-	err = db.Scopes(scopes[0]).Find(&res).Error
+	err = db.Scopes(pageScope).Find(&res).Error
 	if err != nil {
-		g.ZAPLOG.Error("获取分页数据失败", zap.String("Find()", err.Error()))
+		zap_server.ZAPLOG.Error("获取分页数据失败", zap.String("Find()", err.Error()))
 		return count, err
 	}
 
 	return count, nil
+}
+
+func (res *PageResponse) Find(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	db = db.Model(&User{})
+	err := db.Scopes(scopes...).Find(&res).Error
+	if err != nil {
+		zap_server.ZAPLOG.Error("获取数据失败", zap.String("Find()", err.Error()))
+		return err
+	}
+
+	return nil
 }

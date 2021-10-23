@@ -309,7 +309,7 @@ func main() {
 
 
 #### 简单用例
-- [简单使用](https://github.com/snowlyg/iris-admin/tree/master/example)
+- [iris](https://github.com/snowlyg/iris-admin-example/tree/main/iris)
 
 #### 单元测试和接口文档[待更新] 
 - 测试前在 `main_test.go` 文件所在目录新建 `redis_pwd.txt `和 `redis_pwd.txt` 两个文件,分别填入 `redis` 和 `mysql` 的密码

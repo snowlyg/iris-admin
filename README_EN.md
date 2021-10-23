@@ -309,7 +309,7 @@ func main() {
 
 
 #### Example
-- [example](https://github.com/snowlyg/iris-admin/tree/master/example)
+- [iris](https://github.com/snowlyg/iris-admin-example/tree/main/iris)
 
 #### Unit test and documentation: [to be updated]
 - Before start unit tests,you must create two files which is named `redis_pwd.txt `and `redis_pwd.txt` ,fill `redis` and `mysql` 's password in to these two files separately, on the directory the `main_test.go` file is located.

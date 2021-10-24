@@ -197,7 +197,7 @@ func main() {
 
 ##### Custom migrate tools
 - Use `gormigrate` third party package. Tt's helpful for database migrate and program development.
-- Detail is see  [iris-admin-cmd](https://github.com/snowlyg/iris-admin/tree/master/example/iris/cmd).
+- Detail is see  [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go.
   
 ---
 

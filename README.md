@@ -198,7 +198,7 @@ func main() {
 
 ##### 自定义迁移工具初始化.
 - 使用 `gormigrate` 第三方依赖包实现数据的迁移控制，方便后续的升级和开发
-- 使用方法详情见 [iris-admin-cmd](https://github.com/snowlyg/iris-admin/tree/master/example/iris/cmd)
+- 使用方法详情见 [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go)
 ---
 
 #### 简单使用

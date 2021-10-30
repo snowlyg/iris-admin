@@ -8,7 +8,6 @@ import (
 	"github.com/snowlyg/iris-admin/modules/v1/perm"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/database/orm"
-	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
 var (
@@ -30,6 +29,7 @@ func TestList(t *testing.T) {
 	defer client.Logout(logoutUrl, nil)
 
 	pageParams := getPageParams()
+	routes, _ := TestServer.GetSources()
 	for _, pageParam := range pageParams {
 		t.Run(fmt.Sprintf("路由权限测试，第%d页", pageParam.Page), func(t *testing.T) {
 			items, err := getPerms(pageParam)
@@ -43,7 +43,7 @@ func TestList(t *testing.T) {
 					{Key: "pageSize", Value: pageParam.PageSize},
 					{Key: "page", Value: pageParam.Page},
 					{Key: "items", Value: items},
-					{Key: "total", Value: len(web_iris.PermRoutes)},
+					{Key: "total", Value: len(routes)},
 				}},
 			}
 			requestParams := map[string]interface{}{"page": pageParam.Page, "pageSize": pageParam.PageSize}
@@ -183,9 +183,10 @@ func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 }
 
 func getPageParams() []PageParam {
+	routes, _ := TestServer.GetSources()
 	pageSize := 10
-	size := len(web_iris.PermRoutes) / pageSize
-	other := len(web_iris.PermRoutes) % pageSize
+	size := len(routes) / pageSize
+	other := len(routes) % pageSize
 	if other > 0 {
 		size++
 	}

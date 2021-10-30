@@ -62,7 +62,7 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_iris.W
 	}
 	cache.InitCache()
 
-	mc := migration.New(true)
+	mc := migration.New()
 	mc.Migrate()
 
 	wi := web_iris.Init()

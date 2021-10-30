@@ -3,11 +3,7 @@ package migration
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/snowlyg/iris-admin/modules/seed"
-	"github.com/snowlyg/iris-admin/modules/v1/perm"
-	"github.com/snowlyg/iris-admin/modules/v1/role"
-	"github.com/snowlyg/iris-admin/modules/v1/user"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/operation"
 	"gorm.io/gorm"
 )
 
@@ -18,18 +14,13 @@ type MigrationCmd struct {
 }
 
 // New 构建 MigrationCmd
-// - v1 时候填充内置模块
-func New(v1 bool) *MigrationCmd {
+func New() *MigrationCmd {
 	mc := &MigrationCmd{
 		MigrationCollection: nil,
 		ModelCollection:     nil,
 		SeedCollection:      nil,
 	}
-	if v1 {
-		// 添加 v1 内置模块数据表和数据
-		mc.AddModel(&perm.Permission{}, &user.User{}, &role.Role{}, &operation.Oplog{})
-		mc.AddSeed(perm.Source, user.Source, role.Source)
-	}
+
 	return mc
 }
 
@@ -108,6 +99,9 @@ func (mc *MigrationCmd) Migrate() error {
 
 // Seed 填充数据
 func (mc *MigrationCmd) Seed() error {
+	if mc.SeedCollection == nil {
+		return nil
+	}
 	return seed.Seed(mc.SeedCollection...)
 }
 

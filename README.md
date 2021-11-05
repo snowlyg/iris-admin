@@ -21,7 +21,6 @@
 #### 交流方式
 
 - [iris-go-tenancy/community](https://gitter.im/iris-go-tenancy/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link) .
-- 微信群请加微信号: `c25vd2x5Z19jaGluYQ==`
 
 [![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) 
 #### iris 学习记录分享

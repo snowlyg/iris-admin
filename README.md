@@ -185,8 +185,8 @@ package main
 import (
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
-  "github.com/snowlyg/iris-admin/modules/v1/perm"
-	"github.com/snowlyg/iris-admin/modules/v1/role"
+  "github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/role"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/operation"
 )
@@ -235,7 +235,7 @@ go run main.go
 package main
 
 import (
-	v1 "github.com/snowlyg/iris-admin/modules/v1"
+	v1 "github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
@@ -257,7 +257,7 @@ func main() {
 - 可以修改配置项 `static-path` 修改默认目录
 ```yaml
 system:
-  addr: 127.0.0.1:8085
+  addr: "127.0.0.1:8085"
   cache-type: ""
   db-type: ""
   level: debug

@@ -11,7 +11,7 @@ import (
 )
 
 func TestStart(t *testing.T) {
-	addr := "127.0.0.1:8086"
+	addr := "127.0.0.1:8087"
 	web_iris.CONFIG.System.Addr = addr
 	wi := web_iris.Init()
 	go func() {

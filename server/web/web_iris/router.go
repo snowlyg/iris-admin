@@ -9,7 +9,7 @@ import (
 	"github.com/kataras/iris/v12/middleware/pprof"
 	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/helper/arr"
-	"github.com/snowlyg/iris-admin/middleware"
+	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 )
 
 // InitRouter 初始化模块路由
@@ -40,8 +40,14 @@ func (ws *WebServer) InitRouter() error {
 		ws.AddUploadStatic()
 	}
 	if ws.webPrefix != "" {
-		ws.AddWebStatic(ws.webPrefix)
+		ws.AddWebStatic()
 	}
+
+	// http test must build
+	if err := ws.app.Build(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

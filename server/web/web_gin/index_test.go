@@ -1,4 +1,4 @@
-package web_iris
+package web_gin
 
 import (
 	"io/ioutil"
@@ -9,15 +9,15 @@ import (
 	"github.com/snowlyg/iris-admin/server/web"
 )
 
-func TestRun(t *testing.T) {
+func TestStart(t *testing.T) {
 	go func() {
 		web.Start(Init())
 	}()
 
 	time.Sleep(3 * time.Second)
 
-	t.Run("test web run", func(t *testing.T) {
-		resp, err := http.Get("http://127.0.0.1:8085")
+	t.Run("test web start", func(t *testing.T) {
+		resp, err := http.Get("http://127.0.0.1:8086")
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}

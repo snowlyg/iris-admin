@@ -1,18 +1,14 @@
-package web_iris
+package web_gin
 
 import (
-	stdContext "context"
 	"errors"
 	"fmt"
-	"path/filepath"
 	"sync"
 	"testing"
 	"time"
 
-	"github.com/go-playground/validator/v10"
-	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/middleware/recover"
-	"github.com/snowlyg/helper/dir"
+	"github.com/gin-contrib/static"
+	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/server/cache"
@@ -23,7 +19,7 @@ import (
 var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
 
 // WebServer web服务
-// - app iris application
+// - app gin.Engine
 // - idleConnsClosed
 // - addr  服务访问地址
 // - timeFormat  时间格式
@@ -31,15 +27,15 @@ var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
 // - staticPath  静态文件地址
 // - webPath  前端文件地址
 type WebServer struct {
-	app             *iris.Application
-	idleConnsClosed chan struct{}
-	parties         []Party
-	addr            string
-	timeFormat      string
-	staticPrefix    string
-	staticPath      string
-	webPrefix       string
-	webPath         string
+	app *gin.Engine
+	server
+	parties      []Party
+	addr         string
+	timeFormat   string
+	staticPrefix string
+	staticPath   string
+	webPrefix    string
+	webPath      string
 }
 
 // Party 功能模块
@@ -47,7 +43,7 @@ type WebServer struct {
 // - partyFunc 模块
 type Party struct {
 	Perfix    string
-	PartyFunc func(index iris.Party)
+	PartyFunc func(index gin.RouterGroup)
 }
 
 // InitWeb 初始化配置
@@ -59,18 +55,9 @@ func InitWeb() {
 // 先初始化基础服务 config , zap , database , casbin  e.g.
 func Init() *WebServer {
 	InitWeb()
-	app := iris.New()
-	app.Use(recover.New())
-	app.Validator = validator.New() //参数验证
-	app.Logger().SetLevel(CONFIG.System.Level)
-	idleConnsClosed := make(chan struct{})
-	iris.RegisterOnInterrupt(func() { //优雅退出
-		timeout := 10 * time.Second
-		ctx, cancel := stdContext.WithTimeout(stdContext.Background(), timeout)
-		defer cancel()
-		app.Shutdown(ctx) // close all hosts
-		close(idleConnsClosed)
-	})
+	gin.SetMode(CONFIG.System.Level)
+	app := gin.Default()
+	registerValidation()
 
 	if CONFIG.System.Addr == "" { // 默认 8085
 		CONFIG.System.Addr = "127.0.0.1:8085"
@@ -97,20 +84,19 @@ func Init() *WebServer {
 	}
 
 	return &WebServer{
-		app:             app,
-		addr:            CONFIG.System.Addr,
-		timeFormat:      CONFIG.System.TimeFormat,
-		staticPrefix:    CONFIG.System.StaticPrefix,
-		staticPath:      CONFIG.System.StaticPath,
-		webPrefix:       CONFIG.System.WebPrefix,
-		webPath:         CONFIG.System.WebPath,
-		idleConnsClosed: idleConnsClosed,
+		app:          app,
+		addr:         CONFIG.System.Addr,
+		timeFormat:   CONFIG.System.TimeFormat,
+		staticPrefix: CONFIG.System.StaticPrefix,
+		staticPath:   CONFIG.System.StaticPath,
+		webPrefix:    CONFIG.System.WebPrefix,
+		webPath:      CONFIG.System.WebPath,
 	}
 }
 
 // AddStatic 添加静态文件
-func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...iris.DirOptions) {
-	ws.app.HandleDir(requestPath, fsOrDir, opts...)
+func (ws *WebServer) AddStatic(requestPath, root string) {
+	ws.app.Static(requestPath, root)
 }
 
 // AddModule 添加模块
@@ -136,25 +122,16 @@ func (ws *WebServer) InitDriver() error {
 
 // AddWebStatic 添加前端访问地址
 func (ws *WebServer) AddWebStatic() {
-	fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), ws.webPath))
-	opt := iris.DirOptions{
-		IndexName: "index.html",
-		SPA:       true,
-	}
-	ws.AddStatic(ws.webPrefix, fsOrDir, opt)
+	ws.AddStatic(ws.webPrefix, ws.webPath)
 }
 
 // AddUploadStatic 添加上传文件访问地址
 func (ws *WebServer) AddUploadStatic() {
-	fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), ws.staticPath))
-	ws.AddStatic(ws.staticPrefix, fsOrDir)
+	ws.app.Use(static.Serve(ws.staticPrefix, static.LocalFile(ws.staticPath, true)))
 }
 
 // GetTestClient 获取测试验证客户端
 func (ws *WebServer) GetTestClient(t *testing.T) *tests.Client {
-	if ws.app == nil {
-		t.Errorf("ws.app is nil")
-	}
 	var once sync.Once
 	var client *tests.Client
 	once.Do(
@@ -186,12 +163,9 @@ func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses,
 
 // Run 启动web服务
 func (ws *WebServer) Run() {
-	ws.app.Listen(
-		ws.addr,
-		iris.WithoutInterruptHandler,
-		iris.WithoutServerError(iris.ErrServerClosed),
-		iris.WithOptimizations,
-		iris.WithTimeFormat(ws.timeFormat),
-	)
-	<-ws.idleConnsClosed
+	s := initServer(CONFIG.System.Addr, ws.app)
+	time.Sleep(10 * time.Microsecond)
+	fmt.Printf("默认监听地址:http://%s\n", CONFIG.System.Addr)
+	s.ListenAndServe()
+
 }

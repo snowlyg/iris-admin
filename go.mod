@@ -3,25 +3,37 @@ module github.com/snowlyg/iris-admin
 go 1.16
 
 require (
+	github.com/aviddiviner/gin-limit v0.0.0-20170918012823-43b5f79762c1
 	github.com/casbin/casbin/v2 v2.37.2
 	github.com/casbin/gorm-adapter/v3 v3.4.2
 	github.com/fsnotify/fsnotify v1.5.1
+	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6
+	github.com/gin-contrib/static v0.0.1
+	github.com/gin-gonic/gin v1.7.4
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/go-redis/redis/v8 v8.11.3
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.3.0
 	github.com/gookit/color v1.4.2
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
 	github.com/jonboulle/clockwork v0.2.2 // indirect
-	github.com/kataras/iris/v12 v12.2.0-alpha2.0.20210413181054-382e7c14cbd3
+	github.com/kataras/iris/v12 v12.2.0-alpha4
+	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/snowlyg/helper v0.0.0-20211010091912-06421609d44a
-	github.com/snowlyg/multi v0.0.0-20210828154328-14d6bfb7d0a6
-	github.com/spf13/cobra v1.2.1 // indirect
+	github.com/snowlyg/multi v0.0.1
 	github.com/spf13/viper v1.8.1
+	github.com/tdewolff/parse/v2 v2.5.22 // indirect
+	github.com/unrolled/secure v1.0.9
+	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	go.uber.org/zap v1.19.1
-	golang.org/x/crypto v0.0.0-20210915214749-c084706c2272
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/net v0.0.0-20211105192438-b53810dc28af // indirect
+	golang.org/x/sys v0.0.0-20211106132015-ebca88c72f68 // indirect
+	gopkg.in/ini.v1 v1.63.2 // indirect
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.15
 )

@@ -1,103 +1,264 @@
 /*
-本项目基于 go iris 框架二次开发，主要用于快速构建网站管理后台。
-- 项目实现了一些基础功能：项目配置、gorm 集成、zap 日志集成、casbin 权鉴认证集成、redis 缓存驱动集成。
-- 项目内置了管理后台必须的 RBAC 基础模块 [v1](https://github.com/snowlyg/iris-admin/tree/master/modules/v1)。
-- 项目使用了一些自有开发的 package ：
-- - [multi](https://github.com/snowlyg/multi) 多角色多点登录认证
-- - [helper](https://github.com/snowlyg/helper) 封装了一些通用的辅助方法
-
 <h1 align="center">IrisAdmin</h1>
 
-简体中文 | [English](./README_EN.md)
+<div align="center">
+    <a href="https://codecov.io/gh/snowlyg/iris-admin"><img src="https://codecov.io/gh/snowlyg/iris-admin/branch/master/graph/badge.svg" alt="Code Coverage"></a>
+    <a href="https://goreportcard.com/badge/github.com/snowlyg/iris-admin"><img src="https://goreportcard.com/badge/github.com/snowlyg/iris-admin" alt="Go Report Card"></a>
+    <a href="https://godoc.org/github.com/snowlyg/iris-admin"><img src="https://godoc.org/github.com/snowlyg/iris-admin?status.svg" alt="GoDoc"></a>
+    <a href="https://github.com/snowlyg/iris-admin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/iris-admin" alt="Licenses"></a>
+</div>
 
-#### 项目地址
+[简体中文](./README.md)  | English
+
+#### Project url
 [GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin)
+****
+> This project just for learning golang, welcome to give your suggestions!
 
-> 简单项目仅供学习，欢迎指点！
-
-#### 相关文档
-- [IRIS V12 中文文档](https://github.com/snowlyg/iris/wiki)
+#### Documentation
+- [IRIS V12 document for chinese](https://github.com/snowlyg/iris/wiki)
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
 
-#### 交流方式
-- `Iris-go` 学习交流 QQ 群 ：`676717248`
+#### COMMUNICATIONS
+- `Iris-go`  QQ group for communication：`676717248`
 <a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=cc99ccf86be594e790eacc91193789746af7df4a88e84fe949e61e5c6d63537c"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="Iris-go" title="Iris-go"></a>
 
-- If you don't have a QQ account, you can into the [iris-go-tenancy/community](https://gitter.im/iris-go-tenancy/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link) .
-- 微信群请加微信号: `c25vd2x5Z19jaGluYQ==`
+- If you don't have a QQ account, you can into the [iris-go-tenancy/community](https://gitter.im/iris-go-tenancy/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link) [![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) .
+- WeChat group please add WeChat ID: `c25vd2x5Z19jaGluYQ==`
 
-[![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-#### iris 学习记录分享
 
-- [Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/iris-go-api-1/)
+#### BLOG
 
-- [iris + casbin 从陌生到学会使用的过程](https://blog.snowlyg.com/iris-go-api-2/)
+- [REST API with iris-go web framework ](https://blog.snowlyg.com/iris-go-api-1/)
+
+- [How to user iris-go with casbin](https://blog.snowlyg.com/iris-go-api-2/)
 
 ---
 
-#### 简单使用
+
+#### Program introduction
+
+##### The project consists of multiple services, each with different functions.
+
+- [viper_server]
+- - The service configuration is initialized and generate a local configuration file.
+- - Use [github.com/spf13/viper](https://github.com/spf13/viper) third party package.
+- - Need implement  `func getViperConfig() viper_server.ViperConfig` function.
+
+```go
+package cache
+
+import (
+	"fmt"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/snowlyg/iris-admin/g"
+	"github.com/snowlyg/iris-admin/server/viper_server"
+	"github.com/spf13/viper"
+)
+
+var CONFIG Redis
+
+type Redis struct {
+	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
+	Addr     string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	Password string `mapstructure:"password" json:"password" yaml:"password"`
+	PoolSize int    `mapstructure:"pool-size" json:"poolSize" yaml:"pool-size"`
+}
+
+// getViperConfig get initialize config
+func getViperConfig() viper_server.ViperConfig {
+	configName := "redis"
+	db := fmt.Sprintf("%d", CONFIG.DB)
+	poolSize := fmt.Sprintf("%d", CONFIG.PoolSize)
+	return viper_server.ViperConfig{
+		Directory: g.ConfigDir,
+		Name:      configName,
+		Type:      g.ConfigType,
+		Watch: func(vi *viper.Viper) error {
+			if err := vi.Unmarshal(&CONFIG); err != nil {
+				return fmt.Errorf("deserialization data error: %v", err)
+			}
+			// config file change
+			vi.SetConfigName(configName)
+			vi.WatchConfig()
+			vi.OnConfigChange(func(e fsnotify.Event) {
+				fmt.Println("config file change:", e.Name)
+				if err := vi.Unmarshal(&CONFIG); err != nil {
+					fmt.Printf("deserialization data error: %v \n", err)
+				}
+			})
+			return nil
+		},
+		// Note: When setting the default configuration value, there can be no other symbols such as spaces in front. It must be close to the left
+		Default: []byte(`
+db: ` + db + `
+addr: "` + CONFIG.Addr + `"
+password: "` + CONFIG.Password + `"
+pool-size: ` + poolSize),
+	}
+}
+```
+
+- [zap_server]
+- - Service logging.
+- - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
+- - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
+```go
+  zap_server.ZAPLOG.Info("Registration data table error", zap.Any("err", err))
+  zap_server.ZAPLOG.Debug("Registration data table error", zap.Any("err", err))
+  zap_server.ZAPLOG.Error("Registration data table error", zap.Any("err", err))
+  ...
+```
+
+- [database]
+- - database service [only support mysql now].
+- - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
+- - Through single instance `database.Instance()` operating data.
+```go
+  database.Instance().Model(&User{}).Where("name = ?","name").Find(&user)
+  ...
+```
+
+- [casbin]
+- - Access control management service.
+- - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
+- - Through use `index.Use(casbin.Casbin())` middleware on route,implement interface authority authentication
+
+
+- [cache]
+- - Cache-driven service
+- - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
+- - Through single instance `cache.Instance()` operating data.
+```go
+// InitDriver Initial authentication
+func (ws *WebServer) InitDriver() error {
+	err := multi.InitDriver(
+		&multi.Config{
+			DriverType:      CONFIG.System.CacheType,
+			UniversalClient: cache.Instance()},
+	)
+	if err != nil {
+		return fmt.Errorf("Initialize authentication driver error %w", err)
+	}
+	if multi.AuthDriver == nil {
+		return ErrAuthDriverEmpty
+	}
+	return nil
+}
+
+```
+
+- [operation]
+- - System operation log service.
+- - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
+
+- [web]
+- - web_iris Go-Iris web framework service.
+- - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
+- - web framework service need implement `type WebFunc interface {}`  interface.
+```go
+// WebFunc web framework service interface
+// - GetTestClient test client
+// - GetTestLogin login for test
+// - AddWebStatic add web static file
+// - InitDriver initialize authentication driver
+// - AddUploadStatic add upload file api
+// - Run start program
+type WebFunc interface {
+	GetTestClient(t *testing.T) *tests.Client
+	GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client
+	AddWebStatic(perfix string)
+	AddUploadStatic()
+	InitDriver() error
+	InitRouter() error
+	Run()
+}
+```
+#### Initialize database
+
+##### Simple
+- Use gorm's `AutoMigrate()` function to auto migrate database.
 ```go
 package main
 
 import (
 	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/role"
+	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/operation"
 )
 
 func main() {
-	webServer := web.Init()
-	webServer.Run()
+  	database.Instance().AutoMigrate(&perm.Permission{},&role.Role{},&user.User{},&operation.Oplog{})
 }
 ```
 
-#### 启动项目
-- 第一次启动项目后,会自动生成 `config.yaml` 和 `rbac_model.conf` 两个配置文件
-```sh
-go run main.go
-```
+##### Custom migrate tools
+- Use `gormigrate` third party package. Tt's helpful for database migrate and program development.
+- Detail is see  [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go.
 
-#### 添加模块
-- 框架默认内置了v1 版本的基础认证模块
-- 可以使用 AddModule() 增加其他 admin模块
+---
+
+#### Getting started
+- Get master package , Notice must use `master` version.
+```sh
+ go get github.com/snowlyg/iris-admin@master
+```
+- Add main.go file.
 ```go
 package main
 
 import (
-  	"github.com/snowlyg/iris-admin/server/web"
-  "github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/middleware"
-	"github.com/snowlyg/iris-admin/server/module"
+	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
-// Party admin模块
-func Party() module.WebModule {
-  handler := func(admin iris.Party) {
-    // 中间件
-    admin.Use( middleware.JwtHandler(),operation.OperationRecord(), middleware.Casbin())
-		admin.Get("/", GetAllAdmins).Name = "admin列表"
-	}
-	return module.NewModule("/admins", handler)
-}
-
-func GetAllAdmins(ctx iris.Context) {
-  // 处理业务逻辑
-  // ...
-	ctx.JSON(g.Response{Code: g.NoErr.Code, Data: list, Msg: g.NoErr.Msg})
-}
-
 func main() {
-	webServer := web.Init()
-    webServer.AddModule(Party())
-	webServer.Run()
+  wi := web_iris.Init()
+	web.Start(wi)
 }
 ```
 
-#### 设置静态文件路径
-- 已经默认内置了一个静态文件访问路径
-- 静态文件将会上传到 `/static/upload` 目录
-- 可以修改配置项 `static-path` 修改默认目录
+#### Run project
+- When you first run this cmd `go run main.go` , you can see some config files in  the `config` directory,
+- and `rbac_model.conf` will be created in your project root directory.
+```sh
+go run main.go
+```
+
+#### Module
+- The framework has a built-in v1 version of the basic authentication module by default.
+- Your can use AddModule() to add other modules .
+```go
+package main
+
+import (
+	v1 "github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1"
+	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
+)
+
+func main() {
+	wi := web_iris.Init()
+	v1Party := web_iris.Party{
+		Perfix:    "/api/v1",
+		PartyFunc: v1.Party(),
+	}
+	wi.AddModule(v1Party)
+	web.Start(web_iris.Init())
+}
+```
+
+#### Default static file path
+- A static file access path has been built in by default
+- Static files will upload to `/static/upload` directory.
+- You can set this config key `static-path` to change the default directory.
 ```yaml
 system:
-  addr: 127.0.0.1:8085
+  addr: "127.0.0.1:8085"
   cache-type: ""
   db-type: ""
   level: debug
@@ -107,8 +268,8 @@ system:
   web-path: ./dist
 ```
 
-#### 设置其他静态文件路径
-- 设置其他静态文件路径，可以使用 `AddStatic` 方法
+#### Add Static file path
+- You can add static file access path,through `AddStatic` function.
 ```go
 package main
 
@@ -118,16 +279,16 @@ import (
 )
 
 func main() {
-	webServer := web.Init()
+	webServer := web_iris.Init()
     fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
 	webServer.AddStatic("/other",fsOrDir)
 	webServer.Run()
 }
 ```
 
-#### 配合前端使用
-- 编译前端页面默认 `dist` 目录
-- 可以修改配置项 `web-path` 修改默认目录
+#### Use with front-end framework , e.g. vue.
+- Default,you must build vue to the `dist` directory.
+- Naturally you can set this config key `web-path` to change the default directory.
 ```go
 package main
 
@@ -137,23 +298,31 @@ import (
 )
 
 func main() {
-	webServer := web.Init()
+	webServer := web_iris.Init()
 	webServer.AddWebStatic("/")
 	webServer.Run()
 }
 ```
-- 前端页面参考/借用：【前端只简单实现预览效果】
+- Front-end page reference/borrowing:
+ *notice: The front-end only realizes preview effect simply*
 - [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin/tree/master/web)
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
 
 
-#### 简单用例
-- [简单使用](https://github.com/snowlyg/iris-admin/tree/master/example)
+#### Example
+- [iris](https://github.com/snowlyg/iris-admin-example/tree/main/iris)
 
-#### 单元测试和接口文档[待更新]
-- 测试前在 `main_test.go` 文件所在目录新建 `redis_pwd.txt `和 `redis_pwd.txt` 两个文件,分别填入 `redis` 和 `mysql` 的密码
-- 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
-- [接口单元测试例子](https://github.com/snowlyg/iris-admin/tree/master/modules/v1/user/test)
+#### Unit test and documentation: [to be updated]
+- Before start unit tests,you must create two files which is named `redis_pwd.txt `and `redis_pwd.txt` ,fill `redis` and `mysql` 's password in to these two files separately, on the directory the `main_test.go` file is located.
+- [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) package the unit test used, it's  simple package base on [httpexpect/v2](https://github.com/gavv/httpexpect).
+- [example for unit test](https://github.com/snowlyg/iris-admin/tree/master/modules/v1/user/test)
+
+#### Thanks
+
+ - Thanks [JetBrains](https://www.jetbrains.com/?from=iris-admin)' supports .
+
+
+
 
 */
 package doc

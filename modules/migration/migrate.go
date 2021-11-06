@@ -73,6 +73,9 @@ func (mc *MigrationCmd) rollbackTo(migrationId string) error {
 
 // Rollback 回滚迁移到
 func (mc *MigrationCmd) Rollback(migrationId string) error {
+	if mc.MigrationLen() == 0 {
+		return nil
+	}
 	if migrationId == "" {
 		mc.rollbackLast()
 	}

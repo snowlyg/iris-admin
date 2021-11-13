@@ -59,7 +59,6 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)
 	for _, r := range ws.app.GetRoutes() {
-
 		route := map[string]string{
 			"path": r.Path,
 			"name": r.Name,

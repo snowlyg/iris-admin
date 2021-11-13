@@ -17,17 +17,17 @@ func TestStart(t *testing.T) {
 	time.Sleep(3 * time.Second)
 
 	t.Run("test web start", func(t *testing.T) {
-		resp, err := http.Get("http://127.0.0.1:8086")
+		resp, err := http.Get("http://127.0.0.1:8088")
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}
 		defer resp.Body.Close()
-		s, err := ioutil.ReadAll(resp.Body)
+		_, err = ioutil.ReadAll(resp.Body)
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}
-		if string(s) != "Not Found" {
-			t.Errorf("test web start want %s but get %s", "Not Found", string(s))
+		if resp.StatusCode != http.StatusNotFound {
+			t.Errorf("test web start want [%d] but get [%d]", http.StatusNotFound, resp.StatusCode)
 		}
 	})
 }

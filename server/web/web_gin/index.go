@@ -29,21 +29,12 @@ var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
 type WebServer struct {
 	app *gin.Engine
 	server
-	parties      []Party
 	addr         string
 	timeFormat   string
 	staticPrefix string
 	staticPath   string
 	webPrefix    string
 	webPath      string
-}
-
-// Party 功能模块
-// - perfix 模块路由路径
-// - partyFunc 模块
-type Party struct {
-	Perfix    string
-	PartyFunc func(index gin.RouterGroup)
 }
 
 // InitWeb 初始化配置
@@ -97,11 +88,6 @@ func Init() *WebServer {
 // AddStatic 添加静态文件
 func (ws *WebServer) AddStatic(requestPath, root string) {
 	ws.app.Static(requestPath, root)
-}
-
-// AddModule 添加模块
-func (ws *WebServer) AddModule(parties ...Party) {
-	ws.parties = append(ws.parties, parties...)
 }
 
 // InitDriver 初始化认证

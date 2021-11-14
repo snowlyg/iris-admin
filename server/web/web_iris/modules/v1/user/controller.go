@@ -99,7 +99,7 @@ func DeleteUser(ctx iris.Context) {
 		ctx.JSON(orm.Response{Code: orm.ParamErr.Code, Data: nil, Msg: orm.ParamErr.Msg})
 		return
 	}
-	err := orm.Delete(database.Instance(), reqId.Id, &User{})
+	err := orm.Delete(database.Instance(), &User{}, scope.IdScope(reqId.Id))
 	if err != nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
@@ -116,14 +116,14 @@ func GetAll(ctx iris.Context) {
 		return
 	}
 
-	items := &PageResponse{}
+	items := PageResponse{}
 	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope())
 	if err != nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
 	// 查询用户角色
-	getRoles(database.Instance(), *items...)
+	getRoles(database.Instance(), items...)
 	list := iris.Map{"items": items, "total": total, "pageSize": req.PageSize, "page": req.Page}
 	ctx.JSON(orm.Response{Code: orm.NoErr.Code, Data: list, Msg: orm.NoErr.Msg})
 }

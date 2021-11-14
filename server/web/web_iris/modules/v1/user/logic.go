@@ -22,7 +22,7 @@ var ErrUserNameInvalide = errors.New("用户名名称已经被使用")
 
 // getRoles
 func getRoles(db *gorm.DB, users ...*Response) {
-	var roleIds []string
+	var roleIds []uint
 	userRoleIds := make(map[uint][]string, 10)
 	if len(users) == 0 {
 		return
@@ -31,7 +31,13 @@ func getRoles(db *gorm.DB, users ...*Response) {
 		user.ToString()
 		userRoleId := casbin.GetRolesForUser(user.Id)
 		userRoleIds[user.Id] = userRoleId
-		roleIds = append(roleIds, userRoleId...)
+		for _, roleId := range userRoleId {
+			id, err := strconv.ParseUint(roleId, 10, 64)
+			if err != nil {
+				continue
+			}
+			roleIds = append(roleIds, uint(id))
+		}
 	}
 
 	roles, err := role.FindInId(db, roleIds)

@@ -1,6 +1,10 @@
 package perm
 
 import (
+	"errors"
+
+	"github.com/snowlyg/helper/str"
+	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -26,6 +30,9 @@ type BasePermission struct {
 
 // Create 添加
 func (item *Permission) Create(db *gorm.DB) (uint, error) {
+	if !CheckNameAndAct(NameScope(item.Name), ActScope(item.Act)) {
+		return item.ID, errors.New(str.Join("权限[", item.Name, "-", item.Act, "]已存在"))
+	}
 	err := db.Model(item).Create(item).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("添加失败", zap.String("(item *Permission) Create()", err.Error()))
@@ -35,7 +42,10 @@ func (item *Permission) Create(db *gorm.DB) (uint, error) {
 }
 
 // Update 更新
-func (item *Permission) Update(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+func (item *Permission) Update(db *gorm.DB, id uint, scopes ...func(db *gorm.DB) *gorm.DB) error {
+	if !CheckNameAndAct(NameScope(item.Name), ActScope(item.Act), scope.NeIdScope(id)) {
+		return errors.New(str.Join("权限[", item.Name, "-", item.Act, "]已存在"))
+	}
 	err := db.Model(item).Scopes(scopes...).Updates(item).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("更新失败", zap.String("(item *Permission) Update() ", err.Error()))

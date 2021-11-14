@@ -24,7 +24,7 @@ func (res *Response) First(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) er
 // Paginate 分页
 type PageResponse []*Response
 
-func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
+func (res PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
 	db = db.Model(&Role{})
 	var count int64
 	err := db.Scopes(scopes...).Count(&count).Error
@@ -41,7 +41,7 @@ func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm
 	return count, nil
 }
 
-func (res *PageResponse) Find(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+func (res PageResponse) Find(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
 	db = db.Model(&Role{})
 	err := db.Scopes(scopes...).Find(&res).Error
 	if err != nil {

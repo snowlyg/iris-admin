@@ -32,7 +32,7 @@ func (item *Role) Create(db *gorm.DB) (uint, error) {
 }
 
 // Update 更新
-func (item *Role) Update(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
+func (item *Role) Update(db *gorm.DB, id uint, scopes ...func(db *gorm.DB) *gorm.DB) error {
 	err := db.Model(item).Scopes(scopes...).Updates(item).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("更新失败", zap.String("(item *Role) Update() ", err.Error()))

@@ -17,7 +17,7 @@ import (
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/viper_server"
-	"github.com/snowlyg/multi"
+	multi "github.com/snowlyg/multi/iris"
 )
 
 var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")

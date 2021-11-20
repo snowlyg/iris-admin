@@ -157,12 +157,12 @@ func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 		Page:     pageParam.Page,
 		PageSize: pageParam.PageSize,
 	}
-	perms := perm.PageResponse{}
+	perms := &perm.PageResponse{}
 	_, err := perms.Paginate(database.Instance(), req.PaginateScope())
 	if err != nil {
 		return routes, err
 	}
-	for _, route := range perms {
+	for _, route := range perms.Item {
 		perm := tests.Responses{
 			{Key: "id", Value: route.Id},
 			{Key: "name", Value: route.Name},

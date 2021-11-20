@@ -1,11 +1,11 @@
-package perm
+package api
 
 import (
 	"github.com/gin-gonic/gin"
 )
 
 func Group(group *gin.RouterGroup) {
-	ApiRouter := group.Group("/perms")
+	ApiRouter := group.Group("/apis")
 	{
 		ApiRouter.GET("/getApiList", GetApiList)              // 获取Api列表
 		ApiRouter.GET("/getAllApis", GetAllApis)              // 获取所有api

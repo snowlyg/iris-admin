@@ -1,4 +1,4 @@
-package perm
+package api
 
 import (
 	"github.com/gookit/color"

@@ -1,4 +1,4 @@
-package perm
+package api
 
 import (
 	"github.com/snowlyg/iris-admin/server/casbin"
@@ -31,7 +31,7 @@ func Delete(req DeleteApiReq) error {
 }
 
 func BatcheDelete(ids []uint) error {
-	apis := PageResponse{}
+	apis := &PageResponse{}
 	err := orm.Find(database.Instance(), apis, scope.InIdsScope(ids))
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func BatcheDelete(ids []uint) error {
 		if err := orm.Delete(tx, &Api{}, scope.InIdsScope(ids)); err != nil {
 			return err
 		}
-		for _, api := range apis {
+		for _, api := range apis.Item {
 			if err := casbin.ClearCasbin(1, api.Path, api.Method); err != nil {
 				return err
 			}

@@ -1,4 +1,4 @@
-package role
+package authority
 
 import (
 	"errors"
@@ -21,13 +21,17 @@ func GetAdminRoleName() string {
 	return "admin"
 }
 
+func Copy(req *AuthorityCopyResponse) (uint, error) {
+	return 0, nil
+}
+
 // Create 添加
 func Create(req *Request) (uint, error) {
-	if _, err := FindByName(NameScope(req.Name)); !errors.Is(err, gorm.ErrRecordNotFound) {
+	if _, err := FindByName(AuthorityNameScope(req.AuthorityName)); !errors.Is(err, gorm.ErrRecordNotFound) {
 		return 0, ErrRoleNameInvalide
 	}
-	role := &Role{BaseRole: req.BaseRole}
-	id, err := orm.Create(database.Instance(), role)
+	authority := &Authority{BaseAuthority: req.BaseAuthority}
+	id, err := orm.Create(database.Instance(), authority)
 	if err != nil {
 		return 0, err
 	}
@@ -49,35 +53,35 @@ func FindByName(scopes ...func(db *gorm.DB) *gorm.DB) (*Response, error) {
 }
 
 func IsAdminRole(id uint) error {
-	role := &Response{}
-	err := role.First(database.Instance(), scope.IdScope(id))
+	authority := &Response{}
+	err := authority.First(database.Instance(), scope.IdScope(id))
 	if err != nil {
 		return err
 	}
-	if role.Name == GetAdminRoleName() {
+	if authority.AuthorityName == GetAdminRoleName() {
 		return errors.New("不能操作超级管理员")
 	}
 	return nil
 }
 
 func FindById(db *gorm.DB, id uint) (Response, error) {
-	role := Response{}
-	err := db.Model(&Role{}).Where("id = ?", id).First(&role).Error
+	authority := Response{}
+	err := db.Model(&Authority{}).Where("id = ?", id).First(&authority).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("根据id查询角色错误", zap.String("错误:", err.Error()))
-		return role, err
+		return authority, err
 	}
-	return role, nil
+	return authority, nil
 }
 
 func FindInId(db *gorm.DB, ids []uint) ([]*Response, error) {
-	roles := PageResponse{}
-	err := roles.Find(database.Instance(), scope.InIdsScope(ids))
+	authorities := PageResponse{}
+	err := authorities.Find(database.Instance(), scope.InIdsScope(ids))
 	if err != nil {
 		zap_server.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误:", err.Error()))
 		return nil, err
 	}
-	return roles.Item, nil
+	return authorities.Item, nil
 }
 
 // AddPermForRole
@@ -110,7 +114,7 @@ func AddPermForRole(id uint, perms [][]string) error {
 
 func GetRoleIds() ([]uint, error) {
 	var roleIds []uint
-	err := database.Instance().Model(&Role{}).Select("id").Find(&roleIds).Error
+	err := database.Instance().Model(&Authority{}).Select("id").Find(&roleIds).Error
 	if err != nil {
 		return roleIds, fmt.Errorf("获取角色ids错误 %w", err)
 	}

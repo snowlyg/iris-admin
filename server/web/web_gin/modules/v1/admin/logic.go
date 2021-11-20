@@ -1,4 +1,4 @@
-package user
+package admin
 
 import (
 	"errors"
@@ -21,16 +21,16 @@ import (
 var ErrUserNameInvalide = errors.New("用户名名称已经被使用")
 
 // getRoles
-func getRoles(db *gorm.DB, users ...*Response) {
+func getRoles(db *gorm.DB, admins ...*Response) {
 	var roleIds []uint
 	userRoleIds := make(map[uint][]string, 10)
-	if len(users) == 0 {
+	if len(admins) == 0 {
 		return
 	}
-	for _, user := range users {
-		user.ToString()
-		userRoleId := casbin.GetRolesForUser(user.Id)
-		userRoleIds[user.Id] = userRoleId
+	for _, admin := range admins {
+		admin.ToString()
+		userRoleId := casbin.GetRolesForUser(admin.Id)
+		userRoleIds[admin.Id] = userRoleId
 		for _, roleId := range userRoleId {
 			id, err := strconv.ParseUint(roleId, 10, 64)
 			if err != nil {
@@ -45,11 +45,11 @@ func getRoles(db *gorm.DB, users ...*Response) {
 		zap_server.ZAPLOG.Error("get role get err ", zap.String("错误:", err.Error()))
 	}
 
-	for _, user := range users {
+	for _, admin := range admins {
 		for _, role := range roles {
 			sRoleId := strconv.FormatInt(int64(role.Id), 10)
-			if arr.InArrayS(userRoleIds[user.Id], sRoleId) {
-				user.Roles = append(user.Roles, role.DisplayName)
+			if arr.InArrayS(userRoleIds[admin.Id], sRoleId) {
+				admin.AuthorityIds = append(admin.AuthorityIds, role.DisplayName)
 			}
 		}
 	}
@@ -57,34 +57,34 @@ func getRoles(db *gorm.DB, users ...*Response) {
 
 // FindByName
 func FindByUserName(scopes ...func(db *gorm.DB) *gorm.DB) (*Response, error) {
-	user := &Response{}
-	err := user.First(database.Instance(), scopes...)
+	admin := &Response{}
+	err := admin.First(database.Instance(), scopes...)
 	if err != nil {
 		return nil, err
 	}
-	return user, nil
+	return admin, nil
 }
 
 func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (LoginResponse, error) {
-	user := LoginResponse{}
-	db = db.Model(&User{}).Select("id,password").
+	admin := LoginResponse{}
+	db = db.Model(&Admin{}).Select("id,password").
 		Where("username = ?", username)
 	if len(ids) == 1 {
 		db.Where("id != ?", ids[0])
 	}
-	err := db.First(&user).Error
+	err := db.First(&admin).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("根据用户名查询用户错误", zap.String("用户名:", username), zap.Uints("ids:", ids), zap.String("错误:", err.Error()))
-		return user, err
+		return admin, err
 	}
-	return user, nil
+	return admin, nil
 }
 
 func Create(req *Request) (uint, error) {
 	if _, err := FindByUserName(UserNameScope(req.Username)); !errors.Is(err, gorm.ErrRecordNotFound) {
 		return 0, ErrUserNameInvalide
 	}
-	user := &User{BaseUser: req.BaseUser, RoleIds: req.RoleIds}
+	admin := &Admin{BaseAdmin: req.BaseAdmin, AuthorityIds: req.AuthorityIds}
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		zap_server.ZAPLOG.Error("密码加密错误", zap.String("错误:", err.Error()))
@@ -93,13 +93,13 @@ func Create(req *Request) (uint, error) {
 
 	zap_server.ZAPLOG.Info("添加用户", zap.String("hash:", req.Password), zap.ByteString("hash:", hash))
 
-	user.Password = string(hash)
-	id, err := orm.Create(database.Instance(), user)
+	admin.Password = string(hash)
+	id, err := orm.Create(database.Instance(), admin)
 	if err != nil {
 		return 0, err
 	}
 
-	if err := AddRoleForUser(user); err != nil {
+	if err := AddRoleForUser(admin); err != nil {
 		zap_server.ZAPLOG.Error("添加用户角色错误", zap.String("错误:", err.Error()))
 		return 0, err
 	}
@@ -108,33 +108,33 @@ func Create(req *Request) (uint, error) {
 }
 
 func IsAdminUser(id uint) error {
-	user := &Response{}
-	err := user.First(database.Instance(), scope.IdScope(id))
+	admin := &Response{}
+	err := admin.First(database.Instance(), scope.IdScope(id))
 	if err != nil {
 		return err
 	}
-	if arr.InArrayS(user.Roles, role.GetAdminRoleName()) {
+	if arr.InArrayS(admin.AuthorityIds, role.GetAdminRoleName()) {
 		return errors.New("不能操作超级管理员")
 	}
 	return nil
 }
 
 func FindById(db *gorm.DB, id uint) (Response, error) {
-	user := Response{}
-	err := db.Model(&User{}).Where("id = ?", id).First(&user).Error
+	admin := Response{}
+	err := db.Model(&Admin{}).Where("id = ?", id).First(&admin).Error
 	if err != nil {
-		zap_server.ZAPLOG.Error("find user err ", zap.String("错误:", err.Error()))
-		return user, err
+		zap_server.ZAPLOG.Error("find admin err ", zap.String("错误:", err.Error()))
+		return admin, err
 	}
 
-	getRoles(db, &user)
+	getRoles(db, &admin)
 
-	return user, nil
+	return admin, nil
 }
 
 // AddRoleForUser add roles for user
-func AddRoleForUser(user *User) error {
-	userId := strconv.FormatUint(uint64(user.ID), 10)
+func AddRoleForUser(admin *Admin) error {
+	userId := strconv.FormatUint(uint64(admin.ID), 10)
 	oldRoleIds, err := casbin.Instance().GetRolesForUser(userId)
 	if err != nil {
 		zap_server.ZAPLOG.Error("获取用户角色错误", zap.String("错误:", err.Error()))
@@ -147,13 +147,13 @@ func AddRoleForUser(user *User) error {
 			return err
 		}
 	}
-	if len(user.RoleIds) == 0 {
+	if len(admin.AuthorityIds) == 0 {
 		return nil
 	}
 
 	var roleIds []string
-	for _, userRoleId := range user.RoleIds {
-		roleIds = append(roleIds, strconv.FormatUint(uint64(userRoleId), 10))
+	for _, userRoleId := range admin.AuthorityIds {
+		roleIds = append(roleIds, userRoleId)
 	}
 
 	if _, err := casbin.Instance().AddRolesForUser(userId, roleIds); err != nil {

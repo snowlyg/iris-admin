@@ -8,7 +8,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/user"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	"github.com/snowlyg/multi"
+	multi "github.com/snowlyg/multi/iris"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )

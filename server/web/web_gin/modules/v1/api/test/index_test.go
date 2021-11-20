@@ -163,7 +163,7 @@ func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 		return routes, err
 	}
 
-	for _, route := range perms {
+	for _, route := range perms.Item {
 		perm := tests.Responses{
 			{Key: "id", Value: route.Id},
 			{Key: "path", Value: route.Path},

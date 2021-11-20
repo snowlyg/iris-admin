@@ -1,4 +1,4 @@
-package perm
+package api
 
 import (
 	"github.com/gin-gonic/gin"
@@ -19,7 +19,7 @@ func CreateApi(ctx *gin.Context) {
 		return
 	}
 	if id, err := orm.Create(database.Instance(), api); err != nil {
-		zap_server.ZAPLOG.Error("CreateApi()", zap.Any("err", err))
+		zap_server.ZAPLOG.Error("Create()", zap.Any("err", err))
 		response.FailWithMessage(err.Error(), ctx)
 	} else {
 		response.OkWithData(gin.H{"id": id, "path": api.Path, "method": api.Method}, ctx)
@@ -108,7 +108,7 @@ func GetAllApis(ctx *gin.Context) {
 		response.FailWithMessage(err.Error(), ctx)
 		return
 	}
-	apis := PageResponse{}
+	apis := &PageResponse{}
 	err := orm.Find(database.Instance(), apis, AuthorityTypeScope(req.AuthorityType))
 	if err != nil {
 		zap_server.ZAPLOG.Error("GetAllApis()", zap.Any("err", err))

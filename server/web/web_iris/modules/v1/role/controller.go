@@ -111,12 +111,12 @@ func GetAll(ctx iris.Context) {
 		return
 	}
 
-	items := PageResponse{}
+	items := &PageResponse{}
 	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope())
 	if err != nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
-	list := iris.Map{"items": items, "total": total, "pageSize": req.PageSize, "page": req.Page}
+	list := iris.Map{"items": items.Item, "total": total, "pageSize": req.PageSize, "page": req.Page}
 	ctx.JSON(orm.Response{Code: orm.NoErr.Code, Data: list, Msg: orm.NoErr.Msg})
 }

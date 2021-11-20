@@ -1,4 +1,4 @@
-package perm
+package api
 
 import (
 	"github.com/snowlyg/iris-admin/server/zap_server"

@@ -2,15 +2,13 @@ package user
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/server/casbin"
-	"github.com/snowlyg/iris-admin/server/operation"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 )
 
 // Party 用户
 func Party() func(index iris.Party) {
 	return func(index iris.Party) {
-		index.Use(middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
+		index.Use(middleware.MultiHandler(), middleware.OperationRecord(), middleware.Casbin())
 		index.Get("/", GetAll).Name = "用户列表"
 		index.Get("/{id:uint}", GetUser).Name = "用户详情"
 		index.Post("/", CreateUser).Name = "创建用户"

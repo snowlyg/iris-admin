@@ -5,7 +5,7 @@ import (
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
-	"github.com/snowlyg/multi"
+	multi "github.com/snowlyg/multi/iris"
 )
 
 /**

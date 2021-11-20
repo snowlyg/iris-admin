@@ -15,7 +15,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/perm"
-	"github.com/snowlyg/multi"
+	multi "github.com/snowlyg/multi/gin"
 )
 
 // Party v1 模块

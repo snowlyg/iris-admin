@@ -1,4 +1,4 @@
-package user
+package admin
 
 import (
 	"regexp"
@@ -12,17 +12,17 @@ import (
 
 type Response struct {
 	orm.Model
-	BaseUser
-	Roles []string `gorm:"-" json:"roles"`
+	BaseAdmin
+	AuthorityIds []string `gorm:"-" json:"authorityIds"`
 }
 
 func (res *Response) ToString() {
-	if res.Avatar == "" {
+	if res.Avatar.HeaderImg == "" {
 		return
 	}
 	re := regexp.MustCompile("^http")
-	if !re.MatchString(res.Avatar) {
-		res.Avatar = str.Join("http://127.0.0.1:8085/upload/", res.Avatar)
+	if !re.MatchString(res.Avatar.HeaderImg) {
+		res.Avatar.HeaderImg = str.Join("http://127.0.0.1:8085/upload/", res.Avatar.HeaderImg)
 	}
 }
 
@@ -32,7 +32,7 @@ type LoginResponse struct {
 }
 
 func (res *Response) First(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
-	err := db.Model(&User{}).Scopes(scopes...).First(res).Error
+	err := db.Model(&Admin{}).Scopes(scopes...).First(res).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("获取失败", zap.String("First()", err.Error()))
 		return err
@@ -46,7 +46,7 @@ type PageResponse struct {
 }
 
 func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
-	db = db.Model(&User{})
+	db = db.Model(&Admin{})
 	var count int64
 	err := db.Scopes(scopes...).Count(&count).Error
 	if err != nil {
@@ -63,7 +63,7 @@ func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm
 }
 
 func (res *PageResponse) Find(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
-	db = db.Model(&User{})
+	db = db.Model(&Admin{})
 	err := db.Scopes(scopes...).Find(&res.Item).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("获取数据失败", zap.String("Find()", err.Error()))

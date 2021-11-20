@@ -20,7 +20,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/perm"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/role"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/user"
-	"github.com/snowlyg/multi"
+	multi "github.com/snowlyg/multi/iris"
 )
 
 // Party v1 模块

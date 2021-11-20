@@ -9,7 +9,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/validate"
-	"github.com/snowlyg/multi"
+	multi "github.com/snowlyg/multi/iris"
 	"gorm.io/gorm"
 )
 
@@ -116,15 +116,15 @@ func GetAll(ctx iris.Context) {
 		return
 	}
 
-	items := PageResponse{}
+	items := &PageResponse{}
 	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope())
 	if err != nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
 	// 查询用户角色
-	getRoles(database.Instance(), items...)
-	list := iris.Map{"items": items, "total": total, "pageSize": req.PageSize, "page": req.Page}
+	getRoles(database.Instance(), items.Item...)
+	list := iris.Map{"items": items.Item, "total": total, "pageSize": req.PageSize, "page": req.Page}
 	ctx.JSON(orm.Response{Code: orm.NoErr.Code, Data: list, Msg: orm.NoErr.Msg})
 }
 

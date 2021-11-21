@@ -8,9 +8,9 @@ import (
 
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
-	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/user"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/admin"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	multi "github.com/snowlyg/multi/iris"
+	multi "github.com/snowlyg/multi/gin"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -22,10 +22,10 @@ var (
 
 // GetAccessToken 登录
 func GetAccessToken(req *LoginRequest) (*LoginResponse, error) {
-	if store.Verify(req.CaptchaId, req.Captcha, true) || web_gin.CONFIG.System.Level == "debug" {
+	if !store.Verify(req.CaptchaId, req.Captcha, true) && web_gin.CONFIG.System.Level != "test" {
 		return nil, ErrCaptcha
 	}
-	admin, err := user.FindPasswordByUserName(database.Instance(), req.Username)
+	admin, err := admin.FindPasswordByUserName(database.Instance(), req.Username)
 	if err != nil {
 		return nil, err
 	}

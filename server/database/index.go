@@ -126,6 +126,9 @@ func DorpDB(dsn, driver, dbName string) error {
 	if err != nil {
 		return err
 	}
+	if db == nil {
+		return errors.New("db is nil")
+	}
 	defer func(db *sql.DB) {
 		_ = db.Close()
 	}(db)
@@ -133,5 +136,9 @@ func DorpDB(dsn, driver, dbName string) error {
 		return err
 	}
 	_, err = db.Exec(execSql)
-	return err
+	if err != nil {
+		return err
+	}
+	fmt.Println(execSql)
+	return nil
 }

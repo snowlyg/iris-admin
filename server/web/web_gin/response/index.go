@@ -7,6 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	ResponseOkMessage    = "操作成功"
+	ResponseErrorMessage = "操作失败"
+)
+
 type Response struct {
 	Code int         `json:"status"`
 	Data interface{} `json:"data"`
@@ -18,7 +23,7 @@ func Result(code int, data interface{}, msg string, ctx *gin.Context) {
 }
 
 func Ok(ctx *gin.Context) {
-	Result(http.StatusOK, map[string]interface{}{}, "操作成功", ctx)
+	Result(http.StatusOK, map[string]interface{}{}, ResponseOkMessage, ctx)
 }
 
 func OkWithMessage(message string, ctx *gin.Context) {
@@ -26,7 +31,7 @@ func OkWithMessage(message string, ctx *gin.Context) {
 }
 
 func OkWithData(data interface{}, ctx *gin.Context) {
-	Result(http.StatusOK, data, "操作成功", ctx)
+	Result(http.StatusOK, data, ResponseOkMessage, ctx)
 }
 
 func OkWithDetailed(data interface{}, message string, ctx *gin.Context) {
@@ -34,7 +39,7 @@ func OkWithDetailed(data interface{}, message string, ctx *gin.Context) {
 }
 
 func Fail(ctx *gin.Context) {
-	Result(http.StatusBadRequest, map[string]interface{}{}, "操作失败", ctx)
+	Result(http.StatusBadRequest, map[string]interface{}{}, ResponseErrorMessage, ctx)
 }
 
 func UnauthorizedFailWithMessage(message string, ctx *gin.Context) {

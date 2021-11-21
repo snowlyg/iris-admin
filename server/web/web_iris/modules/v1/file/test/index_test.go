@@ -18,7 +18,11 @@ func TestUpload(t *testing.T) {
 		t.Errorf("TestServer is nil")
 	}
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 	files := map[string]string{
 		"file": "./avatar.jpg",
 	}

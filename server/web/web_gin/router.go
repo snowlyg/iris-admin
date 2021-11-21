@@ -2,9 +2,11 @@ package web_gin
 
 import (
 	"net/http"
+	"strings"
 
 	limit "github.com/aviddiviner/gin-limit"
 	"github.com/gin-gonic/gin"
+	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
 )
 
@@ -61,18 +63,17 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)
 	for _, r := range ws.app.Routes() {
-
 		route := map[string]string{
 			"path":   r.Path,
-			"name":   r.Handler,
+			"name":   "",
 			"method": r.Method,
 		}
-		// handerNames := context.HandlersNames(r.HandlerFunc)
-		// if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi.(*Verifier).Verify") {
-		// 	noPermRoutes = append(noPermRoutes, route)
-		// } else {
-		permRoutes = append(permRoutes, route)
-		// }
+
+		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || !strings.Contains(r.Handler, "github.com/snowlyg/multi.(*Verifier).Verify") {
+			noPermRoutes = append(noPermRoutes, route)
+		} else {
+			permRoutes = append(permRoutes, route)
+		}
 	}
 	return permRoutes, noPermRoutes
 }

@@ -18,7 +18,7 @@ var mysqlPwd string
 
 func TestMain(m *testing.M) {
 	node, _ := snowflake.NewNode(1)
-	uuid := str.Join("iris", "_", node.Generate().String())
+	uuid := str.Join("casbin", "_", node.Generate().String())
 
 	database.CONFIG = database.Mysql{
 		Path:         "127.0.0.1:3306",
@@ -45,10 +45,18 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	db, _ := database.Instance().DB()
+	db, err := database.Instance().DB()
+	if err != nil {
+		dir.WriteString("error.txt", err.Error())
+		panic(err)
+	}
 	if db != nil {
 		db.Close()
 	}
-
+	err = database.Remove()
+	if err != nil {
+		dir.WriteString("error.txt", err.Error())
+		panic(err)
+	}
 	os.Exit(code)
 }

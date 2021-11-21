@@ -2,7 +2,7 @@ package public
 
 type LoginResponse struct {
 	Data  interface{} `json:"data"`
-	Token string      `json:"AccessToken"`
+	Token string      `json:"accessToken"`
 }
 
 type MiniCodeResponse struct {

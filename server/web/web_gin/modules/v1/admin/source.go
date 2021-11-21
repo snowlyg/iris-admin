@@ -22,7 +22,7 @@ func GetSources() ([]*Request, error) {
 			Phone:    "13800138000",
 			NickName: "超级管理员",
 		},
-		Password:     "e10adc3949ba59abbe56e057f20f883e", // 123456
+		Password:     "123456",
 		AuthorityIds: []uint{g.AdminAuthorityId},
 	})
 	return admins, nil

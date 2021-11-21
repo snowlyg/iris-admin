@@ -2,12 +2,14 @@ package v1
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
+	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/migration"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
@@ -29,10 +31,25 @@ func Party(group *gin.RouterGroup) {
 	public.Group(group)
 }
 
+var LoginResponse = tests.Responses{
+	{Key: "status", Value: http.StatusOK},
+	{Key: "message", Value: "请求成功"},
+	{Key: "data",
+		Value: tests.Responses{
+			{Key: "accessToken", Value: "", Type: "notempty"},
+		},
+	},
+}
+var LogoutResponse = tests.Responses{
+	{Key: "status", Value: http.StatusOK},
+	{Key: "message", Value: "请求成功"},
+}
+
 func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_gin.WebServer) {
+	fmt.Println("+++++ before test +++++")
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
-	
+	fmt.Printf("+++++ %s +++++\n\n", uuid)
 	web_gin.CONFIG.System.CacheType = "redis"
 	web_gin.CONFIG.System.DbType = "mysql"
 	web_gin.InitWeb()
@@ -65,24 +82,28 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_gin.We
 
 	mc := migration.New()
 	// 添加 v1 内置模块数据表和数据
+	fmt.Println("++++++ add model ++++++")
 	mc.AddModel(&api.Api{}, &authority.Authority{}, &admin.Admin{}, &operation.Oplog{})
 	routes, _ := wi.GetSources()
-
+	fmt.Println("+++++++ seed data ++++++")
 	// notice : 注意模块顺序
 	mc.AddSeed(api.New(routes), authority.Source, admin.Source)
 	err := mc.Migrate()
 	if err != nil {
-		panic(err)
+		fmt.Printf("migrate get error [%s]", err.Error())
+		return uuid, nil
 	}
 	err = mc.Seed()
 	if err != nil {
-		panic(err)
+		fmt.Printf("seed get error [%s]", err.Error())
+		return uuid, nil
 	}
 
 	return uuid, wi
 }
 
 func AfterTestMain(uuid string) {
+	fmt.Println("++++++++ after test main ++++++++")
 	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {
 		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
@@ -90,8 +111,12 @@ func AfterTestMain(uuid string) {
 		dir.WriteString("error.txt", text)
 		panic(err)
 	}
-
-	db, _ := database.Instance().DB()
+	fmt.Println("++++++++ dorp db ++++++++")
+	db, err := database.Instance().DB()
+	if err != nil {
+		dir.WriteString("error.txt", err.Error())
+		panic(err)
+	}
 	if db != nil {
 		db.Close()
 	}
@@ -99,5 +124,9 @@ func AfterTestMain(uuid string) {
 	if multi.AuthDriver != nil {
 		multi.AuthDriver.Close()
 	}
-
+	err = database.Remove()
+	if err != nil {
+		dir.WriteString("error.txt", err.Error())
+		panic(err)
+	}
 }

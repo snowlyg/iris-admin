@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/snowlyg/helper/tests"
+	v1 "github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/response"
 )
 
 var (
@@ -15,11 +17,20 @@ var (
 )
 
 func TestList(t *testing.T) {
-	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if TestServer == nil {
+		t.Error("test server is nil")
+		return
+	}
+
+	client := TestServer.GetTestLogin(t, loginUrl, v1.LoginResponse)
+	if client != nil {
+		defer client.Logout(logoutUrl, v1.LogoutResponse)
+	} else {
+		return
+	}
 	pageKeys := tests.Responses{
 		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: "请求成功"},
+		{Key: "message", Value: response.ResponseOkMessage},
 		{Key: "data", Value: tests.Responses{
 			{Key: "pageSize", Value: 10},
 			{Key: "page", Value: 1},
@@ -40,8 +51,17 @@ func TestList(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if TestServer == nil {
+		t.Error("test server is nil")
+		return
+	}
+
+	client := TestServer.GetTestLogin(t, loginUrl, v1.LoginResponse)
+	if client != nil {
+		defer client.Logout(logoutUrl, v1.LogoutResponse)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "test_display_name",
 		"displayName": "测试名称",
@@ -55,8 +75,17 @@ func TestCreate(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if TestServer == nil {
+		t.Error("test server is nil")
+		return
+	}
+
+	client := TestServer.GetTestLogin(t, loginUrl, v1.LoginResponse)
+	if client != nil {
+		defer client.Logout(logoutUrl, v1.LogoutResponse)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "update_test_display_name",
 		"displayName": "测试名称",
@@ -76,14 +105,23 @@ func TestUpdate(t *testing.T) {
 
 	pageKeys := tests.Responses{
 		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: "请求成功"},
+		{Key: "message", Value: response.ResponseOkMessage},
 	}
 	client.POST(fmt.Sprintf("%s/%d", url, id), pageKeys, update)
 }
 
 func TestGetById(t *testing.T) {
-	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if TestServer == nil {
+		t.Error("test server is nil")
+		return
+	}
+
+	client := TestServer.GetTestLogin(t, loginUrl, v1.LoginResponse)
+	if client != nil {
+		defer client.Logout(logoutUrl, v1.LogoutResponse)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "getbyid_test_display_name",
 		"displayName": "更新测试名称",
@@ -97,7 +135,7 @@ func TestGetById(t *testing.T) {
 
 	pageKeys := tests.Responses{
 		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: "请求成功"},
+		{Key: "message", Value: response.ResponseOkMessage},
 		{Key: "data", Value: tests.Responses{
 			{Key: "id", Value: 1, Type: "ge"},
 			{Key: "name", Value: data["name"].(string)},
@@ -115,7 +153,7 @@ func TestGetById(t *testing.T) {
 func Create(client *tests.Client, data map[string]interface{}) uint {
 	pageKeys := tests.Responses{
 		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: "请求成功"},
+		{Key: "message", Value: response.ResponseOkMessage},
 		{Key: "data", Value: tests.Responses{
 			{Key: "id", Value: 1, Type: "ge"},
 		},
@@ -127,7 +165,7 @@ func Create(client *tests.Client, data map[string]interface{}) uint {
 func Delete(client *tests.Client, id uint) {
 	pageKeys := tests.Responses{
 		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: "请求成功"},
+		{Key: "message", Value: response.ResponseOkMessage},
 	}
 	client.DELETE(fmt.Sprintf("%s/%d", url, id), pageKeys)
 }

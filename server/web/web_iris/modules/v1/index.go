@@ -40,6 +40,8 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_iris.W
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("iris", "_", node.Generate().String())
 
+	fmt.Printf("+++++ %s +++++\n\n", uuid)
+
 	web_iris.CONFIG.System.CacheType = "redis"
 	web_iris.CONFIG.System.DbType = "mysql"
 	web_iris.InitWeb()
@@ -84,17 +86,20 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_iris.W
 	mc.AddSeed(perm.New(routes), role.Source, user.Source)
 	err := mc.Migrate()
 	if err != nil {
-		panic(err)
+		fmt.Printf("migrate get error %s\n", err.Error())
+		return uuid, nil
 	}
 	err = mc.Seed()
 	if err != nil {
-		panic(err)
+		fmt.Printf("seed get error %s\n", err.Error())
+		return uuid, nil
 	}
 
 	return uuid, wi
 }
 
 func AfterTestMain(uuid string) {
+	fmt.Println("++++++++ after test main ++++++++")
 	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {
 		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
@@ -103,13 +108,22 @@ func AfterTestMain(uuid string) {
 		panic(err)
 	}
 
-	db, _ := database.Instance().DB()
+	fmt.Println("++++++++ dorp db ++++++++")
+
+	db, err := database.Instance().DB()
+	if err != nil {
+		dir.WriteString("error.txt", err.Error())
+		panic(err)
+	}
 	if db != nil {
 		db.Close()
 	}
-
 	if multi.AuthDriver != nil {
 		multi.AuthDriver.Close()
 	}
-
+	err = database.Remove()
+	if err != nil {
+		dir.WriteString("error.txt", err.Error())
+		panic(err)
+	}
 }

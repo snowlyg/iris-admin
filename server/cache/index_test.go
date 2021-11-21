@@ -128,7 +128,7 @@ func TestSetCacheBytes(t *testing.T) {
 		if !reflect.DeepEqual(get, want) {
 			t.Errorf("set cache want [%s] but get [%s]\n", want, get)
 		}
-		time.Sleep(time.Second * 3)
+		time.Sleep(time.Second * 10)
 		_, err = GetCacheBytes(key)
 		if err == nil {
 			t.Error("set cache want error but get nil\n")

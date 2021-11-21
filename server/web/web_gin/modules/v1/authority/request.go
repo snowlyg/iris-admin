@@ -7,18 +7,18 @@ import (
 	"go.uber.org/zap"
 )
 
-type Request struct {
-	BaseAuthority
-	Perms [][]string `json:"perms"`
-}
+// type Request struct {
+// 	BaseAuthority
+// 	Perms [][]string `json:"perms"`
+// }
 
-func (req *Request) Request(ctx *gin.Context) error {
-	if err := ctx.ShouldBindJSON(req); err != nil {
-		zap_server.ZAPLOG.Error("参数验证失败", zap.String("ReadParams()", err.Error()))
-		return orm.ErrParamValidate
-	}
-	return nil
-}
+// func (req *Request) Request(ctx *gin.Context) error {
+// 	if err := ctx.ShouldBindJSON(req); err != nil {
+// 		zap_server.ZAPLOG.Error("参数验证失败", zap.String("ReadParams()", err.Error()))
+// 		return orm.ErrParamValidate
+// 	}
+// 	return nil
+// }
 
 type ReqPaginate struct {
 	orm.Paginate

@@ -7,10 +7,10 @@ const (
 )
 
 const (
-	AdminAuthorityId   = 999
-	TenancyAuthorityId = 998
-	LiteAuthorityId    = 997 // 小程序用户
-	DeviceAuthorityId  = 996 // 床旁设备用户
+	AdminAuthorityId   uint = 999
+	TenancyAuthorityId uint = 998
+	LiteAuthorityId    uint = 997 // 小程序用户
+	DeviceAuthorityId  uint = 996 // 床旁设备用户
 )
 
 const (

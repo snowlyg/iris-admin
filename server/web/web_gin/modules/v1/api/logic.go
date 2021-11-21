@@ -11,8 +11,8 @@ import (
 )
 
 // CreatenInBatches 批量加入
-func CreatenInBatches(db *gorm.DB, perms ApiCollection) error {
-	err := db.Model(&Api{}).CreateInBatches(&perms, 500).Error
+func CreatenInBatches(db *gorm.DB, apis ApiCollection) error {
+	err := db.Model(&Api{}).CreateInBatches(&apis, 500).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("批量导入权限", zap.String("错误:", err.Error()))
 		return err

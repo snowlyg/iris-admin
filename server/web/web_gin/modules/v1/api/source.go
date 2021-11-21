@@ -17,18 +17,18 @@ func New(routes []map[string]string) *source {
 }
 
 func (s *source) GetSources() ApiCollection {
-	perms := make(ApiCollection, 0, len(s.routes))
+	apis := make(ApiCollection, 0, len(s.routes))
 	for _, permRoute := range s.routes {
-		perm := Api{BaseApi: BaseApi{
+		api := Api{BaseApi: BaseApi{
 			Path:          permRoute["path"],
 			Description:   permRoute["name"],
 			ApiGroup:      permRoute["name"],
 			AuthorityType: 0,
 			Method:        permRoute["act"],
 		}}
-		perms = append(perms, perm)
+		apis = append(apis, api)
 	}
-	return perms
+	return apis
 }
 
 func (s *source) Init() error {
@@ -42,7 +42,7 @@ func (s *source) Init() error {
 		if err := CreatenInBatches(tx, s.GetSources()); err != nil { // 遇到错误时回滚事务
 			return err
 		}
-		color.Info.Println("\n[Mysql] --> permssions 表初始数据成功!")
+		color.Info.Println("\n[Mysql] --> apis 表初始数据成功!")
 		return nil
 	})
 }

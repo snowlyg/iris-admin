@@ -10,7 +10,7 @@ type Admin struct {
 	gorm.Model
 	Password string `json:"-"  gorm:"not null;type:varchar(128);comment:用户登录密码"`
 	BaseAdmin
-	AuthorityIds []string `json:"authorityIds" gorm:"-"`
+	AuthorityIds []uint `json:"authorityIds" gorm:"-"`
 }
 
 type BaseAdmin struct {

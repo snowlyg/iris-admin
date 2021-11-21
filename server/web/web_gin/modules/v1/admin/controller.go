@@ -129,35 +129,6 @@ func GetAll(ctx *gin.Context) {
 	}, ctx)
 }
 
-// Logout 退出
-func Logout(ctx *gin.Context) {
-	token := multi.GetVerifiedToken(ctx)
-	if token == nil {
-		response.FailWithMessage("授权凭证为空", ctx)
-		return
-	}
-	err := DelToken(string(token))
-	if err != nil {
-		response.FailWithMessage(err.Error(), ctx)
-		return
-	}
-	response.Ok(ctx)
-}
-
-// Clear 清空 token
-func Clear(ctx *gin.Context) {
-	token := multi.GetVerifiedToken(ctx)
-	if token == nil {
-		response.FailWithMessage("授权凭证为空", ctx)
-		return
-	}
-	if err := CleanToken(multi.AdminAuthority, string(token)); err != nil {
-		response.FailWithMessage(err.Error(), ctx)
-		return
-	}
-	response.Ok(ctx)
-}
-
 // ChangeAvatar 修改头像
 func ChangeAvatar(ctx *gin.Context) {
 	avatar := &Avatar{}

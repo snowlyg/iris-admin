@@ -5,14 +5,14 @@ import (
 )
 
 func Group(group *gin.RouterGroup) {
-	ApiRouter := group.Group("/apis")
+	apiRouter := group.Group("/api")
 	{
-		ApiRouter.GET("/getApiList", GetApiList)              // 获取Api列表
-		ApiRouter.GET("/getAllApis", GetAllApis)              // 获取所有api
-		ApiRouter.GET("/getApiById/:id", GetApiById)          // 获取单条Api消息
-		ApiRouter.POST("/createApi", CreateApi)               // 创建Api
-		ApiRouter.DELETE("/deleteApi", DeleteApi)             // 删除Api
-		ApiRouter.PUT("/updateApi/:id", UpdateApi)            // 更新api
-		ApiRouter.DELETE("/deleteApisByIds", DeleteApisByIds) // 删除选中api
+		apiRouter.GET("/getApiList", GetApiList)              // 获取Api列表
+		apiRouter.GET("/getAllApis", GetAllApis)              // 获取所有api
+		apiRouter.GET("/getApiById/:id", GetApiById)          // 获取单条Api消息
+		apiRouter.POST("/createApi", CreateApi)               // 创建Api
+		apiRouter.DELETE("/deleteApi", DeleteApi)             // 删除Api
+		apiRouter.PUT("/updateApi/:id", UpdateApi)            // 更新api
+		apiRouter.DELETE("/deleteApisByIds", DeleteApisByIds) // 删除选中api
 	}
 }

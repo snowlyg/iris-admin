@@ -23,7 +23,7 @@ func GetSources() ([]*Request, error) {
 			NickName: "超级管理员",
 		},
 		Password:     "e10adc3949ba59abbe56e057f20f883e", // 123456
-		AuthorityIds: []string{g.AdminAuthorityId},
+		AuthorityIds: []uint{g.AdminAuthorityId},
 	})
 	return admins, nil
 }
@@ -31,7 +31,7 @@ func GetSources() ([]*Request, error) {
 func (s *source) Init() error {
 	return database.Instance().Transaction(func(tx *gorm.DB) error {
 		if tx.Model(&Admin{}).Where("id IN ?", []int{1}).Find(&[]Admin{}).RowsAffected == 1 {
-			color.Danger.Println("\n[Mysql] --> users 表的初始数据已存在!")
+			color.Danger.Println("\n[Mysql] --> admins 表的初始数据已存在!")
 			return nil
 		}
 		sources, err := GetSources()
@@ -43,7 +43,7 @@ func (s *source) Init() error {
 				return err
 			}
 		}
-		color.Info.Println("\n[Mysql] --> users 表初始数据成功!")
+		color.Info.Println("\n[Mysql] --> admins 表初始数据成功!")
 		return nil
 	})
 }

@@ -2,22 +2,23 @@ package test
 
 import (
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/snowlyg/helper/tests"
 )
 
 var (
-	loginUrl  = "/api/v1/auth/login"   // 登录URL
-	logoutUrl = "/api/v1/users/logout" // 登出 URL
-	url       = "/api/v1/roles"        // url
+	loginUrl  = "/api/v1/public/admin/login"
+	logoutUrl = "/api/v1/public/logout"
+	url       = "/api/v1/authority" // url
 )
 
 func TestList(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
 	defer client.Logout(logoutUrl, nil)
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 		{Key: "data", Value: tests.Responses{
 			{Key: "pageSize", Value: 10},
@@ -74,7 +75,7 @@ func TestUpdate(t *testing.T) {
 	}
 
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 	}
 	client.POST(fmt.Sprintf("%s/%d", url, id), pageKeys, update)
@@ -95,7 +96,7 @@ func TestGetById(t *testing.T) {
 	defer Delete(client, id)
 
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 		{Key: "data", Value: tests.Responses{
 			{Key: "id", Value: 1, Type: "ge"},
@@ -113,7 +114,7 @@ func TestGetById(t *testing.T) {
 
 func Create(client *tests.Client, data map[string]interface{}) uint {
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 		{Key: "data", Value: tests.Responses{
 			{Key: "id", Value: 1, Type: "ge"},
@@ -125,7 +126,7 @@ func Create(client *tests.Client, data map[string]interface{}) uint {
 
 func Delete(client *tests.Client, id uint) {
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 	}
 	client.DELETE(fmt.Sprintf("%s/%d", url, id), pageKeys)

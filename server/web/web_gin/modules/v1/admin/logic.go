@@ -2,7 +2,6 @@ package admin
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/snowlyg/helper/arr"
@@ -12,7 +11,6 @@ import (
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/role"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	multi "github.com/snowlyg/multi/iris"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -153,7 +151,8 @@ func AddRoleForUser(admin *Admin) error {
 
 	var roleIds []string
 	for _, userRoleId := range admin.AuthorityIds {
-		roleIds = append(roleIds, userRoleId)
+		authId := strconv.FormatUint(uint64(userRoleId), 10)
+		roleIds = append(roleIds, authId)
 	}
 
 	if _, err := casbin.Instance().AddRolesForUser(userId, roleIds); err != nil {
@@ -161,26 +160,6 @@ func AddRoleForUser(admin *Admin) error {
 		return err
 	}
 
-	return nil
-}
-
-// DelToken 删除token
-func DelToken(token string) error {
-	err := multi.AuthDriver.DelUserTokenCache(token)
-	if err != nil {
-		zap_server.ZAPLOG.Error("del token", zap.Any("err", err))
-		return fmt.Errorf("del token %w", err)
-	}
-	return nil
-}
-
-// CleanToken 清空 token
-func CleanToken(authorityType int, userId string) error {
-	err := multi.AuthDriver.CleanUserTokenCache(authorityType, userId)
-	if err != nil {
-		zap_server.ZAPLOG.Error("clean token", zap.Any("err", err))
-		return fmt.Errorf("clean token %w", err)
-	}
 	return nil
 }
 

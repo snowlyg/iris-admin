@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/snowlyg/iris-admin/server/web/web_iris"
-	v1 "github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1"
+	"github.com/snowlyg/iris-admin/server/web/web_gin"
+	v1 "github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1"
 )
 
 //go:embed mysqlPwd.txt
@@ -15,7 +15,7 @@ var mysqlPwd string
 //go:embed redisPwd.txt
 var redisPwd string
 
-var TestServer *web_iris.WebServer
+var TestServer *web_gin.WebServer
 
 func TestMain(m *testing.M) {
 	var uuid string

@@ -9,8 +9,8 @@ import (
 
 type Request struct {
 	BaseAdmin
-	Password     string   `json:"password"`
-	AuthorityIds []string `json:"authorityIds" binding:"required"`
+	Password     string `json:"password"`
+	AuthorityIds []uint `json:"authorityIds" binding:"required"`
 }
 
 func (req *Request) Request(ctx *gin.Context) error {

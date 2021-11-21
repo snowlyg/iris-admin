@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type AuthorityCollection []Request
+type AuthorityCollection []Authority
 
 type Authority struct {
 	CreatedAt time.Time  `json:"createdAt"`
@@ -20,6 +20,7 @@ type Authority struct {
 	BaseAuthority
 	Menus    []BaseMenu  `json:"menus" gorm:"many2many:authority_menus;"`
 	Children []Authority `json:"children" gorm:"-"`
+	Perms    [][]string  `json:"perms" gorm:"-"`
 }
 
 type BaseAuthority struct {

@@ -1,14 +1,15 @@
 package authority
 
 import (
-	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
 type Response struct {
-	orm.Model
+	AuthorityId uint   `json:"authorityId"`
+	UpdatedAt   string `json:"updatedAt"`
+	CreatedAt   string `json:"createdAt"`
 	BaseAuthority
 }
 

@@ -2,18 +2,19 @@ package test
 
 import (
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/database/orm"
-	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/api"
 )
 
 var (
-	loginUrl  = "/api/v1/auth/login"
-	logoutUrl = "/api/v1/users/logout"
-	url       = "/api/v1/perms"
+	loginUrl  = "/api/v1/public/admin/login"
+	logoutUrl = "/api/v1/public/logout"
+	url       = "/api/v1/api"
 )
 
 type PageParam struct {
@@ -32,12 +33,12 @@ func TestList(t *testing.T) {
 	routes, _ := TestServer.GetSources()
 	for _, pageParam := range pageParams {
 		t.Run(fmt.Sprintf("路由权限测试，第%d页", pageParam.Page), func(t *testing.T) {
-			items, err := getPerms(pageParam)
+			items, err := getApis(pageParam)
 			if err != nil {
 				t.Fatalf("获取路由权限错误")
 			}
 			pageKeys := tests.Responses{
-				{Key: "code", Value: pageParam.Code},
+				{Key: "status", Value: http.StatusOK},
 				{Key: "message", Value: pageParam.Message},
 				{Key: "data", Value: tests.Responses{
 					{Key: "pageSize", Value: pageParam.PageSize},
@@ -92,7 +93,7 @@ func TestUpdate(t *testing.T) {
 	}
 
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 	}
 	client.POST(fmt.Sprintf("%s/%d", url, id), pageKeys, update)
@@ -114,7 +115,7 @@ func TestGetById(t *testing.T) {
 	defer Delete(client, id)
 
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 		{Key: "data", Value: tests.Responses{
 			{Key: "id", Value: 1, Type: "ge"},
@@ -132,7 +133,7 @@ func TestGetById(t *testing.T) {
 
 func Create(client *tests.Client, data map[string]interface{}) uint {
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 		{Key: "data", Value: tests.Responses{
 			{Key: "id", Value: 1, Type: "ge"},
@@ -144,27 +145,27 @@ func Create(client *tests.Client, data map[string]interface{}) uint {
 
 func Delete(client *tests.Client, id uint) {
 	pageKeys := tests.Responses{
-		{Key: "code", Value: 2000},
+		{Key: "status", Value: http.StatusOK},
 		{Key: "message", Value: "请求成功"},
 	}
 	client.DELETE(fmt.Sprintf("%s/%d", url, id), pageKeys)
 }
 
-func getPerms(pageParam PageParam) ([]tests.Responses, error) {
+func getApis(pageParam PageParam) ([]tests.Responses, error) {
 	l := pageParam.PageLen
 	routes := make([]tests.Responses, 0, l)
 	req := &orm.Paginate{
 		Page:     pageParam.Page,
 		PageSize: pageParam.PageSize,
 	}
-	perms := perm.PageResponse{}
-	_, err := perms.Paginate(database.Instance(), req.PaginateScope())
+	apis := api.PageResponse{}
+	_, err := apis.Paginate(database.Instance(), req.PaginateScope())
 	if err != nil {
 		return routes, err
 	}
 
-	for _, route := range perms.Item {
-		perm := tests.Responses{
+	for _, route := range apis.Item {
+		api := tests.Responses{
 			{Key: "id", Value: route.Id},
 			{Key: "path", Value: route.Path},
 			{Key: "description", Value: route.Description},
@@ -174,7 +175,7 @@ func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 			{Key: "updatedAt", Value: route.UpdatedAt},
 			{Key: "createdAt", Value: route.CreatedAt},
 		}
-		routes = append(routes, perm)
+		routes = append(routes, api)
 		l--
 		if l == 0 {
 			break

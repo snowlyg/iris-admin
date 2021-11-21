@@ -2,18 +2,18 @@ package authority
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/response"
 	"github.com/snowlyg/iris-admin/server/zap_server"
+	multi "github.com/snowlyg/multi/gin"
 	"go.uber.org/zap"
 )
 
 // CreateAuthority 创建角色
 func CreateAuthority(ctx *gin.Context) {
-	req := &Request{}
+	req := &Authority{}
 	if errs := ctx.ShouldBindJSON(&req); errs != nil {
 		response.FailWithMessage(errs.Error(), ctx)
 		return
@@ -61,12 +61,12 @@ func DeleteAuthority(ctx *gin.Context) {
 // UpdateAuthority 更新角色信息
 func UpdateAuthority(ctx *gin.Context) {
 	reqId := &orm.ReqId{}
-	if errs := ctx.ShouldBindJSON(&reqId); errs != nil {
+	if errs := reqId.Request(ctx); errs != nil {
 		response.FailWithMessage(errs.Error(), ctx)
 		return
 	}
 
-	req := &Request{}
+	req := &Authority{}
 	if errs := ctx.ShouldBindJSON(&req); errs != nil {
 		response.FailWithMessage(errs.Error(), ctx)
 		return
@@ -90,7 +90,7 @@ func GetAdminAuthorityList(ctx *gin.Context) {
 	}
 
 	items := &PageResponse{}
-	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope(), AuthorityTypeScope(g.AdminAuthorityId))
+	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope(), AuthorityTypeScope(multi.AdminAuthority))
 	if err != nil {
 		response.FailWithMessage(err.Error(), ctx)
 		return
@@ -112,7 +112,7 @@ func GetTenancyAuthorityList(ctx *gin.Context) {
 	}
 
 	items := &PageResponse{}
-	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope(), AuthorityTypeScope(g.TenancyAuthorityId))
+	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope(), AuthorityTypeScope(multi.TenancyAuthority))
 	if err != nil {
 		response.FailWithMessage(err.Error(), ctx)
 		return
@@ -134,7 +134,7 @@ func GetGeneralAuthorityList(ctx *gin.Context) {
 	}
 
 	items := &PageResponse{}
-	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope(), AuthorityTypeScope(g.DeviceAuthorityId))
+	total, err := orm.Pagination(database.Instance(), items, req.PaginateScope(), AuthorityTypeScope(multi.GeneralAuthority))
 	if err != nil {
 		response.FailWithMessage(err.Error(), ctx)
 		return

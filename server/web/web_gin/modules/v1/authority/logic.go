@@ -8,7 +8,6 @@ import (
 	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/database/orm"
-	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -26,12 +25,11 @@ func Copy(req *AuthorityCopyResponse) (uint, error) {
 }
 
 // Create 添加
-func Create(req *Request) (uint, error) {
+func Create(req *Authority) (uint, error) {
 	if _, err := FindByName(AuthorityNameScope(req.AuthorityName)); !errors.Is(err, gorm.ErrRecordNotFound) {
 		return 0, ErrRoleNameInvalide
 	}
-	authority := &Authority{BaseAuthority: req.BaseAuthority}
-	id, err := orm.Create(database.Instance(), authority)
+	id, err := orm.Create(database.Instance(), req)
 	if err != nil {
 		return 0, err
 	}
@@ -54,7 +52,7 @@ func FindByName(scopes ...func(db *gorm.DB) *gorm.DB) (*Response, error) {
 
 func IsAdminRole(id uint) error {
 	authority := &Response{}
-	err := authority.First(database.Instance(), scope.IdScope(id))
+	err := authority.First(database.Instance(), AuthorityIdScope(id))
 	if err != nil {
 		return err
 	}
@@ -64,19 +62,9 @@ func IsAdminRole(id uint) error {
 	return nil
 }
 
-func FindById(db *gorm.DB, id uint) (Response, error) {
-	authority := Response{}
-	err := db.Model(&Authority{}).Where("id = ?", id).First(&authority).Error
-	if err != nil {
-		zap_server.ZAPLOG.Error("根据id查询角色错误", zap.String("错误:", err.Error()))
-		return authority, err
-	}
-	return authority, nil
-}
-
 func FindInId(db *gorm.DB, ids []uint) ([]*Response, error) {
 	authorities := PageResponse{}
-	err := authorities.Find(database.Instance(), scope.InIdsScope(ids))
+	err := authorities.Find(database.Instance(), InAuthorityIdScope(ids))
 	if err != nil {
 		zap_server.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误:", err.Error()))
 		return nil, err
@@ -114,7 +102,7 @@ func AddPermForRole(id uint, perms [][]string) error {
 
 func GetRoleIds() ([]uint, error) {
 	var roleIds []uint
-	err := database.Instance().Model(&Authority{}).Select("id").Find(&roleIds).Error
+	err := database.Instance().Model(&Authority{}).Select("authority_id").Find(&roleIds).Error
 	if err != nil {
 		return roleIds, fmt.Errorf("获取角色ids错误 %w", err)
 	}

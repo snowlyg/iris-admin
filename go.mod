@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/aviddiviner/gin-limit v0.0.0-20170918012823-43b5f79762c1
+	github.com/bwmarrin/snowflake v0.3.1-0.20210825212239-3cf6d89d1fe9
 	github.com/casbin/casbin/v2 v2.37.2
 	github.com/casbin/gorm-adapter/v3 v3.4.2
 	github.com/fsnotify/fsnotify v1.5.1
@@ -23,6 +24,7 @@ require (
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/mojocn/base64Captcha v1.3.5
 	github.com/snowlyg/helper v0.0.0-20211010091912-06421609d44a
 	github.com/snowlyg/multi v0.0.0-20211120070216-d3fac469b147
 	github.com/spf13/viper v1.8.1

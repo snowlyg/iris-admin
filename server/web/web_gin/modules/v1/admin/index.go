@@ -5,16 +5,15 @@ import (
 )
 
 func Group(group *gin.RouterGroup) {
-	ApiRouter := group.Group("/perms")
+	adminRouter := group.Group("/admin")
 	{
-		ApiRouter.GET("/", GetAll)
-		ApiRouter.GET("/{id:uint}", GetAdmin)
-		ApiRouter.POST("/", CreateAdmin)
-		ApiRouter.POST("/{id:uint}", UpdateAdmin)
-		ApiRouter.DELETE("/{id:uint}", DeleteAdmin)
-		ApiRouter.GET("/logout", Logout)
-		ApiRouter.GET("/clear", Clear)
-		ApiRouter.GET("/profile", Profile)
-		ApiRouter.POST("/change_avatar", ChangeAvatar)
+		adminRouter.GET("/", GetAll)
+		adminRouter.GET("/{id:uint}", GetAdmin)
+		adminRouter.POST("/", CreateAdmin)
+		adminRouter.POST("/{id:uint}", UpdateAdmin)
+		adminRouter.DELETE("/{id:uint}", DeleteAdmin)
+
+		adminRouter.GET("/profile", Profile)
+		adminRouter.POST("/change_avatar", ChangeAvatar)
 	}
 }

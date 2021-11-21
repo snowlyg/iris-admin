@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/migration"
@@ -14,23 +14,25 @@ import (
 	"github.com/snowlyg/iris-admin/server/operation"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
-	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/perm"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/admin"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/api"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/authority"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/modules/v1/public"
 	multi "github.com/snowlyg/multi/gin"
 )
 
 // Party v1 模块
 func Party(group *gin.RouterGroup) {
-	perm.Group(group)
-	// v1.PartyFunc("/users", user.Party())
-	// v1.PartyFunc("/roles", role.Party())
-	// v1.PartyFunc("/file", file.Party())
-	// v1.PartyFunc("/auth", auth.Party())
-	// v1.PartyFunc("/oplog", oplog.Party())
+	api.Group(group)
+	admin.Group(group)
+	authority.Group(group)
+	public.Group(group)
 }
 
 func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_gin.WebServer) {
-	uuid := uuid.New().String()
-
+	node, _ := snowflake.NewNode(1)
+	uuid := str.Join("gin", "_", node.Generate().String())
+	
 	web_gin.CONFIG.System.CacheType = "redis"
 	web_gin.CONFIG.System.DbType = "mysql"
 	web_gin.InitWeb()
@@ -58,15 +60,16 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_gin.We
 	cache.InitCache()
 
 	wi := web_gin.Init()
+	Party(wi.GetRouterGroup("/api/v1"))
 	web.StartTest(wi)
 
 	mc := migration.New()
 	// 添加 v1 内置模块数据表和数据
-	mc.AddModel(&perm.Api{}, &operation.Oplog{})
+	mc.AddModel(&api.Api{}, &authority.Authority{}, &admin.Admin{}, &operation.Oplog{})
 	routes, _ := wi.GetSources()
 
 	// notice : 注意模块顺序
-	mc.AddSeed(perm.New(routes))
+	mc.AddSeed(api.New(routes), authority.Source, admin.Source)
 	err := mc.Migrate()
 	if err != nil {
 		panic(err)

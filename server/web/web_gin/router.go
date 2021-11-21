@@ -1,7 +1,6 @@
 package web_gin
 
 import (
-	"fmt"
 	"net/http"
 
 	limit "github.com/aviddiviner/gin-limit"
@@ -23,6 +22,10 @@ func (a *CustomAspect) Name() string {
 
 func (a *CustomAspect) InRoot() bool {
 	return false
+}
+
+func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
+	return ws.app.Group(relativePath)
 }
 
 // InitRouter 初始化模块路由
@@ -64,8 +67,6 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			"name":   r.Handler,
 			"method": r.Method,
 		}
-		fmt.Println()
-		fmt.Println(r)
 		// handerNames := context.HandlersNames(r.HandlerFunc)
 		// if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi.(*Verifier).Verify") {
 		// 	noPermRoutes = append(noPermRoutes, route)

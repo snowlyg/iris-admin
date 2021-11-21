@@ -18,6 +18,14 @@ func AuthorityIdScope(id uint) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+// InAuthorityIdScope 根据 ids 查询
+// - ids 数据ids
+func InAuthorityIdScope(ids []uint) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("authority_id in ?", ids)
+	}
+}
+
 // AuthorityTypeScope 根据 type 查询
 // - authorityType 角色类型
 func AuthorityTypeScope(authorityType int) func(db *gorm.DB) *gorm.DB {

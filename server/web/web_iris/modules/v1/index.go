@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/google/uuid"
+	"github.com/bwmarrin/snowflake"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
@@ -36,7 +36,9 @@ func Party() func(v1 iris.Party) {
 }
 
 func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_iris.WebServer) {
-	uuid := uuid.New().String()
+	fmt.Println("+++++ before test +++++")
+	node, _ := snowflake.NewNode(1)
+	uuid := str.Join("iris", "_", node.Generate().String())
 
 	web_iris.CONFIG.System.CacheType = "redis"
 	web_iris.CONFIG.System.DbType = "mysql"
@@ -73,9 +75,11 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_iris.W
 	web.StartTest(wi)
 
 	mc := migration.New()
+	fmt.Println("++++++ add model ++++++")
 	// 添加 v1 内置模块数据表和数据
 	mc.AddModel(&perm.Permission{}, &role.Role{}, &user.User{}, &operation.Oplog{})
 	routes, _ := wi.GetSources()
+	fmt.Println("+++++++ seed data ++++++")
 	// notice : 注意模块顺序
 	mc.AddSeed(perm.New(routes), role.Source, user.Source)
 	err := mc.Migrate()

@@ -14,7 +14,6 @@ require (
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/go-redis/redis/v8 v8.11.3
-	github.com/google/uuid v1.3.0
 	github.com/gookit/color v1.4.2
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
 	github.com/jonboulle/clockwork v0.2.2 // indirect
@@ -39,5 +38,3 @@ require (
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.15
 )
-
-replace github.com/snowlyg/multi v0.0.0-20211120070216-d3fac469b147 => /Users/snowlyg/go/src/github.com/snowlyg/multi

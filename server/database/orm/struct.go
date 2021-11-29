@@ -2,8 +2,11 @@ package orm
 
 import (
 	"errors"
+	"fmt"
+	"reflect"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/kataras/iris/v12"
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/validate"
@@ -24,9 +27,28 @@ type ReqId struct {
 	Id uint `json:"id" param:"id"`
 }
 
-func (req *ReqId) Request(ctx iris.Context) error {
+func (req *ReqId) Request(ctx interface{}) error {
+	if c, ok := ctx.(iris.Context); ok {
+		return req.irisReadParams(c)
+	} else if c, ok := ctx.(*gin.Context); ok {
+		return req.ginShouldBindJSON(c)
+	} else {
+		ctxTypeName := reflect.TypeOf(ctx).Name()
+		return fmt.Errorf("Context [%s] 类型错误", ctxTypeName)
+	}
+}
+
+func (req *ReqId) irisReadParams(ctx iris.Context) error {
 	if err := ctx.ReadParams(req); err != nil {
 		zap_server.ZAPLOG.Error("id参数获取失败", zap.String("ReadParams()", err.Error()))
+		return ErrParamValidate
+	}
+	return nil
+}
+
+func (req *ReqId) ginShouldBindJSON(ctx *gin.Context) error {
+	if err := ctx.ShouldBindJSON(req); err != nil {
+		zap_server.ZAPLOG.Error("id参数获取失败", zap.String("ShouldBindJSON()", err.Error()))
 		return ErrParamValidate
 	}
 	return nil
@@ -40,13 +62,32 @@ type Paginate struct {
 	Sort     string `json:"sort"`
 }
 
-func (req *Paginate) Request(ctx iris.Context) error {
+func (req *Paginate) Request(ctx interface{}) error {
+	if c, ok := ctx.(iris.Context); ok {
+		return req.irisReadQuerys(c)
+	} else if c, ok := ctx.(*gin.Context); ok {
+		return req.ginShouldBind(c)
+	} else {
+		ctxTypeName := reflect.TypeOf(ctx).Name()
+		return fmt.Errorf("Context [%s] 类型错误", ctxTypeName)
+	}
+}
+
+func (req *Paginate) irisReadQuerys(ctx iris.Context) error {
 	if err := ctx.ReadQuery(req); err != nil {
 		errs := validate.ValidRequest(err)
 		if len(errs) > 0 {
 			zap_server.ZAPLOG.Error("参数验证失败", zap.String("ValidRequest()", strings.Join(errs, ";")))
 			return ErrParamValidate
 		}
+	}
+	return nil
+}
+
+func (req *Paginate) ginShouldBind(ctx *gin.Context) error {
+	if err := ctx.ShouldBind(req); err != nil {
+		zap_server.ZAPLOG.Error("id参数获取失败", zap.String("ShouldBind()", err.Error()))
+		return ErrParamValidate
 	}
 	return nil
 }

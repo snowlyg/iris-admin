@@ -1,8 +1,6 @@
 package perm
 
 import (
-	"fmt"
-
 	"github.com/gookit/color"
 	"github.com/snowlyg/iris-admin/server/database"
 	"gorm.io/gorm"
@@ -27,7 +25,6 @@ func (s *source) GetSources() PermCollection {
 			Description: permRoute["name"],
 			Act:         permRoute["act"],
 		}}
-		fmt.Printf("%+v\n", perm)
 		perms = append(perms, perm)
 	}
 	return perms

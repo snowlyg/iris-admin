@@ -14,8 +14,15 @@ var (
 )
 
 func TestList(t *testing.T) {
+	if TestServer == nil {
+		t.Errorf("TestServer is nil")
+	}
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
@@ -40,7 +47,11 @@ func TestList(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "test_display_name",
 		"displayName": "测试名称",
@@ -55,7 +66,11 @@ func TestCreate(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "update_test_display_name",
 		"displayName": "测试名称",
@@ -82,7 +97,11 @@ func TestUpdate(t *testing.T) {
 
 func TestGetById(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "getbyid_test_display_name",
 		"displayName": "更新测试名称",

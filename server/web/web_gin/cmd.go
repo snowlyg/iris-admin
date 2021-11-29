@@ -6,7 +6,7 @@ import (
 
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/multi"
+	multi "github.com/snowlyg/multi/gin"
 )
 
 // InitConfig 初始化配置文件

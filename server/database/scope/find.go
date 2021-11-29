@@ -12,7 +12,7 @@ func IdScope(id uint) func(db *gorm.DB) *gorm.DB {
 
 // InIdsScope 根据 id 查询
 // - ids 数据id
-func InIdsScope(ids []string) func(db *gorm.DB) *gorm.DB {
+func InIdsScope(ids []uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("id in ?", ids)
 	}

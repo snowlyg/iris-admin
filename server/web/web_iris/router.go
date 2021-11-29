@@ -1,6 +1,7 @@
 package web_iris
 
 import (
+	"net/http"
 	"strings"
 	"time"
 
@@ -65,7 +66,7 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			"act":  r.Method,
 		}
 		handerNames := context.HandlersNames(r.Handlers)
-		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi.(*Verifier).Verify") {
+		if !arr.InArrayS([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi/iris.(*Verifier).Verify") {
 			noPermRoutes = append(noPermRoutes, route)
 		} else {
 			permRoutes = append(permRoutes, route)

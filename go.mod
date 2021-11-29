@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/aviddiviner/gin-limit v0.0.0-20170918012823-43b5f79762c1
+	github.com/bwmarrin/snowflake v0.3.1-0.20210825212239-3cf6d89d1fe9
 	github.com/casbin/casbin/v2 v2.37.2
 	github.com/casbin/gorm-adapter/v3 v3.4.2
 	github.com/fsnotify/fsnotify v1.5.1
@@ -13,20 +14,19 @@ require (
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/go-redis/redis/v8 v8.11.3
-	github.com/google/uuid v1.3.0
 	github.com/gookit/color v1.4.2
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
 	github.com/jonboulle/clockwork v0.2.2 // indirect
-	github.com/kataras/iris/v12 v12.2.0-alpha4
+	github.com/kataras/iris/v12 v12.2.0-alpha4.0.20211013142751-e2f40ca06e5e
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/mojocn/base64Captcha v1.3.5
 	github.com/snowlyg/helper v0.0.0-20211010091912-06421609d44a
-	github.com/snowlyg/multi v0.0.1
+	github.com/snowlyg/multi v0.0.0-20211120070216-d3fac469b147
 	github.com/spf13/viper v1.8.1
-	github.com/szuecs/gin-gomonitor v1.1.3 // indirect
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect
 	github.com/unrolled/secure v1.0.9
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
@@ -35,7 +35,6 @@ require (
 	golang.org/x/net v0.0.0-20211105192438-b53810dc28af // indirect
 	golang.org/x/sys v0.0.0-20211106132015-ebca88c72f68 // indirect
 	gopkg.in/ini.v1 v1.63.2 // indirect
-	gopkg.in/mcuadros/go-monitor.v1 v1.1.1 // indirect
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.15
 )

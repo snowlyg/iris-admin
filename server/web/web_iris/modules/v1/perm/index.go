@@ -2,8 +2,6 @@ package perm
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/server/casbin"
-	"github.com/snowlyg/iris-admin/server/operation"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 )
 
@@ -15,7 +13,7 @@ import (
 // - 实现控制器逻辑
 func Party() func(index iris.Party) {
 	return func(index iris.Party) {
-		index.Use(middleware.MultiHandler(), operation.OperationRecord(), casbin.Casbin())
+		index.Use(middleware.MultiHandler(), middleware.OperationRecord(), middleware.Casbin())
 		index.Get("/", GetAll).Name = "权限列表"
 		index.Get("/{id:uint}", First).Name = "权限详情"
 		index.Post("/", CreatePerm).Name = "创建权限"

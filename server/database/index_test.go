@@ -28,8 +28,8 @@ func TestGormMysql(t *testing.T) {
 func TestGormConfig(t *testing.T) {
 	t.Run("test gorm config", func(t *testing.T) {
 		gormConfig := gormConfig(false)
-		if !reflect.DeepEqual(gormConfig.Logger, Default.LogMode(logger.Silent)) {
-			t.Errorf("gorm config logger want %+v but get %+v", Default.LogMode(logger.Silent), gormConfig.Logger)
+		if !reflect.DeepEqual(gormConfig.Logger, Default.LogMode(logger.Error)) {
+			t.Errorf("gorm config logger want %+v but get %+v", Default.LogMode(logger.Error), gormConfig.Logger)
 		}
 	})
 }

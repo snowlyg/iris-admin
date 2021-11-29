@@ -70,14 +70,14 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	return role, nil
 }
 
-func FindInId(db *gorm.DB, ids []string) ([]*Response, error) {
+func FindInId(db *gorm.DB, ids []uint) ([]*Response, error) {
 	roles := PageResponse{}
 	err := roles.Find(database.Instance(), scope.InIdsScope(ids))
 	if err != nil {
 		zap_server.ZAPLOG.Error("通过ids查询角色错误", zap.String("错误:", err.Error()))
 		return nil, err
 	}
-	return roles, nil
+	return roles.Item, nil
 }
 
 // AddPermForRole

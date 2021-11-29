@@ -94,7 +94,7 @@ func DeleteRole(ctx iris.Context) {
 		ctx.JSON(orm.Response{Code: orm.ParamErr.Code, Data: nil, Msg: orm.ParamErr.Msg})
 	}
 
-	err = orm.Delete(database.Instance(), reqId.Id, &Role{})
+	err = orm.Delete(database.Instance(), &Role{}, scope.IdScope(reqId.Id))
 	if err != nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
@@ -117,6 +117,6 @@ func GetAll(ctx iris.Context) {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return
 	}
-	list := iris.Map{"items": items, "total": total, "pageSize": req.PageSize, "page": req.Page}
+	list := iris.Map{"items": items.Item, "total": total, "pageSize": req.PageSize, "page": req.Page}
 	ctx.JSON(orm.Response{Code: orm.NoErr.Code, Data: list, Msg: orm.NoErr.Msg})
 }

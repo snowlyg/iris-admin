@@ -25,8 +25,15 @@ type PageParam struct {
 }
 
 func TestList(t *testing.T) {
+	if TestServer == nil {
+		t.Errorf("TestServer is nil")
+	}
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 
 	pageParams := getPageParams()
 	routes, _ := TestServer.GetSources()
@@ -55,7 +62,11 @@ func TestList(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "test_route_name",
 		"displayName": "测试描述信息",
@@ -71,7 +82,11 @@ func TestCreate(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "update_test_route_name",
 		"displayName": "测试描述信息",
@@ -100,7 +115,11 @@ func TestUpdate(t *testing.T) {
 
 func TestGetById(t *testing.T) {
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	defer client.Logout(logoutUrl, nil)
+	if client != nil {
+		defer client.Logout(logoutUrl, nil)
+	} else {
+		return
+	}
 	data := map[string]interface{}{
 		"name":        "getbyid_test_route_name",
 		"displayName": "测试描述信息",
@@ -157,12 +176,12 @@ func getPerms(pageParam PageParam) ([]tests.Responses, error) {
 		Page:     pageParam.Page,
 		PageSize: pageParam.PageSize,
 	}
-	perms := perm.PageResponse{}
+	perms := &perm.PageResponse{}
 	_, err := perms.Paginate(database.Instance(), req.PaginateScope())
 	if err != nil {
 		return routes, err
 	}
-	for _, route := range perms {
+	for _, route := range perms.Item {
 		perm := tests.Responses{
 			{Key: "id", Value: route.Id},
 			{Key: "name", Value: route.Name},

@@ -14,7 +14,7 @@ type Response struct {
 }
 
 func (res *Response) First(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
-	err := db.Model(&Permission{}).Model(&Permission{}).Scopes(scopes...).First(res).Error
+	err := db.Model(&Permission{}).Scopes(scopes...).First(res).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("获取权限失败", zap.String("First()", err.Error()))
 		return err
@@ -23,7 +23,9 @@ func (res *Response) First(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) er
 }
 
 // Paginate 分页
-type PageResponse []*Response
+type PageResponse struct {
+	Item []*Response
+}
 
 func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) (int64, error) {
 	db = db.Model(&Permission{})
@@ -33,7 +35,7 @@ func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm
 		zap_server.ZAPLOG.Error("获取总数失败", zap.String("Count()", err.Error()))
 		return count, err
 	}
-	err = db.Scopes(pageScope).Find(&res).Error
+	err = db.Scopes(pageScope).Find(&res.Item).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("获取分页数据失败", zap.String("Find()", err.Error()))
 		return count, err
@@ -44,7 +46,7 @@ func (res *PageResponse) Paginate(db *gorm.DB, pageScope func(db *gorm.DB) *gorm
 
 func (res *PageResponse) Find(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error {
 	db = db.Model(&Permission{})
-	err := db.Scopes(scopes...).Find(&res).Error
+	err := db.Scopes(scopes...).Find(&res.Item).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("获取数据失败", zap.String("Find()", err.Error()))
 		return err

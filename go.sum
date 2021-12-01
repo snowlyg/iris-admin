@@ -573,8 +573,8 @@ github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1
 github.com/smartystreets/assertions v1.2.0/go.mod h1:tcbTF8ujkAEcZ8TElKY+i30BzYlVhC/LOxJk7iOWnoo=
 github.com/smartystreets/goconvey v1.6.4/go.mod h1:syvi0/a8iFYH4r/RixwvyeAJjdLS9QV7WQ/tjFTllLA=
 github.com/smartystreets/goconvey v1.7.2/go.mod h1:Vw0tHAZW6lzCRk3xgdin6fKYcG+G3Pg9vgXWeJpQFMM=
-github.com/snowlyg/helper v0.0.0-20211010091912-06421609d44a h1:nxPRkyy2QghTXdey1Fok2rZ6X2lWvEv/jAllRopkdAU=
-github.com/snowlyg/helper v0.0.0-20211010091912-06421609d44a/go.mod h1:ApfY5rylaRJgf43tSNXD4lpXJcGrrFYtEEzPk2ZCcxE=
+github.com/snowlyg/helper v0.0.0-20211201074901-c5313323b31e h1:JLf/+Iwg8baSfF9Pr8kw99qqF4Y5PfucxAKQC4sdQ54=
+github.com/snowlyg/helper v0.0.0-20211201074901-c5313323b31e/go.mod h1:ApfY5rylaRJgf43tSNXD4lpXJcGrrFYtEEzPk2ZCcxE=
 github.com/snowlyg/multi v0.0.0-20211120070216-d3fac469b147 h1:bbl69/neyfjzGXq7/06mkC3MWU4FQirjYUa7dfnlXzU=
 github.com/snowlyg/multi v0.0.0-20211120070216-d3fac469b147/go.mod h1:5bD9heZG2QzfU0qPe1oQMskK/SczXnB2I1Gt4IRGwzE=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=

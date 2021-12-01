@@ -170,7 +170,7 @@ func (ws *WebServer) GetTestClient(t *testing.T) *tests.Client {
 }
 
 // GetTestLogin 测试登录web服务
-func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client {
+func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...interface{}) *tests.Client {
 	client := ws.GetTestClient(t)
 	if client == nil {
 		t.Error("登录失败")

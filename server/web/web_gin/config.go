@@ -97,7 +97,7 @@ system:
  static-path: /static/upload
  static-prefix: /upload
  time-format: "2006-01-02 15:04:05"
- web-prefix: /
+ web-prefix: /admin
  web-path: ./dist`),
 	}
 }

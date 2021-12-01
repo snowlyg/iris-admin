@@ -15,7 +15,7 @@ import (
 // - Run 启动
 type WebFunc interface {
 	GetTestClient(t *testing.T) *tests.Client
-	GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...map[string]interface{}) *tests.Client
+	GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...interface{}) *tests.Client
 
 	AddWebStatic()
 	AddUploadStatic()

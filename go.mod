@@ -24,8 +24,8 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/mojocn/base64Captcha v1.3.5
-	github.com/snowlyg/helper v0.0.0-20211201074901-c5313323b31e
-	github.com/snowlyg/multi v0.0.0-20211120070216-d3fac469b147
+	github.com/snowlyg/helper v0.0.0-20211202074034-78d14721c82d
+	github.com/snowlyg/multi v0.0.0-20211208083404-fae53ee641e7
 	github.com/spf13/viper v1.8.1
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect
 	github.com/unrolled/secure v1.0.9

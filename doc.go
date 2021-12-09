@@ -185,8 +185,8 @@ package main
 import (
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
-  "github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/perm"
-	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1/role"
+  "github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/perm"
+	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/role"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/operation"
 )
@@ -236,7 +236,7 @@ go run main.go
 package main
 
 import (
-	v1 "github.com/snowlyg/iris-admin/server/web/web_iris/modules/v1"
+	v1 "github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )

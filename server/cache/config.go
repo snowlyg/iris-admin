@@ -9,7 +9,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-var CONFIG Redis
+var CONFIG = Redis{
+	DB:       0,
+	Addr:     "127.0.0.1:6379",
+	Password: "",
+	PoolSize: 0,
+}
 
 type Redis struct {
 	DB       int    `mapstructure:"db" json:"db" yaml:"db"`

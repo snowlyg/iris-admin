@@ -10,7 +10,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-var CONFIG Operation
+var CONFIG = Operation{
+	Except: Route{
+		Uri:    "api/v1/upload;api/v1/upload",
+		Method: "post;put",
+	},
+	Include: Route{
+		Uri:    "api/v1/menus",
+		Method: "get",
+	},
+}
 
 // Operation 操作日志配置
 // Except 排除生成操作日志的路由,多条使用 ; 号分割
@@ -94,10 +103,10 @@ func getViperConfig() viper_server.ViperConfig {
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
 except: 
- uri: api/v1/upload;api/v1/upload
- method: post;put
+ uri: ` + CONFIG.Except.Uri + `
+ method: ` + CONFIG.Except.Method + `
 include: 
- uri: api/v1/menus
- method: get`),
+ uri: ` + CONFIG.Include.Uri + `
+ method: ` + CONFIG.Include.Method),
 	}
 }

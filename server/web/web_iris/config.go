@@ -2,6 +2,7 @@ package web_iris
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/snowlyg/iris-admin/g"
@@ -9,7 +10,30 @@ import (
 	"github.com/spf13/viper"
 )
 
-var CONFIG Web
+var CONFIG = Web{
+	MaxSize: 1024,
+	System: System{
+		Level:        "debug",
+		Addr:         "127.0.0.1:8085",
+		StaticPrefix: "/upload",
+		StaticPath:   "/static/upload",
+		WebPrefix:    "/admin",
+		WebPath:      "./dist",
+		DbType:       "mysql",
+		CacheType:    "redis",
+		TimeFormat:   "2006-01-02 15:04:05",
+	},
+	Limit: Limit{
+		Disable: true,
+		Limit:   0,
+		Burst:   5,
+	},
+	Captcha: Captcha{
+		KeyLong:   4,
+		ImgWidth:  240,
+		ImgHeight: 80,
+	},
+}
 
 type Web struct {
 	MaxSize int64   `mapstructure:"max-size" json:"burst" yaml:"max-size"`
@@ -19,9 +43,9 @@ type Web struct {
 }
 
 type Captcha struct {
-	KeyLong   int `mapstructure:"key-long" json:"keyLong" yaml:"key-long"`
-	ImgWidth  int `mapstructure:"img-width" json:"imgWidth" yaml:"img-width"`
-	ImgHeight int `mapstructure:"img-height" json:"imgHeight" yaml:"img-height"`
+	KeyLong   int64 `mapstructure:"key-long" json:"keyLong" yaml:"key-long"`
+	ImgWidth  int64 `mapstructure:"img-width" json:"imgWidth" yaml:"img-width"`
+	ImgHeight int64 `mapstructure:"img-height" json:"imgHeight" yaml:"img-height"`
 }
 
 type Limit struct {
@@ -58,6 +82,13 @@ func Remove() error {
 
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
+	maxSize := strconv.FormatInt(CONFIG.MaxSize, 10)
+	keyLong := strconv.FormatInt(CONFIG.Captcha.KeyLong, 10)
+	imgWidth := strconv.FormatInt(CONFIG.Captcha.ImgWidth, 10)
+	imgHeight := strconv.FormatInt(CONFIG.Captcha.ImgHeight, 10)
+	limit := strconv.FormatInt(int64(CONFIG.Limit.Limit), 10)
+	burst := strconv.FormatInt(int64(CONFIG.Limit.Burst), 10)
+	disable := strconv.FormatBool(CONFIG.Limit.Disable)
 	configName := "web"
 	return viper_server.ViperConfig{
 		Directory: g.ConfigDir,
@@ -80,24 +111,24 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-max-size: 1024
+max-size: ` + maxSize + `
 captcha:
- key-long: 6
- img-width: 240
- img-height: 80
+ key-long: ` + keyLong + `
+ img-width: ` + imgWidth + `
+ img-height: ` + imgHeight + `
 limit:
- limit: false
- limit: 0
- burst: 5
+ limit: ` + limit + `
+ disable: ` + disable + `
+ burst: ` + burst + `
 system:
- level: debug
+ level: ` + CONFIG.System.Level + `
  addr: ` + CONFIG.System.Addr + `
  db-type: ` + CONFIG.System.DbType + `
  cache-type: ` + CONFIG.System.CacheType + `
- static-path: /static/upload
- static-prefix: /upload
- time-format: "2006-01-02 15:04:05"
- web-prefix: /admin
- web-path: ./dist`),
+ static-path: ` + CONFIG.System.StaticPath + `
+ static-prefix: ` + CONFIG.System.StaticPrefix + `
+ time-format: ` + CONFIG.System.TimeFormat + `
+ web-prefix: ` + CONFIG.System.WebPrefix + `
+ web-path: ` + CONFIG.System.WebPath),
 	}
 }

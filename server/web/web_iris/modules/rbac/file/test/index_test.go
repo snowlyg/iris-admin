@@ -1,6 +1,7 @@
 package test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/snowlyg/helper/tests"
@@ -23,18 +24,25 @@ func TestUpload(t *testing.T) {
 	} else {
 		return
 	}
-	files := map[string]string{
-		"file": "./avatar.jpg",
-	}
-	filename, err := file.GetFileName(files["file"])
+	name := "mysqlPwd.txt"
+	fh, err := os.Open("D:/admin/go/src/github.com/snowlyg/iris-admin/web/web_iris/modules/rabc/file/tests/" + name)
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Error(err)
+		return
+	}
+	defer fh.Close()
+	files := []tests.File{
+		{
+			Key:    "file",
+			Path:   name,
+			Reader: fh,
+		},
 	}
 	pageKeys := tests.Responses{
 		{Key: "code", Value: 2000},
 		{Key: "message", Value: "请求成功"},
 		{Key: "data", Value: tests.Responses{
-			{Key: "local", Value: file.GetPath(filename)},
+			{Key: "local", Value: file.GetPath(name)},
 			{Key: "qiniu", Value: ""},
 		}},
 	}

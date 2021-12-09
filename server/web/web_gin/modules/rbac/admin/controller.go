@@ -26,7 +26,7 @@ func Profile(ctx *gin.Context) {
 // GetAdmin 详情
 func GetAdmin(ctx *gin.Context) {
 	req := &orm.ReqId{}
-	if errs := ctx.ShouldBindJSON(&req); errs != nil {
+	if errs := ctx.ShouldBindUri(&req); errs != nil {
 		response.FailWithMessage(errs.Error(), ctx)
 		return
 	}
@@ -108,7 +108,7 @@ func DeleteAdmin(ctx *gin.Context) {
 // GetAll 分页列表
 func GetAll(ctx *gin.Context) {
 	req := &orm.Paginate{}
-	if errs := ctx.ShouldBindJSON(&req); errs != nil {
+	if errs := ctx.ShouldBind(&req); errs != nil {
 		response.FailWithMessage(errs.Error(), ctx)
 		return
 	}

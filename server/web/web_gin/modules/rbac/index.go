@@ -33,7 +33,7 @@ func Party(group *gin.RouterGroup) {
 
 var LoginResponse = tests.Responses{
 	{Key: "status", Value: http.StatusOK},
-	{Key: "message", Value: "请求成功"},
+	{Key: "message", Value: "操作成功"},
 	{Key: "data",
 		Value: tests.Responses{
 			{Key: "accessToken", Value: "", Type: "notempty"},
@@ -42,7 +42,7 @@ var LoginResponse = tests.Responses{
 }
 var LogoutResponse = tests.Responses{
 	{Key: "status", Value: http.StatusOK},
-	{Key: "message", Value: "请求成功"},
+	{Key: "message", Value: "操作成功"},
 }
 
 func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_gin.WebServer) {

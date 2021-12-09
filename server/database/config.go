@@ -9,7 +9,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-var CONFIG Mysql
+var CONFIG = Mysql{
+	Path:         "127.0.0.1:3306",
+	Config:       "charset=utf8mb4&parseTime=True&loc=Local",
+	Dbname:       "",
+	Username:     "root",
+	Password:     "",
+	MaxIdleConns: 0,
+	MaxOpenConns: 0,
+	LogMode:      false,
+	LogZap:       "error",
+}
 
 type Mysql struct {
 	Path         string `mapstructure:"path" json:"path" yaml:"path"`
@@ -75,7 +85,7 @@ func getViperConfig() viper_server.ViperConfig {
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
 path: "` + CONFIG.Path + `"
-config: charset=utf8mb4&parseTime=True&loc=Local
+config: ` + CONFIG.Config + `
 db-name: "` + CONFIG.Dbname + `"
 username: "` + CONFIG.Username + `"
 password: "` + CONFIG.Password + `"

@@ -97,7 +97,7 @@ func BeforeTestMainIris(mysqlPwd, redisPwd string, redisDB int, party func(wi *w
 	return uuid, wi
 }
 
-func AfterTestMain(uuid, logurl string) {
+func AfterTestMain(uuid string) {
 	fmt.Println("++++++++ after test main ++++++++")
 	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {

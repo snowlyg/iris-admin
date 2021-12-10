@@ -5,27 +5,20 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
-	"strings"
 	"sync"
 	"testing"
 	"time"
 
-	"github.com/bwmarrin/snowflake"
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/recover"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/helper/tests"
-	"github.com/snowlyg/iris-admin/migration"
 	"github.com/snowlyg/iris-admin/server/cache"
-	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/viper_server"
-	"github.com/snowlyg/iris-admin/server/web"
-	"github.com/snowlyg/iris-admin/server/zap_server"
 	"github.com/snowlyg/multi"
 	multi_iris "github.com/snowlyg/multi/iris"
-	"go.uber.org/zap"
 )
 
 var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
@@ -202,76 +195,4 @@ func (ws *WebServer) Run() {
 		iris.WithTimeFormat(ws.timeFormat),
 	)
 	<-ws.idleConnsClosed
-}
-
-func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int, party func(wi *WebServer), seed func(wi *WebServer, mc *migration.MigrationCmd)) (string, *WebServer) {
-	fmt.Println("+++++ before test +++++")
-	node, _ := snowflake.NewNode(1)
-	uuid := str.Join("gin", "_", node.Generate().String())
-	fmt.Printf("+++++ %s +++++\n\n", uuid)
-	CONFIG.System.CacheType = "redis"
-	CONFIG.System.DbType = "mysql"
-	InitWeb()
-
-	database.CONFIG.Dbname = uuid
-	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
-	database.CONFIG.LogMode = true
-	database.InitMysql()
-
-	cache.CONFIG.DB = redisDB
-	cache.CONFIG.Password = strings.TrimSpace(redisPwd)
-	cache.InitCache()
-
-	wi := Init()
-	party(wi)
-	web.StartTest(wi)
-
-	mc := migration.New()
-	// 添加 v1 内置模块数据表和数据
-	fmt.Println("++++++ add model ++++++")
-	seed(wi, mc)
-	err := mc.Migrate()
-	if err != nil {
-		fmt.Printf("migrate get error [%s]", err.Error())
-		return uuid, nil
-	}
-	err = mc.Seed()
-	if err != nil {
-		fmt.Printf("seed get error [%s]", err.Error())
-		return uuid, nil
-	}
-
-	return uuid, wi
-}
-
-func AfterTestMain(uuid, logurl string, testClient *tests.Client) {
-	fmt.Println("++++++++ after test main ++++++++")
-	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
-	if err != nil {
-		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
-		fmt.Println(text)
-		dir.WriteString("error.txt", text)
-		panic(err)
-	}
-	fmt.Println("++++++++ dorp db ++++++++")
-	db, err := database.Instance().DB()
-	if err != nil {
-		zap_server.ZAPLOG.Error("获取数据库连接失败", zap.String("database.Instance().DB()", err.Error()))
-		panic(err)
-	}
-	if db != nil {
-		db.Close()
-	}
-
-	if multi.AuthDriver != nil {
-		multi.AuthDriver.Close()
-	}
-	err = database.Remove()
-	if err != nil {
-		zap_server.ZAPLOG.Error("删除配置文件失败", zap.String("database.Remove", err.Error()))
-		panic(err)
-	}
-	if testClient != nil {
-		testClient.Logout(logurl, nil)
-	}
 }

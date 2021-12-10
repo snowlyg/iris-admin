@@ -17,7 +17,8 @@ import (
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/viper_server"
-	multi "github.com/snowlyg/multi/iris"
+	"github.com/snowlyg/multi"
+	multi_iris "github.com/snowlyg/multi/iris"
 )
 
 var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
@@ -120,7 +121,7 @@ func (ws *WebServer) AddModule(parties ...Party) {
 
 // InitDriver 初始化认证
 func (ws *WebServer) InitDriver() error {
-	err := multi.InitDriver(
+	err := multi_iris.InitDriver(
 		&multi.Config{
 			DriverType:      CONFIG.System.CacheType,
 			UniversalClient: cache.Instance()},

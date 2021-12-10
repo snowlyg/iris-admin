@@ -56,10 +56,10 @@ func (req *ReqId) ginShouldBindJSON(ctx *gin.Context) error {
 
 // Paginate 验证请求参数
 type Paginate struct {
-	Page     int    `json:"page"`
-	PageSize int    `json:"pageSize"`
-	OrderBy  string `json:"orderBy"`
-	Sort     string `json:"sort"`
+	Page     int    `json:"page" form:"page"`
+	PageSize int    `json:"pageSize" form:"pageSize"`
+	OrderBy  string `json:"orderBy" form:"orderBy"`
+	Sort     string `json:"sort" form:"sort"`
 }
 
 func (req *Paginate) Request(ctx interface{}) error {

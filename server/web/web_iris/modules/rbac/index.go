@@ -6,8 +6,8 @@ import (
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
+	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/migration"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
@@ -20,7 +20,9 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/perm"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/role"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/user"
-	multi "github.com/snowlyg/multi/iris"
+	"github.com/snowlyg/iris-admin/server/zap_server"
+	"github.com/snowlyg/multi"
+	"go.uber.org/zap"
 )
 
 // Party v1 模块
@@ -98,13 +100,12 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int) (string, *web_iris.W
 	return uuid, wi
 }
 
-func AfterTestMain(uuid string) {
+func AfterTestMain(uuid string, client *tests.Client) {
 	fmt.Println("++++++++ after test main ++++++++")
 	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {
 		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
-		fmt.Println(text)
-		dir.WriteString("error.txt", text)
+		zap_server.ZAPLOG.Error("删除数据库失败", zap.String("database.DorpDB", text))
 		panic(err)
 	}
 
@@ -112,7 +113,7 @@ func AfterTestMain(uuid string) {
 
 	db, err := database.Instance().DB()
 	if err != nil {
-		dir.WriteString("error.txt", err.Error())
+		zap_server.ZAPLOG.Error("获取数据库连接失败", zap.String("database.Instance().DB()", err.Error()))
 		panic(err)
 	}
 	if db != nil {
@@ -123,7 +124,10 @@ func AfterTestMain(uuid string) {
 	}
 	err = database.Remove()
 	if err != nil {
-		dir.WriteString("error.txt", err.Error())
+		zap_server.ZAPLOG.Error("删除配置文件失败", zap.String("database.Remove", err.Error()))
 		panic(err)
+	}
+	if client != nil {
+		client.Logout("/api/v1/users/logout", nil)
 	}
 }

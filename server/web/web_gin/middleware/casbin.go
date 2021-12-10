@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"path/filepath"
+
 	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/response"
@@ -11,30 +13,31 @@ import (
 // 拦截器
 func CasbinHandler() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		obj := ctx.Request.URL.RequestURI()
+		obj := filepath.ToSlash(filepath.Clean(ctx.Request.URL.Path))
 		// 获取请求方法
 		act := ctx.Request.Method
 		// 获取用户的角色
-		sub := multi.GetAuthorityId(ctx)
-
-		if sub == "" {
-			zap_server.ZAPLOG.Info("user authorityId is empty")
-			response.UnauthorizedFailWithMessage("auth token 已经过期", ctx)
+		subs := multi.GetAuthorityId(ctx)
+		if len(subs) == 0 {
+			zap_server.ZAPLOG.Info("用户角色ID为空")
+			response.UnauthorizedFailWithMessage("TOKEN已经过期", ctx)
 			ctx.Abort()
 			return
 		}
 
-		success, err := casbin.Instance().Enforce(sub, obj, act)
-		if err != nil {
-			response.ForbiddenFailWithMessage("权限服务验证失败：verfiy failed", ctx)
-			ctx.Abort()
-			return
+		for _, sub := range subs {
+			success, err := casbin.Instance().Enforce(sub, obj, act)
+			if err != nil {
+				response.ForbiddenFailWithMessage("权限服务验证失败", ctx)
+				continue
+			}
+			if success {
+				ctx.Next()
+				return
+			}
 		}
-		if !success {
-			response.ForbiddenFailWithMessage("无此操作权限", ctx)
-			ctx.Abort()
-			return
-		}
-		ctx.Next()
+
+		response.ForbiddenFailWithMessage("无此操作权限", ctx)
+		ctx.Abort()
 	}
 }

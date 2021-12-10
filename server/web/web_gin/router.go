@@ -2,6 +2,7 @@ package web_gin
 
 import (
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	limit "github.com/aviddiviner/gin-limit"
@@ -63,13 +64,18 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)
 	for _, r := range ws.app.Routes() {
+		bases := strings.Split(filepath.Base(r.Handler), ".")
+		if len(bases) != 2 {
+			continue
+		}
+		path := filepath.ToSlash(filepath.Clean(r.Path))
 		route := map[string]string{
-			"path":   r.Path,
-			"name":   "",
+			"path":   path,
+			"desc":   bases[1],
+			"group":  bases[0],
 			"method": r.Method,
 		}
-
-		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) || !strings.Contains(r.Handler, "github.com/snowlyg/multi.(*Verifier).Verify") {
+		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) {
 			noPermRoutes = append(noPermRoutes, route)
 		} else {
 			permRoutes = append(permRoutes, route)

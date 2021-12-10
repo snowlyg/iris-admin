@@ -12,7 +12,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/role"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	multi "github.com/snowlyg/multi/iris"
+	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -65,8 +65,8 @@ func FindByUserName(scopes ...func(db *gorm.DB) *gorm.DB) (*Response, error) {
 	return user, nil
 }
 
-func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (LoginResponse, error) {
-	user := LoginResponse{}
+func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (*LoginResponse, error) {
+	user := &LoginResponse{}
 	db = db.Model(&User{}).Select("id,password").
 		Where("username = ?", username)
 	if len(ids) == 1 {
@@ -75,7 +75,12 @@ func FindPasswordByUserName(db *gorm.DB, username string, ids ...uint) (LoginRes
 	err := db.First(&user).Error
 	if err != nil {
 		zap_server.ZAPLOG.Error("根据用户名查询用户错误", zap.String("用户名:", username), zap.Uints("ids:", ids), zap.String("错误:", err.Error()))
-		return user, err
+		return nil, err
+	}
+	userId := strconv.FormatUint(uint64(user.Id), 10)
+	user.AuthorityIds, err = getRoleIds(userId)
+	if err != nil {
+		return nil, err
 	}
 	return user, nil
 }
@@ -132,10 +137,20 @@ func FindById(db *gorm.DB, id uint) (Response, error) {
 	return user, nil
 }
 
+// getRoleIds
+func getRoleIds(userId string) ([]string, error) {
+	roleIds, err := casbin.Instance().GetRolesForUser(userId)
+	if err != nil {
+		zap_server.ZAPLOG.Error("获取用户角色错误", zap.String("错误:", err.Error()))
+		return nil, err
+	}
+	return roleIds, nil
+}
+
 // AddRoleForUser add roles for user
 func AddRoleForUser(user *User) error {
 	userId := strconv.FormatUint(uint64(user.ID), 10)
-	oldRoleIds, err := casbin.Instance().GetRolesForUser(userId)
+	oldRoleIds, err := getRoleIds(userId)
 	if err != nil {
 		zap_server.ZAPLOG.Error("获取用户角色错误", zap.String("错误:", err.Error()))
 		return err

@@ -6,7 +6,8 @@ import (
 
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
-	multi "github.com/snowlyg/multi/gin"
+	"github.com/snowlyg/multi"
+	multi_gin "github.com/snowlyg/multi/gin"
 )
 
 // InitConfig 初始化配置文件
@@ -56,7 +57,7 @@ func InitConfig() error {
 				CONFIG.System.CacheType = "local"
 			}
 
-			err = multi.InitDriver(
+			err = multi_gin.InitDriver(
 				&multi.Config{
 					DriverType:      CONFIG.System.CacheType,
 					UniversalClient: cache.Instance()},

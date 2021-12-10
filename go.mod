@@ -23,9 +23,8 @@ require (
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/mojocn/base64Captcha v1.3.5
-	github.com/snowlyg/helper v0.0.0-20211202074034-78d14721c82d
-	github.com/snowlyg/multi v0.0.0-20211208083404-fae53ee641e7
+	github.com/snowlyg/helper v0.0.0-20211210061610-8518caad80b5
+	github.com/snowlyg/multi v0.0.0-20211210024630-97a71119f4b8
 	github.com/spf13/viper v1.8.1
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect
 	github.com/unrolled/secure v1.0.9

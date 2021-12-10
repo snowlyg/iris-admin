@@ -11,9 +11,8 @@ import (
 )
 
 var (
-	loginUrl  = "/api/v1/auth/login"
-	logoutUrl = "/api/v1/users/logout"
-	url       = "/api/v1/perms"
+	loginUrl = "/api/v1/auth/login"
+	url      = "/api/v1/perms"
 )
 
 type PageParam struct {
@@ -29,9 +28,7 @@ func TestList(t *testing.T) {
 		t.Errorf("TestServer is nil")
 	}
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	if client != nil {
-		defer client.Logout(logoutUrl, nil)
-	} else {
+	if client == nil {
 		return
 	}
 
@@ -61,12 +58,14 @@ func TestList(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
+	if TestServer == nil {
+		t.Errorf("TestServer is nil")
+	}
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	if client != nil {
-		defer client.Logout(logoutUrl, nil)
-	} else {
+	if client == nil {
 		return
 	}
+
 	data := map[string]interface{}{
 		"name":        "test_route_name",
 		"displayName": "测试描述信息",
@@ -81,12 +80,14 @@ func TestCreate(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	if TestServer == nil {
+		t.Errorf("TestServer is nil")
+	}
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	if client != nil {
-		defer client.Logout(logoutUrl, nil)
-	} else {
+	if client == nil {
 		return
 	}
+
 	data := map[string]interface{}{
 		"name":        "update_test_route_name",
 		"displayName": "测试描述信息",
@@ -114,12 +115,14 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestGetById(t *testing.T) {
+	if TestServer == nil {
+		t.Errorf("TestServer is nil")
+	}
 	client := TestServer.GetTestLogin(t, loginUrl, nil)
-	if client != nil {
-		defer client.Logout(logoutUrl, nil)
-	} else {
+	if client == nil {
 		return
 	}
+
 	data := map[string]interface{}{
 		"name":        "getbyid_test_route_name",
 		"displayName": "测试描述信息",

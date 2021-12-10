@@ -6,13 +6,14 @@ import (
 	"testing"
 	"time"
 
-	multi "github.com/snowlyg/multi/gin"
+	"github.com/snowlyg/multi"
+	multi_gin "github.com/snowlyg/multi/gin"
 )
 
 func TestInstancelocal(t *testing.T) {
 	t.Run("test instance", func(t *testing.T) {
 		// 初始化认证
-		err := multi.InitDriver(
+		err := multi_gin.InitDriver(
 			&multi.Config{
 				DriverType: "local",
 			},
@@ -27,7 +28,7 @@ func TestInstanceRedis(t *testing.T) {
 	t.Run("test instance", func(t *testing.T) {
 		cache := Instance()
 		// 初始化认证
-		err := multi.InitDriver(
+		err := multi_gin.InitDriver(
 			&multi.Config{
 				DriverType:      "redis",
 				UniversalClient: cache},
@@ -42,7 +43,7 @@ func TestSetCacheString(t *testing.T) {
 	t.Run("test set cache string", func(t *testing.T) {
 		cache := Instance()
 		// 初始化认证
-		err := multi.InitDriver(
+		err := multi_gin.InitDriver(
 			&multi.Config{
 				DriverType:      "redis",
 				UniversalClient: cache},
@@ -75,7 +76,7 @@ func TestSetCacheUint(t *testing.T) {
 	t.Run("test set cache bytes", func(t *testing.T) {
 		cache := Instance()
 		// 初始化认证
-		err := multi.InitDriver(
+		err := multi_gin.InitDriver(
 			&multi.Config{
 				DriverType:      "redis",
 				UniversalClient: cache},
@@ -107,7 +108,7 @@ func TestSetCacheBytes(t *testing.T) {
 	t.Run("test set cache bytes", func(t *testing.T) {
 		cache := Instance()
 		// 初始化认证
-		err := multi.InitDriver(
+		err := multi_gin.InitDriver(
 			&multi.Config{
 				DriverType:      "redis",
 				UniversalClient: cache},

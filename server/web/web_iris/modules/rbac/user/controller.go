@@ -9,14 +9,15 @@ import (
 	"github.com/snowlyg/iris-admin/server/database/orm"
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/validate"
-	multi "github.com/snowlyg/multi/iris"
+	"github.com/snowlyg/multi"
+	multi_iris "github.com/snowlyg/multi/iris"
 	"gorm.io/gorm"
 )
 
 // Profile 个人信息
 func Profile(ctx iris.Context) {
 	item := &Response{}
-	err := orm.First(database.Instance(), item, scope.IdScope(multi.GetUserId(ctx)))
+	err := orm.First(database.Instance(), item, scope.IdScope(multi_iris.GetUserId(ctx)))
 	if err != nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: orm.SystemErr.Msg})
 		return
@@ -130,7 +131,7 @@ func GetAll(ctx iris.Context) {
 
 // Logout 退出
 func Logout(ctx iris.Context) {
-	token := multi.GetVerifiedToken(ctx)
+	token := multi_iris.GetVerifiedToken(ctx)
 	if token == nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: "授权凭证为空"})
 		return
@@ -145,7 +146,7 @@ func Logout(ctx iris.Context) {
 
 // Clear 清空 token
 func Clear(ctx iris.Context) {
-	token := multi.GetVerifiedToken(ctx)
+	token := multi_iris.GetVerifiedToken(ctx)
 	if token == nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: "授权凭证为空"})
 		return
@@ -167,7 +168,7 @@ func ChangeAvatar(ctx iris.Context) {
 			return
 		}
 	}
-	err := UpdateAvatar(database.Instance(), multi.GetUserId(ctx), avatar.Avatar)
+	err := UpdateAvatar(database.Instance(), multi_iris.GetUserId(ctx), avatar.Avatar)
 	if err != nil {
 		ctx.JSON(orm.Response{Code: orm.SystemErr.Code, Data: nil, Msg: err.Error()})
 		return

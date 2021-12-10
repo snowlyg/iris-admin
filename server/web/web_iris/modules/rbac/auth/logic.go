@@ -2,13 +2,11 @@ package auth
 
 import (
 	"errors"
-	"strconv"
-	"time"
 
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/user"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	multi "github.com/snowlyg/multi/iris"
+	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -29,16 +27,15 @@ func GetAccessToken(req *LoginRequest) (string, error) {
 		return "", ErrUserNameOrPassword
 	}
 
-	claims := &multi.CustomClaims{
-		ID:            strconv.FormatUint(uint64(admin.Id), 10),
+	claims := multi.New(&multi.Multi{
+		Id:            admin.Id,
 		Username:      req.Username,
-		AuthorityId:   "",
+		AuthorityIds:  admin.AuthorityIds,
 		AuthorityType: multi.AdminAuthority,
 		LoginType:     multi.LoginTypeWeb,
 		AuthType:      multi.AuthPwd,
-		CreationDate:  time.Now().Local().Unix(),
 		ExpiresIn:     multi.RedisSessionTimeoutWeb.Milliseconds(),
-	}
+	})
 	token, _, err := multi.AuthDriver.GenerateToken(claims)
 	if err != nil {
 		return "", err

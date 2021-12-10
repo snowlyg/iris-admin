@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/snowflake"
-	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/helper/tests"
 	"github.com/snowlyg/iris-admin/migration"
@@ -101,11 +100,13 @@ func BeforeTestMainIris(mysqlPwd, redisPwd string, redisDB int, party func(wi *w
 
 func AfterTestMain(uuid, logurl string, testClient *tests.Client) {
 	fmt.Println("++++++++ after test main ++++++++")
+	if testClient != nil {
+		testClient.Logout(logurl, nil)
+	}
 	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {
 		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
-		fmt.Println(text)
-		dir.WriteString("error.txt", text)
+		zap_server.ZAPLOG.Error("删除数据库失败", zap.String("database.DorpDB", text))
 		panic(err)
 	}
 	fmt.Println("++++++++ dorp db ++++++++")

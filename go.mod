@@ -14,7 +14,6 @@ require (
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/go-redis/redis/v8 v8.11.3
-	github.com/gookit/color v1.4.2
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha4.0.20211013142751-e2f40ca06e5e
@@ -30,7 +29,7 @@ require (
 	github.com/unrolled/secure v1.0.9
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	go.uber.org/zap v1.19.1
-	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20211105192438-b53810dc28af // indirect
 	golang.org/x/sys v0.0.0-20211106132015-ebca88c72f68 // indirect
 	gopkg.in/ini.v1 v1.63.2 // indirect

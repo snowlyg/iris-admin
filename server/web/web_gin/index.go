@@ -205,7 +205,7 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int, party func(wi *WebSe
 	return uuid, wi
 }
 
-func AfterTestMain(uuid string, testClient *tests.Client) {
+func AfterTestMain(uuid, logOutUrl string, testClient *tests.Client) {
 	fmt.Println("++++++++ after test main ++++++++")
 	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {
@@ -233,6 +233,6 @@ func AfterTestMain(uuid string, testClient *tests.Client) {
 		panic(err)
 	}
 	if testClient != nil {
-		testClient.Logout("/api/v1/public/logout", nil)
+		testClient.Logout(logOutUrl, nil)
 	}
 }

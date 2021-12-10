@@ -127,7 +127,4 @@ func AfterTestMain(uuid, logurl string, testClient *tests.Client) {
 		zap_server.ZAPLOG.Error("删除配置文件失败", zap.String("database.Remove", err.Error()))
 		panic(err)
 	}
-	if testClient != nil {
-		testClient.Logout(logurl, nil)
-	}
 }

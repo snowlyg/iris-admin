@@ -99,6 +99,18 @@ func BeforeTestMainIris(mysqlPwd, redisPwd string, redisDB int, party func(wi *w
 
 func AfterTestMain(uuid string) {
 	fmt.Println("++++++++ after test main ++++++++")
+	defer func() {
+		err := database.Remove()
+		if err != nil {
+			zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))
+			panic(err)
+		}
+		err = cache.Remove()
+		if err != nil {
+			zap_server.ZAPLOG.Error("删除缓存配置文件失败", zap.String("cahce.Remove", err.Error()))
+			panic(err)
+		}
+	}()
 	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {
 		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
@@ -118,9 +130,5 @@ func AfterTestMain(uuid string) {
 	if multi.AuthDriver != nil {
 		multi.AuthDriver.Close()
 	}
-	err = database.Remove()
-	if err != nil {
-		zap_server.ZAPLOG.Error("删除配置文件失败", zap.String("database.Remove", err.Error()))
-		panic(err)
-	}
+
 }

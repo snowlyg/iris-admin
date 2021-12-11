@@ -52,9 +52,9 @@ type Route struct {
 }
 
 type Captcha struct {
-	KeyLong   int64 `mapstructure:"key-long" json:"keyLong" yaml:"key-long"`
-	ImgWidth  int64 `mapstructure:"img-width" json:"imgWidth" yaml:"img-width"`
-	ImgHeight int64 `mapstructure:"img-height" json:"imgHeight" yaml:"img-height"`
+	KeyLong   int `mapstructure:"key-long" json:"keyLong" yaml:"key-long"`
+	ImgWidth  int `mapstructure:"img-width" json:"imgWidth" yaml:"img-width"`
+	ImgHeight int `mapstructure:"img-height" json:"imgHeight" yaml:"img-height"`
 }
 
 type Limit struct {
@@ -92,9 +92,9 @@ func Remove() error {
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
 	maxSize := strconv.FormatInt(CONFIG.MaxSize, 10)
-	keyLong := strconv.FormatInt(CONFIG.Captcha.KeyLong, 10)
-	imgWidth := strconv.FormatInt(CONFIG.Captcha.ImgWidth, 10)
-	imgHeight := strconv.FormatInt(CONFIG.Captcha.ImgHeight, 10)
+	keyLong := strconv.FormatInt(int64(CONFIG.Captcha.KeyLong), 10)
+	imgWidth := strconv.FormatInt(int64(CONFIG.Captcha.ImgWidth), 10)
+	imgHeight := strconv.FormatInt(int64(CONFIG.Captcha.ImgHeight), 10)
 	limit := strconv.FormatInt(int64(CONFIG.Limit.Limit), 10)
 	burst := strconv.FormatInt(int64(CONFIG.Limit.Burst), 10)
 	disable := strconv.FormatBool(CONFIG.Limit.Disable)
@@ -121,6 +121,9 @@ func getViperConfig() viper_server.ViperConfig {
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
 max-size: ` + maxSize + `
+except: 
+ uri: ` + CONFIG.Except.Uri + `
+ method: ` + CONFIG.Except.Method + `
 captcha:
  key-long: ` + keyLong + `
  img-width: ` + imgWidth + `

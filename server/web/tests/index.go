@@ -2,6 +2,7 @@ package tests
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/bwmarrin/snowflake"
@@ -17,8 +18,22 @@ import (
 	"go.uber.org/zap"
 )
 
-func BeforeTestMainGin(mysqlPwd, redisPwd string, redisDB int, party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
+func BeforeTestMainGin(redisDB int, party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
 	fmt.Println("+++++ before test +++++")
+	mysqlPwd := os.Getenv("mysqlPwd")
+	redisPwd := os.Getenv("redisPwd")
+	if strings.TrimSpace(mysqlPwd) != database.CONFIG.Password {
+		err := database.Remove()
+		if err != nil {
+			zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))
+		}
+	}
+	if strings.TrimSpace(redisPwd) != cache.CONFIG.Password {
+		err := cache.Remove()
+		if err != nil {
+			zap_server.ZAPLOG.Error("删除缓存配置文件失败", zap.String("cahce.Remove", err.Error()))
+		}
+	}
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
@@ -57,10 +72,24 @@ func BeforeTestMainGin(mysqlPwd, redisPwd string, redisDB int, party func(wi *we
 	return uuid, wi
 }
 
-func BeforeTestMainIris(mysqlPwd, redisPwd string, redisDB int, party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
+func BeforeTestMainIris(redisDB int, party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
 	fmt.Println("+++++ before test +++++")
+	mysqlPwd := os.Getenv("mysqlPwd")
+	redisPwd := os.Getenv("redisPwd")
+	if strings.TrimSpace(mysqlPwd) != database.CONFIG.Password {
+		err := database.Remove()
+		if err != nil {
+			zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))
+		}
+	}
+	if strings.TrimSpace(redisPwd) != cache.CONFIG.Password {
+		err := cache.Remove()
+		if err != nil {
+			zap_server.ZAPLOG.Error("删除缓存配置文件失败", zap.String("cahce.Remove", err.Error()))
+		}
+	}
 	node, _ := snowflake.NewNode(1)
-	uuid := str.Join("gin", "_", node.Generate().String())
+	uuid := str.Join("iris", "_", node.Generate().String())
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
 	web_iris.CONFIG.System.CacheType = "redis"
 	web_iris.CONFIG.System.DbType = "mysql"
@@ -97,31 +126,19 @@ func BeforeTestMainIris(mysqlPwd, redisPwd string, redisDB int, party func(wi *w
 	return uuid, wi
 }
 
-func AfterTestMain(uuid string) {
+func AfterTestMain(uuid string, isDelDb bool) {
 	fmt.Println("++++++++ after test main ++++++++")
-	defer func() {
-		err := database.Remove()
+	if isDelDb {
+		err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 		if err != nil {
-			zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))
-			panic(err)
+			text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
+			zap_server.ZAPLOG.Error("删除数据库失败", zap.String("database.DorpDB", text))
 		}
-		err = cache.Remove()
-		if err != nil {
-			zap_server.ZAPLOG.Error("删除缓存配置文件失败", zap.String("cahce.Remove", err.Error()))
-			panic(err)
-		}
-	}()
-	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
-	if err != nil {
-		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
-		zap_server.ZAPLOG.Error("删除数据库失败", zap.String("database.DorpDB", text))
-		panic(err)
 	}
 	fmt.Println("++++++++ dorp db ++++++++")
 	db, err := database.Instance().DB()
 	if err != nil {
 		zap_server.ZAPLOG.Error("获取数据库连接失败", zap.String("database.Instance().DB()", err.Error()))
-		panic(err)
 	}
 	if db != nil {
 		db.Close()
@@ -130,5 +147,12 @@ func AfterTestMain(uuid string) {
 	if multi.AuthDriver != nil {
 		multi.AuthDriver.Close()
 	}
-
+	err = database.Remove()
+	if err != nil {
+		zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))
+	}
+	err = cache.Remove()
+	if err != nil {
+		zap_server.ZAPLOG.Error("删除缓存配置文件失败", zap.String("cahce.Remove", err.Error()))
+	}
 }

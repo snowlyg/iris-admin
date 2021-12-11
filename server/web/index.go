@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/snowlyg/helper/tests"
+	"github.com/snowlyg/iris-admin/server/zap_server"
+	"go.uber.org/zap"
 )
 
 // WebFunc 框架服务接口
@@ -28,11 +30,13 @@ type WebFunc interface {
 func Start(wf WebFunc) {
 	err := wf.InitDriver()
 	if err != nil {
-		panic(err)
+		zap_server.ZAPLOG.Error("初始化系统失败", zap.String("wf.InitDriver", err.Error()))
+		return
 	}
 	err = wf.InitRouter()
 	if err != nil {
-		panic(err)
+		zap_server.ZAPLOG.Error("初始化路由失败", zap.String("wf.InitRouter", err.Error()))
+		return
 	}
 	wf.Run()
 }
@@ -41,10 +45,12 @@ func Start(wf WebFunc) {
 func StartTest(wf WebFunc) {
 	err := wf.InitDriver()
 	if err != nil {
-		panic(err)
+		zap_server.ZAPLOG.Error("初始化系统失败", zap.String("wf.InitDriver", err.Error()))
+		return
 	}
 	err = wf.InitRouter()
 	if err != nil {
-		panic(err)
+		zap_server.ZAPLOG.Error("初始化路由失败", zap.String("wf.InitRouter", err.Error()))
+		return
 	}
 }

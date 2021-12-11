@@ -79,12 +79,12 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 
 		for i := 0; i < len(methods); i++ {
 			if strings.EqualFold(r.Method, strings.ToLower(methods[i])) && strings.EqualFold(r.Path, strings.ToLower(uris[i])) {
-				permRoutes = append(permRoutes, route)
+				noPermRoutes = append(noPermRoutes, route)
 				continue
 			}
 		}
 
-		noPermRoutes = append(noPermRoutes, route)
+		permRoutes = append(permRoutes, route)
 	}
 	return permRoutes, noPermRoutes
 }

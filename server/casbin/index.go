@@ -1,7 +1,6 @@
 package casbin
 
 import (
-	"errors"
 	"fmt"
 	"path/filepath"
 	"strconv"
@@ -73,12 +72,9 @@ func GetRolesForUser(uid uint) []string {
 
 // ClearCasbin 清除权限
 func ClearCasbin(v int, p ...string) error {
-	b, err := Instance().RemoveFilteredPolicy(v, p...)
+	_, err := Instance().RemoveFilteredPolicy(v, p...)
 	if err != nil {
 		return fmt.Errorf("清除权限失败 %w", err)
-	}
-	if !b {
-		return errors.New("清除权限")
 	}
 	return nil
 }

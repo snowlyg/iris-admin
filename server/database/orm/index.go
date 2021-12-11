@@ -8,7 +8,7 @@ import (
 // CUDFunc 增改删接口
 type CUDFunc interface {
 	Create(db *gorm.DB) (uint, error)
-	Update(db *gorm.DB, id uint, scopes ...func(db *gorm.DB) *gorm.DB) error
+	Update(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error
 	Delete(db *gorm.DB, scopes ...func(db *gorm.DB) *gorm.DB) error
 }
 
@@ -30,7 +30,7 @@ func Create(db *gorm.DB, cud CUDFunc) (uint, error) {
 
 // Update 更新
 func Update(db *gorm.DB, id uint, cud CUDFunc) error {
-	return cud.Update(db, id, scope.IdScope(id))
+	return cud.Update(db, scope.IdScope(id))
 }
 
 // Delete // 删除

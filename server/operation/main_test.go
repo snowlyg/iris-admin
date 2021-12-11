@@ -13,10 +13,8 @@ import (
 	"go.uber.org/zap"
 )
 
-//go:embed mysqlPwd.txt
-var mysqlPwd string
-
 func TestMain(m *testing.M) {
+	mysqlPwd := os.Getenv("mysqlPwd")
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("database", "_", node.Generate().String())
 

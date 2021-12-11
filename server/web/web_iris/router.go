@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/middleware/pprof"
 	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/helper/arr"
@@ -56,6 +55,8 @@ func (ws *WebServer) InitRouter() error {
 // - PermRoutes 权鉴路由
 // - NoPermRoutes 公共路由
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
+	methods := strings.Split(CONFIG.Except.Method, ";")
+	uris := strings.Split(CONFIG.Except.Uri, ";")
 	routeLen := len(ws.app.GetRoutes())
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)
@@ -65,12 +66,25 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			"name": r.Name,
 			"act":  r.Method,
 		}
-		handerNames := context.HandlersNames(r.Handlers)
-		if !arr.InArrayS([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) || !arr.InArrayS(strings.Split(handerNames, ","), "github.com/snowlyg/multi/iris.(*Verifier).Verify") {
+
+		if !arr.InArrayS([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) {
 			noPermRoutes = append(noPermRoutes, route)
-		} else {
-			permRoutes = append(permRoutes, route)
+			continue
 		}
+
+		if len(methods) == 0 || len(uris) == 0 || len(methods) != len(uris) {
+			noPermRoutes = append(noPermRoutes, route)
+			continue
+		}
+
+		for i := 0; i < len(methods); i++ {
+			if strings.EqualFold(r.Method, strings.ToLower(methods[i])) && strings.EqualFold(r.Path, strings.ToLower(uris[i])) {
+				permRoutes = append(permRoutes, route)
+				continue
+			}
+		}
+
+		noPermRoutes = append(noPermRoutes, route)
 	}
 	return permRoutes, noPermRoutes
 }

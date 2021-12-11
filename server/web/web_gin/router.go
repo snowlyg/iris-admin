@@ -60,6 +60,8 @@ func (ws *WebServer) InitRouter() error {
 // - PermRoutes 权鉴路由
 // - NoPermRoutes 公共路由
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
+	methods := strings.Split(CONFIG.Except.Method, ";")
+	uris := strings.Split(CONFIG.Except.Uri, ";")
 	routeLen := len(ws.app.Routes())
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)
@@ -75,11 +77,24 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			"group":  bases[0],
 			"method": r.Method,
 		}
-		if !arr.InArrayS([]string{"GET", "POST", "PUT", "DELETE"}, r.Method) {
+		if !arr.InArrayS([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) {
 			noPermRoutes = append(noPermRoutes, route)
-		} else {
-			permRoutes = append(permRoutes, route)
+			continue
 		}
+
+		if len(methods) == 0 || len(uris) == 0 || len(methods) != len(uris) {
+			noPermRoutes = append(noPermRoutes, route)
+			continue
+		}
+
+		for i := 0; i < len(methods); i++ {
+			if strings.EqualFold(r.Method, strings.ToLower(methods[i])) && strings.EqualFold(path, strings.ToLower(uris[i])) {
+				permRoutes = append(permRoutes, route)
+				continue
+			}
+		}
+
+		noPermRoutes = append(noPermRoutes, route)
 	}
 	return permRoutes, noPermRoutes
 }

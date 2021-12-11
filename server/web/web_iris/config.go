@@ -12,6 +12,10 @@ import (
 
 var CONFIG = Web{
 	MaxSize: 1024,
+	Except: Route{
+		Uri:    "",
+		Method: "",
+	},
 	System: System{
 		Level:        "debug",
 		Addr:         "127.0.0.1:8085",
@@ -37,9 +41,14 @@ var CONFIG = Web{
 
 type Web struct {
 	MaxSize int64   `mapstructure:"max-size" json:"burst" yaml:"max-size"`
+	Except  Route   `mapstructure:"except" json:"except" yaml:"except"`
 	System  System  `mapstructure:"system" json:"system" yaml:"system"`
 	Limit   Limit   `mapstructure:"limit" json:"limit" yaml:"limit"`
 	Captcha Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
+}
+type Route struct {
+	Uri    string `mapstructure:"uri" json:"uri" yaml:"uri"`
+	Method string `mapstructure:"method" json:"method" yaml:"method"`
 }
 
 type Captcha struct {

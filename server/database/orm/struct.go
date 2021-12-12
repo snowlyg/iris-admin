@@ -17,14 +17,14 @@ import (
 
 // Model
 type Model struct {
-	Id        uint   `json:"id"`
-	UpdatedAt string `json:"updatedAt"`
-	CreatedAt string `json:"createdAt"`
+	Id        uint   `json:"id" uri:"id" form:"id" param:"id"`
+	UpdatedAt string `json:"updatedAt" uri:"updatedAt" form:"updatedAt" param:"updatedAt"`
+	CreatedAt string `json:"createdAt" uri:"createdAt" form:"createdAt" param:"createdAt"`
 }
 
 // ReqId 获取id请求参数
 type ReqId struct {
-	Id uint `json:"id" param:"id"`
+	Id uint `json:"id" uri:"id" form:"id" param:"id"`
 }
 
 func (req *ReqId) Request(ctx interface{}) error {

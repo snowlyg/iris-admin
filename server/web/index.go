@@ -8,6 +8,13 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	AdminAuthorityId   uint = 1 // 管理员用户
+	TenancyAuthorityId uint = 2 // 商户用户
+	LiteAuthorityId    uint = 3 // 小程序用户
+	DeviceAuthorityId  uint = 4 // 床旁设备用户
+)
+
 // WebFunc 框架服务接口
 // - GetTestClient 测试客户端
 // - GetTestLogin 测试登录

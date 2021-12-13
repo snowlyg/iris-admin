@@ -7,13 +7,6 @@ const (
 )
 
 const (
-	AdminAuthorityId   uint = 999
-	TenancyAuthorityId uint = 998
-	LiteAuthorityId    uint = 997 // 小程序用户
-	DeviceAuthorityId  uint = 996 // 床旁设备用户
-)
-
-const (
 	StatusUnknown int = iota
 	StatusTrue
 	StatusFalse

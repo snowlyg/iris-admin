@@ -13,7 +13,7 @@ require (
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-playground/validator/v10 v10.9.0
-	github.com/go-redis/redis/v8 v8.11.3
+	github.com/go-redis/redis/v8 v8.11.4
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha4.0.20211013142751-e2f40ca06e5e
@@ -23,7 +23,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/snowlyg/helper v0.0.0-20211210061610-8518caad80b5
-	github.com/snowlyg/multi v0.0.0-20211210024630-97a71119f4b8
+	github.com/snowlyg/multi v0.0.0-20211213024614-23ebb6e09053
 	github.com/spf13/viper v1.8.1
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect
 	github.com/unrolled/secure v1.0.9

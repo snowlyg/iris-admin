@@ -90,13 +90,19 @@ func (mc *MigrationCmd) rollbackLast() error {
 // Migrate 执行迁移
 func (mc *MigrationCmd) Migrate() error {
 	m := mc.gormigrate()
-	m.InitSchema(func(tx *gorm.DB) error {
-		err := tx.AutoMigrate(mc.ModelCollection...)
+	err :=  m.Migrate()
 		if err != nil {
-			return err
+				return err
 		}
-		return nil
-	})
+	if len(mc.ModelCollection) >0{
+		m.InitSchema(func(tx *gorm.DB) error {
+			err := tx.AutoMigrate(mc.ModelCollection...)
+			if err != nil {
+				return err
+			}
+			return nil
+		})
+	}
 	return m.Migrate()
 }
 

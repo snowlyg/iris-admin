@@ -180,8 +180,8 @@ package main
 import (
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
-  "github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/perm"
-	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/role"
+  "github.com/snowlyg/iris-admin-rbac/iris/perm"
+	"github.com/snowlyg/iris-admin-rbac/iris/role"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/operation"
 )
@@ -225,24 +225,24 @@ go run main.go
 ```
 
 #### Module
-- The framework has a built-in v1 version of the basic authentication module by default.
+- You can use [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac) package to add rbac function for your project quickly.
 - Your can use AddModule() to add other modules .
 ```go
 package main
 
 import (
-	v1 "github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac"
+	rbac "github.com/snowlyg/iris-admin-rbac/iris"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
 func main() {
 	wi := web_iris.Init()
-	v1Party := web_iris.Party{
+	rbacParty := web_iris.Party{
 		Perfix:    "/api/v1",
-		PartyFunc: v1.Party(),
+		PartyFunc: rbac.Party(),
 	}
-	wi.AddModule(v1Party)
+	wi.AddModule(rbacParty)
 	web.Start(web_iris.Init())
 }
 ```
@@ -306,11 +306,16 @@ func main() {
 
 #### Example
 - [iris](https://github.com/snowlyg/iris-admin-example/tree/main/iris)
+- [gin](https://github.com/snowlyg/iris-admin-example/tree/main/gin)
 
-#### Unit test and documentation: [to be updated]
-- Before start unit tests,you must create two files which is named `redis_pwd.txt `and `redis_pwd.txt` ,fill `redis` and `mysql` 's password in to these two files separately, on the directory the `main_test.go` file is located.
+#### RBAC
+- [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac)
+
+#### Unit test and documentation
+- Before start unit tests, you need to set two system environment variables `mysqlPwd` and `redisPwd`,that will be used when running the test instance。
 - [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) package the unit test used, it's  simple package base on [httpexpect/v2](https://github.com/gavv/httpexpect).
-- [example for unit test](https://github.com/snowlyg/iris-admin/tree/master/modules/v1/user/test)
+- [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/iris/perm/tests)
+- [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)
 
 #### Thanks 
 

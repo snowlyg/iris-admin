@@ -182,8 +182,8 @@ package main
 import (
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
-  "github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/perm"
-	"github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac/role"
+  "github.com/snowlyg/iris-admin-rbac/iris/perm"
+	"github.com/snowlyg/iris-admin-rbac/iris/role"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/operation"
 )
@@ -226,24 +226,24 @@ go run main.go
 ```
 
 #### 添加模块
-- 框架默认内置了v1 版本的基础认证模块
+- 如果需要权鉴管理，可以使用 [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac) 项目快速集成权鉴功能
 - 可以使用 AddModule() 增加其他 admin模块
 ```go
 package main
 
 import (
-	v1 "github.com/snowlyg/iris-admin/server/web/web_iris/modules/rbac"
+	rbac "github.com/snowlyg/iris-admin-rbac/iris"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
 func main() {
 	wi := web_iris.Init()
-	v1Party := web_iris.Party{
+	rbacParty := web_iris.Party{
 		Perfix:    "/api/v1",
-		PartyFunc: v1.Party(),
+		PartyFunc: rbac.Party(),
 	}
-	wi.AddModule(v1Party)
+	wi.AddModule(rbacParty)
 	web.Start(web_iris.Init())
 }
 ```
@@ -261,7 +261,7 @@ system:
   static-path: /static/upload
   static-prefix: /upload
   time-format: "2006-01-02 15:04:05"
-  web-prefix: /
+  web-prefix: /admin
   web-path: ./dist
 ```
 
@@ -307,11 +307,15 @@ func main() {
 
 #### 简单用例
 - [iris](https://github.com/snowlyg/iris-admin-example/tree/main/iris)
+- [gin](https://github.com/snowlyg/iris-admin-example/tree/main/gin)
 
-#### 单元测试和接口文档[待更新] 
-- 测试前在 `main_test.go` 文件所在目录新建 `redis_pwd.txt `和 `redis_pwd.txt` 两个文件,分别填入 `redis` 和 `mysql` 的密码
+#### RBAC
+- [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac)
+#### 单元测试和接口文档 
+- 测试前,需要设置 `mysqlPwd` 和 `redisPwd` 两个系统环境变量，运行测试实例的时候将会使用到它们。
 - 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
-- [接口单元测试例子](https://github.com/snowlyg/iris-admin/tree/master/modules/v1/user/test)
+- [接口单元测试例子](https://github.com/snowlyg/iris-admin-rbac/tree/main/iris/perm/tests)
+- [接口单元测试例子](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)
 
 #### 感谢 
 

@@ -91,7 +91,6 @@ github.com/casbin/gorm-adapter/v3 v3.4.2/go.mod h1:pcnUBPanxppRSQQGyvFreY0GAHC5H
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash v1.1.0 h1:a6HrQnmkObjyL+Gs60czilIUGqrzKutQD6XZog3p+ko=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
-github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/cespare/xxhash/v2 v2.1.2 h1:YRXhKfTDauu4ajMg1TPgFO5jnlC2HCbmLXMcTG5cbYE=
 github.com/cespare/xxhash/v2 v2.1.2/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
@@ -182,7 +181,6 @@ github.com/go-playground/validator/v10 v10.4.1/go.mod h1:nlOn6nFhuKACm19sB/8EGNn
 github.com/go-playground/validator/v10 v10.9.0 h1:NgTtmN58D0m8+UuxtYmGztBJB7VnPgjj221I1QHci2A=
 github.com/go-playground/validator/v10 v10.9.0/go.mod h1:74x4gJWsvQexRdW8Pn3dXSGrTK4nAUsbPlLADvpJkos=
 github.com/go-redis/redis/v8 v8.4.0/go.mod h1:A1tbYoHSa1fXwN+//ljcCYYJeLmVrwL9hbQN45Jdy0M=
-github.com/go-redis/redis/v8 v8.11.3 h1:GCjoYp8c+yQTJfc0n69iwSiHjvuAdruxl7elnZCxgt8=
 github.com/go-redis/redis/v8 v8.11.3/go.mod h1:xNJ9xDG09FsIPwh3bWdk+0oDWHbtF9rPN0F/oD9XeKc=
 github.com/go-redis/redis/v8 v8.11.4 h1:kHoYkfZP6+pe04aFTnhDH6GDROa5yJdHJVNxV3F46Tg=
 github.com/go-redis/redis/v8 v8.11.4/go.mod h1:2Z2wHZXdQpCDXEGzqMockDpNyYvi2l4Pxt6RJr792+w=
@@ -566,8 +564,6 @@ github.com/smartystreets/goconvey v1.7.2/go.mod h1:Vw0tHAZW6lzCRk3xgdin6fKYcG+G3
 github.com/snowlyg/helper v0.0.0-20211202074034-78d14721c82d/go.mod h1:ApfY5rylaRJgf43tSNXD4lpXJcGrrFYtEEzPk2ZCcxE=
 github.com/snowlyg/helper v0.0.0-20211210061610-8518caad80b5 h1:Hzqcw9AKbjqNMbVQs6sxrozs+BuVH6efjVostbM/62Y=
 github.com/snowlyg/helper v0.0.0-20211210061610-8518caad80b5/go.mod h1:rTYQ60yQZVDLOyrCB6VwZAWD9Coxwg/Cb4bGFpiJY64=
-github.com/snowlyg/multi v0.0.0-20211210024630-97a71119f4b8 h1:ITFBE66ZEogdtsxXQ0/MhTv5M5o5cjT+RMiR2skwdFY=
-github.com/snowlyg/multi v0.0.0-20211210024630-97a71119f4b8/go.mod h1:WSUC5G2NBbJ4lVYMTqv9kYtCU+bkDzEDtQ3VZ0Ihj3w=
 github.com/snowlyg/multi v0.0.0-20211213024614-23ebb6e09053 h1:bGrN79ITU1MIYqu++fcRTsBFQQNE2sp7+RQPL/EIC0g=
 github.com/snowlyg/multi v0.0.0-20211213024614-23ebb6e09053/go.mod h1:WSUC5G2NBbJ4lVYMTqv9kYtCU+bkDzEDtQ3VZ0Ihj3w=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=

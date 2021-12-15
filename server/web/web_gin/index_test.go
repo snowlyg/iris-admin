@@ -7,9 +7,11 @@ import (
 	"time"
 
 	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
 func TestStart(t *testing.T) {
+	web_iris.CONFIG.System.CacheType = "local"
 	go func() {
 		web.Start(Init())
 	}()

@@ -13,6 +13,8 @@ import (
 func TestStart(t *testing.T) {
 	addr := "127.0.0.1:8087"
 	web_iris.CONFIG.System.Addr = addr
+	web_iris.CONFIG.System.CacheType = "local"
+
 	wi := web_iris.Init()
 	go func() {
 		Start(wi)

@@ -23,6 +23,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/snowlyg/helper v0.0.0-20211210061610-8518caad80b5
+	github.com/snowlyg/httptest v0.0.0-20211215080911-241a7ee7503c // indirect
 	github.com/snowlyg/multi v0.0.0-20211213024614-23ebb6e09053
 	github.com/spf13/viper v1.8.1
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect

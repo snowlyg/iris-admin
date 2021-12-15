@@ -14,7 +14,7 @@ import (
 	"github.com/kataras/iris/v12/middleware/recover"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
-	"github.com/snowlyg/helper/tests"
+	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/snowlyg/multi"
@@ -152,15 +152,15 @@ func (ws *WebServer) AddUploadStatic() {
 }
 
 // GetTestClient 获取测试验证客户端
-func (ws *WebServer) GetTestClient(t *testing.T) *tests.Client {
+func (ws *WebServer) GetTestClient(t *testing.T) *httptest.Client {
 	if ws.app == nil {
 		t.Errorf("ws.app is nil")
 	}
 	var once sync.Once
-	var client *tests.Client
+	var client *httptest.Client
 	once.Do(
 		func() {
-			client = tests.New(str.Join("http://", ws.addr), t, ws.app)
+			client = httptest.New(str.Join("http://", ws.addr), t, ws.app)
 			if client == nil {
 				t.Errorf("test client is nil")
 			}
@@ -171,7 +171,7 @@ func (ws *WebServer) GetTestClient(t *testing.T) *tests.Client {
 }
 
 // GetTestLogin 测试登录web服务
-func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...interface{}) *tests.Client {
+func (ws *WebServer) GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client {
 	client := ws.GetTestClient(t)
 	if client == nil {
 		t.Error("登录失败")

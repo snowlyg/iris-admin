@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
-	"github.com/snowlyg/helper/tests"
+	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/migration"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
@@ -126,12 +126,12 @@ func (ws *WebServer) AddUploadStatic() {
 }
 
 // GetTestClient 获取测试验证客户端
-func (ws *WebServer) GetTestClient(t *testing.T) *tests.Client {
+func (ws *WebServer) GetTestClient(t *testing.T) *httptest.Client {
 	var once sync.Once
-	var client *tests.Client
+	var client *httptest.Client
 	once.Do(
 		func() {
-			client = tests.New(str.Join("http://", ws.addr), t, ws.app)
+			client = httptest.New(str.Join("http://", ws.addr), t, ws.app)
 			if client == nil {
 				t.Errorf("test client is nil")
 			}
@@ -142,7 +142,7 @@ func (ws *WebServer) GetTestClient(t *testing.T) *tests.Client {
 }
 
 // GetTestLogin 测试登录web服务
-func (ws *WebServer) GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...interface{}) *tests.Client {
+func (ws *WebServer) GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client {
 	client := ws.GetTestClient(t)
 	if client == nil {
 		t.Error("登录失败")
@@ -205,7 +205,7 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int, party func(wi *WebSe
 	return uuid, wi
 }
 
-func AfterTestMain(uuid, logOutUrl string, testClient *tests.Client) {
+func AfterTestMain(uuid, logOutUrl string, testClient *httptest.Client) {
 	fmt.Println("++++++++ after test main ++++++++")
 	err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {

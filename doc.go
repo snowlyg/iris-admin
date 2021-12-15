@@ -162,8 +162,8 @@ func (ws *WebServer) InitDriver() error {
 // - AddUploadStatic add upload file api
 // - Run start program
 type WebFunc interface {
-	GetTestClient(t *testing.T) *tests.Client
-	GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...interface{}) *tests.Client
+	GetTestClient(t *testing.T) *httptest.Client
+	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
 	AddWebStatic(perfix string)
 	AddUploadStatic()
 	InitDriver() error

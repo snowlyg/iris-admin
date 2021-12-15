@@ -564,6 +564,8 @@ github.com/smartystreets/goconvey v1.7.2/go.mod h1:Vw0tHAZW6lzCRk3xgdin6fKYcG+G3
 github.com/snowlyg/helper v0.0.0-20211202074034-78d14721c82d/go.mod h1:ApfY5rylaRJgf43tSNXD4lpXJcGrrFYtEEzPk2ZCcxE=
 github.com/snowlyg/helper v0.0.0-20211210061610-8518caad80b5 h1:Hzqcw9AKbjqNMbVQs6sxrozs+BuVH6efjVostbM/62Y=
 github.com/snowlyg/helper v0.0.0-20211210061610-8518caad80b5/go.mod h1:rTYQ60yQZVDLOyrCB6VwZAWD9Coxwg/Cb4bGFpiJY64=
+github.com/snowlyg/httptest v0.0.0-20211215080911-241a7ee7503c h1:Zett8nTZO77IvZzF15jKhSU5s50ldKlm2aCMsGjTON8=
+github.com/snowlyg/httptest v0.0.0-20211215080911-241a7ee7503c/go.mod h1:SwXYsgCwkWuAKcdVk0JDBVTslxLJ7A2LqXP1eXgBkhc=
 github.com/snowlyg/multi v0.0.0-20211213024614-23ebb6e09053 h1:bGrN79ITU1MIYqu++fcRTsBFQQNE2sp7+RQPL/EIC0g=
 github.com/snowlyg/multi v0.0.0-20211213024614-23ebb6e09053/go.mod h1:WSUC5G2NBbJ4lVYMTqv9kYtCU+bkDzEDtQ3VZ0Ihj3w=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=

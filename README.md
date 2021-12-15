@@ -161,8 +161,8 @@ func (ws *WebServer) InitDriver() error {
 // - AddUploadStatic 上传文件路径
 // - Run 启动
 type WebFunc interface {
-	GetTestClient(t *testing.T) *tests.Client
-	GetTestLogin(t *testing.T, url string, res tests.Responses, datas ...interface{}) *tests.Client
+	GetTestClient(t *testing.T) *httptest.Client
+	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
 	AddWebStatic(perfix string)
 	AddUploadStatic()
 	InitDriver() error

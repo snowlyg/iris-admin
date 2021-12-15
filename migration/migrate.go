@@ -77,7 +77,7 @@ func (mc *MigrationCmd) Rollback(migrationId string) error {
 		return nil
 	}
 	if migrationId == "" {
-		mc.rollbackLast()
+		return mc.rollbackLast()
 	}
 	return mc.rollbackTo(migrationId)
 }
@@ -90,11 +90,11 @@ func (mc *MigrationCmd) rollbackLast() error {
 // Migrate 执行迁移
 func (mc *MigrationCmd) Migrate() error {
 	m := mc.gormigrate()
-	err :=  m.Migrate()
-		if err != nil {
-				return err
-		}
-	if len(mc.ModelCollection) >0{
+	err := m.Migrate()
+	if err != nil {
+		return err
+	}
+	if len(mc.ModelCollection) > 0 {
 		m.InitSchema(func(tx *gorm.DB) error {
 			err := tx.AutoMigrate(mc.ModelCollection...)
 			if err != nil {

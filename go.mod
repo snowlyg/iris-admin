@@ -24,7 +24,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.16 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/snowlyg/helper v0.0.0-20211215075956-864080017ffd
-	github.com/snowlyg/httptest v0.0.0-20211215083527-faf4a41eb8cd // indirect
+	github.com/snowlyg/httptest v0.0.0-20211216073701-48592dbd8c53 // indirect
 	github.com/snowlyg/multi v0.0.0-20211213024614-23ebb6e09053
 	github.com/spf13/viper v1.8.1
 	github.com/tdewolff/parse/v2 v2.5.22 // indirect
@@ -34,7 +34,7 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	go.uber.org/zap v1.19.1
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/net v0.0.0-20211215060638-4ddde0e984e9 // indirect
+	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
 	golang.org/x/sys v0.0.0-20211106132015-ebca88c72f68 // indirect
 	gopkg.in/ini.v1 v1.63.2 // indirect
 	gorm.io/driver/mysql v1.1.2

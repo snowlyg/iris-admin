@@ -10,6 +10,9 @@ import (
 )
 
 func TestRun(t *testing.T) {
+	defer Remove()
+	CONFIG.System.CacheType = "local"
+	CONFIG.System.Addr = "127.0.0.1:18085"
 	go func() {
 		web.Start(Init())
 	}()
@@ -17,7 +20,7 @@ func TestRun(t *testing.T) {
 	time.Sleep(3 * time.Second)
 
 	t.Run("test web run", func(t *testing.T) {
-		resp, err := http.Get("http://127.0.0.1:8085")
+		resp, err := http.Get("http://127.0.0.1:18085")
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}

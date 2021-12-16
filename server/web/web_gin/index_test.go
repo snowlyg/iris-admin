@@ -7,11 +7,12 @@ import (
 	"time"
 
 	"github.com/snowlyg/iris-admin/server/web"
-	"github.com/snowlyg/iris-admin/server/web/web_iris"
 )
 
 func TestStart(t *testing.T) {
-	web_iris.CONFIG.System.CacheType = "local"
+	defer Remove()
+	CONFIG.System.CacheType = "local"
+	CONFIG.System.Addr = "127.0.0.1:18088"
 	go func() {
 		web.Start(Init())
 	}()
@@ -19,7 +20,7 @@ func TestStart(t *testing.T) {
 	time.Sleep(3 * time.Second)
 
 	t.Run("test web start", func(t *testing.T) {
-		resp, err := http.Get("http://127.0.0.1:8088")
+		resp, err := http.Get("http://127.0.0.1:18088")
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}

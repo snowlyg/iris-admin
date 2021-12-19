@@ -19,7 +19,7 @@ require (
 	github.com/kataras/iris/v12 v12.2.0-alpha5
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
-	github.com/snowlyg/helper v0.0.1
+	github.com/snowlyg/helper v0.0.3
 	github.com/snowlyg/httptest v0.0.1
 	github.com/snowlyg/multi v0.0.1-alpha1
 	github.com/spf13/viper v1.8.1

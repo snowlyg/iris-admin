@@ -4,13 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"os"
 	"sync"
 
 	"github.com/snowlyg/iris-admin/server/viper_server"
-	"github.com/snowlyg/iris-admin/server/zap_server"
 
-	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -37,16 +34,6 @@ func Instance() *gorm.DB {
 		db = gormMysql()
 	})
 	return db
-}
-
-// MysqlTables 注册数据库表专用
-func MysqlTables(db *gorm.DB) {
-	err := db.AutoMigrate()
-	if err != nil {
-		zap_server.ZAPLOG.Error("注册数据表错误", zap.Any("err", err))
-		os.Exit(0)
-	}
-	zap_server.ZAPLOG.Info("注册数据表成功")
 }
 
 // gormMysql 初始化Mysql数据库

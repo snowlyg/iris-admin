@@ -81,9 +81,9 @@ type System struct {
 // StaticUrl 静态地址url
 func StaticUrl() string {
 	if CONFIG.System.Tls {
-		return str.Join("https://%s%s/", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
+		return str.Join("https://", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
 	}
-	return str.Join("http://%s%s/", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
+	return str.Join("http://", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
 }
 
 // IsExist 配置文件是否存在

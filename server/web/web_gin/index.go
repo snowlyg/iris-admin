@@ -3,13 +3,13 @@ package web_gin
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/bwmarrin/snowflake"
-	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
@@ -67,12 +67,8 @@ func Init() *WebServer {
 		CONFIG.System.Addr = "127.0.0.1:8085"
 	}
 
-	if CONFIG.System.StaticPath == "" { // 默认 /static/upload
-		CONFIG.System.StaticPath = "/static/upload"
-	}
-
 	if CONFIG.System.StaticPrefix == "" { // 默认 /upload
-		CONFIG.System.StaticPrefix = "/upload"
+		CONFIG.System.StaticPrefix = "static/upload"
 	}
 
 	if CONFIG.System.WebPath == "" { // 默认 ./dist
@@ -80,7 +76,7 @@ func Init() *WebServer {
 	}
 
 	if CONFIG.System.WebPrefix == "" { // 默认 /
-		CONFIG.System.WebPrefix = "/"
+		CONFIG.System.WebPrefix = "/admin"
 	}
 
 	if CONFIG.System.TimeFormat == "" { // 默认 80
@@ -92,9 +88,9 @@ func Init() *WebServer {
 		addr:         CONFIG.System.Addr,
 		timeFormat:   CONFIG.System.TimeFormat,
 		staticPrefix: CONFIG.System.StaticPrefix,
-		staticPath:   CONFIG.System.StaticPath,
-		webPrefix:    CONFIG.System.WebPrefix,
-		webPath:      CONFIG.System.WebPath,
+
+		webPrefix: CONFIG.System.WebPrefix,
+		webPath:   CONFIG.System.WebPath,
 	}
 }
 
@@ -126,7 +122,7 @@ func (ws *WebServer) AddWebStatic() {
 
 // AddUploadStatic 添加上传文件访问地址
 func (ws *WebServer) AddUploadStatic() {
-	ws.app.Use(static.Serve(ws.staticPrefix, static.LocalFile(ws.staticPath, true)))
+	ws.app.StaticFS(ws.staticPrefix, http.Dir(ws.staticPrefix))
 }
 
 // GetTestClient 获取测试验证客户端

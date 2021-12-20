@@ -72,7 +72,7 @@ type System struct {
 	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
 	StaticPrefix string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
 	StaticPath   string `mapstructure:"static-path" json:"staticPath" yaml:"static-path"`
-	WebPrefix    string `mapstructure:"web-prefix" json:"webPPrefix" yaml:"web-prefix"`
+	WebPrefix    string `mapstructure:"web-prefix" json:"webPrefix" yaml:"web-prefix"`
 	WebPath      string `mapstructure:"web-path" json:"webPath" yaml:"web-path"`
 	DbType       string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
 	CacheType    string `mapstructure:"cache-type" json:"cacheType" yaml:"cache-type"`

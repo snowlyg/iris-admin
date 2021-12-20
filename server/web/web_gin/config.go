@@ -22,8 +22,7 @@ var CONFIG = Web{
 		Tls:          false,
 		Level:        "debug",
 		Addr:         "127.0.0.1:8085",
-		StaticPrefix: "/upload",
-		StaticPath:   "/static/upload",
+		StaticPrefix: "static/upload",
 		WebPrefix:    "/admin",
 		WebPath:      "./dist",
 		DbType:       "mysql",
@@ -71,8 +70,7 @@ type System struct {
 	Level        string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
 	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
 	StaticPrefix string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
-	StaticPath   string `mapstructure:"static-path" json:"staticPath" yaml:"static-path"`
-	WebPrefix    string `mapstructure:"web-prefix" json:"webPPrefix" yaml:"web-prefix"`
+	WebPrefix    string `mapstructure:"web-prefix" json:"webPrefix" yaml:"web-prefix"`
 	WebPath      string `mapstructure:"web-path" json:"webPath" yaml:"web-path"`
 	DbType       string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
 	CacheType    string `mapstructure:"cache-type" json:"cacheType" yaml:"cache-type"`
@@ -152,7 +150,6 @@ system:
  addr: ` + CONFIG.System.Addr + `
  db-type: ` + CONFIG.System.DbType + `
  cache-type: ` + CONFIG.System.CacheType + `
- static-path: ` + CONFIG.System.StaticPath + `
  static-prefix: ` + CONFIG.System.StaticPrefix + `
  time-format: ` + CONFIG.System.TimeFormat + `
  web-prefix: ` + CONFIG.System.WebPrefix + `

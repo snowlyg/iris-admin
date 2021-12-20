@@ -17,6 +17,7 @@ import (
 	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/viper_server"
+	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 	"github.com/snowlyg/multi"
 	multi_iris "github.com/snowlyg/multi/iris"
 )
@@ -61,6 +62,9 @@ func InitWeb() {
 func Init() *WebServer {
 	InitWeb()
 	app := iris.New()
+	if CONFIG.System.Tls {
+		app.Use(middleware.LoadTls()) // 打开就能玩https了
+	}
 	app.Use(recover.New())
 	app.Validator = validator.New() //参数验证
 	app.Logger().SetLevel(CONFIG.System.Level)

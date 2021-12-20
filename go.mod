@@ -15,6 +15,7 @@ require (
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
+	github.com/iris-contrib/middleware/secure v0.0.0-20211207164801-081c558a02bb
 	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/kataras/iris/v12 v12.2.0-alpha5
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
@@ -27,9 +28,6 @@ require (
 	github.com/unrolled/secure v1.0.9
 	github.com/valyala/fasthttp v1.31.0 // indirect
 	go.uber.org/zap v1.19.1
-	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
-	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f // indirect
-	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.15
 )

@@ -322,6 +322,8 @@ github.com/iris-contrib/jade v1.1.4 h1:WoYdfyJFfZIUgqNAeOyRfTNQZOksSlZ6+FnXR3AEp
 github.com/iris-contrib/jade v1.1.4/go.mod h1:EDqR+ur9piDl6DUgs6qRrlfzmlx/D5UybogqrXvJTBE=
 github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d h1:s9Oxj8MzXrUnAWVXTpBzkHGO3vlFk/vDjmuAKLISl6U=
 github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d/go.mod h1:e2S1O+DNOz74yNNTyH4S2+EOx0eoiIw6N0SxPXiLLqA=
+github.com/iris-contrib/middleware/secure v0.0.0-20211207164801-081c558a02bb h1:+71aseqVX5UQ2ig/DwcfhWvr4Nedd6jt188Ma6Xdeeg=
+github.com/iris-contrib/middleware/secure v0.0.0-20211207164801-081c558a02bb/go.mod h1:y3NuK8gcZvIXOsO7wQRYBQe/DUnirOHnIDJHOCbv+/Y=
 github.com/iris-contrib/schema v0.0.6 h1:CPSBLyx2e91H2yJzPuhGuifVRnZBBJ3pCOMbOvPZaTw=
 github.com/iris-contrib/schema v0.0.6/go.mod h1:iYszG0IOsuIsfzjymw1kMzTL8YQcCWlm65f3wX8J5iA=
 github.com/jackc/chunkreader v1.0.0 h1:4s39bBR8ByfqH+DKm8rQA3E1LHZWB9XWcrz8fqaZbe0=
@@ -581,7 +583,6 @@ github.com/smartystreets/assertions v1.2.0/go.mod h1:tcbTF8ujkAEcZ8TElKY+i30BzYl
 github.com/smartystreets/goconvey v1.6.4/go.mod h1:syvi0/a8iFYH4r/RixwvyeAJjdLS9QV7WQ/tjFTllLA=
 github.com/smartystreets/goconvey v1.7.2/go.mod h1:Vw0tHAZW6lzCRk3xgdin6fKYcG+G3Pg9vgXWeJpQFMM=
 github.com/snowlyg/helper v0.0.0-20211210061610-8518caad80b5/go.mod h1:rTYQ60yQZVDLOyrCB6VwZAWD9Coxwg/Cb4bGFpiJY64=
-github.com/snowlyg/helper v0.0.1 h1:K9Aod7qN8gh4p694CmjrPS5CVf6Ddti5vOmRRyXKMBA=
 github.com/snowlyg/helper v0.0.1/go.mod h1:rTYQ60yQZVDLOyrCB6VwZAWD9Coxwg/Cb4bGFpiJY64=
 github.com/snowlyg/helper v0.0.3 h1:NmBy8x9K9Av1IAU9DeFyhTFDpdiLZYdP/kb/m9Oej1I=
 github.com/snowlyg/helper v0.0.3/go.mod h1:BlXkUrQVo5uCaNF35ss65uffDo5L/qwAOEHA3FwnudI=

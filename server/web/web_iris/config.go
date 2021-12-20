@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/spf13/viper"
@@ -17,6 +18,7 @@ var CONFIG = Web{
 		Method: "",
 	},
 	System: System{
+		Tls:          false,
 		Level:        "debug",
 		Addr:         "127.0.0.1:8085",
 		StaticPrefix: "/upload",
@@ -64,6 +66,7 @@ type Limit struct {
 }
 
 type System struct {
+	Tls          bool   `mapstructure:"tls" json:"tls" yaml:"tls"`       // debug,release,test
 	Level        string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
 	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
 	StaticPrefix string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
@@ -73,6 +76,14 @@ type System struct {
 	DbType       string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
 	CacheType    string `mapstructure:"cache-type" json:"cacheType" yaml:"cache-type"`
 	TimeFormat   string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
+}
+
+// StaticUrl 静态地址url
+func StaticUrl() string {
+	if CONFIG.System.Tls {
+		return str.Join("https://%s%s/", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
+	}
+	return str.Join("http://%s%s/", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
 }
 
 // IsExist 配置文件是否存在
@@ -98,6 +109,7 @@ func getViperConfig() viper_server.ViperConfig {
 	limit := strconv.FormatInt(int64(CONFIG.Limit.Limit), 10)
 	burst := strconv.FormatInt(int64(CONFIG.Limit.Burst), 10)
 	disable := strconv.FormatBool(CONFIG.Limit.Disable)
+	tls := strconv.FormatBool(CONFIG.System.Tls)
 	configName := "web"
 	return viper_server.ViperConfig{
 		Directory: g.ConfigDir,
@@ -133,6 +145,7 @@ limit:
  disable: ` + disable + `
  burst: ` + burst + `
 system:
+ tls: ` + tls + `
  level: ` + CONFIG.System.Level + `
  addr: ` + CONFIG.System.Addr + `
  db-type: ` + CONFIG.System.DbType + `

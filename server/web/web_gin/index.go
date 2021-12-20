@@ -19,6 +19,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 	"github.com/snowlyg/multi"
 	multi_gin "github.com/snowlyg/multi/gin"
@@ -57,6 +58,9 @@ func Init() *WebServer {
 	InitWeb()
 	gin.SetMode(CONFIG.System.Level)
 	app := gin.Default()
+	if CONFIG.System.Tls {
+		app.Use(middleware.LoadTls()) // 打开就能玩https了
+	}
 	registerValidation()
 
 	if CONFIG.System.Addr == "" { // 默认 8085

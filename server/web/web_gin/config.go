@@ -2,6 +2,7 @@ package web_gin
 
 import (
 	"fmt"
+	"path/filepath"
 	"strconv"
 
 	"github.com/fsnotify/fsnotify"
@@ -83,12 +84,13 @@ func IsExist() bool {
 	return getViperConfig().IsFileExist()
 }
 
-// StaticUrl 静态地址url
-func StaticUrl() string {
+// ToStaticUrl 静态地址url
+func ToStaticUrl(uri string) string {
+	path := filepath.Join(CONFIG.System.Addr, CONFIG.System.StaticPrefix, uri)
 	if CONFIG.System.Tls {
-		return str.Join("https://", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
+		return str.Join("https://", path)
 	}
-	return str.Join("http://", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
+	return str.Join("http://", path)
 }
 
 // Remove 删除配置文件

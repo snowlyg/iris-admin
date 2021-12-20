@@ -2,6 +2,7 @@ package web_iris
 
 import (
 	"fmt"
+	"path/filepath"
 	"strconv"
 
 	"github.com/fsnotify/fsnotify"
@@ -78,12 +79,13 @@ type System struct {
 	TimeFormat   string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
 }
 
-// StaticUrl 静态地址url
-func StaticUrl() string {
+// ToStaticUrl 静态地址url
+func ToStaticUrl(uri string) string {
+	path := filepath.Join(CONFIG.System.Addr, CONFIG.System.StaticPrefix, uri)
 	if CONFIG.System.Tls {
-		return str.Join("https://", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
+		return str.Join("https://", path)
 	}
-	return str.Join("http://", CONFIG.System.Addr, CONFIG.System.StaticPrefix)
+	return str.Join("http://", path)
 }
 
 // IsExist 配置文件是否存在

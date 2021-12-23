@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	limit "github.com/aviddiviner/gin-limit"
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
@@ -34,6 +35,10 @@ func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
 // InitRouter 初始化模块路由
 func (ws *WebServer) InitRouter() error {
 	ws.app.Use(limit.MaxAllowed(50))
+
+	if CONFIG.System.Level == "debug" {
+		pprof.Register(ws.app)
+	}
 	router := ws.app.Group("/")
 	{
 		router.Use(middleware.Cors()) // 如需跨域可以打开

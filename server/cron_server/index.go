@@ -1,4 +1,4 @@
-package cronserver
+package cron_server
 
 import (
 	"errors"

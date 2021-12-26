@@ -125,24 +125,6 @@ pool-size: ` + poolSize),
 - - Cache-driven service
 - - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
 - - Through single instance `cache.Instance()` operating data.
-```go
-// InitDriver Initial authentication
-func (ws *WebServer) InitDriver() error {
-	err := multi.InitDriver(
-		&multi.Config{
-			DriverType:      CONFIG.System.CacheType,
-			UniversalClient: cache.Instance()},
-	)
-	if err != nil {
-		return fmt.Errorf("Initialize authentication driver error %w", err)
-	}
-	if multi.AuthDriver == nil {
-		return ErrAuthDriverEmpty
-	}
-	return nil
-}
-
-```
 
 - [operation]
 - - System operation log service.
@@ -157,7 +139,6 @@ func (ws *WebServer) InitDriver() error {
 // - GetTestClient test client
 // - GetTestLogin login for test
 // - AddWebStatic add web static file 
-// - InitDriver initialize authentication driver
 // - AddUploadStatic add upload file api
 // - Run start program
 type WebFunc interface {
@@ -165,7 +146,6 @@ type WebFunc interface {
 	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
 	AddWebStatic(perfix string)
 	AddUploadStatic()
-	InitDriver() error
 	InitRouter() error
 	Run()
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/kataras/iris/v12/middleware/pprof"
 	"github.com/kataras/iris/v12/middleware/rate"
 	"github.com/snowlyg/helper/arr"
+	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 )
 
@@ -17,11 +18,11 @@ func (ws *WebServer) InitRouter() error {
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
 		app.UseRouter(middleware.CrsAuth())
-		if !CONFIG.Limit.Disable {
-			limitV1 := rate.Limit(CONFIG.Limit.Limit, CONFIG.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
+		if !web.CONFIG.Limit.Disable {
+			limitV1 := rate.Limit(web.CONFIG.Limit.Limit, web.CONFIG.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
 			app.Use(limitV1)
 		}
-		if CONFIG.System.Level == "debug" {
+		if web.CONFIG.System.Level == "debug" {
 			debug := func(index iris.Party) {
 				index.Get("/", func(ctx iris.Context) {
 					ctx.HTML("<h1>请点击<a href='/debug/pprof'>这里</a>打开调试页面")
@@ -55,8 +56,8 @@ func (ws *WebServer) InitRouter() error {
 // - PermRoutes 权鉴路由
 // - NoPermRoutes 公共路由
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
-	methods := strings.Split(CONFIG.Except.Method, ";")
-	uris := strings.Split(CONFIG.Except.Uri, ";")
+	methods := strings.Split(web.CONFIG.Except.Method, ";")
+	uris := strings.Split(web.CONFIG.Except.Uri, ";")
 	routeLen := len(ws.app.GetRoutes())
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)

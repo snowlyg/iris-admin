@@ -1,4 +1,4 @@
-package web_iris
+package web
 
 import (
 	"fmt"
@@ -27,7 +27,6 @@ var CONFIG = Web{
 		WebPrefix:    "/admin",
 		WebPath:      "./dist",
 		DbType:       "mysql",
-		CacheType:    "redis",
 		TimeFormat:   "2006-01-02 15:04:05",
 	},
 	Limit: Limit{
@@ -75,8 +74,34 @@ type System struct {
 	WebPrefix    string `mapstructure:"web-prefix" json:"webPrefix" yaml:"web-prefix"`
 	WebPath      string `mapstructure:"web-path" json:"webPath" yaml:"web-path"`
 	DbType       string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
-	CacheType    string `mapstructure:"cache-type" json:"cacheType" yaml:"cache-type"`
 	TimeFormat   string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
+}
+
+// Verfiy
+func Verfiy() {
+	if CONFIG.System.Addr == "" { // 默认 8085
+		CONFIG.System.Addr = "127.0.0.1:8085"
+	}
+
+	if CONFIG.System.StaticPath == "" { // 默认 /static/upload
+		CONFIG.System.StaticPath = "/static/upload"
+	}
+
+	if CONFIG.System.StaticPrefix == "" { // 默认 /upload
+		CONFIG.System.StaticPrefix = "/upload"
+	}
+
+	if CONFIG.System.WebPath == "" { // 默认 ./dist
+		CONFIG.System.WebPath = "./dist"
+	}
+
+	if CONFIG.System.WebPrefix == "" { // 默认 /
+		CONFIG.System.WebPrefix = "/"
+	}
+
+	if CONFIG.System.TimeFormat == "" { // 默认 80
+		CONFIG.System.TimeFormat = "2006-01-02 15:04:05"
+	}
 }
 
 // ToStaticUrl 静态地址url
@@ -151,7 +176,6 @@ system:
  level: ` + CONFIG.System.Level + `
  addr: ` + CONFIG.System.Addr + `
  db-type: ` + CONFIG.System.DbType + `
- cache-type: ` + CONFIG.System.CacheType + `
  static-path: ` + CONFIG.System.StaticPath + `
  static-prefix: ` + CONFIG.System.StaticPrefix + `
  time-format: ` + CONFIG.System.TimeFormat + `

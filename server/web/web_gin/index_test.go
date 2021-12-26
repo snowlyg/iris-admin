@@ -10,9 +10,8 @@ import (
 )
 
 func TestStart(t *testing.T) {
-	defer Remove()
-	CONFIG.System.CacheType = "local"
-	CONFIG.System.Addr = "127.0.0.1:18088"
+	defer web.Remove()
+	web.CONFIG.System.Addr = "127.0.0.1:18088"
 	go func() {
 		web.Start(Init())
 	}()

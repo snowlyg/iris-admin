@@ -125,24 +125,6 @@ pool-size: ` + poolSize),
 - - 缓存驱动服务
 - - 使用 [github.com/go-redis/redis](https://github.com/go-redis/redis) 第三方包实现
 - - 通过单列 `cache.Instance()` 操作数据
-```go
-// InitDriver 初始化认证
-func (ws *WebServer) InitDriver() error {
-	err := multi.InitDriver(
-		&multi.Config{
-			DriverType:      CONFIG.System.CacheType,
-			UniversalClient: cache.Instance()},
-	)
-	if err != nil {
-		return fmt.Errorf("初始化认证驱动错误 %w", err)
-	}
-	if multi.AuthDriver == nil {
-		return ErrAuthDriverEmpty
-	}
-	return nil
-}
-
-```
 
 - [operation]
 - - 系统操作日志服务
@@ -157,7 +139,6 @@ func (ws *WebServer) InitDriver() error {
 // - GetTestClient 测试客户端
 // - GetTestLogin 测试登录
 // - AddWebStatic 添加静态页面
-// - InitDriver 初始化认证
 // - AddUploadStatic 上传文件路径
 // - Run 启动
 type WebFunc interface {
@@ -165,7 +146,6 @@ type WebFunc interface {
 	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
 	AddWebStatic(perfix string)
 	AddUploadStatic()
-	InitDriver() error
 	InitRouter() error
 	Run()
 }

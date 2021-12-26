@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/arr"
+	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
 )
 
@@ -35,7 +36,7 @@ func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
 // InitRouter 初始化模块路由
 func (ws *WebServer) InitRouter() error {
 	ws.app.Use(limit.MaxAllowed(50))
-	if CONFIG.System.Level == "debug" {
+	if web.CONFIG.System.Level == "debug" {
 		pprof.Register(ws.app)
 	}
 	router := ws.app.Group("/")
@@ -64,8 +65,8 @@ func (ws *WebServer) InitRouter() error {
 // - PermRoutes 权鉴路由
 // - NoPermRoutes 公共路由
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
-	methods := strings.Split(CONFIG.Except.Method, ";")
-	uris := strings.Split(CONFIG.Except.Uri, ";")
+	methods := strings.Split(web.CONFIG.Except.Method, ";")
+	uris := strings.Split(web.CONFIG.Except.Uri, ";")
 	routeLen := len(ws.app.Routes())
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)

@@ -17,12 +17,10 @@ import (
 	"github.com/snowlyg/iris-admin/migration"
 	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 	"github.com/snowlyg/multi"
-	multi_gin "github.com/snowlyg/multi/gin"
 	"go.uber.org/zap"
 )
 
@@ -47,72 +45,33 @@ type WebServer struct {
 	webPath      string
 }
 
-// InitWeb 初始化配置
-func InitWeb() {
-	viper_server.Init(getViperConfig())
-}
-
 // Init 初始化web服务
 // 先初始化基础服务 config , zap , database , casbin  e.g.
 func Init() *WebServer {
-	InitWeb()
-	gin.SetMode(CONFIG.System.Level)
+	web.InitWeb()
+	gin.SetMode(web.CONFIG.System.Level)
 	app := gin.Default()
-	if CONFIG.System.Tls {
+	if web.CONFIG.System.Tls {
 		app.Use(middleware.LoadTls()) // 打开就能玩https了
 	}
 	registerValidation()
 
-	if CONFIG.System.Addr == "" { // 默认 8085
-		CONFIG.System.Addr = "127.0.0.1:8085"
-	}
-
-	if CONFIG.System.StaticPrefix == "" { // 默认 /upload
-		CONFIG.System.StaticPrefix = "static/upload"
-	}
-
-	if CONFIG.System.WebPath == "" { // 默认 ./dist
-		CONFIG.System.WebPath = "./dist"
-	}
-
-	if CONFIG.System.WebPrefix == "" { // 默认 /
-		CONFIG.System.WebPrefix = "/admin"
-	}
-
-	if CONFIG.System.TimeFormat == "" { // 默认 80
-		CONFIG.System.TimeFormat = "2006-01-02 15:04:05"
-	}
+	web.Verfiy()
 
 	return &WebServer{
 		app:          app,
-		addr:         CONFIG.System.Addr,
-		timeFormat:   CONFIG.System.TimeFormat,
-		staticPrefix: CONFIG.System.StaticPrefix,
+		addr:         web.CONFIG.System.Addr,
+		timeFormat:   web.CONFIG.System.TimeFormat,
+		staticPrefix: web.CONFIG.System.StaticPrefix,
 
-		webPrefix: CONFIG.System.WebPrefix,
-		webPath:   CONFIG.System.WebPath,
+		webPrefix: web.CONFIG.System.WebPrefix,
+		webPath:   web.CONFIG.System.WebPath,
 	}
 }
 
 // AddStatic 添加静态文件
 func (ws *WebServer) AddStatic(requestPath, root string) {
 	ws.app.Static(requestPath, root)
-}
-
-// InitDriver 初始化认证
-func (ws *WebServer) InitDriver() error {
-	err := multi_gin.InitDriver(
-		&multi.Config{
-			DriverType:      CONFIG.System.CacheType,
-			UniversalClient: cache.Instance()},
-	)
-	if err != nil {
-		return fmt.Errorf("初始化认证驱动错误 %w", err)
-	}
-	if multi.AuthDriver == nil {
-		return ErrAuthDriverEmpty
-	}
-	return nil
 }
 
 // AddWebStatic 添加前端访问地址
@@ -158,9 +117,9 @@ func (ws *WebServer) GetTestLogin(t *testing.T, url string, res httptest.Respons
 
 // Run 启动web服务
 func (ws *WebServer) Run() {
-	s := initServer(CONFIG.System.Addr, ws.app)
+	s := initServer(web.CONFIG.System.Addr, ws.app)
 	time.Sleep(10 * time.Microsecond)
-	fmt.Printf("默认监听地址:http://%s\n", CONFIG.System.Addr)
+	fmt.Printf("默认监听地址:http://%s\n", web.CONFIG.System.Addr)
 	s.ListenAndServe()
 
 }
@@ -170,9 +129,8 @@ func BeforeTestMain(mysqlPwd, redisPwd string, redisDB int, party func(wi *WebSe
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
-	CONFIG.System.CacheType = "redis"
-	CONFIG.System.DbType = "mysql"
-	InitWeb()
+	web.CONFIG.System.DbType = "mysql"
+	web.InitWeb()
 
 	database.CONFIG.Dbname = uuid
 	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)

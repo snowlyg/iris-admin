@@ -3,7 +3,6 @@ package web_iris
 import (
 	stdContext "context"
 	"errors"
-	"fmt"
 	"path/filepath"
 	"sync"
 	"testing"
@@ -15,11 +14,8 @@ import (
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/httptest"
-	"github.com/snowlyg/iris-admin/server/cache"
-	"github.com/snowlyg/iris-admin/server/viper_server"
+	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
-	"github.com/snowlyg/multi"
-	multi_iris "github.com/snowlyg/multi/iris"
 )
 
 var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
@@ -52,22 +48,17 @@ type Party struct {
 	PartyFunc func(index iris.Party)
 }
 
-// InitWeb 初始化配置
-func InitWeb() {
-	viper_server.Init(getViperConfig())
-}
-
 // Init 初始化web服务
 // 先初始化基础服务 config , zap , database , casbin  e.g.
 func Init() *WebServer {
-	InitWeb()
+	web.InitWeb()
 	app := iris.New()
-	if CONFIG.System.Tls {
+	if web.CONFIG.System.Tls {
 		app.Use(middleware.LoadTls()) // 打开就能玩https了
 	}
 	app.Use(recover.New())
 	app.Validator = validator.New() //参数验证
-	app.Logger().SetLevel(CONFIG.System.Level)
+	app.Logger().SetLevel(web.CONFIG.System.Level)
 	idleConnsClosed := make(chan struct{})
 	iris.RegisterOnInterrupt(func() { //优雅退出
 		timeout := 10 * time.Second
@@ -77,38 +68,16 @@ func Init() *WebServer {
 		close(idleConnsClosed)
 	})
 
-	if CONFIG.System.Addr == "" { // 默认 8085
-		CONFIG.System.Addr = "127.0.0.1:8085"
-	}
-
-	if CONFIG.System.StaticPath == "" { // 默认 /static/upload
-		CONFIG.System.StaticPath = "/static/upload"
-	}
-
-	if CONFIG.System.StaticPrefix == "" { // 默认 /upload
-		CONFIG.System.StaticPrefix = "/upload"
-	}
-
-	if CONFIG.System.WebPath == "" { // 默认 ./dist
-		CONFIG.System.WebPath = "./dist"
-	}
-
-	if CONFIG.System.WebPrefix == "" { // 默认 /
-		CONFIG.System.WebPrefix = "/"
-	}
-
-	if CONFIG.System.TimeFormat == "" { // 默认 80
-		CONFIG.System.TimeFormat = "2006-01-02 15:04:05"
-	}
+	web.Verfiy()
 
 	return &WebServer{
 		app:             app,
-		addr:            CONFIG.System.Addr,
-		timeFormat:      CONFIG.System.TimeFormat,
-		staticPrefix:    CONFIG.System.StaticPrefix,
-		staticPath:      CONFIG.System.StaticPath,
-		webPrefix:       CONFIG.System.WebPrefix,
-		webPath:         CONFIG.System.WebPath,
+		addr:            web.CONFIG.System.Addr,
+		timeFormat:      web.CONFIG.System.TimeFormat,
+		staticPrefix:    web.CONFIG.System.StaticPrefix,
+		staticPath:      web.CONFIG.System.StaticPath,
+		webPrefix:       web.CONFIG.System.WebPrefix,
+		webPath:         web.CONFIG.System.WebPath,
 		idleConnsClosed: idleConnsClosed,
 	}
 }
@@ -121,22 +90,6 @@ func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...
 // AddModule 添加模块
 func (ws *WebServer) AddModule(parties ...Party) {
 	ws.parties = append(ws.parties, parties...)
-}
-
-// InitDriver 初始化认证
-func (ws *WebServer) InitDriver() error {
-	err := multi_iris.InitDriver(
-		&multi.Config{
-			DriverType:      CONFIG.System.CacheType,
-			UniversalClient: cache.Instance()},
-	)
-	if err != nil {
-		return fmt.Errorf("初始化认证驱动错误 %w", err)
-	}
-	if multi.AuthDriver == nil {
-		return ErrAuthDriverEmpty
-	}
-	return nil
 }
 
 // AddWebStatic 添加前端访问地址

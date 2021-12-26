@@ -37,9 +37,8 @@ func BeforeTestMainGin(redisDB int, party func(wi *web_gin.WebServer), seed func
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
-	web_gin.CONFIG.System.CacheType = "redis"
-	web_gin.CONFIG.System.DbType = "mysql"
-	web_gin.InitWeb()
+	web.CONFIG.System.DbType = "mysql"
+	web.InitWeb()
 
 	database.CONFIG.Dbname = uuid
 	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
@@ -91,9 +90,8 @@ func BeforeTestMainIris(redisDB int, party func(wi *web_iris.WebServer), seed fu
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("iris", "_", node.Generate().String())
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
-	web_iris.CONFIG.System.CacheType = "redis"
-	web_iris.CONFIG.System.DbType = "mysql"
-	web_iris.InitWeb()
+	web.CONFIG.System.DbType = "mysql"
+	web.InitWeb()
 
 	database.CONFIG.Dbname = uuid
 	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)

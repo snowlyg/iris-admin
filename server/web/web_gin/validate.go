@@ -3,6 +3,7 @@ package web_gin
 import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/snowlyg/iris-admin/server/web"
 )
 
 func registerValidation() {
@@ -12,7 +13,7 @@ func registerValidation() {
 }
 
 var validateDevRequired validator.Func = func(fl validator.FieldLevel) bool {
-	if CONFIG.System.Level != "release" {
+	if web.CONFIG.System.Level != "release" {
 		return true
 	}
 	return fl.Field().String() != ""

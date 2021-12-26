@@ -1,59 +1,16 @@
 package cache
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/snowlyg/multi"
-	multi_gin "github.com/snowlyg/multi/gin"
 )
-
-func TestInstancelocal(t *testing.T) {
-	t.Run("test instance", func(t *testing.T) {
-		// 初始化认证
-		err := multi_gin.InitDriver(
-			&multi.Config{
-				DriverType: "local",
-			},
-		)
-		if err != nil || multi.AuthDriver == nil {
-			t.Error(fmt.Sprintf("认证驱动初始化失败 %v \n", err))
-		}
-	})
-}
-
-func TestInstanceRedis(t *testing.T) {
-	t.Run("test instance", func(t *testing.T) {
-		cache := Instance()
-		// 初始化认证
-		err := multi_gin.InitDriver(
-			&multi.Config{
-				DriverType:      "redis",
-				UniversalClient: cache},
-		)
-		if err != nil || multi.AuthDriver == nil {
-			t.Error(fmt.Sprintf("认证驱动初始化失败 %v \n", err))
-		}
-	})
-}
 
 func TestSetCacheString(t *testing.T) {
 	t.Run("test set cache string", func(t *testing.T) {
-		cache := Instance()
-		// 初始化认证
-		err := multi_gin.InitDriver(
-			&multi.Config{
-				DriverType:      "redis",
-				UniversalClient: cache},
-		)
-		if err != nil || multi.AuthDriver == nil {
-			t.Error(fmt.Sprintf("认证驱动初始化失败 %v \n", err))
-		}
 		key := "test_set_cache"
 		want := "test_set_cache_value"
-		err = SetCache(key, want, time.Duration(time.Second*3))
+		err := SetCache(key, want, time.Duration(time.Second*3))
 		if err != nil {
 			t.Errorf("set cache get error %v\n", err)
 		}
@@ -74,19 +31,9 @@ func TestSetCacheString(t *testing.T) {
 
 func TestSetCacheUint(t *testing.T) {
 	t.Run("test set cache bytes", func(t *testing.T) {
-		cache := Instance()
-		// 初始化认证
-		err := multi_gin.InitDriver(
-			&multi.Config{
-				DriverType:      "redis",
-				UniversalClient: cache},
-		)
-		if err != nil || multi.AuthDriver == nil {
-			t.Error(fmt.Sprintf("认证驱动初始化失败 %v \n", err))
-		}
 		key := "test_set_cache"
 		var want uint64 = 123
-		err = SetCache(key, want, time.Duration(time.Second*3))
+		err := SetCache(key, want, time.Duration(time.Second*3))
 		if err != nil {
 			t.Errorf("set cache get error %v\n", err)
 		}
@@ -106,19 +53,10 @@ func TestSetCacheUint(t *testing.T) {
 }
 func TestSetCacheBytes(t *testing.T) {
 	t.Run("test set cache bytes", func(t *testing.T) {
-		cache := Instance()
-		// 初始化认证
-		err := multi_gin.InitDriver(
-			&multi.Config{
-				DriverType:      "redis",
-				UniversalClient: cache},
-		)
-		if err != nil || multi.AuthDriver == nil {
-			t.Error(fmt.Sprintf("认证驱动初始化失败 %v \n", err))
-		}
+
 		key := "test_set_cache"
 		want := []byte("test_set_cache_value")
-		err = SetCache(key, want, time.Duration(time.Second*3))
+		err := SetCache(key, want, time.Duration(time.Second*3))
 		if err != nil {
 			t.Errorf("set cache get error %v\n", err)
 		}

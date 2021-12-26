@@ -18,7 +18,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func BeforeTestMainGin(redisDB int, party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
+func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
 	fmt.Println("+++++ before test +++++")
 	mysqlPwd := os.Getenv("mysqlPwd")
 	redisPwd := os.Getenv("redisPwd")
@@ -45,10 +45,6 @@ func BeforeTestMainGin(redisDB int, party func(wi *web_gin.WebServer), seed func
 	database.CONFIG.LogMode = true
 	database.InitMysql()
 
-	cache.CONFIG.DB = redisDB
-	cache.CONFIG.Password = strings.TrimSpace(redisPwd)
-	cache.InitCache()
-
 	wi := web_gin.Init()
 	party(wi)
 	web.StartTest(wi)
@@ -71,7 +67,7 @@ func BeforeTestMainGin(redisDB int, party func(wi *web_gin.WebServer), seed func
 	return uuid, wi
 }
 
-func BeforeTestMainIris(redisDB int, party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
+func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
 	fmt.Println("+++++ before test +++++")
 	mysqlPwd := os.Getenv("mysqlPwd")
 	redisPwd := os.Getenv("redisPwd")
@@ -97,10 +93,6 @@ func BeforeTestMainIris(redisDB int, party func(wi *web_iris.WebServer), seed fu
 	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
 	database.CONFIG.LogMode = true
 	database.InitMysql()
-
-	cache.CONFIG.DB = redisDB
-	cache.CONFIG.Password = strings.TrimSpace(redisPwd)
-	cache.InitCache()
 
 	wi := web_iris.Init()
 	party(wi)

@@ -234,7 +234,6 @@ func main() {
 ```yaml
 system:
   addr: "127.0.0.1:8085"
-  cache-type: ""
   db-type: ""
   level: debug
   static-path: /static/upload

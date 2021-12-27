@@ -66,6 +66,7 @@ func (ws *WebServer) AddWebStatic() {
 	favicon := filepath.Join(ws.staticAbsPath, "favicon.ico")
 	index := filepath.Join(ws.staticAbsPath, "index.html")
 	ws.app.Static("/favicon.ico", favicon)
+	ws.app.Static(ws.webPrefix, index)
 	filepathNames, _ := filepath.Glob(filepath.Join(ws.staticAbsPath, "*"))
 	for _, filepathName := range filepathNames {
 		if filepathName == ws.staticAbsPath {

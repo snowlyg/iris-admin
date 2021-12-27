@@ -69,6 +69,9 @@ func (ws *WebServer) AddWebStatic(paths ...string) {
 	}
 
 	webPrefix := paths[0]
+	if webPrefix == "/" {
+		return
+	}
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
 	if str.InStrArray(webPrefix, webPrefixs) {
 		return
@@ -80,7 +83,7 @@ func (ws *WebServer) AddWebStatic(paths ...string) {
 	index := filepath.Join(staticAbsPath, "index.html")
 	static := filepath.Join(staticAbsPath, staticName)
 	ws.app.Static("/favicon.ico", favicon)
-	ws.app.Static(webPrefix, staticAbsPath)
+	ws.app.StaticFile(webPrefix, index)
 	ws.app.Static(staticName, static)
 
 	// 关键点【解决页面刷新404的问题】

@@ -90,6 +90,9 @@ func (ws *WebServer) AddWebStatic(paths ...string) {
 		return
 	}
 	webPrefix := paths[0]
+	if webPrefix == "/" {
+		return
+	}
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
 	if str.InStrArray(webPrefix, webPrefixs) {
 		return

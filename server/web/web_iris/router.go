@@ -18,7 +18,7 @@ func (ws *WebServer) InitRouter() error {
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
 		// 排除路由竞争
-		app.Get("/version", func(ctx iris.Context) {
+		app.Get("/", func(ctx iris.Context) {
 			ctx.WriteString("GO_MERCHANT is running!!!")
 		})
 

@@ -53,12 +53,7 @@ func initConfig() error {
 		}
 	}
 
-	var systemStaticPrefix, systemTimeFormat, systemAddr string
-	fmt.Println("Please input your system static prefix: ")
-	fmt.Println("System static prefix is ''")
-	fmt.Scanln(&systemStaticPrefix)
-	CONFIG.System.StaticPrefix = systemStaticPrefix
-
+	var systemTimeFormat, systemAddr string
 	fmt.Println("Please input your system timeformat: ")
 	fmt.Println("System timeformat is '2006-01-02 15:04:05'")
 	fmt.Scanln(&systemTimeFormat)

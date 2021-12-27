@@ -14,7 +14,6 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	"github.com/snowlyg/multi"
 	"go.uber.org/zap"
 )
 
@@ -134,9 +133,6 @@ func AfterTestMain(uuid string, isDelDb bool) {
 		db.Close()
 	}
 
-	if multi.AuthDriver != nil {
-		multi.AuthDriver.Close()
-	}
 	err = database.Remove()
 	if err != nil {
 		zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))

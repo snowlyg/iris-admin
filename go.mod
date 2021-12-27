@@ -23,7 +23,6 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/snowlyg/helper v0.0.3
 	github.com/snowlyg/httptest v0.0.1
-	github.com/snowlyg/multi v0.0.1-alpha2
 	github.com/spf13/viper v1.8.1
 	github.com/tdewolff/minify/v2 v2.9.24 // indirect
 	github.com/unrolled/secure v1.0.9

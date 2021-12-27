@@ -38,6 +38,38 @@ func InitConfig() error {
 				}
 			}
 
+			var systemStaticPrefix, systemWebPrefix, systemTimeFormat, systemStaticAbsPath, systemAddr string
+			fmt.Println("Please input your system static prefix: ")
+			fmt.Println("System static prefix is ''")
+			fmt.Scanln(&systemStaticPrefix)
+			CONFIG.System.StaticPrefix = systemStaticPrefix
+
+			fmt.Println("Please input your system web prefix: ")
+			fmt.Println("System web prefix is ''")
+			fmt.Scanln(&systemWebPrefix)
+			CONFIG.System.WebPrefix = systemWebPrefix
+
+			fmt.Println("Please input your system timeformat: ")
+			fmt.Println("System timeformat is '2006-01-02 15:04:05'")
+			fmt.Scanln(&systemTimeFormat)
+			if systemTimeFormat == "" {
+				systemTimeFormat = "2006-01-02 15:04:05"
+			}
+			CONFIG.System.TimeFormat = systemTimeFormat
+
+			fmt.Println("Please input your system static abs path: ")
+			fmt.Println("System static abs path is ''")
+			fmt.Scanln(&systemStaticAbsPath)
+			CONFIG.System.StaticAbsPath = systemStaticAbsPath
+
+			fmt.Println("Please input your system addr: ")
+			fmt.Println("System addr is '127.0.0.1:8085'")
+			fmt.Scanln(&systemAddr)
+			if systemAddr == "" {
+				systemAddr = "127.0.0.1:8085"
+			}
+			CONFIG.System.Addr = systemAddr
+
 			InitWeb()
 		case "N":
 			return nil

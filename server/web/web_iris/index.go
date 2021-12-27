@@ -26,7 +26,6 @@ var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
 // - addr  服务访问地址
 // - timeFormat  时间格式
 // - staticPrefix  静态文件访问地址前缀
-// - staticAbsPath  静态文件绝对地址
 
 type WebServer struct {
 	app             *iris.Application

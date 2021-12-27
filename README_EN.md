@@ -236,28 +236,9 @@ system:
   addr: "127.0.0.1:8085"
   db-type: ""
   level: debug
-  static-abs-path: /static/upload
   static-prefix: /upload
   time-format: "2006-01-02 15:04:05"
   web-path: ./dist
-```
-
-#### Add Static file path
-- You can add static file access path,through `AddStatic` function.
-```go
-package main
-
-import (
-	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/server/web"
-)
-
-func main() {
-	webServer := web_iris.Init()
-    fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
-	webServer.AddStatic("/other",fsOrDir)
-	webServer.Run()
-}
 ```
 
 #### Use with front-end framework , e.g. vue.
@@ -273,7 +254,8 @@ import (
 
 func main() {
 	webServer := web_iris.Init()
-	webServer.AddWebStatic("/")
+ wi.AddUploadStatic("/upload", "/var/static")
+	wi.AddWebStatic("/", "/var/static")
 	webServer.Run()
 }
 ```

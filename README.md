@@ -237,30 +237,12 @@ system:
   addr: "127.0.0.1:8085"
   db-type: ""
   level: debug
-  static-abs-path: /static/upload
   static-prefix: /upload
   time-format: "2006-01-02 15:04:05"
   web-prefix: /admin
   web-path: ./dist
 ```
 
-#### 设置其他静态文件路径
-- 设置其他静态文件路径，可以使用 `AddStatic` 方法
-```go
-package main
-
-import (
-	"github.com/kataras/iris/v12"
-	"github.com/snowlyg/iris-admin/server/web"
-)
-
-func main() {
-	webServer := web_iris.Init()
-    fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
-	webServer.AddStatic("/other",fsOrDir)
-	webServer.Run()
-}
-```
 
 #### 配合前端使用
 - 编译前端页面默认 `dist` 目录
@@ -275,7 +257,8 @@ import (
 
 func main() {
 	webServer := web_iris.Init()
-	webServer.AddWebStatic("/")
+	wi.AddUploadStatic("/upload", "/var/static")
+	wi.AddWebStatic("/", "/var/static")
 	webServer.Run()
 }
 ```

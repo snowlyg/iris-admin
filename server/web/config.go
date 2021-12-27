@@ -143,8 +143,8 @@ func getViperConfig() viper_server.ViperConfig {
 		Default: []byte(`
 max-size: ` + maxSize + `
 except: 
- uri: ` + CONFIG.Except.Uri + `
- method: ` + CONFIG.Except.Method + `
+ uri: "` + CONFIG.Except.Uri + `"
+ method: "` + CONFIG.Except.Method + `"
 captcha:
  key-long: ` + keyLong + `
  img-width: ` + imgWidth + `
@@ -155,12 +155,12 @@ limit:
  burst: ` + burst + `
 system:
  tls: ` + tls + `
- level: ` + CONFIG.System.Level + `
- addr: ` + CONFIG.System.Addr + `
- db-type: ` + CONFIG.System.DbType + `
+ level: "` + CONFIG.System.Level + `"
+ addr: "` + CONFIG.System.Addr + `"
+ db-type: "` + CONFIG.System.DbType + `"
  static-abs-path: ""
- static-prefix: ` + CONFIG.System.StaticPrefix + `
- time-format: ` + CONFIG.System.TimeFormat + `
- web-prefix: ` + CONFIG.System.WebPrefix),
+ static-prefix: "` + CONFIG.System.StaticPrefix + `"
+ web-prefix: "` + CONFIG.System.WebPrefix + `"
+ time-format: "` + CONFIG.System.TimeFormat + `"`),
 	}
 }

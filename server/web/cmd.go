@@ -20,18 +20,17 @@ func Init() error {
 			if err != nil {
 				return err
 			}
-			return initConfig()
 		case "N":
 			return nil
 		default:
-			return nil
 		}
 	}
+
 	err := initConfig()
 	if err != nil {
 		return err
 	}
-	fmt.Println("web iris initialized finished!")
+	fmt.Println("web iris-admin initialized finished!")
 	return nil
 }
 

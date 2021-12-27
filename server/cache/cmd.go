@@ -18,11 +18,9 @@ func InitConfig() error {
 			if err != nil {
 				return err
 			}
-			return initConfig()
 		case "N":
 			return nil
 		default:
-			return nil
 		}
 	}
 	err := initConfig()

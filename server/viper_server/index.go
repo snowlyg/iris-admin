@@ -81,6 +81,7 @@ func Init(viperConfig ViperConfig) error {
 
 		// ReadConfig 读取配置文件到 vi 中
 		if err := vi.ReadConfig(bytes.NewBuffer(viperConfig.Default)); err != nil {
+			fmt.Println(string(viperConfig.Default))
 			return fmt.Errorf("读取默认配置文件错误: %w ", err)
 		}
 

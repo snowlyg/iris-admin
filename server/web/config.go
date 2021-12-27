@@ -19,14 +19,11 @@ var CONFIG = Web{
 		Method: "",
 	},
 	System: System{
-		Tls:           false,
-		Level:         "debug",
-		Addr:          "127.0.0.1:8085",
-		StaticPrefix:  "",
-		StaticAbsPath: "",
-		WebPrefix:     "",
-		DbType:        "mysql",
-		TimeFormat:    "2006-01-02 15:04:05",
+		Tls:        false,
+		Level:      "debug",
+		Addr:       "127.0.0.1:8085",
+		DbType:     "mysql",
+		TimeFormat: "2006-01-02 15:04:05",
 	},
 	Limit: Limit{
 		Disable: true,
@@ -65,14 +62,13 @@ type Limit struct {
 }
 
 type System struct {
-	Tls           bool   `mapstructure:"tls" json:"tls" yaml:"tls"`       // debug,release,test
-	Level         string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
-	Addr          string `mapstructure:"addr" json:"addr" yaml:"addr"`
-	StaticPrefix  string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
-	StaticAbsPath string `mapstructure:"static-abs-path" json:"staticAbsPath" yaml:"static-abs-path"`
-	WebPrefix     string `mapstructure:"web-prefix" json:"webPrefix" yaml:"web-prefix"`
-	DbType        string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
-	TimeFormat    string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
+	Tls          bool   `mapstructure:"tls" json:"tls" yaml:"tls"`       // debug,release,test
+	Level        string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
+	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	StaticPrefix string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
+	WebPrefix    string `mapstructure:"web-prefix" json:"webPrefix" yaml:"web-prefix"`
+	DbType       string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
+	TimeFormat   string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
 }
 
 // Verfiy
@@ -158,7 +154,6 @@ system:
  level: "` + CONFIG.System.Level + `"
  addr: "` + CONFIG.System.Addr + `"
  db-type: "` + CONFIG.System.DbType + `"
- static-abs-path: "` + CONFIG.System.StaticAbsPath + `"
  static-prefix: "` + CONFIG.System.StaticPrefix + `"
  web-prefix: "` + CONFIG.System.WebPrefix + `"
  time-format: "` + CONFIG.System.TimeFormat + `"`),

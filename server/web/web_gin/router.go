@@ -11,6 +11,7 @@ import (
 	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
 type CustomAspect struct {
@@ -46,17 +47,10 @@ func (ws *WebServer) InitRouter() error {
 		router.Use(gin.Recovery())
 
 		// 排除路由竞争
-		if ws.webPrefix != "/" {
-			router.GET("/", func(ctx *gin.Context) {
-				ctx.String(http.StatusOK, "GO_MERCHANT is running!!!")
-			})
-		}
-	}
-	if ws.staticPrefix != "" {
-		ws.AddUploadStatic()
-	}
-	if ws.webPrefix != "" {
-		ws.AddWebStatic()
+		zap_server.ZAPLOG.Info("Default root path is used!")
+		router.GET("/version", func(ctx *gin.Context) {
+			ctx.String(http.StatusOK, "GO_MERCHANT is running!!!")
+		})
 	}
 	return nil
 }

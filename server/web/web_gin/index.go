@@ -16,6 +16,7 @@ import (
 	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
 var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
@@ -30,11 +31,8 @@ var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
 type WebServer struct {
 	app *gin.Engine
 	server
-	addr          string
-	timeFormat    string
-	staticPrefix  string
-	staticAbsPath string
-	webPrefix     string
+	addr       string
+	timeFormat string
 }
 
 // Init 初始化web服务
@@ -52,47 +50,67 @@ func Init() *WebServer {
 	web.Verfiy()
 
 	return &WebServer{
-		app:           app,
-		addr:          web.CONFIG.System.Addr,
-		timeFormat:    web.CONFIG.System.TimeFormat,
-		staticPrefix:  web.CONFIG.System.StaticPrefix,
-		staticAbsPath: web.CONFIG.System.StaticAbsPath,
-		webPrefix:     web.CONFIG.System.WebPrefix,
+		app:        app,
+		addr:       web.CONFIG.System.Addr,
+		timeFormat: web.CONFIG.System.TimeFormat,
 	}
 }
 
 // AddWebStatic 添加前端访问地址
-func (ws *WebServer) AddWebStatic() {
-	favicon := filepath.Join(ws.staticAbsPath, "favicon.ico")
-	index := filepath.Join(ws.staticAbsPath, "index.html")
-	ws.app.Static("/favicon.ico", favicon)
-	ws.app.Static(ws.webPrefix, index)
-	filepathNames, _ := filepath.Glob(filepath.Join(ws.staticAbsPath, "*"))
-	for _, filepathName := range filepathNames {
-		if filepathName == ws.staticAbsPath {
-			continue
-		}
-		if dir.IsFile(filepathName) {
-			continue
-		}
-		ws.app.Static(filepath.Base(filepathName), filepathName)
+func (ws *WebServer) AddWebStatic(paths ...string) {
+
+	if len(paths) != 3 {
+		zap_server.ZAPLOG.Warn("AddWebStatic function need 3 params")
+		return
 	}
+
+	if paths[0] == "" || paths[1] == "" || paths[2] == "" {
+		zap_server.ZAPLOG.Warn("AddWebStatic function params not support empty string")
+		return
+	}
+
+	webPrefix := paths[0]
+	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
+	if str.InStrArray(webPrefix, webPrefixs) {
+		return
+	}
+	staticName := paths[1]
+	staticAbsPath := paths[2]
+
+	favicon := filepath.Join(staticAbsPath, "favicon.ico")
+	index := filepath.Join(staticAbsPath, "index.html")
+	static := filepath.Join(staticAbsPath, staticName)
+	ws.app.Static("/favicon.ico", favicon)
+	ws.app.Static(webPrefix, staticAbsPath)
+	ws.app.Static(staticName, static)
 
 	// 关键点【解决页面刷新404的问题】
 	ws.app.NoRoute(func(ctx *gin.Context) {
 		ctx.Writer.WriteHeader(http.StatusOK)
-		if strings.Contains(ctx.Request.RequestURI, ws.webPrefix) {
+		if strings.Contains(ctx.Request.RequestURI, webPrefix) {
 			file, _ := dir.ReadBytes(index)
 			ctx.Writer.Write(file)
 		}
 		ctx.Writer.Header().Add("Accept", "text/html")
 		ctx.Writer.Flush()
 	})
+	web.CONFIG.System.WebPrefix = str.Join(web.CONFIG.System.WebPrefix, ",", webPrefix)
 }
 
 // AddUploadStatic 添加上传文件访问地址
-func (ws *WebServer) AddUploadStatic() {
-	ws.app.StaticFS(ws.staticPrefix, http.Dir(ws.staticPrefix))
+func (ws *WebServer) AddUploadStatic(paths ...string) {
+	if len(paths) != 1 {
+		zap_server.ZAPLOG.Warn("AddWebStatic function need 1 params")
+		return
+	}
+
+	if paths[0] == "" {
+		zap_server.ZAPLOG.Warn("AddWebStatic function params not support empty string")
+		return
+	}
+	staticPrefix := paths[0]
+	ws.app.StaticFS(staticPrefix, http.Dir(staticPrefix))
+	web.CONFIG.System.StaticPrefix = staticPrefix
 }
 
 // GetTestClient 获取测试验证客户端

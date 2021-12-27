@@ -21,8 +21,8 @@ type WebTestFunc interface {
 	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
 }
 type WebBaseFunc interface {
-	AddWebStatic()
-	AddUploadStatic()
+	AddWebStatic(paths ...string)
+	AddUploadStatic(paths ...string)
 	InitRouter() error
 	Run()
 }

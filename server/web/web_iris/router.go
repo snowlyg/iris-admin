@@ -18,11 +18,9 @@ func (ws *WebServer) InitRouter() error {
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
 		// 排除路由竞争
-		if ws.webPrefix != "/" {
-			app.Get("/", func(ctx iris.Context) {
-				ctx.WriteString("GO_MERCHANT is running!!!")
-			})
-		}
+		app.Get("/version", func(ctx iris.Context) {
+			ctx.WriteString("GO_MERCHANT is running!!!")
+		})
 
 		app.UseRouter(middleware.CrsAuth())
 		if !web.CONFIG.Limit.Disable {
@@ -43,14 +41,6 @@ func (ws *WebServer) InitRouter() error {
 		for _, party := range ws.parties {
 			app.PartyFunc(party.Perfix, party.PartyFunc)
 		}
-	}
-
-	if ws.staticPrefix != "" {
-		ws.AddUploadStatic()
-	}
-
-	if ws.webPrefix != "" {
-		ws.AddWebStatic()
 	}
 
 	// http test must build

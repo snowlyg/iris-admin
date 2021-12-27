@@ -101,17 +101,17 @@ func (ws *WebServer) AddWebStatic(paths ...string) {
 
 // AddUploadStatic 添加上传文件访问地址
 func (ws *WebServer) AddUploadStatic(paths ...string) {
-	if len(paths) != 1 {
-		zap_server.ZAPLOG.Warn("AddWebStatic function need 1 params")
+	if len(paths) != 2 {
+		zap_server.ZAPLOG.Warn("AddUploadStatic function need 2 params")
 		return
 	}
 
-	if paths[0] == "" {
-		zap_server.ZAPLOG.Warn("AddWebStatic function params not support empty string")
+	if paths[0] == "" || paths[1] == "" {
+		zap_server.ZAPLOG.Warn("AddUploadStatic function params not support empty string")
 		return
 	}
 	staticPrefix := paths[0]
-	ws.app.StaticFS(staticPrefix, http.Dir(staticPrefix))
+	ws.app.StaticFS(staticPrefix, http.Dir(paths[1]))
 	web.CONFIG.System.StaticPrefix = staticPrefix
 }
 

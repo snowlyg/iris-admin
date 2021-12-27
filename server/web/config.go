@@ -158,7 +158,7 @@ system:
  level: "` + CONFIG.System.Level + `"
  addr: "` + CONFIG.System.Addr + `"
  db-type: "` + CONFIG.System.DbType + `"
- static-abs-path: ""
+ static-abs-path: "` + CONFIG.System.StaticAbsPath + `"
  static-prefix: "` + CONFIG.System.StaticPrefix + `"
  web-prefix: "` + CONFIG.System.WebPrefix + `"
  time-format: "` + CONFIG.System.TimeFormat + `"`),

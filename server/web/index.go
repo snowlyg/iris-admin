@@ -57,9 +57,11 @@ func StartTest(wf WebFunc) {
 }
 
 // InitWeb 初始化配置
-func InitWeb() {
+func InitWeb() error {
 	err := viper_server.Init(getViperConfig())
 	if err != nil {
 		zap_server.ZAPLOG.Error("初始化配置文件", zap.String("viper_server.Init(getViperConfig())·", err.Error()))
+		return err
 	}
+	return nil
 }

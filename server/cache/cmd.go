@@ -18,6 +18,7 @@ func InitConfig() error {
 			if err != nil {
 				return err
 			}
+			return initConfig()
 		case "N":
 			return nil
 		default:
@@ -25,6 +26,11 @@ func InitConfig() error {
 		}
 	}
 
+	fmt.Println("redis initialized finished!")
+	return nil
+}
+
+func initConfig() error {
 	var addr, dbPwd string
 	var db, poolSize int
 	fmt.Println("Please input your redis addr: ")
@@ -51,7 +57,5 @@ func InitConfig() error {
 	fmt.Println("Please input your redis pool size: ")
 	fmt.Scanln(&poolSize)
 	CONFIG.PoolSize = poolSize
-
-	fmt.Println("redis initialized finished!")
 	return nil
 }

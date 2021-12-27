@@ -62,12 +62,25 @@ func Init() *WebServer {
 
 // AddWebStatic 添加前端访问地址
 func (ws *WebServer) AddWebStatic() {
-	ws.app.Static(ws.webPrefix, ws.staticAbsPath)
+	favicon := filepath.Join(ws.staticAbsPath, "favicon.ico")
+	index := filepath.Join(ws.staticAbsPath, "index.html")
+	ws.app.Static("/favicon.ico", favicon)
+	filepathNames, _ := filepath.Glob(filepath.Join(ws.staticAbsPath, "*"))
+	for _, filepathName := range filepathNames {
+		if filepathName == ws.staticAbsPath {
+			continue
+		}
+		if dir.IsFile(filepathName) {
+			continue
+		}
+		ws.app.Static(filepath.Base(filepathName), filepathName)
+	}
+
 	// 关键点【解决页面刷新404的问题】
 	ws.app.NoRoute(func(ctx *gin.Context) {
 		ctx.Writer.WriteHeader(http.StatusOK)
 		if strings.Contains(ctx.Request.RequestURI, ws.webPrefix) {
-			file, _ := dir.ReadBytes(filepath.Join(ws.staticAbsPath, "index.html"))
+			file, _ := dir.ReadBytes(index)
 			ctx.Writer.Write(file)
 		}
 		ctx.Writer.Header().Add("Accept", "text/html")

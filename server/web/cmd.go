@@ -24,7 +24,12 @@ func Init() error {
 		case "N":
 			return nil
 		default:
+			return nil
 		}
+	}
+	err := initConfig()
+	if err != nil {
+		return err
 	}
 	fmt.Println("web iris initialized finished!")
 	return nil

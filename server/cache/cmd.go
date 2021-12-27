@@ -25,6 +25,10 @@ func InitConfig() error {
 			return nil
 		}
 	}
+	err := initConfig()
+	if err != nil {
+		return err
+	}
 
 	fmt.Println("redis initialized finished!")
 	return nil

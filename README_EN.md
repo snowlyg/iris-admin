@@ -236,7 +236,7 @@ system:
   addr: "127.0.0.1:8085"
   db-type: ""
   level: debug
-  static-path: /static/upload
+  static-abs-path: /static/upload
   static-prefix: /upload
   time-format: "2006-01-02 15:04:05"
   web-path: ./dist

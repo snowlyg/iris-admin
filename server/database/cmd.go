@@ -14,16 +14,17 @@ func Init() error {
 		fmt.Scanln(&cover)
 		switch strings.ToUpper(cover) {
 		case "Y":
-			err := Remove()
-			if err != nil {
-				return err
-			}
 		case "N":
 			return nil
 		default:
 		}
 	}
-	err := initConfig()
+	err := Remove()
+	if err != nil {
+		return err
+	}
+
+	err = initConfig()
 	if err != nil {
 		return err
 	}

@@ -16,17 +16,18 @@ func Init() error {
 		fmt.Scanln(&cover)
 		switch strings.ToUpper(cover) {
 		case "Y":
-			err := Remove()
-			if err != nil {
-				return err
-			}
 		case "N":
 			return nil
 		default:
 		}
 	}
 
-	err := initConfig()
+	err := Remove()
+	if err != nil {
+		return err
+	}
+
+	err = initConfig()
 	if err != nil {
 		return err
 	}
@@ -52,7 +53,7 @@ func initConfig() error {
 		}
 	}
 
-	var systemStaticPrefix, systemWebPrefix, systemTimeFormat, systemStaticAbsPath, systemAddr string
+	var systemStaticPrefix, systemWebPrefix, systemTimeFormat, systemAddr string
 	fmt.Println("Please input your system static prefix: ")
 	fmt.Println("System static prefix is ''")
 	fmt.Scanln(&systemStaticPrefix)
@@ -70,11 +71,6 @@ func initConfig() error {
 		systemTimeFormat = "2006-01-02 15:04:05"
 	}
 	CONFIG.System.TimeFormat = systemTimeFormat
-
-	fmt.Println("Please input your system static abs path: ")
-	fmt.Println("System static abs path is ''")
-	fmt.Scanln(&systemStaticAbsPath)
-	CONFIG.System.StaticAbsPath = systemStaticAbsPath
 
 	fmt.Println("Please input your system addr: ")
 	fmt.Println("System addr is '127.0.0.1:8085'")

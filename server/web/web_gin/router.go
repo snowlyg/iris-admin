@@ -36,12 +36,7 @@ func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
 // InitRouter 初始化模块路由
 func (ws *WebServer) InitRouter() error {
 	ws.app.Use(limit.MaxAllowed(50))
-<<<<<<< HEAD
-
-	if CONFIG.System.Level == "debug" {
-=======
 	if web.CONFIG.System.Level == "debug" {
->>>>>>> dev
 		pprof.Register(ws.app)
 	}
 	router := ws.app.Group("/")

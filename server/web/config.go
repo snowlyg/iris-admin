@@ -19,15 +19,14 @@ var CONFIG = Web{
 		Method: "",
 	},
 	System: System{
-		Tls:          false,
-		Level:        "debug",
-		Addr:         "127.0.0.1:8085",
-		StaticPrefix: "/upload",
-		StaticPath:   "/static/upload",
-		WebPrefix:    "/admin",
-		WebPath:      "./dist",
-		DbType:       "mysql",
-		TimeFormat:   "2006-01-02 15:04:05",
+		Tls:           false,
+		Level:         "debug",
+		Addr:          "127.0.0.1:8085",
+		StaticPrefix:  "/upload",
+		StaticAbsPath: "",
+		WebPrefix:     "/admin",
+		DbType:        "mysql",
+		TimeFormat:    "2006-01-02 15:04:05",
 	},
 	Limit: Limit{
 		Disable: true,
@@ -66,15 +65,14 @@ type Limit struct {
 }
 
 type System struct {
-	Tls          bool   `mapstructure:"tls" json:"tls" yaml:"tls"`       // debug,release,test
-	Level        string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
-	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
-	StaticPrefix string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
-	StaticPath   string `mapstructure:"static-path" json:"staticPath" yaml:"static-path"`
-	WebPrefix    string `mapstructure:"web-prefix" json:"webPrefix" yaml:"web-prefix"`
-	WebPath      string `mapstructure:"web-path" json:"webPath" yaml:"web-path"`
-	DbType       string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
-	TimeFormat   string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
+	Tls           bool   `mapstructure:"tls" json:"tls" yaml:"tls"`       // debug,release,test
+	Level         string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
+	Addr          string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	StaticPrefix  string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
+	StaticAbsPath string `mapstructure:"static-abs-path" json:"staticAbsPath" yaml:"static-abs-path"`
+	WebPrefix     string `mapstructure:"web-prefix" json:"webPrefix" yaml:"web-prefix"`
+	DbType        string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
+	TimeFormat    string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
 }
 
 // Verfiy
@@ -83,20 +81,12 @@ func Verfiy() {
 		CONFIG.System.Addr = "127.0.0.1:8085"
 	}
 
-	if CONFIG.System.StaticPath == "" { // 默认 /static/upload
-		CONFIG.System.StaticPath = "/static/upload"
-	}
-
 	if CONFIG.System.StaticPrefix == "" { // 默认 /upload
 		CONFIG.System.StaticPrefix = "/upload"
 	}
 
-	if CONFIG.System.WebPath == "" { // 默认 ./dist
-		CONFIG.System.WebPath = "./dist"
-	}
-
 	if CONFIG.System.WebPrefix == "" { // 默认 /
-		CONFIG.System.WebPrefix = "/"
+		CONFIG.System.WebPrefix = "/admin"
 	}
 
 	if CONFIG.System.TimeFormat == "" { // 默认 80
@@ -176,10 +166,9 @@ system:
  level: ` + CONFIG.System.Level + `
  addr: ` + CONFIG.System.Addr + `
  db-type: ` + CONFIG.System.DbType + `
- static-path: ` + CONFIG.System.StaticPath + `
+ static-abs-path: ""
  static-prefix: ` + CONFIG.System.StaticPrefix + `
  time-format: ` + CONFIG.System.TimeFormat + `
- web-prefix: ` + CONFIG.System.WebPrefix + `
- web-path: ` + CONFIG.System.WebPath),
+ web-prefix: ` + CONFIG.System.WebPrefix),
 	}
 }

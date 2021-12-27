@@ -3,7 +3,6 @@ package web_iris
 import (
 	stdContext "context"
 	"errors"
-	"path/filepath"
 	"sync"
 	"testing"
 	"time"
@@ -11,7 +10,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/recover"
-	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/web"
@@ -26,8 +24,8 @@ var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
 // - addr  服务访问地址
 // - timeFormat  时间格式
 // - staticPrefix  静态文件访问地址前缀
-// - staticPath  静态文件地址
-// - webPath  前端文件地址
+// - staticAbsPath  静态文件绝对地址
+
 type WebServer struct {
 	app             *iris.Application
 	idleConnsClosed chan struct{}
@@ -35,9 +33,8 @@ type WebServer struct {
 	addr            string
 	timeFormat      string
 	staticPrefix    string
-	staticPath      string
+	staticAbsPath   string
 	webPrefix       string
-	webPath         string
 }
 
 // Party 功能模块
@@ -75,16 +72,10 @@ func Init() *WebServer {
 		addr:            web.CONFIG.System.Addr,
 		timeFormat:      web.CONFIG.System.TimeFormat,
 		staticPrefix:    web.CONFIG.System.StaticPrefix,
-		staticPath:      web.CONFIG.System.StaticPath,
+		staticAbsPath:   web.CONFIG.System.StaticAbsPath,
 		webPrefix:       web.CONFIG.System.WebPrefix,
-		webPath:         web.CONFIG.System.WebPath,
 		idleConnsClosed: idleConnsClosed,
 	}
-}
-
-// AddStatic 添加静态文件
-func (ws *WebServer) AddStatic(requestPath string, fsOrDir interface{}, opts ...iris.DirOptions) {
-	ws.app.HandleDir(requestPath, fsOrDir, opts...)
 }
 
 // AddModule 添加模块
@@ -94,18 +85,18 @@ func (ws *WebServer) AddModule(parties ...Party) {
 
 // AddWebStatic 添加前端访问地址
 func (ws *WebServer) AddWebStatic() {
-	fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), ws.webPath))
+	fsOrDir := iris.Dir(ws.staticAbsPath)
 	opt := iris.DirOptions{
 		IndexName: "index.html",
 		SPA:       true,
 	}
-	ws.AddStatic(ws.webPrefix, fsOrDir, opt)
+	ws.app.HandleDir(ws.webPrefix, fsOrDir, opt)
 }
 
 // AddUploadStatic 添加上传文件访问地址
 func (ws *WebServer) AddUploadStatic() {
-	fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), ws.staticPath))
-	ws.AddStatic(ws.staticPrefix, fsOrDir)
+	fsOrDir := iris.Dir(ws.staticAbsPath)
+	ws.app.HandleDir(ws.staticPrefix, fsOrDir)
 }
 
 // GetTestClient 获取测试验证客户端

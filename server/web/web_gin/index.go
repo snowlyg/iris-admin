@@ -4,11 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/web"
@@ -23,17 +26,15 @@ var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
 // - addr  服务访问地址
 // - timeFormat  时间格式
 // - staticPrefix  静态文件访问地址前缀
-// - staticPath  静态文件地址
-// - webPath  前端文件地址
+// - staticAbsPath  静态文件地址
 type WebServer struct {
 	app *gin.Engine
 	server
-	addr         string
-	timeFormat   string
-	staticPrefix string
-	staticPath   string
-	webPrefix    string
-	webPath      string
+	addr          string
+	timeFormat    string
+	staticPrefix  string
+	staticAbsPath string
+	webPrefix     string
 }
 
 // Init 初始化web服务
@@ -50,24 +51,28 @@ func Init() *WebServer {
 	web.Verfiy()
 
 	return &WebServer{
-		app:          app,
-		addr:         web.CONFIG.System.Addr,
-		timeFormat:   web.CONFIG.System.TimeFormat,
-		staticPrefix: web.CONFIG.System.StaticPrefix,
-
-		webPrefix: web.CONFIG.System.WebPrefix,
-		webPath:   web.CONFIG.System.WebPath,
+		app:           app,
+		addr:          web.CONFIG.System.Addr,
+		timeFormat:    web.CONFIG.System.TimeFormat,
+		staticPrefix:  web.CONFIG.System.StaticPrefix,
+		staticAbsPath: web.CONFIG.System.StaticAbsPath,
+		webPrefix:     web.CONFIG.System.WebPrefix,
 	}
-}
-
-// AddStatic 添加静态文件
-func (ws *WebServer) AddStatic(requestPath, root string) {
-	ws.app.Static(requestPath, root)
 }
 
 // AddWebStatic 添加前端访问地址
 func (ws *WebServer) AddWebStatic() {
-	ws.AddStatic(ws.webPrefix, ws.webPath)
+	ws.app.Static(ws.webPrefix, ws.staticAbsPath)
+	// 关键点【解决页面刷新404的问题】
+	ws.app.NoRoute(func(ctx *gin.Context) {
+		ctx.Writer.WriteHeader(http.StatusOK)
+		if strings.Contains(ctx.Request.RequestURI, ws.webPrefix) {
+			file, _ := dir.ReadBytes(filepath.Join(ws.staticAbsPath, "index.html"))
+			ctx.Writer.Write(file)
+		}
+		ctx.Writer.Header().Add("Accept", "text/html")
+		ctx.Writer.Flush()
+	})
 }
 
 // AddUploadStatic 添加上传文件访问地址

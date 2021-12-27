@@ -17,6 +17,13 @@ import (
 func (ws *WebServer) InitRouter() error {
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
+		// 排除路由竞争
+		if ws.webPrefix != "/" {
+			app.Get("/", func(ctx iris.Context) {
+				ctx.WriteString("GO_MERCHANT is running!!!")
+			})
+		}
+
 		app.UseRouter(middleware.CrsAuth())
 		if !web.CONFIG.Limit.Disable {
 			limitV1 := rate.Limit(web.CONFIG.Limit.Limit, web.CONFIG.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
@@ -37,9 +44,11 @@ func (ws *WebServer) InitRouter() error {
 			app.PartyFunc(party.Perfix, party.PartyFunc)
 		}
 	}
+
 	if ws.staticPrefix != "" {
 		ws.AddUploadStatic()
 	}
+
 	if ws.webPrefix != "" {
 		ws.AddWebStatic()
 	}

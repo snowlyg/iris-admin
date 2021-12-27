@@ -53,11 +53,13 @@ func StartTest(wf WebFunc) {
 	err := wf.InitRouter()
 	if err != nil {
 		zap_server.ZAPLOG.Error("初始化路由失败", zap.String("wf.InitRouter", err.Error()))
-		return
 	}
 }
 
 // InitWeb 初始化配置
 func InitWeb() {
-	viper_server.Init(getViperConfig())
+	err := viper_server.Init(getViperConfig())
+	if err != nil {
+		zap_server.ZAPLOG.Error("初始化配置文件", zap.String("viper_server.Init(getViperConfig())·", err.Error()))
+	}
 }

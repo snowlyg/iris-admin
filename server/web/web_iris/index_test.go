@@ -28,7 +28,7 @@ func TestRun(t *testing.T) {
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}
-		if string(s) != "Not Found" {
+		if string(s) != "GO_MERCHANT is running!!!" {
 			t.Errorf("test web start want %s but get %s", "Not Found", string(s))
 		}
 	})

@@ -71,8 +71,9 @@ func Init(viperConfig ViperConfig) error {
 	isExist := dir.IsExist(fileName)
 	if !isExist { //没有配置文件，写入默认配置
 		fmt.Printf("您的配置文件 [%s] 不存在\n", fileName)
+		fmt.Printf("您的配置文件目录名称 [%s] \n", viperConfig.Directory)
 		if viperConfig.Directory != "./" {
-			err := dir.InsureDir(viperConfig.Directory)
+			err := dir.InsureDir(filepath.Dir(fileName))
 			if err != nil {
 				return fmt.Errorf("新建 %s 目录失败 %v", fileName, err)
 			}

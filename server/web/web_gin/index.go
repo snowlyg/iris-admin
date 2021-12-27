@@ -46,6 +46,7 @@ func Init() *WebServer {
 	if web.CONFIG.System.Tls {
 		app.Use(middleware.LoadTls()) // 打开就能玩https了
 	}
+	app.Use(middleware.Cors())
 	registerValidation()
 
 	web.Verfiy()

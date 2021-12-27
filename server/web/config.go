@@ -22,9 +22,9 @@ var CONFIG = Web{
 		Tls:           false,
 		Level:         "debug",
 		Addr:          "127.0.0.1:8085",
-		StaticPrefix:  "/upload",
+		StaticPrefix:  "",
 		StaticAbsPath: "",
-		WebPrefix:     "/admin",
+		WebPrefix:     "",
 		DbType:        "mysql",
 		TimeFormat:    "2006-01-02 15:04:05",
 	},
@@ -79,14 +79,6 @@ type System struct {
 func Verfiy() {
 	if CONFIG.System.Addr == "" { // 默认 8085
 		CONFIG.System.Addr = "127.0.0.1:8085"
-	}
-
-	if CONFIG.System.StaticPrefix == "" { // 默认 /upload
-		CONFIG.System.StaticPrefix = "/upload"
-	}
-
-	if CONFIG.System.WebPrefix == "" { // 默认 /
-		CONFIG.System.WebPrefix = "/admin"
 	}
 
 	if CONFIG.System.TimeFormat == "" { // 默认 80

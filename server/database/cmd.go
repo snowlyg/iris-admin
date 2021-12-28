@@ -36,11 +36,11 @@ func initConfig() error {
 	var dbPath, dbName, dbUsername, dbPwd, dbLogZap, dbLogMod string
 	var maxIdleConns, maxOpenConns int
 	fmt.Println("Please input your database path: ")
-	fmt.Println("Database path default is 127.0.0.1:3306")
+	fmt.Println("Database path default is localhost:3306")
 	fmt.Scanln(&dbPath)
 
 	if dbPath == "" {
-		dbPath = "127.0.0.1:3306"
+		dbPath = "localhost:3306"
 	}
 	CONFIG.Path = dbPath
 

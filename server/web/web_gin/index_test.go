@@ -11,7 +11,7 @@ import (
 
 func TestStart(t *testing.T) {
 	defer web.Remove()
-	web.CONFIG.System.Addr = "127.0.0.1:18088"
+	web.CONFIG.System.Addr = "localhost:18088"
 	go func() {
 		web.Start(Init())
 	}()
@@ -19,7 +19,7 @@ func TestStart(t *testing.T) {
 	time.Sleep(3 * time.Second)
 
 	t.Run("test web start", func(t *testing.T) {
-		resp, err := http.Get("http://127.0.0.1:18088")
+		resp, err := http.Get("http://localhost:18088")
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}

@@ -234,7 +234,7 @@ func main() {
 - 可以修改配置项 `static-path` 修改默认目录
 ```yaml
 system:
-  addr: "127.0.0.1:8085"
+  addr: "localhost:8085"
   db-type: ""
   level: debug
   static-prefix: /upload

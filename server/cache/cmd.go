@@ -38,11 +38,11 @@ func initConfig() error {
 	var addr, dbPwd string
 	var db, poolSize int
 	fmt.Println("Please input your redis addr: ")
-	fmt.Println("Redis addr default is 127.0.0.1:6379")
+	fmt.Println("Redis addr default is localhost:6379")
 	fmt.Scanln(&addr)
 
 	if addr == "" {
-		addr = "127.0.0.1:6379"
+		addr = "localhost:6379"
 	}
 	CONFIG.Addr = addr
 

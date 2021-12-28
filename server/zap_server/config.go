@@ -2,6 +2,7 @@ package zap_server
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/snowlyg/iris-admin/g"
@@ -9,7 +10,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-var CONFIG Zap
+var CONFIG = Zap{
+	Level:         "debug",
+	Format:        "console",
+	Prefix:        "[IRIS-ADMIN]",
+	Director:      "logs",
+	LinkName:      "latest_log",
+	ShowLine:      true,
+	EncodeLevel:   "LowercaseColorLevelEncoder",
+	StacktraceKey: "stacktrace",
+	LogInConsole:  false,
+}
 
 type Zap struct {
 	Level         string `mapstructure:"level" json:"level" yaml:"level"` //debug ,info,warn,error,panic,fatal
@@ -26,6 +37,8 @@ type Zap struct {
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
 	configName := "zap"
+	showLine := strconv.FormatBool(CONFIG.ShowLine)
+	logInConsole := strconv.FormatBool(CONFIG.LogInConsole)
 	return viper_server.ViperConfig{
 		Directory: g.ConfigDir,
 		Name:      configName,
@@ -47,14 +60,14 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-level: info
-format: console
-prefix: '[OP-ONLINE]'
-director: log
-link-name: latest_log
-show-line: true
-encode-level: LowercaseColorLevelEncoder
-stacktrace-key: stacktrace
-log-in-console: true`),
+level: ` + CONFIG.Level + `
+format: ` + CONFIG.Format + `
+prefix: '` + CONFIG.Prefix + `'
+director: ` + CONFIG.Director + `
+link-name: ` + CONFIG.LinkName + `
+show-line: ` + showLine + `
+encode-level: ` + CONFIG.EncodeLevel + `
+stacktrace-key: ` + CONFIG.StacktraceKey + `
+log-in-console: ` + logInConsole),
 	}
 }

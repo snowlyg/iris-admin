@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/snowlyg/helper/global"
+	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/server/database"
 )
 
@@ -62,11 +64,12 @@ func initConfig() error {
 	}
 	CONFIG.System.TimeFormat = systemTimeFormat
 
+	defaultAddr := str.Join(global.LocalIP(), ":8085")
 	fmt.Println("Please input your system addr: ")
-	fmt.Println("System addr is '127.0.0.1:8085'")
+	fmt.Printf("System addr is '%s'\n", defaultAddr)
 	fmt.Scanln(&systemAddr)
 	if systemAddr == "" {
-		systemAddr = "127.0.0.1:8085"
+		systemAddr = defaultAddr
 	}
 	CONFIG.System.Addr = systemAddr
 	err := InitWeb()

@@ -1,12 +1,15 @@
 package cache
 
 import (
+	"os"
 	"reflect"
 	"testing"
 	"time"
 )
 
 func TestSetCacheString(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	CONFIG.Password = redisPwd
 	t.Run("test set cache string", func(t *testing.T) {
 		key := "test_set_cache"
 		want := "test_set_cache_value"
@@ -30,6 +33,8 @@ func TestSetCacheString(t *testing.T) {
 }
 
 func TestSetCacheUint(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	CONFIG.Password = redisPwd
 	t.Run("test set cache bytes", func(t *testing.T) {
 		key := "test_set_cache"
 		var want uint64 = 123
@@ -52,8 +57,9 @@ func TestSetCacheUint(t *testing.T) {
 	})
 }
 func TestSetCacheBytes(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	CONFIG.Password = redisPwd
 	t.Run("test set cache bytes", func(t *testing.T) {
-
 		key := "test_set_cache"
 		want := []byte("test_set_cache_value")
 		err := SetCache(key, want, time.Duration(time.Second*3))

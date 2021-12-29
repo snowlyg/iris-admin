@@ -11,7 +11,7 @@ import (
 
 var CONFIG = Redis{
 	DB:       0,
-	Addr:     "localhost:6379",
+	Addr:     "127.0.0.1:6379",
 	Password: "",
 	PoolSize: 0,
 }

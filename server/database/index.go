@@ -13,9 +13,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var (
-	ErrDatabaseNotInit = errors.New("数据库未初始化")
-)
+var ErrDatabaseInit = errors.New("数据库初始化失败")
 
 var (
 	once sync.Once

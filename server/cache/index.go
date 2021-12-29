@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"sync"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/viper_server"
 )
 
+var ErrRedisInit = errors.New("缓存初始化失败")
 var (
 	once        sync.Once
 	cacheClient redis.UniversalClient

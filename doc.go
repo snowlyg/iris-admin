@@ -234,7 +234,7 @@ func main() {
 - You can set this config key `static-path` to change the default directory.
 ```yaml
 system:
-  addr: "localhost:8085"
+  addr: "127.0.0.1:8085"
   db-type: ""
   level: debug
   static-path: /static/upload

@@ -21,7 +21,7 @@ var CONFIG = Web{
 	System: System{
 		Tls:        false,
 		Level:      "release",
-		Addr:       "localhost:8085",
+		Addr:       "127.0.0.1:8085",
 		DbType:     "mysql",
 		TimeFormat: "2006-01-02 15:04:05",
 	},
@@ -74,7 +74,7 @@ type System struct {
 // Verfiy
 func Verfiy() {
 	if CONFIG.System.Addr == "" { // 默认 8085
-		CONFIG.System.Addr = "localhost:8085"
+		CONFIG.System.Addr = "127.0.0.1:8085"
 	}
 
 	if CONFIG.System.TimeFormat == "" { // 默认 80

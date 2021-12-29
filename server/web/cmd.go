@@ -55,20 +55,18 @@ func initConfig() error {
 
 	var systemTimeFormat, systemAddr string
 	fmt.Println("Please input your system timeformat: ")
-	fmt.Println("System timeformat is '2006-01-02 15:04:05'")
+	fmt.Printf("System timeformat is '%s'\n", CONFIG.System.TimeFormat)
 	fmt.Scanln(&systemTimeFormat)
-	if systemTimeFormat == "" {
-		systemTimeFormat = "2006-01-02 15:04:05"
+	if systemTimeFormat != "" {
+		CONFIG.System.TimeFormat = systemTimeFormat
 	}
-	CONFIG.System.TimeFormat = systemTimeFormat
 
 	fmt.Println("Please input your system addr: ")
-	fmt.Printf("System addr is '%s'\n", "localhost:8085")
+	fmt.Printf("System addr is '%s'\n", CONFIG.System.Addr)
 	fmt.Scanln(&systemAddr)
-	if systemAddr == "" {
-		systemAddr = "localhost:8085"
+	if systemAddr != "" {
+		CONFIG.System.Addr = systemAddr
 	}
-	CONFIG.System.Addr = systemAddr
 	err := InitWeb()
 	if err != nil {
 		return err

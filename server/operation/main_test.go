@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 	uuid := str.Join("database", "_", node.Generate().String())
 
 	database.CONFIG = database.Mysql{
-		Path:         "localhost:3306",
+		Path:         "127.0.0.1:3306",
 		Config:       "charset=utf8mb4&parseTime=True&loc=Local",
 		Dbname:       uuid,
 		Username:     "root",

@@ -10,7 +10,7 @@ import (
 )
 
 var CONFIG = Mysql{
-	Path:         "localhost:3306",
+	Path:         "127.0.0.1:3306",
 	Config:       "charset=utf8mb4&parseTime=True&loc=Local",
 	Dbname:       "",
 	Username:     "root",

@@ -36,44 +36,39 @@ func initConfig() error {
 	var dbPath, dbName, dbUsername, dbPwd, dbLogZap, dbLogMod string
 	var maxIdleConns, maxOpenConns int
 	fmt.Println("Please input your database path: ")
-	fmt.Println("Database path default is localhost:3306")
+	fmt.Printf("Database path default is '%s'\n", CONFIG.Path)
 	fmt.Scanln(&dbPath)
-
-	if dbPath == "" {
-		dbPath = "localhost:3306"
+	if dbPath != "" {
+		CONFIG.Path = dbPath
 	}
-	CONFIG.Path = dbPath
 
 	fmt.Println("Please input your database db-name: ")
-	fmt.Println("Database db-name default is iris-admin")
+	fmt.Printf("Database db-name default is '%s'\n", CONFIG.Dbname)
 	fmt.Scanln(&dbName)
-	if dbName == "" {
-		dbName = "iris-admin"
+	if dbName != "" {
+		CONFIG.Dbname = dbName
 	}
-	CONFIG.Dbname = dbName
 
 	fmt.Println("Please input your database username: ")
-	fmt.Println("Database username default is root")
+	fmt.Printf("Database username default is '%s\n", CONFIG.Username)
 	fmt.Scanln(&dbUsername)
-	if dbUsername == "" {
-		dbUsername = "root"
+	if dbUsername != "" {
+		CONFIG.Username = dbUsername
 	}
-	CONFIG.Username = dbUsername
 
 	fmt.Println("Please input your database password: ")
+	fmt.Printf("Database password default is '%s\n", CONFIG.Password)
 	fmt.Scanln(&dbPwd)
-	if dbPwd == "" {
-		dbPwd = ""
+	if dbPwd != "" {
+		CONFIG.Password = dbPwd
 	}
-	CONFIG.Password = dbPwd
 
 	fmt.Println("Please input your database log zap: ")
-	fmt.Println("Database log zap default is error")
+	fmt.Printf("Database log zap default is '%s'\n", CONFIG.LogZap)
 	fmt.Scanln(&dbLogZap)
-	if dbLogZap == "" {
-		dbLogZap = "error"
+	if dbLogZap != "" {
+		CONFIG.LogZap = dbLogZap
 	}
-	CONFIG.LogZap = dbLogZap
 
 	fmt.Println("Please input your database log mode: [Y/N]")
 	fmt.Println("Database log mode default is N")
@@ -89,14 +84,19 @@ func initConfig() error {
 
 	fmt.Println("Please input your database max idle conns: ")
 	fmt.Scanln(&maxIdleConns)
-	CONFIG.MaxIdleConns = maxIdleConns
+	if maxIdleConns > 0 {
+		CONFIG.MaxIdleConns = maxIdleConns
+	}
 
 	fmt.Println("Please input your database max open conns: ")
 	fmt.Scanln(&maxOpenConns)
-	CONFIG.MaxOpenConns = maxOpenConns
+	if maxOpenConns > 0 {
+		CONFIG.MaxOpenConns = maxOpenConns
+	}
 
 	if Instance() == nil {
-		return ErrDatabaseNotInit
+		return ErrDatabaseInit
 	}
+
 	return nil
 }

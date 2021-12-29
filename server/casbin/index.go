@@ -31,7 +31,7 @@ func Instance() *casbin.Enforcer {
 // GetEnforcer 获取 casbin.Enforcer
 func GetEnforcer() *casbin.Enforcer {
 	if database.Instance() == nil {
-		zap_server.ZAPLOG.Error(database.ErrDatabaseNotInit.Error())
+		zap_server.ZAPLOG.Error(database.ErrDatabaseInit.Error())
 		return nil
 	}
 	c, err := gormadapter.NewAdapterByDBUseTableName(database.Instance(), "", "casbin_rule") // Your driver and data source.

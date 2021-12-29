@@ -12,7 +12,7 @@ import (
 var CONFIG = Mysql{
 	Path:         "127.0.0.1:3306",
 	Config:       "charset=utf8mb4&parseTime=True&loc=Local",
-	Dbname:       "",
+	Dbname:       "iris-admin",
 	Username:     "root",
 	Password:     "",
 	MaxIdleConns: 0,

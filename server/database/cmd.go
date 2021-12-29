@@ -50,14 +50,14 @@ func initConfig() error {
 	}
 
 	fmt.Println("Please input your database username: ")
-	fmt.Printf("Database username default is '%s\n", CONFIG.Username)
+	fmt.Printf("Database username default is '%s'\n", CONFIG.Username)
 	fmt.Scanln(&dbUsername)
 	if dbUsername != "" {
 		CONFIG.Username = dbUsername
 	}
 
 	fmt.Println("Please input your database password: ")
-	fmt.Printf("Database password default is '%s\n", CONFIG.Password)
+	fmt.Printf("Database password default is '%s'\n", CONFIG.Password)
 	fmt.Scanln(&dbPwd)
 	if dbPwd != "" {
 		CONFIG.Password = dbPwd

@@ -14,7 +14,6 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	"go.uber.org/zap"
 )
 
 func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
@@ -24,13 +23,13 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 	if strings.TrimSpace(mysqlPwd) != database.CONFIG.Password {
 		err := database.Remove()
 		if err != nil {
-			zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))
+			zap_server.ZAPLOG.Error(str.Join("删除数据库配置文件失败:", err.Error()))
 		}
 	}
 	if strings.TrimSpace(redisPwd) != cache.CONFIG.Password {
 		err := cache.Remove()
 		if err != nil {
-			zap_server.ZAPLOG.Error("删除缓存配置文件失败", zap.String("cahce.Remove", err.Error()))
+			zap_server.ZAPLOG.Error(str.Join("删除缓存配置文件失败:", err.Error()))
 		}
 	}
 	node, _ := snowflake.NewNode(1)
@@ -73,13 +72,13 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 	if strings.TrimSpace(mysqlPwd) != database.CONFIG.Password {
 		err := database.Remove()
 		if err != nil {
-			zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))
+			zap_server.ZAPLOG.Error(str.Join("删除数据库配置文件失败:", err.Error()))
 		}
 	}
 	if strings.TrimSpace(redisPwd) != cache.CONFIG.Password {
 		err := cache.Remove()
 		if err != nil {
-			zap_server.ZAPLOG.Error("删除缓存配置文件失败", zap.String("cahce.Remove", err.Error()))
+			zap_server.ZAPLOG.Error(str.Join("删除缓存配置文件失败:", err.Error()))
 		}
 	}
 	node, _ := snowflake.NewNode(1)
@@ -121,13 +120,13 @@ func AfterTestMain(uuid string, isDelDb bool) {
 		err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 		if err != nil {
 			text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
-			zap_server.ZAPLOG.Error("删除数据库失败", zap.String("database.DorpDB", text))
+			zap_server.ZAPLOG.Error(text)
 		}
 	}
 	fmt.Println("++++++++ dorp db ++++++++")
 	db, err := database.Instance().DB()
 	if err != nil {
-		zap_server.ZAPLOG.Error("获取数据库连接失败", zap.String("database.Instance().DB()", err.Error()))
+		zap_server.ZAPLOG.Error(str.Join("获取数据库连接失败:", err.Error()))
 	}
 	if db != nil {
 		db.Close()
@@ -135,10 +134,14 @@ func AfterTestMain(uuid string, isDelDb bool) {
 
 	err = database.Remove()
 	if err != nil {
-		zap_server.ZAPLOG.Error("删除数据库配置文件失败", zap.String("database.Remove", err.Error()))
+		zap_server.ZAPLOG.Error(str.Join("删除数据库配置文件失败:", err.Error()))
 	}
-	err = cache.Remove()
+	err = web.Remove()
 	if err != nil {
-		zap_server.ZAPLOG.Error("删除缓存配置文件失败", zap.String("cahce.Remove", err.Error()))
+		zap_server.ZAPLOG.Error(str.Join("删除缓存配置文件失败:", err.Error()))
+	}
+	err = web.Remove()
+	if err != nil {
+		zap_server.ZAPLOG.Error(str.Join("删除web配置文件失败:", err.Error()))
 	}
 }

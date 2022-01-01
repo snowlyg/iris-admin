@@ -7,9 +7,11 @@ import (
 	"time"
 
 	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
 func TestRun(t *testing.T) {
+	defer zap_server.Remove()
 	defer web.Remove()
 	web.CONFIG.System.Addr = "127.0.0.1:18085"
 	go func() {

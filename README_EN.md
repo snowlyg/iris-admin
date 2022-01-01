@@ -130,6 +130,17 @@ pool-size: ` + poolSize),
 - - System operation log service.
 - - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
 
+- [cron_server]
+- - Job server
+- - Use [robfig/cron](https://github.com/robfig/cron) third party package.
+- - Through single instance `cron_server.Instance()` to add job or func.
+```go
+  cron_server.CronInstance().AddJob("@every 1m",YourJob)
+  // 或者 
+  cron_server.CronInstance().AddFunc("@every 1m",YourFunc)
+  ...
+```
+
 - [web]
 - - web_iris Go-Iris web framework service.
 - - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.

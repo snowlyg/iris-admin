@@ -8,6 +8,7 @@ import (
 )
 
 func TestSetCacheString(t *testing.T) {
+	defer Remove()
 	redisPwd := os.Getenv("redisPwd")
 	CONFIG.Password = redisPwd
 	t.Run("test set cache string", func(t *testing.T) {
@@ -33,6 +34,7 @@ func TestSetCacheString(t *testing.T) {
 }
 
 func TestSetCacheUint(t *testing.T) {
+	defer Remove()
 	redisPwd := os.Getenv("redisPwd")
 	CONFIG.Password = redisPwd
 	t.Run("test set cache bytes", func(t *testing.T) {

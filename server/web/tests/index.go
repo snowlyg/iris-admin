@@ -14,6 +14,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 	"github.com/snowlyg/iris-admin/server/zap_server"
+	"go.uber.org/zap"
 )
 
 func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
@@ -119,8 +120,7 @@ func AfterTestMain(uuid string, isDelDb bool) {
 	if isDelDb {
 		err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 		if err != nil {
-			text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
-			zap_server.ZAPLOG.Error(text)
+			zap_server.ZAPLOG.Error("删除数据库失败", zap.String("uuid", uuid), zap.String("err", err.Error()))
 		}
 	}
 	fmt.Println("++++++++ dorp db ++++++++")

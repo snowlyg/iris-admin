@@ -100,7 +100,7 @@ func IsExist() bool {
 func Remove() error {
 	err := getViperConfig().Remove()
 	if err != nil {
-		return fmt.Errorf("remove file %s failed %w", getViperConfig().GetConfigFileDir(), err)
+		return err
 	}
 	return nil
 }

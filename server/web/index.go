@@ -6,7 +6,6 @@ import (
 	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	"go.uber.org/zap"
 )
 
 const (
@@ -42,7 +41,7 @@ type WebFunc interface {
 func Start(wf WebFunc) {
 	err := wf.InitRouter()
 	if err != nil {
-		zap_server.ZAPLOG.Error("初始化路由失败", zap.String("wf.InitRouter", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		return
 	}
 	wf.Run()
@@ -52,7 +51,7 @@ func Start(wf WebFunc) {
 func StartTest(wf WebFunc) {
 	err := wf.InitRouter()
 	if err != nil {
-		zap_server.ZAPLOG.Error("初始化路由失败", zap.String("wf.InitRouter", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 	}
 }
 
@@ -60,7 +59,7 @@ func StartTest(wf WebFunc) {
 func InitWeb() error {
 	err := viper_server.Init(getViperConfig())
 	if err != nil {
-		zap_server.ZAPLOG.Error("初始化配置文件", zap.String("viper_server.Init(getViperConfig())·", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		return err
 	}
 	return nil

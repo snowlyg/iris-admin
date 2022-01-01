@@ -21,6 +21,20 @@ var CONFIG = Operation{
 	},
 }
 
+// IsExist 配置文件是否存在
+func IsExist() bool {
+	return getViperConfig().IsFileExist()
+}
+
+// Remove 删除配置文件
+func Remove() error {
+	err := getViperConfig().Remove()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Operation 操作日志配置
 // Except 排除生成操作日志的路由,多条使用 ; 号分割
 // Include 包括生成操作日志的路由,多条使用 ; 号分割

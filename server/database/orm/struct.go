@@ -11,7 +11,6 @@ import (
 	"github.com/snowlyg/iris-admin/server/database/scope"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/validate"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +39,7 @@ func (req *ReqId) Request(ctx interface{}) error {
 
 func (req *ReqId) irisReadParams(ctx iris.Context) error {
 	if err := ctx.ReadParams(req); err != nil {
-		zap_server.ZAPLOG.Error("id参数获取失败", zap.String("ReadParams()", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		return ErrParamValidate
 	}
 	return nil
@@ -48,7 +47,7 @@ func (req *ReqId) irisReadParams(ctx iris.Context) error {
 
 func (req *ReqId) ginShouldBindJSON(ctx *gin.Context) error {
 	if err := ctx.ShouldBindJSON(req); err != nil {
-		zap_server.ZAPLOG.Error("id参数获取失败", zap.String("ShouldBindJSON()", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		return ErrParamValidate
 	}
 	return nil
@@ -77,7 +76,7 @@ func (req *Paginate) irisReadQuerys(ctx iris.Context) error {
 	if err := ctx.ReadQuery(req); err != nil {
 		errs := validate.ValidRequest(err)
 		if len(errs) > 0 {
-			zap_server.ZAPLOG.Error("参数验证失败", zap.String("ValidRequest()", strings.Join(errs, ";")))
+			zap_server.ZAPLOG.Error(strings.Join(errs, ";"))
 			return ErrParamValidate
 		}
 	}
@@ -86,7 +85,7 @@ func (req *Paginate) irisReadQuerys(ctx iris.Context) error {
 
 func (req *Paginate) ginShouldBind(ctx *gin.Context) error {
 	if err := ctx.ShouldBind(req); err != nil {
-		zap_server.ZAPLOG.Error("id参数获取失败", zap.String("ShouldBind()", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		return ErrParamValidate
 	}
 	return nil

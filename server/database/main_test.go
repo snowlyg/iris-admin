@@ -36,14 +36,13 @@ func TestMain(m *testing.M) {
 
 	err := DorpDB(CONFIG.BaseDsn(), "mysql", uuid)
 	if err != nil {
-		text := str.Join("删除数据库 '", uuid, "' 错误： ", err.Error(), "\n")
-		zap_server.ZAPLOG.Error("删除数据库失败", zap.String("database.DorpDB", text))
+		zap_server.ZAPLOG.Error("删除数据库失败", zap.String("uuid", uuid), zap.String("err", err.Error()))
 		panic(err)
 	}
 
 	db, err := Instance().DB()
 	if err != nil {
-		zap_server.ZAPLOG.Error("获取数据库连接失败", zap.String("database.Instance().DB()", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		panic(err)
 	}
 	if db != nil {
@@ -52,9 +51,9 @@ func TestMain(m *testing.M) {
 
 	err = Remove()
 	if err != nil {
-		zap_server.ZAPLOG.Error("删除配置文件失败", zap.String("database.Remove", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		panic(err)
 	}
-
+	zap_server.Remove()
 	os.Exit(code)
 }

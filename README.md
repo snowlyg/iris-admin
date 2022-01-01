@@ -130,6 +130,17 @@ pool-size: ` + poolSize),
 - - 系统操作日志服务
 - - 并通过 `index.Use(operation.OperationRecord())` 使用中间件,实现接口自动生成操作日志
 
+- [cron_server]
+- - 任务服务
+- - 使用 [robfig/cron](https://github.com/robfig/cron) 第三方包实现
+- - 通过单列 `cron_server.Instance()` 操作数据
+```go
+  cron_server.CronInstance().AddJob("@every 1m",YourJob)
+  // 或者 
+  cron_server.CronInstance().AddFunc("@every 1m",YourFunc)
+  ...
+```
+
 - [web]
 - - web_iris Go-Iris 框架服务
 - - 使用 [github.com/kataras/iris/v12](https://github.com/kataras/iris) 第三方包实现

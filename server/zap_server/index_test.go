@@ -5,6 +5,7 @@ import (
 )
 
 func TestGetEncoderConfig(t *testing.T) {
+	defer Remove()
 	t.Run("test zap_server get encoder config", func(t *testing.T) {
 		config := getEncoderConfig()
 		if config.StacktraceKey != CONFIG.StacktraceKey {

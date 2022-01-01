@@ -34,6 +34,20 @@ type Zap struct {
 	LogInConsole  bool   `mapstructure:"log-in-console" json:"logInConsole" yaml:"log-in-console"`
 }
 
+// IsExist 配置文件是否存在
+func IsExist() bool {
+	return getViperConfig().IsFileExist()
+}
+
+// Remove 删除配置文件
+func Remove() error {
+	err := getViperConfig().Remove()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
 	configName := "zap"

@@ -12,7 +12,6 @@ import (
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	"go.uber.org/zap"
 )
 
 var (
@@ -23,6 +22,7 @@ var (
 // Instance casbin 单例
 func Instance() *casbin.Enforcer {
 	once.Do(func() {
+		new()
 		enforcer = GetEnforcer()
 	})
 	return enforcer
@@ -36,13 +36,13 @@ func GetEnforcer() *casbin.Enforcer {
 	}
 	c, err := gormadapter.NewAdapterByDBUseTableName(database.Instance(), "", "casbin_rule") // Your driver and data source.
 	if err != nil {
-		zap_server.ZAPLOG.Error("驱动初始化错误", zap.String("gormadapter.NewAdapterByDBUseTableName()", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		return nil
 	}
 
 	enforcer, err := casbin.NewEnforcer(filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName), c)
 	if err != nil {
-		zap_server.ZAPLOG.Error("初始化失败", zap.String("casbin.NewEnforcer()", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		return nil
 	}
 
@@ -53,7 +53,7 @@ func GetEnforcer() *casbin.Enforcer {
 
 	err = enforcer.LoadPolicy()
 	if err != nil {
-		zap_server.ZAPLOG.Error("加载规则失败", zap.String("casbin.LoadPolicy()", err.Error()))
+		zap_server.ZAPLOG.Error(err.Error())
 		return nil
 	}
 

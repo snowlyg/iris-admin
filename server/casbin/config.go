@@ -8,10 +8,23 @@ import (
 	"github.com/snowlyg/iris-admin/g"
 )
 
-// init 初始化系统配置
+// Remove 删除配置文件
+func Remove() error {
+	casbinPath := getCasbinPath()
+	if dir.IsExist(casbinPath) && dir.IsFile(casbinPath) {
+		return dir.Remove(casbinPath)
+	}
+	return nil
+}
+
+func getCasbinPath() string {
+	return filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName)
+}
+
+// new 初始化系统配置
 // - 第一次初始化系统配置，会自动生成casbin 的规则文件 rbac_model.conf
-func init() {
-	casbinPath := filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName)
+func new() {
+	casbinPath := getCasbinPath()
 	fmt.Printf("casbin rbac_model.conf 位于： %s\n\n", casbinPath)
 	if !dir.IsExist(casbinPath) { // casbin rbac_model.conf 文件
 		var rbacModelConf = []byte(`[request_definition]

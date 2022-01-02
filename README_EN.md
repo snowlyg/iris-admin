@@ -15,6 +15,7 @@
 > This project just for learning golang, welcome to give your suggestions!
 
 #### Documentation
+- [IRIS-ADMIN-DOC](https://doc.snowlyg.com)
 - [IRIS V12 document for chinese](https://github.com/snowlyg/iris/wiki)
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
 

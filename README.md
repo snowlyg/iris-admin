@@ -15,6 +15,7 @@
 > 简单项目仅供学习，欢迎指点！
 
 #### 相关文档
+- [IRIS-ADMIN-DOC](https://doc.snowlyg.com)
 - [IRIS V12 中文文档](https://github.com/snowlyg/iris/wiki)
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
 

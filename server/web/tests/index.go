@@ -8,8 +8,9 @@ import (
 	"github.com/bwmarrin/snowflake"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/migration"
-	"github.com/snowlyg/iris-admin/server/cache"
+	"github.com/snowlyg/iris-admin/server/casbin"
 	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/operation"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
@@ -20,19 +21,8 @@ import (
 func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
 	fmt.Println("+++++ before test +++++")
 	mysqlPwd := os.Getenv("mysqlPwd")
-	redisPwd := os.Getenv("redisPwd")
-	if strings.TrimSpace(mysqlPwd) != database.CONFIG.Password {
-		err := database.Remove()
-		if err != nil {
-			zap_server.ZAPLOG.Error(str.Join("删除数据库配置文件失败:", err.Error()))
-		}
-	}
-	if strings.TrimSpace(redisPwd) != cache.CONFIG.Password {
-		err := cache.Remove()
-		if err != nil {
-			zap_server.ZAPLOG.Error(str.Join("删除缓存配置文件失败:", err.Error()))
-		}
-	}
+	zap_server.CONFIG.Level = "debug"
+	web.CONFIG.System.Level = "debug"
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
@@ -69,19 +59,8 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
 	fmt.Println("+++++ before test +++++")
 	mysqlPwd := os.Getenv("mysqlPwd")
-	redisPwd := os.Getenv("redisPwd")
-	if strings.TrimSpace(mysqlPwd) != database.CONFIG.Password {
-		err := database.Remove()
-		if err != nil {
-			zap_server.ZAPLOG.Error(str.Join("删除数据库配置文件失败:", err.Error()))
-		}
-	}
-	if strings.TrimSpace(redisPwd) != cache.CONFIG.Password {
-		err := cache.Remove()
-		if err != nil {
-			zap_server.ZAPLOG.Error(str.Join("删除缓存配置文件失败:", err.Error()))
-		}
-	}
+	zap_server.CONFIG.Level = "debug"
+	web.CONFIG.System.Level = "debug"
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("iris", "_", node.Generate().String())
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
@@ -144,4 +123,13 @@ func AfterTestMain(uuid string, isDelDb bool) {
 	if err != nil {
 		zap_server.ZAPLOG.Error(str.Join("删除web配置文件失败:", err.Error()))
 	}
+	err = casbin.Remove()
+	if err != nil {
+		zap_server.ZAPLOG.Error(str.Join("删除casbin配置文件失败:", err.Error()))
+	}
+	err = operation.Remove()
+	if err != nil {
+		zap_server.ZAPLOG.Error(str.Join("删除操作日志配置文件失败:", err.Error()))
+	}
+	zap_server.Remove()
 }

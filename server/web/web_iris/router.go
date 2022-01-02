@@ -19,7 +19,7 @@ func (ws *WebServer) InitRouter() error {
 	{
 		// 排除路由竞争
 		app.Get("/", func(ctx iris.Context) {
-			ctx.WriteString("GO_MERCHANT is running!!!")
+			ctx.WriteString("IRIS-ADMIN is running!!!")
 		})
 
 		app.UseRouter(middleware.CrsAuth())

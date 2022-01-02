@@ -47,7 +47,7 @@ func (ws *WebServer) InitRouter() error {
 
 		// 排除路由竞争
 		router.GET("/", func(ctx *gin.Context) {
-			ctx.String(http.StatusOK, "GO_MERCHANT is running!!!")
+			ctx.String(http.StatusOK, "IRIS-ADMIN is running!!!")
 		})
 	}
 	return nil

@@ -21,7 +21,7 @@ require (
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/snowlyg/helper v0.0.3
+	github.com/snowlyg/helper v0.0.4
 	github.com/snowlyg/httptest v0.0.1
 	github.com/spf13/viper v1.8.1
 	github.com/tdewolff/minify/v2 v2.9.24 // indirect

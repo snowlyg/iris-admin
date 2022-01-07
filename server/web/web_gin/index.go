@@ -16,7 +16,6 @@ import (
 	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
-	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
 var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
@@ -56,35 +55,29 @@ func Init() *WebServer {
 }
 
 // AddWebStatic 添加前端访问地址
-func (ws *WebServer) AddWebStatic(paths ...string) {
-
-	if len(paths) != 3 {
-		zap_server.ZAPLOG.Warn("AddWebStatic function need 3 params")
-		return
-	}
-
-	if paths[0] == "" || paths[1] == "" || paths[2] == "" {
-		zap_server.ZAPLOG.Warn("AddWebStatic function params not support empty string")
-		return
-	}
-
-	webPrefix := paths[0]
+func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
 	if webPrefix == "/" {
 		return
 	}
+
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
 	if str.InStrArray(webPrefix, webPrefixs) {
 		return
 	}
-	staticName := paths[1]
-	staticAbsPath := paths[2]
 
 	favicon := filepath.Join(staticAbsPath, "favicon.ico")
 	index := filepath.Join(staticAbsPath, "index.html")
-	static := filepath.Join(staticAbsPath, staticName)
-	ws.app.Static("/favicon.ico", favicon)
+
+	ws.app.Static(str.Join(webPrefix, "/favicon.ico"), favicon)
 	ws.app.StaticFile(webPrefix, index)
-	ws.app.Static(staticName, static)
+
+	// 加载次级目录
+	if len(paths) > 0 {
+		for _, path := range paths {
+			static := filepath.Join(staticAbsPath, path)
+			ws.app.Static(path, static)
+		}
+	}
 
 	// 关键点【解决页面刷新404的问题】
 	ws.app.NoRoute(func(ctx *gin.Context) {
@@ -100,19 +93,9 @@ func (ws *WebServer) AddWebStatic(paths ...string) {
 }
 
 // AddUploadStatic 添加上传文件访问地址
-func (ws *WebServer) AddUploadStatic(paths ...string) {
-	if len(paths) != 2 {
-		zap_server.ZAPLOG.Warn("AddUploadStatic function need 2 params")
-		return
-	}
-
-	if paths[0] == "" || paths[1] == "" {
-		zap_server.ZAPLOG.Warn("AddUploadStatic function params not support empty string")
-		return
-	}
-	staticPrefix := paths[0]
-	ws.app.StaticFS(staticPrefix, http.Dir(paths[1]))
-	web.CONFIG.System.StaticPrefix = staticPrefix
+func (ws *WebServer) AddUploadStatic(staticAbsPath, webPrefix string) {
+	ws.app.StaticFS(staticAbsPath, http.Dir(webPrefix))
+	web.CONFIG.System.StaticPrefix = staticAbsPath
 }
 
 // GetTestClient 获取测试验证客户端

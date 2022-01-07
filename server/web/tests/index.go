@@ -20,15 +20,23 @@ import (
 
 func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
 	fmt.Println("+++++ before test +++++")
-	mysqlPwd := os.Getenv("mysqlPwd")
+
 	zap_server.CONFIG.Level = "debug"
 	web.CONFIG.System.Level = "debug"
+
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
+
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
 	web.CONFIG.System.DbType = "mysql"
+
 	web.InitWeb()
 
+	mysqlPwd := os.Getenv("mysqlPwd")
+	mysqlAddr := os.Getenv("mysqlAddr")
+	if mysqlAddr != "" {
+		database.CONFIG.Path = strings.TrimSpace(mysqlAddr)
+	}
 	database.CONFIG.Dbname = uuid
 	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
 	database.CONFIG.LogMode = true
@@ -58,14 +66,22 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 
 func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
 	fmt.Println("+++++ before test +++++")
-	mysqlPwd := os.Getenv("mysqlPwd")
+
 	zap_server.CONFIG.Level = "debug"
 	web.CONFIG.System.Level = "debug"
+
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("iris", "_", node.Generate().String())
+
 	fmt.Printf("+++++ %s +++++\n\n", uuid)
 	web.CONFIG.System.DbType = "mysql"
 	web.InitWeb()
+
+	mysqlPwd := os.Getenv("mysqlPwd")
+	mysqlAddr := os.Getenv("mysqlAddr")
+	if mysqlAddr != "" {
+		database.CONFIG.Path = strings.TrimSpace(mysqlAddr)
+	}
 
 	database.CONFIG.Dbname = uuid
 	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
@@ -111,25 +127,9 @@ func AfterTestMain(uuid string, isDelDb bool) {
 		db.Close()
 	}
 
-	err = database.Remove()
-	if err != nil {
-		zap_server.ZAPLOG.Error(str.Join("删除数据库配置文件失败:", err.Error()))
-	}
-	err = web.Remove()
-	if err != nil {
-		zap_server.ZAPLOG.Error(str.Join("删除缓存配置文件失败:", err.Error()))
-	}
-	err = web.Remove()
-	if err != nil {
-		zap_server.ZAPLOG.Error(str.Join("删除web配置文件失败:", err.Error()))
-	}
-	err = casbin.Remove()
-	if err != nil {
-		zap_server.ZAPLOG.Error(str.Join("删除casbin配置文件失败:", err.Error()))
-	}
-	err = operation.Remove()
-	if err != nil {
-		zap_server.ZAPLOG.Error(str.Join("删除操作日志配置文件失败:", err.Error()))
-	}
-	zap_server.Remove()
+	defer zap_server.Remove()
+	defer operation.Remove()
+	defer casbin.Remove()
+	defer web.Remove()
+	defer database.Remove()
 }

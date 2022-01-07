@@ -144,6 +144,16 @@ pool-size: ` + poolSize),
 - - 使用 [github.com/kataras/iris/v12](https://github.com/kataras/iris) 第三方包实现
 - - web 框架服务需要实现 `type WebFunc interface {}`  接口
 ```go
+type WebTestFunc interface {
+	GetTestClient(t *testing.T) *httptest.Client
+	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
+}
+type WebBaseFunc interface {
+	AddWebStatic(staticAbsPath, webPrefix string, paths ...string)
+	AddUploadStatic(staticAbsPath, webPrefix string)
+	InitRouter() error
+	Run()
+}
 // WebFunc 框架服务接口
 // - GetTestClient 测试客户端
 // - GetTestLogin 测试登录
@@ -151,12 +161,8 @@ pool-size: ` + poolSize),
 // - AddUploadStatic 上传文件路径
 // - Run 启动
 type WebFunc interface {
-	GetTestClient(t *testing.T) *httptest.Client
-	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
-	AddWebStatic(perfix string)
-	AddUploadStatic()
-	InitRouter() error
-	Run()
+	WebBaseFunc
+	WebTestFunc
 }
 ```
   

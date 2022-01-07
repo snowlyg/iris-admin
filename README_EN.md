@@ -263,8 +263,8 @@ import (
 
 func main() {
 	webServer := web_iris.Init()
- wi.AddUploadStatic("/upload", "/var/static")
-	wi.AddWebStatic("/", "/var/static")
+  wi.AddUploadStatic("/upload", "/var/static")
+  wi.AddWebStatic("/", "/var/static")
 	webServer.Run()
 }
 ```

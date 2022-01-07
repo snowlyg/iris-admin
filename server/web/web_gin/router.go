@@ -33,6 +33,10 @@ func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
 	return ws.app.Group(relativePath)
 }
 
+func (ws *WebServer) GetEngine() *gin.Engine {
+	return ws.app
+}
+
 // InitRouter 初始化模块路由
 func (ws *WebServer) InitRouter() error {
 	ws.app.Use(limit.MaxAllowed(50))
@@ -46,7 +50,7 @@ func (ws *WebServer) InitRouter() error {
 		router.Use(gin.Recovery())
 
 		// 排除路由竞争
-		router.GET("/", func(ctx *gin.Context) {
+		router.GET("/v0/version", func(ctx *gin.Context) {
 			ctx.String(http.StatusOK, "IRIS-ADMIN is running!!!")
 		})
 	}

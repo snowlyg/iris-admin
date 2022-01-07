@@ -254,10 +254,10 @@ import (
 )
 
 func main() {
-	webServer := web_iris.Init()
-    fsOrDir := iris.Dir(filepath.Join(dir.GetCurrentAbPath(), "/other"))
-	webServer.AddStatic("/other",fsOrDir)
-	webServer.Run()
+	wi := web_iris.Init()
+  wi.AddUploadStatic("/upload", "/var/static")
+  wi.AddWebStatic("/", "/var/static")
+	wi.Run()
 }
 ```
 
@@ -273,9 +273,10 @@ import (
 )
 
 func main() {
-	webServer := web_iris.Init()
-	webServer.AddWebStatic("/")
-	webServer.Run()
+	wi := web_iris.Init()
+  wi.AddUploadStatic("/upload", "/var/static")
+  wi.AddWebStatic("/", "/var/static")
+	wi.Run()
 }
 ```
 - Front-end page reference/borrowing:

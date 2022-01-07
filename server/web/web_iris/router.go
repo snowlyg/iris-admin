@@ -17,8 +17,7 @@ import (
 func (ws *WebServer) InitRouter() error {
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
-		// 排除路由竞争
-		app.Get("/", func(ctx iris.Context) {
+		app.Get("/v0/version", func(ctx iris.Context) {
 			ctx.WriteString("IRIS-ADMIN is running!!!")
 		})
 

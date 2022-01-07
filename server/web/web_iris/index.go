@@ -15,7 +15,6 @@ import (
 	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
-	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
 var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
@@ -79,17 +78,7 @@ func (ws *WebServer) AddModule(parties ...Party) {
 }
 
 // AddWebStatic 添加前端访问地址
-func (ws *WebServer) AddWebStatic(paths ...string) {
-	if len(paths) != 2 {
-		zap_server.ZAPLOG.Warn("AddWebStatic function need 2 params")
-		return
-	}
-
-	if paths[0] == "" || paths[1] == "" {
-		zap_server.ZAPLOG.Warn("AddWebStatic function params not support empty string")
-		return
-	}
-	webPrefix := paths[0]
+func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
 	if webPrefix == "/" {
 		return
 	}
@@ -97,7 +86,7 @@ func (ws *WebServer) AddWebStatic(paths ...string) {
 	if str.InStrArray(webPrefix, webPrefixs) {
 		return
 	}
-	staticAbsPath := paths[1]
+
 	fsOrDir := iris.Dir(staticAbsPath)
 	opt := iris.DirOptions{
 		IndexName: "index.html",
@@ -108,21 +97,10 @@ func (ws *WebServer) AddWebStatic(paths ...string) {
 }
 
 // AddUploadStatic 添加上传文件访问地址
-func (ws *WebServer) AddUploadStatic(paths ...string) {
-	if len(paths) != 2 {
-		zap_server.ZAPLOG.Warn("AddUploadStatic function need 2 params")
-		return
-	}
-
-	if paths[0] == "" || paths[1] == "" {
-		zap_server.ZAPLOG.Warn("AddUploadStatic function params not support empty string")
-		return
-	}
-	staticPrefix := paths[0]
-	staticAbsPath := paths[1]
+func (ws *WebServer) AddUploadStatic(staticAbsPath, webPrefix string) {
 	fsOrDir := iris.Dir(staticAbsPath)
-	ws.app.HandleDir(staticPrefix, fsOrDir)
-	web.CONFIG.System.StaticPrefix = staticPrefix
+	ws.app.HandleDir(webPrefix, fsOrDir)
+	web.CONFIG.System.StaticPrefix = webPrefix
 }
 
 // GetTestClient 获取测试验证客户端

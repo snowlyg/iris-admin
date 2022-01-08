@@ -288,11 +288,344 @@ func main() {
 
 #### RBAC
 - [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac)
-#### 单元测试和接口文档 
+#### 接口单元测试和接口文档 
 - 测试前,需要设置 `mysqlPwd` 和 `redisPwd` 两个系统环境变量，运行测试实例的时候将会使用到它们。
 - 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
 - [接口单元测试例子](https://github.com/snowlyg/iris-admin-rbac/tree/main/iris/perm/tests)
 - [接口单元测试例子](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)
+
+接口单元测试需要新建 `main_test.go` 文件,该文件定义了单元测试的一些通用基础步骤：
+***建议采用docker部署mysql,否则测试失败会有大量测试数据库遗留***
+1.测试数据库的数据库的创建和摧毁（每个单元测试都会新建不同的数据库，以隔离数据对单元测试结果的影响）
+2.数据表的新建和表数据的填充
+3. `PartyFunc` , `SeedFunc` 方法需要根据对应的测试模块自定义
+内容如下所示:
+```go
+package test
+
+import (
+	_ "embed"
+	"os"
+	"testing"
+
+	"github.com/snowlyg/httptest"
+	rbac "github.com/snowlyg/iris-admin-rbac/gin"
+	web_tests "github.com/snowlyg/iris-admin/server/web/tests"
+	"github.com/snowlyg/iris-admin/server/web/web_gin"
+)
+
+var TestServer *web_gin.WebServer
+var TestClient *httptest.Client
+
+func TestMain(m *testing.M) {
+	var uuid string
+	uuid, TestServer = web_tests.BeforeTestMainGin(rbac.PartyFunc, rbac.SeedFunc)
+	code := m.Run()
+	web_tests.AfterTestMain(uuid, true)
+	os.Exit(code)
+}
+```
+
+4.然后添加对应的单元测试
+```go
+package test
+
+import (
+	"fmt"
+	"net/http"
+	"testing"
+
+	"github.com/snowlyg/httptest"
+	rbac "github.com/snowlyg/iris-admin-rbac/gin"
+	"github.com/snowlyg/iris-admin/server/web"
+	"github.com/snowlyg/iris-admin/server/web/web_gin/response"
+	"github.com/snowlyg/multi"
+)
+
+var (
+	url = "/api/v1/authority" // url
+)
+
+func TestList(t *testing.T) {
+	if TestServer == nil {
+		t.Error("测试服务初始化失败")
+		return
+	}
+
+	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
+	if TestClient == nil {
+		return
+	}
+	pageKeys := httptest.Responses{
+		{Key: "status", Value: http.StatusOK},
+		{Key: "message", Value: response.ResponseOkMessage},
+		{Key: "data", Value: httptest.Responses{
+			{Key: "pageSize", Value: 10},
+			{Key: "page", Value: 1},
+			{Key: "list", Value: []httptest.Responses{
+				{
+					{Key: "id", Value: web.DeviceAuthorityId, Type: "ge"},
+					{Key: "authorityName", Value: "设备用户"},
+					{Key: "authorityType", Value: multi.GeneralAuthority},
+					{Key: "parentId", Value: 0},
+					{Key: "defaultRouter", Value: "dashboard"},
+					{Key: "updatedAt", Value: "", Type: "notempty"},
+					{Key: "createdAt", Value: "", Type: "notempty"},
+				},
+				{
+					{Key: "id", Value: web.LiteAuthorityId, Type: "ge"},
+					{Key: "authorityName", Value: "小程序用户"},
+					{Key: "authorityType", Value: multi.GeneralAuthority},
+					{Key: "parentId", Value: 0},
+					{Key: "defaultRouter", Value: "dashboard"},
+					{Key: "updatedAt", Value: "", Type: "notempty"},
+					{Key: "createdAt", Value: "", Type: "notempty"},
+				},
+				{
+					{Key: "id", Value: web.TenancyAuthorityId, Type: "ge"},
+					{Key: "authorityName", Value: "商户管理员"},
+					{Key: "authorityType", Value: multi.TenancyAuthority},
+					{Key: "parentId", Value: 0},
+					{Key: "defaultRouter", Value: "dashboard"},
+					{Key: "updatedAt", Value: "", Type: "notempty"},
+					{Key: "createdAt", Value: "", Type: "notempty"},
+				},
+				{
+					{Key: "id", Value: web.AdminAuthorityId, Type: "ge"},
+					{Key: "authorityName", Value: "超级管理员"},
+					{Key: "authorityType", Value: multi.AdminAuthority},
+					{Key: "parentId", Value: 0},
+					{Key: "defaultRouter", Value: "dashboard"},
+					{Key: "updatedAt", Value: "", Type: "notempty"},
+					{Key: "createdAt", Value: "", Type: "notempty"},
+				},
+			}},
+			{Key: "total", Value: 0, Type: "ge"},
+		}},
+	}
+	requestParams := map[string]interface{}{"page": 1, "pageSize": 10, "orderBy": "id"}
+	TestClient.GET(fmt.Sprintf("%s/getAuthorityList", url), pageKeys, requestParams)
+}
+
+func TestGetAdminAuthorityList(t *testing.T) {
+	if TestServer == nil {
+		t.Error("测试服务初始化失败")
+		return
+	}
+
+	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
+	if TestClient == nil {
+		return
+	}
+	pageKeys := httptest.Responses{
+		{Key: "status", Value: http.StatusOK},
+		{Key: "message", Value: response.ResponseOkMessage},
+		{Key: "data", Value: httptest.Responses{
+			{Key: "pageSize", Value: 10},
+			{Key: "page", Value: 1},
+			{Key: "list", Value: []httptest.Responses{
+				{
+					{Key: "id", Value: web.AdminAuthorityId, Type: "ge"},
+					{Key: "authorityName", Value: "超级管理员"},
+					{Key: "authorityType", Value: multi.AdminAuthority},
+					{Key: "parentId", Value: 0},
+					{Key: "defaultRouter", Value: "dashboard"},
+					{Key: "updatedAt", Value: "", Type: "notempty"},
+					{Key: "createdAt", Value: "", Type: "notempty"},
+				},
+			}},
+			{Key: "total", Value: 0, Type: "ge"},
+		}},
+	}
+	requestParams := map[string]interface{}{"page": 1, "pageSize": 10, "orderBy": "id"}
+	TestClient.GET(fmt.Sprintf("%s/getAdminAuthorityList", url), pageKeys, requestParams)
+}
+
+func TestGetTenancyAuthorityList(t *testing.T) {
+	if TestServer == nil {
+		t.Error("测试服务初始化失败")
+		return
+	}
+
+	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
+	if TestClient == nil {
+		return
+	}
+	pageKeys := httptest.Responses{
+		{Key: "status", Value: http.StatusOK},
+		{Key: "message", Value: response.ResponseOkMessage},
+		{Key: "data", Value: httptest.Responses{
+			{Key: "pageSize", Value: 10},
+			{Key: "page", Value: 1},
+			{Key: "list", Value: []httptest.Responses{
+				{
+					{Key: "id", Value: web.TenancyAuthorityId, Type: "ge"},
+					{Key: "authorityName", Value: "商户管理员"},
+					{Key: "authorityType", Value: multi.TenancyAuthority},
+					{Key: "parentId", Value: 0},
+					{Key: "defaultRouter", Value: "dashboard"},
+					{Key: "updatedAt", Value: "", Type: "notempty"},
+					{Key: "createdAt", Value: "", Type: "notempty"},
+				},
+			}},
+			{Key: "total", Value: 0, Type: "ge"},
+		}},
+	}
+	requestParams := map[string]interface{}{"page": 1, "pageSize": 10, "orderBy": "id"}
+	TestClient.GET(fmt.Sprintf("%s/getTenancyAuthorityList", url), pageKeys, requestParams)
+}
+
+func TestGetGeneralAuthorityList(t *testing.T) {
+	if TestServer == nil {
+		t.Error("测试服务初始化失败")
+		return
+	}
+
+	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
+	if TestClient == nil {
+		return
+	}
+	pageKeys := httptest.Responses{
+		{Key: "status", Value: http.StatusOK},
+		{Key: "message", Value: response.ResponseOkMessage},
+		{Key: "data", Value: httptest.Responses{
+			{Key: "pageSize", Value: 10},
+			{Key: "page", Value: 1},
+			{Key: "list", Value: []httptest.Responses{
+				{
+					{Key: "id", Value: web.DeviceAuthorityId, Type: "ge"},
+					{Key: "authorityName", Value: "设备用户"},
+					{Key: "authorityType", Value: multi.GeneralAuthority},
+					{Key: "parentId", Value: 0},
+					{Key: "defaultRouter", Value: "dashboard"},
+					{Key: "updatedAt", Value: "", Type: "notempty"},
+					{Key: "createdAt", Value: "", Type: "notempty"},
+				},
+				{
+					{Key: "id", Value: web.LiteAuthorityId, Type: "ge"},
+					{Key: "authorityName", Value: "小程序用户"},
+					{Key: "authorityType", Value: multi.GeneralAuthority},
+					{Key: "parentId", Value: 0},
+					{Key: "defaultRouter", Value: "dashboard"},
+					{Key: "updatedAt", Value: "", Type: "notempty"},
+					{Key: "createdAt", Value: "", Type: "notempty"},
+				},
+			}},
+			{Key: "total", Value: 0, Type: "ge"},
+		}},
+	}
+	requestParams := map[string]interface{}{"page": 1, "pageSize": 10, "orderBy": "id"}
+	TestClient.GET(fmt.Sprintf("%s/getGeneralAuthorityList", url), pageKeys, requestParams)
+}
+
+func TestCreate(t *testing.T) {
+	if TestServer == nil {
+		t.Error("测试服务初始化失败")
+		return
+	}
+
+	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
+	if TestClient == nil {
+		return
+	}
+	data := map[string]interface{}{
+		"authorityName": "test_authorityName_for_create",
+		"parentId":      0,
+		"authorityType": multi.AdminAuthority,
+	}
+	id := Create(TestClient, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
+	}
+	defer Delete(TestClient, id)
+}
+
+func TestUpdate(t *testing.T) {
+	if TestServer == nil {
+		t.Error("测试服务初始化失败")
+		return
+	}
+
+	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
+	if TestClient == nil {
+		return
+	}
+	data := map[string]interface{}{
+		"authorityName": "test_authorityName_for_update",
+		"parentId":      0,
+		"authorityType": multi.AdminAuthority,
+	}
+	id := Create(TestClient, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
+	}
+	defer Delete(TestClient, id)
+
+	update := map[string]interface{}{
+		"authorityName": "test_authorityName_for_update1",
+		"parentId":      0,
+		"authorityType": multi.AdminAuthority,
+	}
+
+	pageKeys := httptest.Responses{
+		{Key: "status", Value: http.StatusOK},
+		{Key: "message", Value: response.ResponseOkMessage},
+	}
+	TestClient.PUT(fmt.Sprintf("%s/updateAuthority/%d", url, id), pageKeys, update)
+}
+
+func TestCopyAuthority(t *testing.T) {
+	if TestServer == nil {
+		t.Error("测试服务初始化失败")
+		return
+	}
+
+	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
+	if TestClient == nil {
+		return
+	}
+	data := map[string]interface{}{
+		"authorityName": "test_authorityName_for_copy",
+		"parentId":      0,
+		"authorityType": multi.AdminAuthority,
+	}
+	id := Create(TestClient, data)
+	if id == 0 {
+		t.Fatalf("测试添加用户失败 id=%d", id)
+	}
+	defer Delete(TestClient, id)
+
+	pageKeys := httptest.Responses{
+		{Key: "status", Value: http.StatusOK},
+		{Key: "message", Value: response.ResponseOkMessage},
+	}
+	copy := map[string]interface{}{
+		"authorityName": "test_authorityName_after_copy",
+	}
+
+	TestClient.POST(fmt.Sprintf("%s/copyAuthority/%d", url, id), pageKeys, copy)
+}
+
+func Create(TestClient *httptest.Client, data map[string]interface{}) uint {
+	pageKeys := httptest.Responses{
+		{Key: "status", Value: http.StatusOK},
+		{Key: "message", Value: response.ResponseOkMessage},
+		{Key: "data", Value: httptest.Responses{
+			{Key: "id", Value: 1, Type: "ge"},
+		},
+		},
+	}
+	return TestClient.POST(fmt.Sprintf("%s/createAuthority", url), pageKeys, data).GetId()
+}
+
+func Delete(TestClient *httptest.Client, id uint) {
+	pageKeys := httptest.Responses{
+		{Key: "status", Value: http.StatusOK},
+		{Key: "message", Value: response.ResponseOkMessage},
+	}
+	TestClient.DELETE(fmt.Sprintf("%s/deleteAuthority/%d", url, id), pageKeys)
+}
+```
 
 #### 感谢 
 

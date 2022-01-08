@@ -153,6 +153,7 @@ func (ws *WebServer) GetTestLogin(t *testing.T, url string, res httptest.Respons
 
 // Run 启动web服务
 func (ws *WebServer) Run() {
+	ws.NoRoute()
 	s := initServer(web.CONFIG.System.Addr, ws.app)
 	time.Sleep(10 * time.Microsecond)
 	fmt.Printf("默认监听地址:http://%s\n", web.CONFIG.System.Addr)

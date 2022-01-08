@@ -19,7 +19,7 @@ import (
 )
 
 func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
-	fmt.Println("+++++ before test +++++")
+	fmt.Println("+++++ 测试开始 +++++")
 
 	dbType := os.Getenv("dbType")
 	if dbType != "" {
@@ -28,17 +28,18 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 
 	web.InitWeb()
 
-	mysqlPwd := os.Getenv("mysqlPwd")
-	mysqlAddr := os.Getenv("mysqlAddr")
-	if mysqlAddr == "" {
-		database.CONFIG.Path = strings.TrimSpace(mysqlAddr)
-	}
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
 
-	fmt.Printf("+++++ %s +++++\n\n", uuid)
 	database.CONFIG.Dbname = uuid
-	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
+	mysqlPwd := os.Getenv("mysqlPwd")
+	if mysqlPwd != "" {
+		database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
+	}
+	mysqlAddr := os.Getenv("mysqlAddr")
+	if mysqlAddr != "" {
+		database.CONFIG.Path = strings.TrimSpace(mysqlAddr)
+	}
 	database.CONFIG.LogMode = true
 	database.InitMysql()
 
@@ -48,16 +49,16 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 
 	mc := migration.New()
 	// 添加 v1 内置模块数据表和数据
-	fmt.Println("++++++ add model ++++++")
+	fmt.Println("++++++ 添加数据 ++++++")
 	seed(wi, mc)
 	err := mc.Migrate()
 	if err != nil {
-		fmt.Printf("migrate get error [%s]", err.Error())
+		fmt.Printf("数据库迁移失败： [%s]", err.Error())
 		return uuid, nil
 	}
 	err = mc.Seed()
 	if err != nil {
-		fmt.Printf("seed get error [%s]", err.Error())
+		fmt.Printf("数据填充失败：[%s]", err.Error())
 		return uuid, nil
 	}
 
@@ -65,7 +66,7 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 }
 
 func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
-	fmt.Println("+++++ before test +++++")
+	fmt.Println("+++++ 测试前置方法 +++++")
 
 	dbType := os.Getenv("dbType")
 	if dbType != "" {
@@ -74,17 +75,18 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 
 	web.InitWeb()
 
+	node, _ := snowflake.NewNode(1)
+	uuid := str.Join("iris", "_", node.Generate().String())
+
+	database.CONFIG.Dbname = uuid
 	mysqlPwd := os.Getenv("mysqlPwd")
+	if mysqlPwd != "" {
+		database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
+	}
 	mysqlAddr := os.Getenv("mysqlAddr")
 	if mysqlAddr != "" {
 		database.CONFIG.Path = strings.TrimSpace(mysqlAddr)
 	}
-	node, _ := snowflake.NewNode(1)
-	uuid := str.Join("iris", "_", node.Generate().String())
-
-	fmt.Printf("+++++ %s +++++\n\n", uuid)
-	database.CONFIG.Dbname = uuid
-	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
 	database.CONFIG.LogMode = true
 	database.InitMysql()
 
@@ -93,17 +95,19 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 	web.StartTest(wi)
 
 	mc := migration.New()
+
 	// 添加 v1 内置模块数据表和数据
-	fmt.Println("++++++ add model ++++++")
+	fmt.Println("++++++ 添加数据 ++++++")
+
 	seed(wi, mc)
 	err := mc.Migrate()
 	if err != nil {
-		fmt.Printf("migrate get error [%s]", err.Error())
+		fmt.Printf("数据库迁移失败： [%s]", err.Error())
 		return uuid, nil
 	}
 	err = mc.Seed()
 	if err != nil {
-		fmt.Printf("seed get error [%s]", err.Error())
+		fmt.Printf("数据填充失败：[%s]", err.Error())
 		return uuid, nil
 	}
 
@@ -111,14 +115,15 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 }
 
 func AfterTestMain(uuid string, isDelDb bool) {
-	fmt.Println("++++++++ after test main ++++++++")
+	fmt.Println("++++++++ 测试后置方法 ++++++++")
 	if isDelDb {
 		err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
 		if err != nil {
 			zap_server.ZAPLOG.Error("删除数据库失败", zap.String("uuid", uuid), zap.String("err", err.Error()))
 		}
 	}
-	fmt.Println("++++++++ dorp db ++++++++")
+	fmt.Println("++++++++ 删除数据表 ++++++++")
+
 	db, err := database.Instance().DB()
 	if err != nil {
 		zap_server.ZAPLOG.Error(str.Join("获取数据库连接失败:", err.Error()))

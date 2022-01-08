@@ -63,7 +63,13 @@ func Init() *WebServer {
 	}
 }
 
+// NoRoute 关键点【解决页面刷新404的问题】
 func (ws *WebServer) NoRoute() {
+
+	if len(ws.webStatics) == 0 {
+		return
+	}
+
 	for _, wp := range ws.webStatics {
 		wp := wp
 		// 关键点【解决页面刷新404的问题】

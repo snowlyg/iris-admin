@@ -20,6 +20,7 @@ require (
 	github.com/kataras/iris/v12 v12.2.0-alpha5
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
+	github.com/mattn/go-colorable v0.1.12
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/snowlyg/helper v0.0.4
 	github.com/snowlyg/httptest v0.0.1

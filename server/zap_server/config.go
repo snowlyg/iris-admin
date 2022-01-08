@@ -54,6 +54,7 @@ func getViperConfig() viper_server.ViperConfig {
 	showLine := strconv.FormatBool(CONFIG.ShowLine)
 	logInConsole := strconv.FormatBool(CONFIG.LogInConsole)
 	return viper_server.ViperConfig{
+		Debug:     true,
 		Directory: g.ConfigDir,
 		Name:      configName,
 		Type:      g.ConfigType,
@@ -74,14 +75,16 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-level: ` + CONFIG.Level + `
-format: ` + CONFIG.Format + `
-prefix: '` + CONFIG.Prefix + `'
-director: ` + CONFIG.Director + `
-link-name: ` + CONFIG.LinkName + `
-show-line: ` + showLine + `
-encode-level: ` + CONFIG.EncodeLevel + `
-stacktrace-key: ` + CONFIG.StacktraceKey + `
-log-in-console: ` + logInConsole),
+{
+	"level": "` + CONFIG.Level + `",
+	"format": "` + CONFIG.Format + `",
+	"prefix": "` + CONFIG.Prefix + `",
+	"director": "` + CONFIG.Director + `",
+	"link-name": "` + CONFIG.LinkName + `",
+	"show-line": ` + showLine + `,
+	"encode-level": "` + CONFIG.EncodeLevel + `",
+	"stacktrace-key": "` + CONFIG.StacktraceKey + `",
+	"log-in-console": ` + logInConsole + `
+}`),
 	}
 }

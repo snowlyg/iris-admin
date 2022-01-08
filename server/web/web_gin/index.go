@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mattn/go-colorable"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/httptest"
@@ -44,6 +45,8 @@ func Init() *WebServer {
 	}
 	app.Use(middleware.Cors())
 	registerValidation()
+
+	gin.DefaultWriter = colorable.NewColorableStdout()
 
 	web.Verfiy()
 

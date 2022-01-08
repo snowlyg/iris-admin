@@ -116,11 +116,16 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-except: 
- uri: ` + CONFIG.Except.Uri + `
- method: ` + CONFIG.Except.Method + `
-include: 
- uri: ` + CONFIG.Include.Uri + `
- method: ` + CONFIG.Include.Method),
+{
+	"except":{ 
+		uri: "` + CONFIG.Except.Uri + `",
+		method: "` + CONFIG.Except.Method + `"
+	},	
+"include":
+	{
+		"uri": "` + CONFIG.Include.Uri + `",
+		"method": "` + CONFIG.Include.Method + `"
+	} 
+ }`),
 	}
 }

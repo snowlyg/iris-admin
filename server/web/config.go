@@ -117,6 +117,7 @@ func getViperConfig() viper_server.ViperConfig {
 	tls := strconv.FormatBool(CONFIG.System.Tls)
 	configName := "web"
 	return viper_server.ViperConfig{
+		Debug:     true,
 		Directory: g.ConfigDir,
 		Name:      configName,
 		Type:      g.ConfigType,
@@ -137,25 +138,33 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-max-size: ` + maxSize + `
-except: 
- uri: "` + CONFIG.Except.Uri + `"
- method: "` + CONFIG.Except.Method + `"
-captcha:
- key-long: ` + keyLong + `
- img-width: ` + imgWidth + `
- img-height: ` + imgHeight + `
-limit:
- limit: ` + limit + `
- disable: ` + disable + `
- burst: ` + burst + `
-system:
- tls: ` + tls + `
- level: "` + CONFIG.System.Level + `"
- addr: "` + CONFIG.System.Addr + `"
- db-type: "` + CONFIG.System.DbType + `"
- static-prefix: "` + CONFIG.System.StaticPrefix + `"
- web-prefix: "` + CONFIG.System.WebPrefix + `"
- time-format: "` + CONFIG.System.TimeFormat + `"`),
+{
+	"max-size": ` + maxSize + `,
+	"except":
+		{ 
+			"uri": "` + CONFIG.Except.Uri + `",
+			"method": "` + CONFIG.Except.Method + `"
+		},
+	"captcha":
+		{
+		"key-long": ` + keyLong + `,
+		"img-width": ` + imgWidth + `,
+		"img-height": ` + imgHeight + `
+		},
+	"limit":
+		{
+			"limit": ` + limit + `,
+			"disable": ` + disable + `,
+			"burst": ` + burst + `
+		},
+	"system":
+		{
+			"tls": ` + tls + `,
+			"level": "` + CONFIG.System.Level + `",
+			"addr": "` + CONFIG.System.Addr + `",
+			"db-type": "` + CONFIG.System.DbType + `",
+			"time-format": "` + CONFIG.System.TimeFormat + `"
+		}
+ }`),
 	}
 }

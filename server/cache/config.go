@@ -43,6 +43,7 @@ func getViperConfig() viper_server.ViperConfig {
 	db := fmt.Sprintf("%d", CONFIG.DB)
 	poolSize := fmt.Sprintf("%d", CONFIG.PoolSize)
 	return viper_server.ViperConfig{
+		Debug:     true,
 		Directory: g.ConfigDir,
 		Name:      configName,
 		Type:      g.ConfigType,
@@ -63,9 +64,11 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-db: ` + db + `
-addr: "` + CONFIG.Addr + `"
-password: "` + CONFIG.Password + `"
-pool-size: ` + poolSize),
+{
+	"db": ` + db + `,
+	"addr": "` + CONFIG.Addr + `",
+	"password": "` + CONFIG.Password + `",
+	"pool-size": ` + poolSize + `
+}`),
 	}
 }

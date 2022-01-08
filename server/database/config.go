@@ -64,6 +64,7 @@ func getViperConfig() viper_server.ViperConfig {
 	mxOpenConns := fmt.Sprintf("%d", CONFIG.MaxOpenConns)
 	logMode := fmt.Sprintf("%t", CONFIG.LogMode)
 	return viper_server.ViperConfig{
+		Debug:     true,
 		Directory: g.ConfigDir,
 		Name:      configName,
 		Type:      g.ConfigType,
@@ -84,14 +85,16 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
-path: "` + CONFIG.Path + `"
-config: ` + CONFIG.Config + `
-db-name: "` + CONFIG.Dbname + `"
-username: "` + CONFIG.Username + `"
-password: "` + CONFIG.Password + `"
-max-idle-conns: ` + mxIdleConns + `
-max-open-conns: ` + mxOpenConns + `
-log-mode: ` + logMode + `
-log-zap: "` + CONFIG.LogZap + `"`),
+{
+	"path": "` + CONFIG.Path + `",
+	"config": "` + CONFIG.Config + `",
+	"db-name": "` + CONFIG.Dbname + `",
+	"username": "` + CONFIG.Username + `",
+	"password": "` + CONFIG.Password + `",
+	"max-idle-conns": ` + mxIdleConns + `,
+	"max-open-conns": ` + mxOpenConns + `,
+	"log-mode": ` + logMode + `,
+	"log-zap": "` + CONFIG.LogZap + `"
+}`),
 	}
 }

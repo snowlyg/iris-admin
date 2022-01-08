@@ -46,16 +46,16 @@ func TestViperInit(t *testing.T) {
 			return nil
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
-		Default: []byte(`
-level: info
-format: console
-prefix: '[OP-ONLINE]'
-director: log
-link-name: latest_log
-show-line: true
-encode-level: LowercaseColorLevelEncoder
-stacktrace-key: stacktrace
-log-in-console: true`),
+		Default: []byte(`{
+"level": "info",
+"format": "console",
+"prefix": "[OP-ONLINE]",
+"director": "log",
+"link-name": "latest_log",
+"show-line": true,
+"encode-level": "LowercaseColorLevelEncoder",
+"stacktrace-key": "stacktrace",
+"log-in-console": true}`),
 	}
 	want := Zap{
 		Level:         "info",

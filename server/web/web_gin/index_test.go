@@ -30,7 +30,7 @@ func TestStart(t *testing.T) {
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}
-		if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode != http.StatusNotFound {
 			t.Errorf("test web start want [%d] but get [%d]", http.StatusNotFound, resp.StatusCode)
 		}
 	})

@@ -21,22 +21,22 @@ import (
 func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
 	fmt.Println("+++++ before test +++++")
 
-	zap_server.CONFIG.Level = "debug"
-	web.CONFIG.System.Level = "debug"
-
-	node, _ := snowflake.NewNode(1)
-	uuid := str.Join("gin", "_", node.Generate().String())
-
-	fmt.Printf("+++++ %s +++++\n\n", uuid)
-	web.CONFIG.System.DbType = "mysql"
+	dbType := os.Getenv("dbType")
+	if dbType != "" {
+		web.CONFIG.System.DbType = dbType
+	}
 
 	web.InitWeb()
 
 	mysqlPwd := os.Getenv("mysqlPwd")
 	mysqlAddr := os.Getenv("mysqlAddr")
-	if mysqlAddr != "" {
+	if mysqlAddr == "" {
 		database.CONFIG.Path = strings.TrimSpace(mysqlAddr)
 	}
+	node, _ := snowflake.NewNode(1)
+	uuid := str.Join("gin", "_", node.Generate().String())
+
+	fmt.Printf("+++++ %s +++++\n\n", uuid)
 	database.CONFIG.Dbname = uuid
 	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
 	database.CONFIG.LogMode = true
@@ -67,14 +67,11 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
 	fmt.Println("+++++ before test +++++")
 
-	zap_server.CONFIG.Level = "debug"
-	web.CONFIG.System.Level = "debug"
+	dbType := os.Getenv("dbType")
+	if dbType != "" {
+		web.CONFIG.System.DbType = dbType
+	}
 
-	node, _ := snowflake.NewNode(1)
-	uuid := str.Join("iris", "_", node.Generate().String())
-
-	fmt.Printf("+++++ %s +++++\n\n", uuid)
-	web.CONFIG.System.DbType = "mysql"
 	web.InitWeb()
 
 	mysqlPwd := os.Getenv("mysqlPwd")
@@ -82,7 +79,10 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 	if mysqlAddr != "" {
 		database.CONFIG.Path = strings.TrimSpace(mysqlAddr)
 	}
+	node, _ := snowflake.NewNode(1)
+	uuid := str.Join("iris", "_", node.Generate().String())
 
+	fmt.Printf("+++++ %s +++++\n\n", uuid)
 	database.CONFIG.Dbname = uuid
 	database.CONFIG.Password = strings.TrimSpace(mysqlPwd)
 	database.CONFIG.LogMode = true

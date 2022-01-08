@@ -282,7 +282,7 @@ func main() {
 - [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac)
 
 #### Unit test and documentation
-- Before start unit tests, you need to set two system environment variables `mysqlPwd` and `redisPwd`,that will be used when running the test instance。
+- Before start unit tests, you need to set two system environment variables `mysqlPwd` and `mysqlAddr`,that will be used when running the test instance。
 - [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) package the unit test used, it's  simple package base on [httpexpect/v2](https://github.com/gavv/httpexpect).
 - [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/iris/perm/tests)
 - [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)

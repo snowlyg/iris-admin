@@ -21,7 +21,7 @@ func TestRun(t *testing.T) {
 	time.Sleep(3 * time.Second)
 
 	t.Run("test web run", func(t *testing.T) {
-		resp, err := http.Get("http://127.0.0.1:18085")
+		resp, err := http.Get("http://127.0.0.1:18085/v0/version")
 		if err != nil {
 			t.Errorf("test web start get %v", err)
 		}

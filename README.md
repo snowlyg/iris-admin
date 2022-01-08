@@ -289,7 +289,7 @@ func main() {
 #### RBAC
 - [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac)
 #### 接口单元测试和接口文档 
-- 测试前,需要设置 `mysqlPwd` 和 `redisPwd` 两个系统环境变量，运行测试实例的时候将会使用到它们。
+- 测试前,需要设置 `mysqlPwd`, `mysqlAddr` 系统环境变量，运行测试实例的时候将会使用到它们。
 - 测试使用依赖库 [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) 是基于 [httpexpect/v2](https://github.com/gavv/httpexpect) 的简单封装
 - [接口单元测试例子](https://github.com/snowlyg/iris-admin-rbac/tree/main/iris/perm/tests)
 - [接口单元测试例子](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)

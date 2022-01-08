@@ -2,7 +2,6 @@ package zap_server
 
 import (
 	zaprotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	"github.com/snowlyg/iris-admin/g"
 	"go.uber.org/zap/zapcore"
 	"os"
 	"path"

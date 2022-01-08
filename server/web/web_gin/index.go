@@ -32,6 +32,12 @@ type WebServer struct {
 	server
 	addr       string
 	timeFormat string
+	webStatics []WebStatic
+}
+
+type WebStatic struct {
+	Prefix    string
+	IndexFile []byte
 }
 
 // Init 初始化web服务
@@ -54,6 +60,23 @@ func Init() *WebServer {
 		app:        app,
 		addr:       web.CONFIG.System.Addr,
 		timeFormat: web.CONFIG.System.TimeFormat,
+	}
+}
+
+func (ws *WebServer) NoRoute() {
+	for _, wp := range ws.webStatics {
+		wp := wp
+		// 关键点【解决页面刷新404的问题】
+		go func(wp WebStatic) {
+			ws.app.NoRoute(func(ctx *gin.Context) {
+				ctx.Writer.WriteHeader(http.StatusOK)
+				if strings.Contains(ctx.Request.RequestURI, wp.Prefix) {
+					ctx.Writer.Write(wp.IndexFile)
+				}
+				ctx.Writer.Header().Add("Accept", "text/html")
+				ctx.Writer.Flush()
+			})
+		}(wp)
 	}
 }
 
@@ -82,23 +105,19 @@ func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...stri
 		}
 	}
 
-	// 关键点【解决页面刷新404的问题】
-	ws.app.NoRoute(func(ctx *gin.Context) {
-		ctx.Writer.WriteHeader(http.StatusOK)
-		if strings.Contains(ctx.Request.RequestURI, webPrefix) {
-			file, _ := dir.ReadBytes(index)
-			ctx.Writer.Write(file)
-		}
-		ctx.Writer.Header().Add("Accept", "text/html")
-		ctx.Writer.Flush()
-	})
 	web.CONFIG.System.WebPrefix = str.Join(web.CONFIG.System.WebPrefix, ",", webPrefix)
+	file, _ := dir.ReadBytes(index)
+	webStatic := WebStatic{
+		Prefix:    webPrefix,
+		IndexFile: file,
+	}
+	ws.webStatics = append(ws.webStatics, webStatic)
 }
 
 // AddUploadStatic 添加上传文件访问地址
 func (ws *WebServer) AddUploadStatic(staticAbsPath, webPrefix string) {
 	ws.app.StaticFS(staticAbsPath, http.Dir(webPrefix))
-	web.CONFIG.System.StaticPrefix = staticAbsPath
+	web.CONFIG.System.StaticPrefix = webPrefix
 }
 
 // GetTestClient 获取测试验证客户端

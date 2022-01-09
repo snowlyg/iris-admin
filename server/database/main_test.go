@@ -12,8 +12,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	defer Remove()
-	defer zap_server.Remove()
 
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("database", "_", node.Generate().String())
@@ -34,6 +32,7 @@ func TestMain(m *testing.M) {
 	if db != nil {
 		db.Close()
 	}
-
+	Remove()
+	zap_server.Remove()
 	os.Exit(code)
 }

@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/snowlyg/iris-admin/server/viper_server"
+	"github.com/snowlyg/iris-admin/server/zap_server"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -124,6 +125,6 @@ func DorpDB(dsn, driver, dbName string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(execSql)
+	zap_server.ZAPLOG.Debug(execSql)
 	return nil
 }

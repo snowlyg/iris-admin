@@ -13,12 +13,9 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	defer Remove()
-	defer zap_server.Remove()
-	defer database.Remove()
 
 	node, _ := snowflake.NewNode(1)
-	uuid := str.Join("database", "_", node.Generate().String())
+	uuid := str.Join("casbin", "_", node.Generate().String())
 
 	database.CONFIG.Dbname = uuid
 	database.CONFIG.Password = strings.TrimSpace(os.Getenv("mysqlPwd"))
@@ -36,6 +33,8 @@ func TestMain(m *testing.M) {
 	if db != nil {
 		db.Close()
 	}
-
+	Remove()
+	zap_server.Remove()
+	database.Remove()
 	os.Exit(code)
 }

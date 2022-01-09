@@ -108,7 +108,7 @@ func (req *Paginate) PaginateScope() func(db *gorm.DB) *gorm.DB {
 
 // Response
 type Response struct {
-	Code int64       `json:"code"`
-	Msg  string      `json:"message"`
-	Data interface{} `json:"data"`
+	Status int64       `json:"status"`
+	Msg    string      `json:"message"`
+	Data   interface{} `json:"data"`
 }

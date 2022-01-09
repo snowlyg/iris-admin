@@ -10,11 +10,13 @@
 [简体中文](./README.md)  | English
 
 #### Project url
+
 [GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin) 
 ****
 > This project just for learning golang, welcome to give your suggestions!
 
 #### Documentation
+
 - [IRIS-ADMIN-DOC](https://doc.snowlyg.com)
 - [IRIS V12 document for chinese](https://github.com/snowlyg/iris/wiki)
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
@@ -97,6 +99,7 @@ pool-size: ` + poolSize),
 - - Service logging.
 - - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
 - - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
+  
 ```go
   zap_server.ZAPLOG.Info("Registration data table error", zap.Any("err", err))
   zap_server.ZAPLOG.Debug("Registration data table error", zap.Any("err", err))
@@ -108,6 +111,7 @@ pool-size: ` + poolSize),
 - - database service [only support mysql now].
 - - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
 - - Through single instance `database.Instance()` operating data.
+  
 ```go
   database.Instance().Model(&User{}).Where("name = ?","name").Find(&user)
   ...
@@ -132,6 +136,7 @@ pool-size: ` + poolSize),
 - - Job server
 - - Use [robfig/cron](https://github.com/robfig/cron) third party package.
 - - Through single instance `cron_server.Instance()` to add job or func.
+  
 ```go
   cron_server.CronInstance().AddJob("@every 1m",YourJob)
   // 或者 
@@ -143,25 +148,30 @@ pool-size: ` + poolSize),
 - - web_iris Go-Iris web framework service.
 - - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
 - - web framework service need implement `type WebFunc interface {}`  interface.
+- 
 ```go
-// WebFunc web framework service interface
-// - GetTestClient test client
-// - GetTestLogin login for test
-// - AddWebStatic add web static file 
-// - AddUploadStatic add upload file api
-// - Run start program
-type WebFunc interface {
-	GetTestClient(t *testing.T) *httptest.Client
-	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
-	AddWebStatic(perfix string)
-	AddUploadStatic()
+type WebBaseFunc interface {
+	AddWebStatic(staticAbsPath, webPrefix string, paths ...string)
+	AddUploadStatic(staticAbsPath, webPrefix string)
 	InitRouter() error
 	Run()
 }
+
+// WebFunc 框架服务接口
+// - GetTestClient 测试客户端
+// - GetTestLogin 测试登录
+// - AddWebStatic 添加静态页面
+// - AddUploadStatic 上传文件路径
+// - Run 启动
+type WebFunc interface {
+	WebBaseFunc
+}
 ```
+
 #### Initialize database
 
 ##### Simple
+
 - Use gorm's `AutoMigrate()` function to auto migrate database. 
 ```go
 package main
@@ -181,12 +191,14 @@ func main() {
 ```
 
 ##### Custom migrate tools
+
 - Use `gormigrate` third party package. Tt's helpful for database migrate and program development.
 - Detail is see  [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go.
   
 ---
 
 #### Getting started
+
 - Get master package , Notice must use `master` version.
 ```sh
  go get github.com/snowlyg/iris-admin@master
@@ -207,6 +219,7 @@ func main() {
 ```
 
 #### Run project 
+
 - When you first run this cmd `go run main.go` , you can see some config files in  the `config` directory,
 - and `rbac_model.conf` will be created in your project root directory.
 ```sh
@@ -214,6 +227,7 @@ go run main.go
 ```
 
 #### Module
+
 - You can use [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac) package to add rbac function for your project quickly.
 - Your can use AddModule() to add other modules .
 ```go
@@ -237,6 +251,7 @@ func main() {
 ```
 
 #### Default static file path
+
 - A static file access path has been built in by default
 - Static files will upload to `/static/upload` directory.
 - You can set this config key `static-path` to change the default directory.
@@ -251,6 +266,7 @@ system:
 ```
 
 #### Use with front-end framework , e.g. vue.
+
 - Default,you must build vue to the `dist` directory.
 - Naturally you can set this config key `web-path` to change the default directory.
 ```go
@@ -268,6 +284,7 @@ func main() {
 	webServer.Run()
 }
 ```
+
 - Front-end page reference/borrowing:
  *notice: The front-end only realizes preview effect simply*
 - [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin/tree/master/web)
@@ -275,13 +292,16 @@ func main() {
 
 
 #### Example
+
 - [iris](https://github.com/snowlyg/iris-admin-example/tree/main/iris)
 - [gin](https://github.com/snowlyg/iris-admin-example/tree/main/gin)
 
 #### RBAC
+
 - [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac)
 
 #### Unit test and documentation
+
 - Before start unit tests, you need to set two system environment variables `mysqlPwd` and `mysqlAddr`,that will be used when running the test instance。
 - [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) package the unit test used, it's  simple package base on [httpexpect/v2](https://github.com/gavv/httpexpect).
 - [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/iris/perm/tests)
@@ -293,331 +313,9 @@ func main() {
 2.数据表的新建和表数据的填充
 3. `PartyFunc` , `SeedFunc` 方法需要根据对应的测试模块自定义
 内容如下所示:
+
 ```go
-package test
 
-import (
-	_ "embed"
-	"os"
-	"testing"
-
-	"github.com/snowlyg/httptest"
-	rbac "github.com/snowlyg/iris-admin-rbac/gin"
-	web_tests "github.com/snowlyg/iris-admin/server/web/tests"
-	"github.com/snowlyg/iris-admin/server/web/web_gin"
-)
-
-var TestServer *web_gin.WebServer
-var TestClient *httptest.Client
-
-func TestMain(m *testing.M) {
-	var uuid string
-	uuid, TestServer = web_tests.BeforeTestMainGin(rbac.PartyFunc, rbac.SeedFunc)
-	code := m.Run()
-	web_tests.AfterTestMain(uuid, true)
-	os.Exit(code)
-}
-```
-
-4.然后添加对应的单元测试
-```go
-package test
-
-import (
-	"fmt"
-	"net/http"
-	"testing"
-
-	"github.com/snowlyg/httptest"
-	rbac "github.com/snowlyg/iris-admin-rbac/gin"
-	"github.com/snowlyg/iris-admin/server/web"
-	"github.com/snowlyg/iris-admin/server/web/web_gin/response"
-	"github.com/snowlyg/multi"
-)
-
-var (
-	url = "/api/v1/authority" // url
-)
-
-func TestList(t *testing.T) {
-	if TestServer == nil {
-		t.Error("测试服务初始化失败")
-		return
-	}
-
-	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
-	if TestClient == nil {
-		return
-	}
-	pageKeys := httptest.Responses{
-		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: response.ResponseOkMessage},
-		{Key: "data", Value: httptest.Responses{
-			{Key: "pageSize", Value: 10},
-			{Key: "page", Value: 1},
-			{Key: "list", Value: []httptest.Responses{
-				{
-					{Key: "id", Value: web.DeviceAuthorityId, Type: "ge"},
-					{Key: "authorityName", Value: "设备用户"},
-					{Key: "authorityType", Value: multi.GeneralAuthority},
-					{Key: "parentId", Value: 0},
-					{Key: "defaultRouter", Value: "dashboard"},
-					{Key: "updatedAt", Value: "", Type: "notempty"},
-					{Key: "createdAt", Value: "", Type: "notempty"},
-				},
-				{
-					{Key: "id", Value: web.LiteAuthorityId, Type: "ge"},
-					{Key: "authorityName", Value: "小程序用户"},
-					{Key: "authorityType", Value: multi.GeneralAuthority},
-					{Key: "parentId", Value: 0},
-					{Key: "defaultRouter", Value: "dashboard"},
-					{Key: "updatedAt", Value: "", Type: "notempty"},
-					{Key: "createdAt", Value: "", Type: "notempty"},
-				},
-				{
-					{Key: "id", Value: web.TenancyAuthorityId, Type: "ge"},
-					{Key: "authorityName", Value: "商户管理员"},
-					{Key: "authorityType", Value: multi.TenancyAuthority},
-					{Key: "parentId", Value: 0},
-					{Key: "defaultRouter", Value: "dashboard"},
-					{Key: "updatedAt", Value: "", Type: "notempty"},
-					{Key: "createdAt", Value: "", Type: "notempty"},
-				},
-				{
-					{Key: "id", Value: web.AdminAuthorityId, Type: "ge"},
-					{Key: "authorityName", Value: "超级管理员"},
-					{Key: "authorityType", Value: multi.AdminAuthority},
-					{Key: "parentId", Value: 0},
-					{Key: "defaultRouter", Value: "dashboard"},
-					{Key: "updatedAt", Value: "", Type: "notempty"},
-					{Key: "createdAt", Value: "", Type: "notempty"},
-				},
-			}},
-			{Key: "total", Value: 0, Type: "ge"},
-		}},
-	}
-	requestParams := map[string]interface{}{"page": 1, "pageSize": 10, "orderBy": "id"}
-	TestClient.GET(fmt.Sprintf("%s/getAuthorityList", url), pageKeys, requestParams)
-}
-
-func TestGetAdminAuthorityList(t *testing.T) {
-	if TestServer == nil {
-		t.Error("测试服务初始化失败")
-		return
-	}
-
-	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
-	if TestClient == nil {
-		return
-	}
-	pageKeys := httptest.Responses{
-		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: response.ResponseOkMessage},
-		{Key: "data", Value: httptest.Responses{
-			{Key: "pageSize", Value: 10},
-			{Key: "page", Value: 1},
-			{Key: "list", Value: []httptest.Responses{
-				{
-					{Key: "id", Value: web.AdminAuthorityId, Type: "ge"},
-					{Key: "authorityName", Value: "超级管理员"},
-					{Key: "authorityType", Value: multi.AdminAuthority},
-					{Key: "parentId", Value: 0},
-					{Key: "defaultRouter", Value: "dashboard"},
-					{Key: "updatedAt", Value: "", Type: "notempty"},
-					{Key: "createdAt", Value: "", Type: "notempty"},
-				},
-			}},
-			{Key: "total", Value: 0, Type: "ge"},
-		}},
-	}
-	requestParams := map[string]interface{}{"page": 1, "pageSize": 10, "orderBy": "id"}
-	TestClient.GET(fmt.Sprintf("%s/getAdminAuthorityList", url), pageKeys, requestParams)
-}
-
-func TestGetTenancyAuthorityList(t *testing.T) {
-	if TestServer == nil {
-		t.Error("测试服务初始化失败")
-		return
-	}
-
-	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
-	if TestClient == nil {
-		return
-	}
-	pageKeys := httptest.Responses{
-		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: response.ResponseOkMessage},
-		{Key: "data", Value: httptest.Responses{
-			{Key: "pageSize", Value: 10},
-			{Key: "page", Value: 1},
-			{Key: "list", Value: []httptest.Responses{
-				{
-					{Key: "id", Value: web.TenancyAuthorityId, Type: "ge"},
-					{Key: "authorityName", Value: "商户管理员"},
-					{Key: "authorityType", Value: multi.TenancyAuthority},
-					{Key: "parentId", Value: 0},
-					{Key: "defaultRouter", Value: "dashboard"},
-					{Key: "updatedAt", Value: "", Type: "notempty"},
-					{Key: "createdAt", Value: "", Type: "notempty"},
-				},
-			}},
-			{Key: "total", Value: 0, Type: "ge"},
-		}},
-	}
-	requestParams := map[string]interface{}{"page": 1, "pageSize": 10, "orderBy": "id"}
-	TestClient.GET(fmt.Sprintf("%s/getTenancyAuthorityList", url), pageKeys, requestParams)
-}
-
-func TestGetGeneralAuthorityList(t *testing.T) {
-	if TestServer == nil {
-		t.Error("测试服务初始化失败")
-		return
-	}
-
-	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
-	if TestClient == nil {
-		return
-	}
-	pageKeys := httptest.Responses{
-		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: response.ResponseOkMessage},
-		{Key: "data", Value: httptest.Responses{
-			{Key: "pageSize", Value: 10},
-			{Key: "page", Value: 1},
-			{Key: "list", Value: []httptest.Responses{
-				{
-					{Key: "id", Value: web.DeviceAuthorityId, Type: "ge"},
-					{Key: "authorityName", Value: "设备用户"},
-					{Key: "authorityType", Value: multi.GeneralAuthority},
-					{Key: "parentId", Value: 0},
-					{Key: "defaultRouter", Value: "dashboard"},
-					{Key: "updatedAt", Value: "", Type: "notempty"},
-					{Key: "createdAt", Value: "", Type: "notempty"},
-				},
-				{
-					{Key: "id", Value: web.LiteAuthorityId, Type: "ge"},
-					{Key: "authorityName", Value: "小程序用户"},
-					{Key: "authorityType", Value: multi.GeneralAuthority},
-					{Key: "parentId", Value: 0},
-					{Key: "defaultRouter", Value: "dashboard"},
-					{Key: "updatedAt", Value: "", Type: "notempty"},
-					{Key: "createdAt", Value: "", Type: "notempty"},
-				},
-			}},
-			{Key: "total", Value: 0, Type: "ge"},
-		}},
-	}
-	requestParams := map[string]interface{}{"page": 1, "pageSize": 10, "orderBy": "id"}
-	TestClient.GET(fmt.Sprintf("%s/getGeneralAuthorityList", url), pageKeys, requestParams)
-}
-
-func TestCreate(t *testing.T) {
-	if TestServer == nil {
-		t.Error("测试服务初始化失败")
-		return
-	}
-
-	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
-	if TestClient == nil {
-		return
-	}
-	data := map[string]interface{}{
-		"authorityName": "test_authorityName_for_create",
-		"parentId":      0,
-		"authorityType": multi.AdminAuthority,
-	}
-	id := Create(TestClient, data)
-	if id == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", id)
-	}
-	defer Delete(TestClient, id)
-}
-
-func TestUpdate(t *testing.T) {
-	if TestServer == nil {
-		t.Error("测试服务初始化失败")
-		return
-	}
-
-	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
-	if TestClient == nil {
-		return
-	}
-	data := map[string]interface{}{
-		"authorityName": "test_authorityName_for_update",
-		"parentId":      0,
-		"authorityType": multi.AdminAuthority,
-	}
-	id := Create(TestClient, data)
-	if id == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", id)
-	}
-	defer Delete(TestClient, id)
-
-	update := map[string]interface{}{
-		"authorityName": "test_authorityName_for_update1",
-		"parentId":      0,
-		"authorityType": multi.AdminAuthority,
-	}
-
-	pageKeys := httptest.Responses{
-		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: response.ResponseOkMessage},
-	}
-	TestClient.PUT(fmt.Sprintf("%s/updateAuthority/%d", url, id), pageKeys, update)
-}
-
-func TestCopyAuthority(t *testing.T) {
-	if TestServer == nil {
-		t.Error("测试服务初始化失败")
-		return
-	}
-
-	TestClient = TestServer.GetTestLogin(t, rbac.LoginUrl, rbac.LoginResponse)
-	if TestClient == nil {
-		return
-	}
-	data := map[string]interface{}{
-		"authorityName": "test_authorityName_for_copy",
-		"parentId":      0,
-		"authorityType": multi.AdminAuthority,
-	}
-	id := Create(TestClient, data)
-	if id == 0 {
-		t.Fatalf("测试添加用户失败 id=%d", id)
-	}
-	defer Delete(TestClient, id)
-
-	pageKeys := httptest.Responses{
-		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: response.ResponseOkMessage},
-	}
-	copy := map[string]interface{}{
-		"authorityName": "test_authorityName_after_copy",
-	}
-
-	TestClient.POST(fmt.Sprintf("%s/copyAuthority/%d", url, id), pageKeys, copy)
-}
-
-func Create(TestClient *httptest.Client, data map[string]interface{}) uint {
-	pageKeys := httptest.Responses{
-		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: response.ResponseOkMessage},
-		{Key: "data", Value: httptest.Responses{
-			{Key: "id", Value: 1, Type: "ge"},
-		},
-		},
-	}
-	return TestClient.POST(fmt.Sprintf("%s/createAuthority", url), pageKeys, data).GetId()
-}
-
-func Delete(TestClient *httptest.Client, id uint) {
-	pageKeys := httptest.Responses{
-		{Key: "status", Value: http.StatusOK},
-		{Key: "message", Value: response.ResponseOkMessage},
-	}
-	TestClient.DELETE(fmt.Sprintf("%s/deleteAuthority/%d", url, id), pageKeys)
-}
 ```
 
 #### Thanks 

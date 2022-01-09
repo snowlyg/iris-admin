@@ -1,9 +1,6 @@
 package web
 
 import (
-	"testing"
-
-	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 )
@@ -15,10 +12,6 @@ const (
 	DeviceAuthorityId  uint = 4 // 床旁设备用户
 )
 
-type WebTestFunc interface {
-	GetTestClient(t *testing.T) *httptest.Client
-	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
-}
 type WebBaseFunc interface {
 	AddWebStatic(staticAbsPath, webPrefix string, paths ...string)
 	AddUploadStatic(staticAbsPath, webPrefix string)
@@ -34,10 +27,9 @@ type WebBaseFunc interface {
 // - Run 启动
 type WebFunc interface {
 	WebBaseFunc
-	WebTestFunc
 }
 
-// Start 启动 web 服务
+// Start 启动服务
 func Start(wf WebFunc) {
 	err := wf.InitRouter()
 	if err != nil {
@@ -47,7 +39,7 @@ func Start(wf WebFunc) {
 	wf.Run()
 }
 
-// StartTest 启动 web 服务
+// StartTest 启动服务
 func StartTest(wf WebFunc) {
 	err := wf.InitRouter()
 	if err != nil {

@@ -13,8 +13,8 @@ func registerValidation() {
 }
 
 var validateDevRequired validator.Func = func(fl validator.FieldLevel) bool {
-	if web.CONFIG.System.Level != "release" {
-		return true
+	if web.CONFIG.System.Level == "release" {
+		return fl.Field().String() != ""
 	}
-	return fl.Field().String() != ""
+	return true
 }

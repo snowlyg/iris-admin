@@ -6,15 +6,12 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
-	"sync"
-	"testing"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-colorable"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
-	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
 )
@@ -86,6 +83,11 @@ func (ws *WebServer) NoRoute() {
 	}
 }
 
+// GetEngine 增加灵活性
+func (ws *WebServer) GetEngine() *gin.Engine {
+	return ws.app
+}
+
 // AddWebStatic 添加前端访问地址
 func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
 	if webPrefix == "/" {
@@ -124,37 +126,6 @@ func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...stri
 func (ws *WebServer) AddUploadStatic(staticAbsPath, webPrefix string) {
 	ws.app.StaticFS(staticAbsPath, http.Dir(webPrefix))
 	web.CONFIG.System.StaticPrefix = webPrefix
-}
-
-// GetTestClient 获取测试验证客户端
-func (ws *WebServer) GetTestClient(t *testing.T) *httptest.Client {
-	var once sync.Once
-	var client *httptest.Client
-	once.Do(
-		func() {
-			client = httptest.New(str.Join("http://", ws.addr), t, ws.app)
-			if client == nil {
-				t.Errorf("test client is nil")
-			}
-		},
-	)
-
-	return client
-}
-
-// GetTestLogin 测试登录web服务
-func (ws *WebServer) GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client {
-	client := ws.GetTestClient(t)
-	if client == nil {
-		t.Error("登录失败")
-		return nil
-	}
-	err := client.Login(url, res, datas...)
-	if err != nil {
-		t.Error(err)
-		return nil
-	}
-	return client
 }
 
 // Run 启动web服务

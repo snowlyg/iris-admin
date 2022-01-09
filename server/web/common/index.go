@@ -1,4 +1,4 @@
-package tests
+package common
 
 import (
 	"fmt"
@@ -18,6 +18,7 @@ import (
 	"go.uber.org/zap"
 )
 
+// BeforeTestMainGin 单元测试前置方法
 func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
 	fmt.Println("+++++ 测试开始 +++++")
 
@@ -25,8 +26,9 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 	if dbType != "" {
 		web.CONFIG.System.DbType = dbType
 	}
-
 	web.InitWeb()
+
+	zap_server.CONFIG.LogInConsole = true
 
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
@@ -65,6 +67,7 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 	return uuid, wi
 }
 
+// BeforeTestMainIris 单元测试前置方法
 func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
 	fmt.Println("+++++ 测试前置方法 +++++")
 
@@ -72,8 +75,9 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 	if dbType != "" {
 		web.CONFIG.System.DbType = dbType
 	}
-
 	web.InitWeb()
+
+	zap_server.CONFIG.LogInConsole = true
 
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("iris", "_", node.Generate().String())

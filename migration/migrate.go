@@ -1,23 +1,25 @@
 package migration
 
 import (
+	"errors"
+
 	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/snowlyg/iris-admin/seed"
 	"github.com/snowlyg/iris-admin/server/database"
-	"gorm.io/gorm"
 )
 
+// MigrationCmd 迁移 cmd
+// MigrationCollection 迁移集合,数据表迁移方法
+// SeedCollection 数据填充集合
 type MigrationCmd struct {
 	MigrationCollection []*gormigrate.Migration
-	ModelCollection     []interface{}
 	SeedCollection      []seed.SeedFunc
 }
 
-// New 构建 MigrationCmd
+// New MigrationCmd
 func New() *MigrationCmd {
 	mc := &MigrationCmd{
 		MigrationCollection: nil,
-		ModelCollection:     nil,
 		SeedCollection:      nil,
 	}
 
@@ -32,16 +34,6 @@ func (mc *MigrationCmd) AddMigration(m ...*gormigrate.Migration) {
 // MigrationLen MigrationCollection 的长度
 func (mc *MigrationCmd) MigrationLen() int {
 	return len(mc.MigrationCollection)
-}
-
-// AddModel 添加 model
-func (mc *MigrationCmd) AddModel(dst ...interface{}) {
-	mc.ModelCollection = append(mc.ModelCollection, dst...)
-}
-
-// ModelLen ModelCollection 的长度
-func (mc *MigrationCmd) ModelLen() int {
-	return len(mc.ModelCollection)
 }
 
 // AddSeed 添加 seed
@@ -60,7 +52,7 @@ func (mc *MigrationCmd) Refresh() error {
 		return nil
 	}
 	err := mc.rollbackTo(mc.getFirstMigrateion())
-	if err != nil {
+	if !errors.Is(gormigrate.ErrMigrationIDDoesNotExist, err) && err != nil {
 		return err
 	}
 	return mc.Migrate()
@@ -77,9 +69,17 @@ func (mc *MigrationCmd) Rollback(migrationId string) error {
 		return nil
 	}
 	if migrationId == "" {
-		return mc.rollbackLast()
+		err := mc.rollbackLast()
+		if !errors.Is(gormigrate.ErrMigrationIDDoesNotExist, err) && err != nil {
+			return err
+		}
+		return nil
 	}
-	return mc.rollbackTo(migrationId)
+	err := mc.rollbackTo(migrationId)
+	if !errors.Is(gormigrate.ErrMigrationIDDoesNotExist, err) && err != nil {
+		return err
+	}
+	return nil
 }
 
 // rollbackLast 回滚最后一次迁移
@@ -93,15 +93,6 @@ func (mc *MigrationCmd) Migrate() error {
 	err := m.Migrate()
 	if err != nil {
 		return err
-	}
-	if len(mc.ModelCollection) > 0 {
-		m.InitSchema(func(tx *gorm.DB) error {
-			err := tx.AutoMigrate(mc.ModelCollection...)
-			if err != nil {
-				return err
-			}
-			return nil
-		})
 	}
 	return m.Migrate()
 }
@@ -122,7 +113,7 @@ func (mc *MigrationCmd) getFirstMigrateion() string {
 	return mc.MigrationCollection[0].ID
 }
 
-// gormigrate get gormigrate
+// gormigrate 新建 *gormigrate.Gormigrate
 func (mc *MigrationCmd) gormigrate() *gormigrate.Gormigrate {
 	return gormigrate.New(database.Instance(), gormigrate.DefaultOptions, mc.MigrationCollection)
 }

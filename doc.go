@@ -137,14 +137,10 @@ pool-size: ` + poolSize),
 - - web framework service need implement `type WebFunc interface {}`  interface.
 ```go
 // WebFunc web framework service interface
-// - GetTestClient test client
-// - GetTestLogin login for test
 // - AddWebStatic add web static file
 // - AddUploadStatic add upload file api
 // - Run start program
 type WebFunc interface {
-	GetTestClient(t *testing.T) *httptest.Client
-	GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client
 	AddWebStatic(perfix string)
 	AddUploadStatic()
 	InitRouter() error

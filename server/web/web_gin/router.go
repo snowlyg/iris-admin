@@ -13,28 +13,8 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
 )
 
-type CustomAspect struct {
-	CustomValue int
-}
-
-func (a *CustomAspect) GetStats() interface{} {
-	return a.CustomValue
-}
-
-func (a *CustomAspect) Name() string {
-	return "Custom"
-}
-
-func (a *CustomAspect) InRoot() bool {
-	return false
-}
-
 func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
 	return ws.app.Group(relativePath)
-}
-
-func (ws *WebServer) GetEngine() *gin.Engine {
-	return ws.app
 }
 
 // InitRouter 初始化模块路由
@@ -61,37 +41,41 @@ func (ws *WebServer) InitRouter() error {
 // - PermRoutes 权鉴路由
 // - NoPermRoutes 公共路由
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
-	methods := strings.Split(web.CONFIG.Except.Method, ";")
-	uris := strings.Split(web.CONFIG.Except.Uri, ";")
+
+	methodExcepts := strings.Split(web.CONFIG.Except.Method, ";")
+	uriExcepts := strings.Split(web.CONFIG.Except.Uri, ";")
+
 	routeLen := len(ws.app.Routes())
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)
+
 	for _, r := range ws.app.Routes() {
+		// 处理路径
 		bases := strings.Split(filepath.Base(r.Handler), ".")
 		if len(bases) != 2 {
 			continue
 		}
 		path := filepath.ToSlash(filepath.Clean(r.Path))
+
 		route := map[string]string{
 			"path":   path,
 			"desc":   bases[1],
 			"group":  bases[0],
 			"method": r.Method,
 		}
+		// 过滤非必要请求
 		if !arr.InArrayS([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) {
 			noPermRoutes = append(noPermRoutes, route)
 			continue
 		}
 
-		if len(methods) == 0 || len(uris) == 0 || len(methods) != len(uris) {
-			noPermRoutes = append(noPermRoutes, route)
-			continue
-		}
-
-		for i := 0; i < len(methods); i++ {
-			if strings.EqualFold(r.Method, strings.ToLower(methods[i])) && strings.EqualFold(path, strings.ToLower(uris[i])) {
-				noPermRoutes = append(noPermRoutes, route)
-				continue
+		// 过滤不需要的请求
+		if len(methodExcepts) > 0 && len(uriExcepts) > 0 && len(methodExcepts) == len(uriExcepts) {
+			for i := 0; i < len(methodExcepts); i++ {
+				if strings.EqualFold(r.Method, strings.ToLower(methodExcepts[i])) && strings.EqualFold(path, strings.ToLower(uriExcepts[i])) {
+					noPermRoutes = append(noPermRoutes, route)
+					continue
+				}
 			}
 		}
 

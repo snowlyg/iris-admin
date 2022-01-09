@@ -20,7 +20,7 @@ var CONFIG = Web{
 	},
 	System: System{
 		Tls:        false,
-		Level:      "release",
+		Level:      "debug",
 		Addr:       "127.0.0.1:8085",
 		DbType:     "mysql",
 		TimeFormat: "2006-01-02 15:04:05",

@@ -1,12 +1,12 @@
 package g
 
 const (
-	ConfigType     = "json"            // 配置文件类型
-	ConfigDir      = "config"          // 配置目录
-	CasbinFileName = "rbac_model.conf" // casbin 规则文件名称
+	ConfigType     = "json"            // config's type
+	ConfigDir      = "config"          // config's dir
+	CasbinFileName = "rbac_model.conf" // casbin's name
 )
 
-// 状态值 0:未知,1:true,2:false
+// status 0:unkown,1:true,2:false
 const (
 	StatusUnknown int = iota
 	StatusTrue

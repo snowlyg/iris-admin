@@ -4,15 +4,12 @@ import (
 	stdContext "context"
 	"errors"
 	"strings"
-	"sync"
-	"testing"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/recover"
 	"github.com/snowlyg/helper/str"
-	"github.com/snowlyg/httptest"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 )
@@ -72,6 +69,11 @@ func Init() *WebServer {
 	}
 }
 
+// GetEngine 增加灵活性
+func (ws *WebServer) GetEngine() *iris.Application {
+	return ws.app
+}
+
 // AddModule 添加模块
 func (ws *WebServer) AddModule(parties ...Party) {
 	ws.parties = append(ws.parties, parties...)
@@ -101,40 +103,6 @@ func (ws *WebServer) AddUploadStatic(staticAbsPath, webPrefix string) {
 	fsOrDir := iris.Dir(staticAbsPath)
 	ws.app.HandleDir(webPrefix, fsOrDir)
 	web.CONFIG.System.StaticPrefix = webPrefix
-}
-
-// GetTestClient 获取测试验证客户端
-func (ws *WebServer) GetTestClient(t *testing.T) *httptest.Client {
-	if ws.app == nil {
-		t.Errorf("ws.app is nil")
-	}
-	var once sync.Once
-	var client *httptest.Client
-	once.Do(
-		func() {
-			client = httptest.New(str.Join("http://", ws.addr), t, ws.app)
-			if client == nil {
-				t.Errorf("test client is nil")
-			}
-		},
-	)
-
-	return client
-}
-
-// GetTestLogin 测试登录web服务
-func (ws *WebServer) GetTestLogin(t *testing.T, url string, res httptest.Responses, datas ...interface{}) *httptest.Client {
-	client := ws.GetTestClient(t)
-	if client == nil {
-		t.Error("登录失败")
-		return nil
-	}
-	err := client.Login(url, res, datas...)
-	if err != nil {
-		t.Error(err)
-		return nil
-	}
-	return client
 }
 
 // Run 启动web服务

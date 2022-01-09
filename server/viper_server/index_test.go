@@ -26,6 +26,7 @@ type Zap struct {
 }
 
 func TestViperInit(t *testing.T) {
+
 	config := ViperConfig{
 		Directory: g.ConfigDir,
 		Name:      "zap", // 名称需要和结构体名称对应 zap => type Zap struct
@@ -57,6 +58,7 @@ func TestViperInit(t *testing.T) {
 "stacktrace-key": "stacktrace",
 "log-in-console": true}`),
 	}
+	defer config.Remove()
 	want := Zap{
 		Level:         "info",
 		Format:        "console",

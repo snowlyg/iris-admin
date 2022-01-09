@@ -2,8 +2,6 @@ package orm
 
 import (
 	"errors"
-	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -14,11 +12,23 @@ import (
 	"gorm.io/gorm"
 )
 
+type ErrMsg struct {
+	Code int64  `json:"code"`
+	Msg  string `json:"message"`
+}
+
+var (
+	ErrParamValidate      = errors.New("参数验证失败")
+	ErrPaginateParam      = errors.New("分页查询参数缺失")
+	ErrUnSupportFramework = errors.New("不支持的框架")
+)
+
 // Model
 type Model struct {
 	Id        uint   `json:"id" uri:"id" form:"id" param:"id"`
 	UpdatedAt string `json:"updatedAt" uri:"updatedAt" form:"updatedAt" param:"updatedAt"`
 	CreatedAt string `json:"createdAt" uri:"createdAt" form:"createdAt" param:"createdAt"`
+	DeletedAt string `json:"deletedAt" uri:"deletedAt" form:"deletedAt" param:"deletedAt"`
 }
 
 // ReqId 获取id请求参数
@@ -26,14 +36,14 @@ type ReqId struct {
 	Id uint `json:"id" uri:"id" form:"id" param:"id"`
 }
 
+// Request 读取数据
 func (req *ReqId) Request(ctx interface{}) error {
 	if c, ok := ctx.(iris.Context); ok {
 		return req.irisReadParams(c)
 	} else if c, ok := ctx.(*gin.Context); ok {
-		return req.ginShouldBindJSON(c)
+		return req.ginShouldBindUri(c)
 	} else {
-		ctxTypeName := reflect.TypeOf(ctx).Name()
-		return fmt.Errorf("Context [%s] 类型错误", ctxTypeName)
+		return ErrUnSupportFramework
 	}
 }
 
@@ -45,8 +55,8 @@ func (req *ReqId) irisReadParams(ctx iris.Context) error {
 	return nil
 }
 
-func (req *ReqId) ginShouldBindJSON(ctx *gin.Context) error {
-	if err := ctx.ShouldBindJSON(req); err != nil {
+func (req *ReqId) ginShouldBindUri(ctx *gin.Context) error {
+	if err := ctx.ShouldBindUri(req); err != nil {
 		zap_server.ZAPLOG.Error(err.Error())
 		return ErrParamValidate
 	}
@@ -61,14 +71,14 @@ type Paginate struct {
 	Sort     string `json:"sort" form:"sort"`
 }
 
+// Request 读取数据
 func (req *Paginate) Request(ctx interface{}) error {
 	if c, ok := ctx.(iris.Context); ok {
 		return req.irisReadQuerys(c)
 	} else if c, ok := ctx.(*gin.Context); ok {
 		return req.ginShouldBind(c)
 	} else {
-		ctxTypeName := reflect.TypeOf(ctx).Name()
-		return fmt.Errorf("Context [%s] 类型错误", ctxTypeName)
+		return ErrUnSupportFramework
 	}
 }
 
@@ -102,24 +112,3 @@ type Response struct {
 	Msg  string      `json:"message"`
 	Data interface{} `json:"data"`
 }
-
-// ErrMsg
-type ErrMsg struct {
-	Code int64  `json:"code"`
-	Msg  string `json:"message"`
-}
-
-var (
-	NoErr         = ErrMsg{2000, "请求成功"}
-	NeedInitErr   = ErrMsg{2001, "前往初始化数据库"}
-	AuthErr       = ErrMsg{4001, "认证错误"}
-	AuthExpireErr = ErrMsg{4002, "token 过期，请刷新token"}
-	AuthActionErr = ErrMsg{4003, "权限错误"}
-	ParamErr      = ErrMsg{4004, "参数解析失败，请联系管理员"}
-	SystemErr     = ErrMsg{5000, "系统错误，请联系管理员"}
-	DataEmptyErr  = ErrMsg{5001, "数据为空"}
-	TokenCacheErr = ErrMsg{5002, "TOKEN CACHE 错误"}
-
-	ErrParamValidate = errors.New("参数验证失败")
-	ErrPaginateParam = errors.New("分页查询参数缺失")
-)

@@ -62,25 +62,26 @@ func Init() *WebServer {
 
 // NoRoute 关键点【解决页面刷新404的问题】
 func (ws *WebServer) NoRoute() {
-
+	fmt.Println("解决页面刷新404的问题")
 	if len(ws.webStatics) == 0 {
 		return
 	}
 
-	for _, wp := range ws.webStatics {
-		wp := wp
+	ws.app.NoRoute(func(ctx *gin.Context) {
+		var prefix string
+		var IndexFile []byte
+		for _, wp := range ws.webStatics {
+			if strings.Contains(ctx.Request.RequestURI, prefix) {
+				IndexFile = wp.IndexFile
+			}
+		}
 		// 关键点【解决页面刷新404的问题】
-		go func(wp WebStatic) {
-			ws.app.NoRoute(func(ctx *gin.Context) {
-				ctx.Writer.WriteHeader(http.StatusOK)
-				if strings.Contains(ctx.Request.RequestURI, wp.Prefix) {
-					ctx.Writer.Write(wp.IndexFile)
-				}
-				ctx.Writer.Header().Add("Accept", "text/html")
-				ctx.Writer.Flush()
-			})
-		}(wp)
-	}
+		ctx.Writer.WriteHeader(http.StatusOK)
+		ctx.Writer.Write(IndexFile)
+
+		ctx.Writer.Header().Add("Accept", "text/html")
+		ctx.Writer.Flush()
+	})
 }
 
 // GetEngine 增加灵活性
@@ -120,6 +121,7 @@ func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...stri
 		IndexFile: file,
 	}
 	ws.webStatics = append(ws.webStatics, webStatic)
+
 }
 
 // AddUploadStatic 添加上传文件访问地址

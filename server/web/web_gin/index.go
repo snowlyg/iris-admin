@@ -62,22 +62,21 @@ func Init() *WebServer {
 
 // NoRoute 关键点【解决页面刷新404的问题】
 func (ws *WebServer) NoRoute() {
-	fmt.Println("解决页面刷新404的问题")
 	if len(ws.webStatics) == 0 {
 		return
 	}
 
 	ws.app.NoRoute(func(ctx *gin.Context) {
-		var prefix string
-		var IndexFile []byte
+		var indexFile []byte
 		for _, wp := range ws.webStatics {
-			if strings.Contains(ctx.Request.RequestURI, prefix) {
-				IndexFile = wp.IndexFile
+			if !strings.Contains(ctx.Request.RequestURI, wp.Prefix) {
+				continue
 			}
+			indexFile = wp.IndexFile
 		}
 		// 关键点【解决页面刷新404的问题】
 		ctx.Writer.WriteHeader(http.StatusOK)
-		ctx.Writer.Write(IndexFile)
+		ctx.Writer.Write(indexFile)
 
 		ctx.Writer.Header().Add("Accept", "text/html")
 		ctx.Writer.Flush()

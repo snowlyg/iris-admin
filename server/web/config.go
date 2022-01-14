@@ -86,9 +86,9 @@ func Verfiy() {
 func ToStaticUrl(uri string) string {
 	path := filepath.Join(CONFIG.System.Addr, CONFIG.System.StaticPrefix, uri)
 	if CONFIG.System.Tls {
-		return str.Join("https://", path)
+		return filepath.ToSlash(str.Join("https://", path))
 	}
-	return str.Join("http://", path)
+	return filepath.ToSlash(str.Join("http://", path))
 }
 
 // IsExist 配置文件是否存在

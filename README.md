@@ -31,7 +31,16 @@
 
 ---
 
+#### 简单使用
+
+- 获取依赖包,注意必须带上 `master` 版本
+
+```sh
+ go get github.com/snowlyg/iris-admin@master
+```
+
 #### 项目介绍
+
 
 ##### 项目由多个服务构成,每个服务有不同的功能
 
@@ -198,14 +207,6 @@ func main() {
 - 使用方法详情见 [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go)
 
 ---
-
-#### 简单使用
-
-- 获取依赖包,注意必须带上 `master` 版本
-
-```sh
- go get github.com/snowlyg/iris-admin@master
-```
 
 - 添加 main.go 文件
 

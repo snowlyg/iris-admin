@@ -30,6 +30,12 @@
 
 ---
 
+#### Getting started
+
+- Get master package , Notice must use `master` version.
+```sh
+ go get github.com/snowlyg/iris-admin@master
+```
 
 #### Program introduction
 
@@ -197,12 +203,7 @@ func main() {
   
 ---
 
-#### Getting started
 
-- Get master package , Notice must use `master` version.
-```sh
- go get github.com/snowlyg/iris-admin@master
-```
 - Add main.go file.
 ```go
 package main

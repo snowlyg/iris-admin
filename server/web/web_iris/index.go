@@ -99,7 +99,7 @@ func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...stri
 }
 
 // AddUploadStatic 添加上传文件访问地址
-func (ws *WebServer) AddUploadStatic(staticAbsPath, webPrefix string) {
+func (ws *WebServer) AddUploadStatic(webPrefix, staticAbsPath string) {
 	fsOrDir := iris.Dir(staticAbsPath)
 	ws.app.HandleDir(webPrefix, fsOrDir)
 	web.CONFIG.System.StaticPrefix = webPrefix

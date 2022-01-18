@@ -125,7 +125,7 @@ func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...stri
 
 // AddUploadStatic 添加上传文件访问地址
 func (ws *WebServer) AddUploadStatic(webPrefix, staticAbsPath string) {
-	ws.app.StaticFS(staticAbsPath, http.Dir(webPrefix))
+	ws.app.StaticFS(webPrefix, http.Dir(staticAbsPath))
 	web.CONFIG.System.StaticPrefix = webPrefix
 }
 

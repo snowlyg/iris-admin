@@ -81,9 +81,6 @@ func (ws *WebServer) AddModule(parties ...Party) {
 
 // AddWebStatic 添加前端访问地址
 func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
-	if webPrefix == "/" {
-		return
-	}
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
 	if str.InStrArray(webPrefix, webPrefixs) {
 		return

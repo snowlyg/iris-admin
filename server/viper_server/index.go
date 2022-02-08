@@ -77,7 +77,7 @@ func Init(vc ViperConfig) error {
 	isExist := dir.IsExist(fileName)
 	if !isExist { //没有配置文件，写入默认配置
 		if vc.Debug {
-			fmt.Printf("您的配置文件 [%s/%s] 不存在\n", vc.Directory, fileName)
+			fmt.Printf("您的配置文件 [%s] 不存在\n", fileName)
 		}
 		if vc.Directory != "./" {
 			err := dir.InsureDir(filepath.Dir(fileName))

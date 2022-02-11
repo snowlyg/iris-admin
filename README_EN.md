@@ -21,6 +21,7 @@
 - [IRIS V12 document for chinese](https://github.com/snowlyg/iris/wiki)
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
 
+[![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Join the chat at https://gitter.im/iris-go-tenancy/iris-admin](https://badges.gitter.im/iris-go-tenancy/iris-admin.svg)](https://gitter.im/iris-go-tenancy/iris-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 #### BLOG
 
@@ -563,4 +564,7 @@ func Delete(TestClient *httptest.Client, id uint) {
 
  - Thanks [JetBrains](https://www.jetbrains.com/?from=iris-admin)' supports .
 
-
+#### 打赏
+> 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
+- [为爱发电](https://afdian.net/@snowlyg/plan)
+- [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)

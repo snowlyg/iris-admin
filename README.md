@@ -15,6 +15,12 @@
 
 > 简单项目仅供学习，欢迎指点！
 
+
+#### 打赏
+> 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
+- [为爱发电](https://afdian.net/@snowlyg/plan)
+- 
+
 #### 相关文档
 
 - [IRIS-ADMIN-DOC](https://doc.snowlyg.com)

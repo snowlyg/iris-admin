@@ -71,7 +71,7 @@ func (ws *WebServer) NoRoute() {
 		var indexFile []byte
 		for _, wp := range ws.webStatics {
 			// 匹配 /admin or /admin/***
-			reg:= str.Join("^",wp.Prefix,"$|^(",wp.Prefix,")/")
+			reg := str.Join("^", wp.Prefix, "$|^(", wp.Prefix, ")/")
 			ok, err := regexp.MatchString(reg, ctx.Request.RequestURI)
 			if err != nil {
 				continue

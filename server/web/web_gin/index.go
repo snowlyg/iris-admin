@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
@@ -69,7 +70,11 @@ func (ws *WebServer) NoRoute() {
 	ws.app.NoRoute(func(ctx *gin.Context) {
 		var indexFile []byte
 		for _, wp := range ws.webStatics {
-			if !strings.Contains(ctx.Request.RequestURI, wp.Prefix) {
+			ok, err := regexp.MatchString(str.Join("$", wp.Prefix), ctx.Request.RequestURI)
+			if err != nil {
+				continue
+			}
+			if !ok {
 				continue
 			}
 			indexFile = wp.IndexFile

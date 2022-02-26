@@ -471,7 +471,6 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestGetById(t *testing.T) {
-
   TestClient = httptest.Instance(t, str.Join("http://", web.CONFIG.System.Addr), TestServer.GetEngine())
   TestClient.Login(rbac.LoginUrl, nil)
   if TestClient == nil {
@@ -513,7 +512,6 @@ func TestGetById(t *testing.T) {
 }
 
 func TestChangeAvatar(t *testing.T) {
-
   TestClient = httptest.Instance(t, str.Join("http://", web.CONFIG.System.Addr), TestServer.GetEngine())
   TestClient.Login(rbac.LoginUrl, nil)
   if TestClient == nil {

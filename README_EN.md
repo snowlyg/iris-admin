@@ -11,7 +11,7 @@
 
 #### Project url
 
-[GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin) 
+[GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin)
 ****
 > This project just for learning golang, welcome to give your suggestions!
 
@@ -25,7 +25,7 @@
 
 #### BLOG
 
-- [REST API with iris-go web framework ](https://blog.snowlyg.com/iris-go-api-1/)
+- [REST API with iris-go web framework](https://blog.snowlyg.com/iris-go-api-1/)
 
 - [How to user iris-go with casbin](https://blog.snowlyg.com/iris-go-api-2/)
 
@@ -34,18 +34,19 @@
 #### Getting started
 
 - Get master package , Notice must use `master` version.
+
 ```sh
  go get github.com/snowlyg/iris-admin@master
 ```
 
 #### Program introduction
 
-##### The project consists of multiple services, each with different functions.
+##### The project consists of multiple services, each with different functions
 
 - [viper_server]
-- - The service configuration is initialized and generate a local configuration file.
-- - Use [github.com/spf13/viper](https://github.com/spf13/viper) third party package.
-- - Need implement  `func getViperConfig() viper_server.ViperConfig` function.
+  - - The service configuration is initialized and generate a local configuration file.
+  - - Use [github.com/spf13/viper](https://github.com/spf13/viper) third party package.
+  - - Need implement  `func getViperConfig() viper_server.ViperConfig` function.
 
 ```go
 package cache
@@ -102,10 +103,10 @@ pool-size: ` + poolSize),
 }
 ```
 
-- [zap_server] 
-- - Service logging.
-- - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
-- - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
+- [zap_server]
+  - - Service logging.
+  - - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
+  - - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
   
 ```go
   zap_server.ZAPLOG.Info("Registration data table error", zap.Any("err", err))
@@ -115,9 +116,9 @@ pool-size: ` + poolSize),
 ```
 
 - [database]
-- - database service [only support mysql now].
-- - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
-- - Through single instance `database.Instance()` operating data.
+  - - database service [only support mysql now].
+  - - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
+  - - Through single instance `database.Instance()` operating data.
   
 ```go
   database.Instance().Model(&User{}).Where("name = ?","name").Find(&user)
@@ -125,24 +126,23 @@ pool-size: ` + poolSize),
 ```
 
 - [casbin]
-- - Access control management service.
-- - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
-- - Through use `index.Use(casbin.Casbin())` middleware on route,implement interface authority authentication
-
+  - - Access control management service.
+  - - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
+  - - Through use `index.Use(casbin.Casbin())` middleware on route,implement interface authority authentication
 
 - [cache]
-- - Cache-driven service
-- - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
-- - Through single instance `cache.Instance()` operating data.
+  - - Cache-driven service
+  - - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
+  - - Through single instance `cache.Instance()` operating data.
 
 - [operation]
-- - System operation log service.
-- - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
+  - - System operation log service.
+  - - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
 
 - [cron_server]
-- - Job server
-- - Use [robfig/cron](https://github.com/robfig/cron) third party package.
-- - Through single instance `cron_server.Instance()` to add job or func.
+  - - Job server
+  - - Use [robfig/cron](https://github.com/robfig/cron) third party package.
+  - - Through single instance `cron_server.Instance()` to add job or func.
   
 ```go
   cron_server.CronInstance().AddJob("@every 1m",YourJob)
@@ -152,10 +152,12 @@ pool-size: ` + poolSize),
 ```
 
 - [web]
-- - web_iris Go-Iris web framework service.
-- - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
-- - web framework service need implement `type WebFunc interface {}`  interface.
-- 
+  - - web_iris Go-Iris web framework service.
+  - - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
+  - - web framework service need implement `type WebFunc interface {}`  interface.
+
+-
+
 ```go
 type WebBaseFunc interface {
   AddWebStatic(staticAbsPath, webPrefix string, paths ...string)
@@ -179,7 +181,8 @@ type WebFunc interface {
 
 ##### Simple
 
-- Use gorm's `AutoMigrate()` function to auto migrate database. 
+- Use gorm's `AutoMigrate()` function to auto migrate database.
+
 ```go
 package main
 
@@ -200,12 +203,12 @@ func main() {
 ##### Custom migrate tools
 
 - Use `gormigrate` third party package. Tt's helpful for database migrate and program development.
-- Detail is see  [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go.
+- Detail is see  [iris-admin-cmd](<https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go>.
   
 ---
 
-
 - Add main.go file.
+
 ```go
 package main
 
@@ -220,10 +223,11 @@ func main() {
 }
 ```
 
-#### Run project 
+#### Run project
 
 - When you first run this cmd `go run main.go` , you can see some config files in  the `config` directory,
 - and `rbac_model.conf` will be created in your project root directory.
+
 ```sh
 go run main.go
 ```
@@ -232,6 +236,7 @@ go run main.go
 
 - You can use [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac) package to add rbac function for your project quickly.
 - Your can use AddModule() to add other modules .
+
 ```go
 package main
 
@@ -257,6 +262,7 @@ func main() {
 - A static file access path has been built in by default
 - Static files will upload to `/static/upload` directory.
 - You can set this config key `static-path` to change the default directory.
+
 ```yaml
 system:
   addr: "127.0.0.1:8085"
@@ -267,7 +273,7 @@ system:
   web-path: ./dist
 ```
 
-#### Use with front-end framework , e.g. vue.
+#### Use with front-end framework , e.g. vue
 
 - Default,you must build vue to the `dist` directory.
 - Naturally you can set this config key `web-path` to change the default directory.
@@ -292,7 +298,6 @@ func main() {
  *notice: The front-end only realizes preview effect simply*
 - [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin/tree/master/web)
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
-
 
 #### Example
 
@@ -335,7 +340,6 @@ var TestServer *web_gin.WebServer
 var TestClient *httptest.Client
 
 func TestMain(m *testing.M) {
-
   var uuid string
   uuid, TestServer = common.BeforeTestMainGin(rbac.PartyFunc, rbac.SeedFunc)
   code := m.Run()
@@ -425,7 +429,6 @@ func TestCreate(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-
   TestClient = httptest.Instance(t, str.Join("http://", web.CONFIG.System.Addr), TestServer.GetEngine())
   TestClient.Login(rbac.LoginUrl, nil)
   if TestClient == nil {
@@ -460,7 +463,6 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestGetById(t *testing.T) {
-
   TestClient = httptest.Instance(t, str.Join("http://", web.CONFIG.System.Addr), TestServer.GetEngine())
   TestClient.Login(rbac.LoginUrl, nil)
   if TestClient == nil {
@@ -502,7 +504,6 @@ func TestGetById(t *testing.T) {
 }
 
 func TestChangeAvatar(t *testing.T) {
-
   TestClient = httptest.Instance(t, str.Join("http://", web.CONFIG.System.Addr), TestServer.GetEngine())
   TestClient.Login(rbac.LoginUrl, nil)
   if TestClient == nil {
@@ -560,11 +561,10 @@ func Delete(TestClient *httptest.Client, id uint) {
 
 ```
 
-#### Thanks 
-
- - Thanks [JetBrains](https://www.jetbrains.com/?from=iris-admin)' supports .
-
 #### 打赏
 > 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
 - [为爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)
+#### Thanks
+
+- Thanks [JetBrains](https://www.jetbrains.com/?from=iris-admin)' supports .

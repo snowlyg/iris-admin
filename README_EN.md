@@ -40,10 +40,10 @@
 
 #### Program introduction
 
-##### The project consists of multiple services, each with different functions
+##### The project consists of multiple plugins, each with different functions
 
 - [viper_server]
-  - - The service configuration is initialized and generate a local configuration file.
+  - - The plugin configuration is initialized and generate a local configuration file.
   - - Use [github.com/spf13/viper](https://github.com/spf13/viper) third party package.
   - - Need implement  `func getViperConfig() viper_server.ViperConfig` function.
 
@@ -103,7 +103,7 @@ pool-size: ` + poolSize),
 ```
 
 - [zap_server]
-  - - Service logging.
+  - - Plugin logging.
   - - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
   - - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
   
@@ -115,7 +115,7 @@ pool-size: ` + poolSize),
 ```
 
 - [database]
-  - - database service [only support mysql now].
+  - - database plugin [only support mysql now].
   - - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
   - - Through single instance `database.Instance()` operating data.
   
@@ -125,17 +125,17 @@ pool-size: ` + poolSize),
 ```
 
 - [casbin]
-  - - Access control management service.
+  - - Access control management plugin.
   - - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
   - - Through use `index.Use(casbin.Casbin())` middleware on route,implement interface authority authentication
 
 - [cache]
-  - - Cache-driven service
+  - - Cache-driven plugin
   - - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
   - - Through single instance `cache.Instance()` operating data.
 
 - [operation]
-  - - System operation log service.
+  - - System operation log plugin.
   - - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
 
 - [cron_server]
@@ -151,9 +151,9 @@ pool-size: ` + poolSize),
 ```
 
 - [web]
-  - - web_iris Go-Iris web framework service.
+  - - web_iris Go-Iris web framework plugin.
   - - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
-  - - web framework service need implement `type WebFunc interface {}`  interface.
+  - - web framework plugin need implement `type WebFunc interface {}`  interface.
 
 -
 

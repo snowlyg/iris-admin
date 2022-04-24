@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/aviddiviner/gin-limit v0.0.0-20170918012823-43b5f79762c1
 	github.com/bwmarrin/snowflake v0.3.1-0.20210825212239-3cf6d89d1fe9
-	github.com/casbin/casbin/v2 v2.37.2
+	github.com/casbin/casbin/v2 v2.42.0
 	github.com/casbin/gorm-adapter/v3 v3.4.2
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/fvbock/endless v0.0.0-20170109170031-447134032cb6

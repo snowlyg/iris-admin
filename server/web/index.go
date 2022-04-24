@@ -5,13 +5,6 @@ import (
 	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
-const (
-	AdminAuthorityId   uint = 1 // 管理员用户
-	TenancyAuthorityId uint = 2 // 商户用户
-	LiteAuthorityId    uint = 3 // 小程序用户
-	DeviceAuthorityId  uint = 4 // 床旁设备用户
-)
-
 type WebBaseFunc interface {
 	AddWebStatic(staticAbsPath, webPrefix string, paths ...string)
 	AddUploadStatic(staticAbsPath, webPrefix string)

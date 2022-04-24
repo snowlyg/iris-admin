@@ -43,9 +43,9 @@
 ##### The project consists of multiple plugins, each with different functions
 
 - [viper_server]
-  - - The plugin configuration is initialized and generate a local configuration file.
-  - - Use [github.com/spf13/viper](https://github.com/spf13/viper) third party package.
-  - - Need implement  `func getViperConfig() viper_server.ViperConfig` function.
+  - The plugin configuration is initialized and generate a local configuration file.
+  - Use [github.com/spf13/viper](https://github.com/spf13/viper) third party package.
+  - Need implement  `func getViperConfig() viper_server.ViperConfig` function.
 
 ```go
 package cache
@@ -103,9 +103,9 @@ pool-size: ` + poolSize),
 ```
 
 - [zap_server]
-  - - Plugin logging.
-  - - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
-  - - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
+  - Plugin logging.
+  - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
+  - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
   
 ```go
   zap_server.ZAPLOG.Info("Registration data table error", zap.Any("err", err))
@@ -115,9 +115,9 @@ pool-size: ` + poolSize),
 ```
 
 - [database]
-  - - database plugin [only support mysql now].
-  - - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
-  - - Through single instance `database.Instance()` operating data.
+  - database plugin [only support mysql now].
+  - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
+  - Through single instance `database.Instance()` operating data.
   
 ```go
   database.Instance().Model(&User{}).Where("name = ?","name").Find(&user)
@@ -125,23 +125,23 @@ pool-size: ` + poolSize),
 ```
 
 - [casbin]
-  - - Access control management plugin.
-  - - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
-  - - Through use `index.Use(casbin.Casbin())` middleware on route,implement interface authority authentication
+  - Access control management plugin.
+  - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
+  - Through use `index.Use(casbin.Casbin())` middleware on route,implement interface authority authentication
 
 - [cache]
-  - - Cache-driven plugin
-  - - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
-  - - Through single instance `cache.Instance()` operating data.
+  - Cache-driven plugin
+  - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
+  - Through single instance `cache.Instance()` operating data.
 
 - [operation]
-  - - System operation log plugin.
-  - - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
+  - System operation log plugin.
+  - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
 
 - [cron_server]
-  - - Job server
-  - - Use [robfig/cron](https://github.com/robfig/cron) third party package.
-  - - Through single instance `cron_server.Instance()` to add job or func.
+  - Job server
+  - Use [robfig/cron](https://github.com/robfig/cron) third party package.
+  - Through single instance `cron_server.Instance()` to add job or func.
   
 ```go
   cron_server.CronInstance().AddJob("@every 1m",YourJob)
@@ -151,9 +151,9 @@ pool-size: ` + poolSize),
 ```
 
 - [web]
-  - - web_iris Go-Iris web framework plugin.
-  - - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
-  - - web framework plugin need implement `type WebFunc interface {}`  interface.
+  - web_iris Go-Iris web framework plugin.
+  - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
+  - web framework plugin need implement `type WebFunc interface {}`  interface.
 
 -
 

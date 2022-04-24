@@ -563,8 +563,6 @@ github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1
 github.com/smartystreets/assertions v1.2.0/go.mod h1:tcbTF8ujkAEcZ8TElKY+i30BzYlVhC/LOxJk7iOWnoo=
 github.com/smartystreets/goconvey v1.6.4/go.mod h1:syvi0/a8iFYH4r/RixwvyeAJjdLS9QV7WQ/tjFTllLA=
 github.com/smartystreets/goconvey v1.7.2/go.mod h1:Vw0tHAZW6lzCRk3xgdin6fKYcG+G3Pg9vgXWeJpQFMM=
-github.com/snowlyg/helper v0.0.5 h1:gppTaEKXwQ3J1W4zT1J6gm+2n0LyHR3CxBSGaBbavG4=
-github.com/snowlyg/helper v0.0.5/go.mod h1:+89V/CNTzLyS3LCyv7inR9PsTeOog+XTb813quVjXx4=
 github.com/snowlyg/helper v0.0.6 h1:48Zz5BI5ywEUTm8F26aPF2qKm52DyxBX6wOjIA31PL0=
 github.com/snowlyg/helper v0.0.6/go.mod h1:+89V/CNTzLyS3LCyv7inR9PsTeOog+XTb813quVjXx4=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=

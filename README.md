@@ -45,9 +45,9 @@
 ##### 项目由多个插件构成,每个插件有不同的功能
 
 - [viper_server]
-  - - 插件配置初始化,并生成本地配置文件
-  - - 使用 [github.com/spf13/viper](https://github.com/spf13/viper) 第三方包实现
-  - - 需要实现 `func getViperConfig() viper_server.ViperConfig` 方法
+  - 插件配置初始化,并生成本地配置文件
+  - 使用 [github.com/spf13/viper](https://github.com/spf13/viper) 第三方包实现
+  - 需要实现 `func getViperConfig() viper_server.ViperConfig` 方法
 
 ```go
 package cache
@@ -105,9 +105,9 @@ pool-size: ` + poolSize),
 ```
 
 - [zap_server]
-  - - 插件日志记录
-  - - 使用 [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) 第三方包实现
-  - - 通过全局变量 `zap_server.ZAPLOG` 记录对应级别的日志
+  - 插件日志记录
+  - 使用 [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) 第三方包实现
+  - 通过全局变量 `zap_server.ZAPLOG` 记录对应级别的日志
 
 ```go
   zap_server.ZAPLOG.Info("注册数据表错误", zap.Any("err", err))
@@ -117,9 +117,9 @@ pool-size: ` + poolSize),
 ```
 
 - [database]
-  - - 数据插件 [目前仅支持 mysql]
-  - - 使用 [gorm.io/gorm](https://github.com/go-gorm/gorm) 第三方包实现
-  - - 通过单列 `database.Instance()` 操作数据
+  - 数据插件 [目前仅支持 mysql]
+  - 使用 [gorm.io/gorm](https://github.com/go-gorm/gorm) 第三方包实现
+  - 通过单列 `database.Instance()` 操作数据
 
 ```go
   database.Instance().Model(&User{}).Where("name = ?","name").Find(&user)
@@ -127,23 +127,23 @@ pool-size: ` + poolSize),
 ```
 
 - [casbin]
-  - - 权限控制管理插件
-  - - 使用 [casbin](github.com/casbin/casbin/v2 ) 第三方包实现
-  - - 并通过 `index.Use(casbin.Casbin())` 使用中间件,实现接口权限认证
+  - 权限控制管理插件
+  - 使用 [casbin](github.com/casbin/casbin/v2 ) 第三方包实现
+  - 并通过 `index.Use(casbin.Casbin())` 使用中间件,实现接口权限认证
 
 - [cache]
-  - - 缓存驱动插件
-  - - 使用 [github.com/go-redis/redis](https://github.com/go-redis/redis) 第三方包实现
-  - - 通过单列 `cache.Instance()` 操作数据
+  - 缓存驱动插件
+  - 使用 [github.com/go-redis/redis](https://github.com/go-redis/redis) 第三方包实现
+  - 通过单列 `cache.Instance()` 操作数据
 
 - [operation]
-  - - 系统操作日志插件
-  - - 并通过 `index.Use(operation.OperationRecord())` 使用中间件,实现接口自动生成操作日志
+  - 系统操作日志插件
+  - 并通过 `index.Use(operation.OperationRecord())` 使用中间件,实现接口自动生成操作日志
 
 - [cron_server]
-  - - 任务插件
-  - - 使用 [robfig/cron](https://github.com/robfig/cron) 第三方包实现
-  - - 通过单列 `cron_server.Instance()` 操作数据
+  - 任务插件
+  - 使用 [robfig/cron](https://github.com/robfig/cron) 第三方包实现
+  - 通过单列 `cron_server.Instance()` 操作数据
 
 ```go
   cron_server.CronInstance().AddJob("@every 1m",YourJob)
@@ -153,9 +153,9 @@ pool-size: ` + poolSize),
 ```
 
 - [web]
-  - - web_iris Go-Iris 框架插件
-  - - 使用 [github.com/kataras/iris/v12](https://github.com/kataras/iris) 第三方包实现
-  - - web 框架插件需要实现 `type WebFunc interface {}`  接口
+  - web_iris Go-Iris 框架插件
+  - 使用 [github.com/kataras/iris/v12](https://github.com/kataras/iris) 第三方包实现
+  - web 框架插件需要实现 `type WebFunc interface {}`  接口
 
 ```go
 type WebBaseFunc interface {

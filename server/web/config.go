@@ -50,9 +50,9 @@ type Route struct {
 }
 
 type Captcha struct {
-	KeyLong   int `mapstructure:"key-long" json:"keyLong" yaml:"key-long"`
-	ImgWidth  int `mapstructure:"img-width" json:"imgWidth" yaml:"img-width"`
-	ImgHeight int `mapstructure:"img-height" json:"imgHeight" yaml:"img-height"`
+	KeyLong   int `mapstructure:"key-long" json:"key-long" yaml:"key-long"`
+	ImgWidth  int `mapstructure:"img-width" json:"img-width" yaml:"img-width"`
+	ImgHeight int `mapstructure:"img-height" json:"img-height" yaml:"img-height"`
 }
 
 type Limit struct {
@@ -65,10 +65,10 @@ type System struct {
 	Tls          bool   `mapstructure:"tls" json:"tls" yaml:"tls"`       // debug,release,test
 	Level        string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
 	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
-	StaticPrefix string `mapstructure:"static-prefix" json:"staticPrefix" yaml:"static-prefix"`
-	WebPrefix    string `mapstructure:"web-prefix" json:"webPrefix" yaml:"web-prefix"`
-	DbType       string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
-	TimeFormat   string `mapstructure:"time-format" json:"timeFormat" yaml:"time-format"`
+	StaticPrefix string `mapstructure:"static-prefix" json:"static-prefix" yaml:"static-prefix"`
+	WebPrefix    string `mapstructure:"web-prefix" json:"web-prefix" yaml:"web-prefix"`
+	DbType       string `mapstructure:"db-type" json:"db-type" yaml:"db-type"`
+	TimeFormat   string `mapstructure:"time-format" json:"time-format" yaml:"time-format"`
 }
 
 // Verfiy

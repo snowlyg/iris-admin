@@ -27,10 +27,10 @@ type Mysql struct {
 	Dbname       string `mapstructure:"db-name" json:"dbname" yaml:"db-name"`
 	Username     string `mapstructure:"username" json:"username" yaml:"username"`
 	Password     string `mapstructure:"password" json:"password" yaml:"password"`
-	MaxIdleConns int    `mapstructure:"max-idle-conns" json:"maxIdleConns" yaml:"max-idle-conns"`
-	MaxOpenConns int    `mapstructure:"max-open-conns" json:"maxOpenConns" yaml:"max-open-conns"`
-	LogMode      bool   `mapstructure:"log-mode" json:"logMode" yaml:"log-mode"`
-	LogZap       string `mapstructure:"log-zap" json:"logZap" yaml:"log-zap"` //silent,error,warn,info,zap
+	MaxIdleConns int    `mapstructure:"max-idle-conns" json:"max-idle-conns" yaml:"max-idle-conns"`
+	MaxOpenConns int    `mapstructure:"max-open-conns" json:"max-open-conns" yaml:"max-open-conns"`
+	LogMode      bool   `mapstructure:"log-mode" json:"log-mode" yaml:"log-mode"`
+	LogZap       string `mapstructure:"log-zap" json:"log-zap" yaml:"log-zap"` //silent,error,warn,info,zap
 }
 
 // Dsn 获取 mysql dsn

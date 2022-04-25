@@ -27,11 +27,11 @@ type Zap struct {
 	Format        string `mapstructure:"format" json:"format" yaml:"format"`
 	Prefix        string `mapstructure:"prefix" json:"prefix" yaml:"prefix"`
 	Director      string `mapstructure:"director" json:"director"  yaml:"director"`
-	LinkName      string `mapstructure:"link-name" json:"linkName" yaml:"link-name"`
-	ShowLine      bool   `mapstructure:"show-line" json:"showLine" yaml:"show-line"`
-	EncodeLevel   string `mapstructure:"encode-level" json:"encodeLevel" yaml:"encode-level"`
-	StacktraceKey string `mapstructure:"stacktrace-key" json:"stacktraceKey" yaml:"stacktrace-key"`
-	LogInConsole  bool   `mapstructure:"log-in-console" json:"logInConsole" yaml:"log-in-console"`
+	LinkName      string `mapstructure:"link-name" json:"link-name" yaml:"link-name"`
+	ShowLine      bool   `mapstructure:"show-line" json:"show-line" yaml:"show-line"`
+	EncodeLevel   string `mapstructure:"encode-level" json:"encode-level" yaml:"encode-level"`
+	StacktraceKey string `mapstructure:"stacktrace-key" json:"stacktrace-key" yaml:"stacktrace-key"`
+	LogInConsole  bool   `mapstructure:"log-in-console" json:"log-in-console" yaml:"log-in-console"`
 }
 
 // IsExist 配置文件是否存在

@@ -8,12 +8,11 @@ import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/pprof"
 	"github.com/kataras/iris/v12/middleware/rate"
+	"github.com/kataras/iris/v12/middleware/recover"
 	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 )
-
-
 
 // InitRouter 初始化模块路由
 func (ws *WebServer) InitRouter() error {
@@ -24,6 +23,7 @@ func (ws *WebServer) InitRouter() error {
 		})
 
 		app.UseRouter(middleware.CrsAuth())
+		app.UseRouter(recover.New())
 		if !web.CONFIG.Limit.Disable {
 			limitV1 := rate.Limit(web.CONFIG.Limit.Limit, web.CONFIG.Limit.Burst, rate.PurgeEvery(time.Minute, 5*time.Minute))
 			app.Use(limitV1)

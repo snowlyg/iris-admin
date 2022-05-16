@@ -17,14 +17,13 @@ require (
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
 	github.com/iris-contrib/middleware/secure v0.0.0-20211207164801-081c558a02bb
 	github.com/jonboulle/clockwork v0.2.2 // indirect
-	github.com/kataras/iris/v12 v12.2.0-alpha5
+	github.com/kataras/iris/v12 v12.2.0-alpha8
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.5 // indirect
 	github.com/mattn/go-colorable v0.1.12
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/snowlyg/helper v0.0.5
 	github.com/spf13/viper v1.8.1
-	github.com/tdewolff/minify/v2 v2.9.24 // indirect
 	github.com/unrolled/secure v1.0.9
 	go.uber.org/zap v1.19.1
 	gorm.io/driver/mysql v1.1.2

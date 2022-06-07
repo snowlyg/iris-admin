@@ -70,7 +70,7 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 		}
 
 		// 过滤不需要的方法
-		if !arr.InArrayS([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) {
+		if !arr.InArray([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) {
 			noPermRoutes = append(noPermRoutes, route)
 			continue
 		}

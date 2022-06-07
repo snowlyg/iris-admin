@@ -68,15 +68,21 @@ func (ws *WebServer) NoRoute() {
 	}
 
 	ws.app.NoRoute(func(ctx *gin.Context) {
+		// 拦截 /v1 等接口路径
+		reg := `^/v[0-9]+$|^(/v[0-9]+)/`
+		ok, _ := regexp.MatchString(reg, ctx.Request.RequestURI)
+		if ok {
+			ctx.Writer.WriteHeader(http.StatusNotFound)
+			ctx.Writer.Flush()
+			return
+		}
+
 		var indexFile []byte
 		for _, wp := range ws.webStatics {
 			// 匹配 /admin or /admin/***
 			reg := str.Join("^", wp.Prefix, "$|^(", wp.Prefix, ")/")
 			ok, err := regexp.MatchString(reg, ctx.Request.RequestURI)
-			if err != nil {
-				continue
-			}
-			if !ok {
+			if err != nil || !ok {
 				continue
 			}
 			indexFile = wp.IndexFile

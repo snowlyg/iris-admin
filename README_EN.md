@@ -1,7 +1,6 @@
 <h1 align="center">IrisAdmin</h1>
 
 <div align="center">
-    <a href="https://codecov.io/gh/snowlyg/iris-admin"><img src="https://codecov.io/gh/snowlyg/iris-admin/branch/master/graph/badge.svg" alt="Code Coverage"></a>
     <a href="https://goreportcard.com/badge/github.com/snowlyg/iris-admin"><img src="https://goreportcard.com/badge/github.com/snowlyg/iris-admin" alt="Go Report Card"></a>
     <a href="https://godoc.org/github.com/snowlyg/iris-admin"><img src="https://godoc.org/github.com/snowlyg/iris-admin?status.svg" alt="GoDoc"></a>
     <a href="https://github.com/snowlyg/iris-admin/blob/master/LICENSE"><img src="https://img.shields.io/github/license/snowlyg/iris-admin" alt="Licenses"></a>
@@ -202,7 +201,7 @@ func main() {
 ##### Custom migrate tools
 
 - Use `gormigrate` third party package. Tt's helpful for database migrate and program development.
-- Detail is see  [iris-admin-cmd](<https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go>.
+- Detail is see  [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go).
   
 ---
 
@@ -560,13 +559,10 @@ func Delete(TestClient *httptest.Client, id uint) {
 
 ```
 
-<<<<<<< HEAD
-=======
 #### 打赏
 > 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
 - [为爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)
->>>>>>> merge
 #### Thanks
 
 - Thanks [JetBrains](https://www.jetbrains.com/?from=iris-admin)' supports .

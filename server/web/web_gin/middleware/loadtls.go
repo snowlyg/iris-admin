@@ -7,7 +7,7 @@ import (
 	"github.com/unrolled/secure"
 )
 
-// 用https把这个中间件在router里面use一下就好
+// 用 https 把这个中间件在router里面 use() 一下就好
 func LoadTls() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		middleware := secure.New(secure.Options{

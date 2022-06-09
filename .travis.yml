@@ -1,0 +1,23 @@
+language: go
+
+go:
+  - 1.18.x
+
+before_script:
+  - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass 'secret'
+  - echo "USE mysql;\nUPDATE user SET password=PASSWORD('secret') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
+
+services:
+- mysql
+
+env:
+  - GO111MODULE=on redisPwd=secret mysqlPwd=secret  
+
+before_install:
+  - go get -v -t ./...
+
+script:
+  - go test  -v -race -coverprofile='coverage.txt' -covermode=atomic -coverpkg ./...
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

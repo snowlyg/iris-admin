@@ -1,7 +1,6 @@
 package casbin
 
 import (
-	"fmt"
 	"path/filepath"
 	"strconv"
 	"sync"
@@ -74,7 +73,8 @@ func GetRolesForUser(uid uint) []string {
 func ClearCasbin(v int, p ...string) error {
 	_, err := Instance().RemoveFilteredPolicy(v, p...)
 	if err != nil {
-		return fmt.Errorf("清除权限失败 %w", err)
+		zap_server.ZAPLOG.Error(err.Error())
+		return err
 	}
 	return nil
 }

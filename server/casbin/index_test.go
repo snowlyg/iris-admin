@@ -21,6 +21,7 @@ func TestGetEnforcer(t *testing.T) {
 		}
 	})
 }
+
 func TestGetRolesForUser(t *testing.T) {
 	userId := "888"
 	roleId := "2"

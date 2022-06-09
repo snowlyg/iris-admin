@@ -12,13 +12,12 @@ before_script:
   - sudo mysql_upgrade
   - mysql --version 
   - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass 'secret'
-  - echo "USE mysql;\nUPDATE user SET password=PASSWORD("secret") WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
 
 services:
   - mysql
 
 env:
-  - GO111MODULE=on redisPwd=secret mysqlPwd=secret  
+  - GO111MODULE=on redisPwd=secret   
 
 before_install:
   - go get -v -t ./...

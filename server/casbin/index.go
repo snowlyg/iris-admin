@@ -22,13 +22,13 @@ var (
 func Instance() *casbin.Enforcer {
 	once.Do(func() {
 		new()
-		enforcer = GetEnforcer()
+		enforcer = getEnforcer()
 	})
 	return enforcer
 }
 
-// GetEnforcer 获取 casbin.Enforcer
-func GetEnforcer() *casbin.Enforcer {
+// getEnforcer 获取 casbin.Enforcer
+func getEnforcer() *casbin.Enforcer {
 	if database.Instance() == nil {
 		zap_server.ZAPLOG.Error(database.ErrDatabaseInit.Error())
 		return nil

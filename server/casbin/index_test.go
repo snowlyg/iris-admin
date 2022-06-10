@@ -13,14 +13,6 @@ func TestInstance(t *testing.T) {
 		}
 	})
 }
-func TestGetEnforcer(t *testing.T) {
-	t.Run("test casbin get enforcer", func(t *testing.T) {
-		enforcer := GetEnforcer()
-		if enforcer == nil {
-			t.Error("casbin enforcer is nil")
-		}
-	})
-}
 
 func TestGetRolesForUser(t *testing.T) {
 	userId := "888"

@@ -24,8 +24,8 @@ func InitCache() {
 
 // Instance 初始化缓存服务
 func Instance() redis.UniversalClient {
+	InitCache()
 	once.Do(func() {
-		InitCache()
 		universalOptions := &redis.UniversalOptions{
 			Addrs:       strings.Split(CONFIG.Addr, ","),
 			Password:    CONFIG.Password,

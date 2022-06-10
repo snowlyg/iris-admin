@@ -4,13 +4,6 @@ go:
   - 1.18.x
 
 before_script:
-  - wget https://repo.mysql.com//mysql-apt-config_0.8.10-1_all.deb
-  - sudo dpkg -i mysql-apt-config_0.8.10-1_all.deb
-  - sudo apt-get update -q
-  - sudo apt-get install -q -y --allow-unauthenticated -o Dpkg::Options::=--force-confnew mysql-server
-  - sudo systemctl restart mysql
-  - sudo mysql_upgrade
-  - mysql --version 
   - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass 'secret'
 
 services:
@@ -23,7 +16,7 @@ before_install:
   - go get -v -t ./...
 
 script:
-  - go test  -v -race -coverprofile='coverage.txt' -covermode=atomic -coverpkg ./...
+  - go test  -v -race -coverprofile='coverage.txt' -covermode=atomic github.com\snowlyg\iris-admin\g github.com\snowlyg\iris-admin\migration github.com\snowlyg\iris-admin\seed github.com\snowlyg\iris-admin\server\...
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

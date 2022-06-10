@@ -82,13 +82,6 @@ func getViperConfig() viper_server.ViperConfig {
       }
       // config file change
       vi.SetConfigName(configName)
-      vi.WatchConfig()
-      vi.OnConfigChange(func(e fsnotify.Event) {
-        fmt.Println("config file change:", e.Name)
-        if err := vi.Unmarshal(&CONFIG); err != nil {
-          fmt.Printf("deserialization data error: %v \n", err)
-        }
-      })
       return nil
     },
     // Note: When setting the default configuration value, there can be no other symbols such as spaces in front. It must be close to the left

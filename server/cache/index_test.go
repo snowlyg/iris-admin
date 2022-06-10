@@ -41,7 +41,7 @@ func TestSetCacheUint(t *testing.T) {
 	defer zap_server.Remove()
 	redisPwd := os.Getenv("redisPwd")
 	CONFIG.Password = redisPwd
-	t.Run("test set cache bytes", func(t *testing.T) {
+	t.Run("test set cache uint", func(t *testing.T) {
 		key := "test_set_cache"
 		var want uint64 = 123
 		err := SetCache(key, want, time.Duration(time.Second*3))
@@ -56,8 +56,8 @@ func TestSetCacheUint(t *testing.T) {
 			t.Errorf("set cache want [%d] but get [%d]\n", want, get)
 		}
 		time.Sleep(time.Second * 5)
-		_, err = GetCacheUint(key)
-		if err == nil {
+		data, err := GetCacheUint(key)
+		if err == nil && data > 0 {
 			t.Error("set cache want error but get nil\n")
 		}
 	})

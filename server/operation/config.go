@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fsnotify/fsnotify"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/spf13/viper"
@@ -105,13 +104,6 @@ func getViperConfig() viper_server.ViperConfig {
 			}
 			// 监控配置文件变化
 			vi.SetConfigName(configName)
-			vi.WatchConfig()
-			vi.OnConfigChange(func(e fsnotify.Event) {
-				fmt.Println("配置发生变化:", e.Name)
-				if err := vi.Unmarshal(&CONFIG); err != nil {
-					fmt.Printf("反序列化错误: %v \n", err)
-				}
-			})
 			return nil
 		},
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.

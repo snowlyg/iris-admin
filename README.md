@@ -313,10 +313,10 @@ func main() {
 - [接口单元测试例子](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)
 
 接口单元测试需要新建 `main_test.go` 文件,该文件定义了单元测试的一些通用基础步骤：
-***建议采用docker部署mysql,否则测试失败会有大量测试数据库遗留***
-1.测试数据库的数据库的创建和摧毁（每个单元测试都会新建不同的数据库，以隔离数据对单元测试结果的影响）
-2.数据表的新建和表数据的填充
-3. `PartyFunc` , `SeedFunc` 方法需要根据对应的测试模块自定义
+***建议采用docker部署mysql,否则测试错误失败后会有大量测试数据遗留***
+- 1.测试数据库的数据库的创建和摧毁
+- 2.数据表的新建和表数据的填充
+- 3. `PartyFunc` , `SeedFunc` 方法需要根据对应的测试模块自定义
 内容如下所示:
 
 ***main_test.go***

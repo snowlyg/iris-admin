@@ -306,11 +306,11 @@ func main() {
 - [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/iris/perm/tests)
 - [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)
 
-接口单元测试需要新建 `main_test.go` 文件,该文件定义了单元测试的一些通用基础步骤：
-***建议采用docker部署mysql,否则测试失败会有大量测试数据库遗留***
-1.测试数据库的数据库的创建和摧毁（每个单元测试都会新建不同的数据库，以隔离数据对单元测试结果的影响）
-2.数据表的新建和表数据的填充
-3. `PartyFunc` , `SeedFunc` 方法需要根据对应的测试模块自定义
+Before create a http api unit test , you need create a base test file named `main_test.go` , this file have some unit test step ：
+***Suggest use docker mysql, otherwise if the test fails, there will be a lot of test data left behind***
+- 1.create database before test start and delete database when test finish.
+- 2.create tables and seed test data at once time.
+- 3.`PartyFunc` and `SeedFunc` use to custom someting for your test model.
 内容如下所示:
 ***main_test.go***
 

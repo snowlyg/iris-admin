@@ -119,12 +119,26 @@ pool-size: ` + poolSize),
 - [casbin]
   - Access control management plugin.
   - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
-  - Through use `index.Use(casbin.Casbin())` middleware on route,implement interface authority authentication
+  - Through use `casbin.Instance()` middleware on route,implement interface authority authentication
+
+```go
+	_, err := casbin.Instance().AddRoleForUser("1", "999") 
+	uids, err := casbin.Instance().GetRolesForUser("1") 
+	_, err := casbin.Instance().RemoveFilteredPolicy(v, p...) 
+  ...
+```
 
 - [cache]
   - Cache-driven plugin
   - Use [github.com/go-redis/redis](https://github.com/go-redis/redis) third party package.
   - Through single instance `cache.Instance()` operating data.
+
+```go
+  	err := cache.Instance().Set(context.Background(), "key", "value", expiration).Err()
+    cache.Instance().Del(context.Background(), "key").Result()
+    cache.Instance().Get(context.Background(), "key")
+  ...
+```
 
 - [operation]
   - System operation log plugin.

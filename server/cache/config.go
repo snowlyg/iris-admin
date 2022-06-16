@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/viper_server"
@@ -39,8 +40,6 @@ func Remove() error {
 // getViperConfig 获取初始化配置
 func getViperConfig() viper_server.ViperConfig {
 	configName := "redis"
-	db := fmt.Sprintf("%d", CONFIG.DB)
-	poolSize := fmt.Sprintf("%d", CONFIG.PoolSize)
 	return viper_server.ViperConfig{
 		Debug:     true,
 		Directory: g.ConfigDir,
@@ -57,10 +56,10 @@ func getViperConfig() viper_server.ViperConfig {
 		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
 		Default: []byte(`
 {
-	"db": ` + db + `,
+	"db": ` + strconv.FormatInt(int64(CONFIG.DB), 10) + `,
 	"addr": "` + CONFIG.Addr + `",
 	"password": "` + CONFIG.Password + `",
-	"pool-size": ` + poolSize + `
+	"pool-size": ` + strconv.FormatInt(int64(CONFIG.PoolSize), 10) + `
 }`),
 	}
 }

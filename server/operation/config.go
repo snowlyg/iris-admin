@@ -95,6 +95,7 @@ func (op Operation) IsExcept(uri, method string) bool {
 func getViperConfig() viper_server.ViperConfig {
 	configName := "operation"
 	return viper_server.ViperConfig{
+		Debug:     true,
 		Directory: g.ConfigDir,
 		Name:      configName,
 		Type:      g.ConfigType,

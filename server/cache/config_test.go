@@ -9,10 +9,7 @@ func TestIsExist(t *testing.T) {
 	t.Run("测试redis配置初始化方法", func(t *testing.T) {
 		redisPwd := os.Getenv("redisPwd")
 		CONFIG.Password = redisPwd
-		err := InitConfig()
-		if err != nil {
-			t.Error(err)
-		}
+		Instance()
 		if !IsExist() {
 			t.Errorf("config's files is not exist.")
 		}

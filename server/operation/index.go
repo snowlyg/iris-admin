@@ -10,7 +10,8 @@ import (
 )
 
 func init() {
-	viper_server.Init(getViperConfig())
+	err := viper_server.Init(getViperConfig())
+	panic(err)
 }
 
 // CreateOplog

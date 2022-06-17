@@ -111,10 +111,10 @@ func getViperConfig() viper_server.ViperConfig {
 		Default: []byte(`
 {
 	"except":{ 
-		uri: "` + CONFIG.Except.Uri + `",
-		method: "` + CONFIG.Except.Method + `"
+		"uri": "` + CONFIG.Except.Uri + `",
+		"method": "` + CONFIG.Except.Method + `"
 	},	
-"include":
+  "include":
 	{
 		"uri": "` + CONFIG.Include.Uri + `",
 		"method": "` + CONFIG.Include.Method + `"

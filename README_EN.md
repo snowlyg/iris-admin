@@ -566,10 +566,15 @@ func Delete(TestClient *httptest.Client, id uint) {
 
 ```
 
-#### 打赏
-> 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
+## 🔋 JetBrains OS licenses
+
+<a href="https://www.jetbrains.com/?from=iris-admin" target="_blank"><img src="https://raw.githubusercontent.com/panjf2000/illustrations/master/jetbrains/jetbrains-variant-4.png" width="230" align="middle"/></a>
+
+## ☕️ Buy me a coffee
+
+> Please be sure to leave your name, GitHub account or other social media accounts when you donate by the following means so that I can add it to the list of donors as a token of my appreciation.
 - [为爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)
-#### Thanks
 
-- Thanks [JetBrains](https://www.jetbrains.com/?from=iris-admin)' supports .
+
+

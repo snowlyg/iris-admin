@@ -94,7 +94,7 @@ func (mc *MigrationCmd) Migrate() error {
 	if err != nil {
 		return err
 	}
-	return m.Migrate()
+	return nil
 }
 
 // Seed 填充数据

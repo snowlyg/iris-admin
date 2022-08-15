@@ -13,6 +13,7 @@ require (
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/gorilla/websocket v1.5.0
 	github.com/iris-contrib/middleware/cors v0.0.0-20210110101738-6d0a4d799b5d
 	github.com/iris-contrib/middleware/secure v0.0.0-20211207164801-081c558a02bb
 	github.com/kataras/iris/v12 v12.2.0-beta3

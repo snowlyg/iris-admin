@@ -11,7 +11,7 @@ import (
 )
 
 var CONFIG = MongoDB{
-	DB:      "test",
+	DB:      "mongo_test",
 	Timeout: 10,
 	Addr:    "localhost:27017",
 }

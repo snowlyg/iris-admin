@@ -17,6 +17,7 @@ func TestMain(m *testing.M) {
 	uuid := str.Join("database", "_", node.Generate().String())
 
 	CONFIG.Dbname = uuid
+	CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
 	CONFIG.Password = strings.TrimSpace(os.Getenv("mysqlPwd"))
 
 	Instance()

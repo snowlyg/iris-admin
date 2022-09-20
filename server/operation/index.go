@@ -5,7 +5,6 @@ import (
 
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/viper_server"
-	"github.com/snowlyg/iris-admin/server/zap_server"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +19,6 @@ func init() {
 func CreateOplog(ol *Oplog) error {
 	err := database.Instance().Model(&Oplog{}).Create(ol).Error
 	if err != nil {
-		zap_server.ZAPLOG.Error(err.Error())
 		return err
 	}
 	return nil

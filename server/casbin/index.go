@@ -35,13 +35,11 @@ func getEnforcer() *casbin.Enforcer {
 	}
 	c, err := gormadapter.NewAdapterByDBUseTableName(database.Instance(), "", "casbin_rule") // Your driver and data source.
 	if err != nil {
-		zap_server.ZAPLOG.Error(err.Error())
 		return nil
 	}
 
 	enforcer, err := casbin.NewEnforcer(filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName), c)
 	if err != nil {
-		zap_server.ZAPLOG.Error(err.Error())
 		return nil
 	}
 
@@ -52,7 +50,6 @@ func getEnforcer() *casbin.Enforcer {
 
 	err = enforcer.LoadPolicy()
 	if err != nil {
-		zap_server.ZAPLOG.Error(err.Error())
 		return nil
 	}
 
@@ -73,7 +70,6 @@ func GetRolesForUser(uid uint) []string {
 func ClearCasbin(v int, p ...string) error {
 	_, err := Instance().RemoveFilteredPolicy(v, p...)
 	if err != nil {
-		zap_server.ZAPLOG.Error(err.Error())
 		return err
 	}
 	return nil

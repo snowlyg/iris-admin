@@ -18,6 +18,7 @@ func TestMain(m *testing.M) {
 	uuid := str.Join("casbin", "_", node.Generate().String())
 
 	database.CONFIG.Dbname = uuid
+	database.CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
 	database.CONFIG.Password = strings.TrimSpace(os.Getenv("mysqlPwd"))
 
 	Instance()

@@ -2,6 +2,7 @@ package migration
 
 import (
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/go-gormigrate/gormigrate/v2"
@@ -54,6 +55,7 @@ func TestAddSeed(t *testing.T) {
 func TestMigrate(t *testing.T) {
 	defer zap_server.Remove()
 	defer database.Remove()
+	database.CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
 	database.CONFIG.Password = os.Getenv("mysqlPwd")
 	migrate := New()
 	migrate.AddMigration(m)
@@ -67,6 +69,7 @@ func TestMigrate(t *testing.T) {
 func TestRollback(t *testing.T) {
 	defer zap_server.Remove()
 	defer database.Remove()
+	database.CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
 	database.CONFIG.Password = os.Getenv("mysqlPwd")
 	migrate := New()
 	t.Run("migrate rollback no migrate with id", func(t *testing.T) {
@@ -104,6 +107,7 @@ func TestRollback(t *testing.T) {
 func TestRefresh(t *testing.T) {
 	defer zap_server.Remove()
 	defer database.Remove()
+	database.CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
 	database.CONFIG.Password = os.Getenv("mysqlPwd")
 	migrate := New()
 

@@ -14,7 +14,7 @@ services:
   - mysql
 
 env:
-  - GO111MODULE=on redisPwd=secret mongoAddr='travis:test@127.0.0.1:27017'
+  - GO111MODULE=on redisPwd=secret mongoAddr='travis:test@127.0.0.1:27017/mongo_test'
 
 before_install:
   - go get -v -t ./...

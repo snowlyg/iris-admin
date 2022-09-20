@@ -151,14 +151,14 @@ pool-size: ` + poolSize),
   
 ```go
   cron_server.CronInstance().AddJob("@every 1m",YourJob)
-  // 或者 
+  // or 
   cron_server.CronInstance().AddFunc("@every 1m",YourFunc)
   ...
 ```
 
 - [web]
-  - web_iris Go-Iris web framework plugin.
-  - Use [github.com/kataras/iris/v12](https://github.com/kataras/iris) third party package.
+  - web_iris [Go-Iris](https://github.com/kataras/iris) web framework plugin.
+  - web_gin [Go-gin web](https://github.com/gin-gonic/gin) web framework plugin.
   - web framework plugin need implement `type WebFunc interface {}`  interface.
 
 -
@@ -171,16 +171,20 @@ type WebBaseFunc interface {
   Run()
 }
 
-// WebFunc 框架服务接口
-// - GetTestClient 测试客户端
-// - GetTestLogin 测试登录
-// - AddWebStatic 添加静态页面
-// - AddUploadStatic 上传文件路径
-// - Run 启动
+// WebFunc web framework
+// - GetTestClient test client
+// - GetTestLogin test for login
+// - AddWebStatic add web static path
+// - AddUploadStatic add upload static path 
+// - Run start
 type WebFunc interface {
   WebBaseFunc
 }
 ```
+
+- [mongodb]
+  - mongodb
+  - Use [mongodb](https://www.mongodb.com/) third party package.
 
 #### Initialize database
 
@@ -393,14 +397,14 @@ func TestList(t *testing.T) {
       {Key: "list", Value: []httptest.Responses{
         {
           {Key: "id", Value: 1, Type: "ge"},
-          {Key: "nickName", Value: "超级管理员"},
+          {Key: "nickName", Value: "superadmin"},
           {Key: "username", Value: "admin"},
           {Key: "headerImg", Value: "http://xxxx/head.png"},
           {Key: "status", Value: g.StatusTrue},
           {Key: "isShow", Value: g.StatusFalse},
           {Key: "phone", Value: "13800138000"},
           {Key: "email", Value: "admin@admin.com"},
-          {Key: "authorities", Value: []string{"超级管理员"}},
+          {Key: "authorities", Value: []string{"superadmin"}},
           {Key: "updatedAt", Value: "", Type: "notempty"},
           {Key: "createdAt", Value: "", Type: "notempty"},
         },
@@ -419,7 +423,7 @@ func TestCreate(t *testing.T) {
   }
 
   data := map[string]interface{}{
-    "nickName":     "测试名称",
+    "nickName":     "test name",
     "username":     "create_test_username",
     "authorityIds": []uint{web.AdminAuthorityId},
     "email":        "get@admin.com",
@@ -428,7 +432,7 @@ func TestCreate(t *testing.T) {
   }
   id := Create(TestClient, data)
   if id == 0 {
-    t.Fatalf("测试添加用户失败 id=%d", id)
+    t.Fatalf("add user failed by id=%d", id)
   }
   defer Delete(TestClient, id)
 }
@@ -440,7 +444,7 @@ func TestUpdate(t *testing.T) {
     return
   }
   data := map[string]interface{}{
-    "nickName":     "测试名称",
+    "nickName":     "test name",
     "username":     "create_test_username_for_update",
     "authorityIds": []uint{web.AdminAuthorityId},
     "email":        "get@admin.com",
@@ -449,12 +453,12 @@ func TestUpdate(t *testing.T) {
   }
   id := Create(TestClient, data)
   if id == 0 {
-    t.Fatalf("测试添加用户失败 id=%d", id)
+    t.Fatalf("add user failed by id=%d", id)
   }
   defer Delete(TestClient, id)
 
   update := map[string]interface{}{
-    "nickName": "测试名称",
+    "nickName": "test name",
     "email":    "get@admin.com",
     "phone":    "13800138003",
     "password": "123456",
@@ -474,7 +478,7 @@ func TestGetById(t *testing.T) {
     return
   }
   data := map[string]interface{}{
-    "nickName":     "测试名称",
+    "nickName":     "test name",
     "username":     "create_test_username_for_get",
     "email":        "get@admin.com",
     "phone":        "13800138001",
@@ -483,7 +487,7 @@ func TestGetById(t *testing.T) {
   }
   id := Create(TestClient, data)
   if id == 0 {
-    t.Fatalf("测试添加用户失败 id=%d", id)
+    t.Fatalf("add user failed by id=%d", id)
   }
   defer Delete(TestClient, id)
   pageKeys := httptest.Responses{
@@ -528,14 +532,14 @@ func TestChangeAvatar(t *testing.T) {
     {Key: "message", Value: response.ResponseOkMessage},
     {Key: "data", Value: httptest.Responses{
       {Key: "id", Value: 1, Type: "ge"},
-      {Key: "nickName", Value: "超级管理员"},
+      {Key: "nickName", Value: "superadmin"},
       {Key: "username", Value: "admin"},
       {Key: "headerImg", Value: filepath.ToSlash(web.ToStaticUrl("/avatar.png"))},
       {Key: "status", Value: g.StatusTrue},
       {Key: "isShow", Value: g.StatusFalse},
       {Key: "phone", Value: "13800138000"},
       {Key: "email", Value: "admin@admin.com"},
-      {Key: "authorities", Value: []string{"超级管理员"}},
+      {Key: "authorities", Value: []string{"superadmin"}},
       {Key: "updatedAt", Value: "", Type: "notempty"},
       {Key: "createdAt", Value: "", Type: "notempty"},
     },

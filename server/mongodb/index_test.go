@@ -6,12 +6,13 @@ import (
 	"testing"
 	"time"
 
+	_ "github.com/snowlyg/iris-admin/server/cache"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func TestGetClient(t *testing.T) {
 	CONFIG.Addr = os.Getenv("mongoAddr")
-	InitMongoDBConfig()
 	defer Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
 	defer cancel()
@@ -34,7 +35,6 @@ func TestGetClient(t *testing.T) {
 }
 func TestPing(t *testing.T) {
 	CONFIG.Addr = os.Getenv("mongoAddr")
-	InitMongoDBConfig()
 	defer Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
 	defer cancel()
@@ -61,7 +61,6 @@ func TestPing(t *testing.T) {
 }
 func TestInsertOne(t *testing.T) {
 	CONFIG.Addr = os.Getenv("mongoAddr")
-	InitMongoDBConfig()
 	defer Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
 	defer cancel()
@@ -80,7 +79,7 @@ func TestInsertOne(t *testing.T) {
 			}
 		}()
 		res, err := client.InsertOne(ctx, "testing", bson.D{
-			{"name", "pi"}, {"value", 3.14159},
+			{Key: "name", Value: "pi"}, {Key: "value", Value: 3.14159},
 		})
 		if err != nil {
 			t.Error(err.Error())
@@ -93,7 +92,6 @@ func TestInsertOne(t *testing.T) {
 }
 func TestGetCollection(t *testing.T) {
 	CONFIG.Addr = os.Getenv("mongoAddr")
-	InitMongoDBConfig()
 	defer Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
 	defer cancel()
@@ -112,6 +110,166 @@ func TestGetCollection(t *testing.T) {
 			}
 		}()
 		res := client.getCollection("testing")
+		if res == nil {
+			t.Error("Collection return empty")
+		}
+	})
+}
+
+func TestGetAggregate(t *testing.T) {
+	CONFIG.Addr = os.Getenv("mongoAddr")
+	defer Remove()
+	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
+	defer cancel()
+	t.Run("test mongodb Aggregate", func(t *testing.T) {
+		client, err := GetClient(ctx)
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+		if client == nil {
+			t.Error("mongodb clinet is nil")
+			return
+		}
+		defer func() {
+			if err = client.Disconnect(ctx); err != nil {
+				t.Error(err)
+			}
+		}()
+		pipeline := mongo.Pipeline{
+			{
+				{"$match", bson.D{
+					{"items.fruit", "banana"},
+				}},
+			},
+			{
+				{"$sort", bson.D{
+					{"date", 1},
+				}},
+			},
+		}
+		res, err := client.Aggregate(ctx, "testing", pipeline)
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+		if res == nil {
+			t.Error("Collection return empty")
+		}
+	})
+}
+
+func TestFind(t *testing.T) {
+	CONFIG.Addr = os.Getenv("mongoAddr")
+	defer Remove()
+	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
+	defer cancel()
+	t.Run("test mongodb Find", func(t *testing.T) {
+		client, err := GetClient(ctx)
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+		if client == nil {
+			t.Error("mongodb clinet is nil")
+			return
+		}
+		defer func() {
+			if err = client.Disconnect(ctx); err != nil {
+				t.Error(err)
+			}
+		}()
+		res, err := client.Find(ctx, "testing", bson.D{{"end", nil}})
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+		if res == nil {
+			t.Error("Collection return empty")
+		}
+	})
+}
+
+func TestFindOne(t *testing.T) {
+	CONFIG.Addr = os.Getenv("mongoAddr")
+	defer Remove()
+	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
+	defer cancel()
+	t.Run("test mongodb FindOne", func(t *testing.T) {
+		client, err := GetClient(ctx)
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+		if client == nil {
+			t.Error("mongodb clinet is nil")
+			return
+		}
+		defer func() {
+			if err = client.Disconnect(ctx); err != nil {
+				t.Error(err)
+			}
+		}()
+		res := client.FindOne(ctx, "testing", bson.D{{"end", nil}})
+		if res == nil {
+			t.Error("Collection return empty")
+		}
+	})
+}
+
+func TestDeleteOne(t *testing.T) {
+	CONFIG.Addr = os.Getenv("mongoAddr")
+	defer Remove()
+	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
+	defer cancel()
+	t.Run("test mongodb DeleteOne", func(t *testing.T) {
+		client, err := GetClient(ctx)
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+		if client == nil {
+			t.Error("mongodb clinet is nil")
+			return
+		}
+		defer func() {
+			if err = client.Disconnect(ctx); err != nil {
+				t.Error(err)
+			}
+		}()
+		err = client.DeleteOne(ctx, "testing", bson.D{{"end", nil}})
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+	})
+}
+
+func TestUpdateOne(t *testing.T) {
+	CONFIG.Addr = os.Getenv("mongoAddr")
+	defer Remove()
+	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
+	defer cancel()
+	t.Run("test mongodb UpdateOne", func(t *testing.T) {
+		client, err := GetClient(ctx)
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+		if client == nil {
+			t.Error("mongodb clinet is nil")
+			return
+		}
+		defer func() {
+			if err = client.Disconnect(ctx); err != nil {
+				t.Error(err)
+			}
+		}()
+		res, err := client.UpdateOne(ctx, "testing", bson.D{{"end", nil}}, bson.D{{"end", nil}})
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
 		if res == nil {
 			t.Error("Collection return empty")
 		}

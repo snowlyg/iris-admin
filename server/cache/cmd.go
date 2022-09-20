@@ -3,6 +3,8 @@ package cache
 import (
 	"fmt"
 	"strings"
+
+	"github.com/snowlyg/iris-admin/server/viper_server"
 )
 
 // InitConfig 初始化 redis 配置
@@ -18,6 +20,8 @@ func InitConfig() error {
 			return nil
 		default:
 		}
+	} else {
+		fmt.Println("Redis config file is not exist!")
 	}
 
 	err := Remove()
@@ -45,14 +49,14 @@ func initConfig() error {
 	}
 
 	fmt.Println("Please input your redis db: ")
-	fmt.Printf("Redis db default is '%d'", CONFIG.DB)
+	fmt.Printf("Redis db default is '%d'\n", CONFIG.DB)
 	fmt.Scanln(&db)
 	if db > 0 {
 		CONFIG.DB = db
 	}
 
 	fmt.Println("Please input your redis password: ")
-	fmt.Printf("Redis password default is '%s'", CONFIG.Password)
+	fmt.Printf("Redis password default is '%s'\n", CONFIG.Password)
 	fmt.Scanln(&dbPwd)
 	if dbPwd != "" {
 		CONFIG.Password = dbPwd
@@ -63,6 +67,7 @@ func initConfig() error {
 	if poolSize > 0 {
 		CONFIG.PoolSize = poolSize
 	}
+	viper_server.Init(getViperConfig())
 	if Instance() == nil {
 		return ErrRedisInit
 	}

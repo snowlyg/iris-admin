@@ -40,8 +40,8 @@ func Remove() error {
 	return nil
 }
 
-// InitMongoDBConfig 初始化配置
-func InitMongoDBConfig() {
+// init 初始化配置
+func init() {
 	viper_server.Init(getViperConfig())
 }
 

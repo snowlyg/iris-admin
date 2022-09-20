@@ -78,8 +78,8 @@ func (c *Client) Find(ctx context.Context, name string, filters ...interface{}) 
 	return results, nil
 }
 
-// FindByID
-func (c *Client) FindByID(ctx context.Context, name string, filter interface{}) *mongo.SingleResult {
+// FindOne
+func (c *Client) FindOne(ctx context.Context, name string, filter interface{}) *mongo.SingleResult {
 	return c.getCollection(name).FindOne(ctx, filter)
 }
 

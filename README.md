@@ -160,8 +160,8 @@ pool-size: ` + poolSize),
 ```
 
 - [web]
-  - web_iris Go-Iris 框架插件
-  - 使用 [github.com/kataras/iris/v12](https://github.com/kataras/iris) 第三方包实现
+  - web_iris [Go-Iris](https://github.com/kataras/iris) web 框架插件
+  - web_gin [Go-gin web](https://github.com/gin-gonic/gin) web 框架插件
   - web 框架插件需要实现 `type WebFunc interface {}`  接口
 
 ```go
@@ -183,6 +183,10 @@ type WebFunc interface {
 }
 ```
   
+- [mongodb]
+  - mongodb
+  - 使用 [mongodb](https://www.mongodb.com/) 第三方包实现.
+
 ---
 
 #### 数据初始化

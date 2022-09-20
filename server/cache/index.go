@@ -17,14 +17,13 @@ var (
 	cacheClient redis.UniversalClient
 )
 
-// initCacheConfig 初始化配置
-func initCacheConfig() {
+// init 初始化配置
+func init() {
 	viper_server.Init(getViperConfig())
 }
 
 // Instance 初始化缓存服务
 func Instance() redis.UniversalClient {
-	initCacheConfig()
 	once.Do(func() {
 		universalOptions := &redis.UniversalOptions{
 			Addrs:       strings.Split(CONFIG.Addr, ","),

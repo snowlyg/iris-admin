@@ -265,7 +265,20 @@ func TestUpdateOne(t *testing.T) {
 				t.Error(err)
 			}
 		}()
-		res, err := client.UpdateOne(ctx, "testing", bson.D{{"end", nil}}, bson.D{{"end", nil}})
+		id, err := client.InsertOne(ctx, "testing", bson.D{
+			{Key: "name", Value: "pi"}, {Key: "value", Value: 3.14159},
+		})
+		if err != nil {
+			t.Error(err.Error())
+			return
+		}
+		b := bson.D{
+			{Key: "$set", Value: bson.D{
+				{Key: "name", Value: "pi"},
+				{Key: "value", Value: 3.1415926},
+			}},
+		}
+		res, err := client.UpdateOne(ctx, "testing", bson.D{{"_id", id}}, b)
 		if err != nil {
 			t.Error(err.Error())
 			return

@@ -4,8 +4,10 @@ go:
   - 1.18.x
 
 before_script:
-  - sleep 15
   - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass 'secret'
+  - mkdir -p data/db
+  - mongod --dbpath=data/db &
+  - sleep 5
   - mongo test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
 
 services:

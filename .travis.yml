@@ -8,13 +8,13 @@ before_script:
   - mkdir -p data/db
   - mongod --dbpath=data/db &
   - sleep 5
-  - mongo test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
+  - mongo test --eval 'db.createUser({user:"travis",pwd:"admin",roles:["readWrite"]});'
 
 services:
   - mysql
 
 env:
-  - GO111MODULE=on redisPwd=secret mongoAddr='travis:test@127.0.0.1:27017'
+  - GO111MODULE=on redisPwd=secret mongoAddr='travis:admin@127.0.0.1:27017'
 
 before_install:
   - go get -v -t ./...

@@ -5,12 +5,13 @@ go:
 
 before_script:
   - sudo redis-server /etc/redis/redis.conf --port 6379 --requirepass 'secret'
+  - mongo test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
 
 services:
   - mysql
 
 env:
-  - GO111MODULE=on redisPwd=secret   
+  - GO111MODULE=on redisPwd=secret mongoAddr=travis:test@127.0.0.1:27017
 
 before_install:
   - go get -v -t ./...

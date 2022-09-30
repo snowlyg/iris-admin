@@ -12,17 +12,17 @@ type WebBaseFunc interface {
 	Run()
 }
 
-// WebFunc 框架服务接口
-// - GetTestClient 测试客户端
-// - GetTestLogin 测试登录
-// - AddWebStatic 添加静态页面
-// - AddUploadStatic 上传文件路径
-// - Run 启动
+// WebFunc
+// - GetTestClient
+// - GetTestLogin
+// - AddWebStatic
+// - AddUploadStatic
+// - Run
 type WebFunc interface {
 	WebBaseFunc
 }
 
-// Start 启动服务
+// Start
 func Start(wf WebFunc) {
 	err := wf.InitRouter()
 	if err != nil {
@@ -32,7 +32,7 @@ func Start(wf WebFunc) {
 	wf.Run()
 }
 
-// StartTest 启动服务
+// StartTest
 func StartTest(wf WebFunc) {
 	err := wf.InitRouter()
 	if err != nil {
@@ -40,7 +40,7 @@ func StartTest(wf WebFunc) {
 	}
 }
 
-// InitWeb 初始化配置
+// InitWeb
 func InitWeb() error {
 	err := viper_server.Init(getViperConfig())
 	if err != nil {

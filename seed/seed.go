@@ -4,7 +4,7 @@ type SeedFunc interface {
 	Init() (err error)
 }
 
-// Seed 数据填充
+// Seed exec seed funcs
 func Seed(SeedFunctions ...SeedFunc) error {
 	if len(SeedFunctions) == 0 {
 		return nil

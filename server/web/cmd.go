@@ -7,7 +7,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/database"
 )
 
-// Init 初始化配置文件
+// Init  initialize
 func Init() error {
 	var cover string
 	if IsExist() {

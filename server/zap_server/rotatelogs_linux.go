@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// GetWriteSyncer zap logger中加入file-rotatelogs
+// GetWriteSyncer 
 func GetWriteSyncer() (zapcore.WriteSyncer, error) {
 	fileWriter, err := zaprotatelogs.New(
 		path.Join(CONFIG.Director, "%Y-%m-%d.log"),

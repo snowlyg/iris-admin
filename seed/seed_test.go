@@ -9,7 +9,7 @@ func (ts *testSeed) Init() error {
 }
 
 func TestSeed(t *testing.T) {
-	t.Run("数据填充", func(t *testing.T) {
+	t.Run("test seed data", func(t *testing.T) {
 		err := Seed(&testSeed{})
 		if err != nil {
 			t.Error(err)

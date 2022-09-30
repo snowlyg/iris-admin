@@ -17,7 +17,7 @@ func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
 	return ws.app.Group(relativePath)
 }
 
-// InitRouter 初始化模块路由
+// InitRouter 
 func (ws *WebServer) InitRouter() error {
 	ws.app.Use(limit.MaxAllowed(50))
 	ws.app.Use(gin.Recovery())
@@ -26,11 +26,10 @@ func (ws *WebServer) InitRouter() error {
 	}
 	router := ws.app.Group("/")
 	{
-		router.Use(middleware.Cors()) // 如需跨域可以打开
+		router.Use(middleware.Cors()) 
 		// last middleware
 		router.Use(gin.Recovery())
 
-		// 排除路由竞争
 		router.GET("/v0/version", func(ctx *gin.Context) {
 			ctx.String(http.StatusOK, "IRIS-ADMIN is running!!!")
 		})
@@ -38,9 +37,9 @@ func (ws *WebServer) InitRouter() error {
 	return nil
 }
 
-// GetSources 获取系统路由
-// - PermRoutes 权鉴路由
-// - NoPermRoutes 公共路由
+// GetSources 
+// - PermRoutes 
+// - NoPermRoutes 
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 
 	methodExcepts := strings.Split(web.CONFIG.Except.Method, ";")
@@ -51,7 +50,6 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 	noPermRoutes := make([]map[string]string, 0, routeLen)
 
 	for _, r := range ws.app.Routes() {
-		// 处理路径
 		bases := strings.Split(filepath.Base(r.Handler), ".")
 		if len(bases) != 2 {
 			continue
@@ -64,13 +62,13 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			"group":  bases[0],
 			"method": r.Method,
 		}
-		// 过滤非必要请求
+
 		if !arr.InArray([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) {
 			noPermRoutes = append(noPermRoutes, route)
 			continue
 		}
 
-		// 过滤不需要的请求
+
 		if len(methodExcepts) > 0 && len(uriExcepts) > 0 && len(methodExcepts) == len(uriExcepts) {
 			for i := 0; i < len(methodExcepts); i++ {
 				if strings.EqualFold(r.Method, strings.ToLower(methodExcepts[i])) && strings.EqualFold(path, strings.ToLower(uriExcepts[i])) {

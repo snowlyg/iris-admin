@@ -7,7 +7,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/viper_server"
 )
 
-// InitConfig 初始化 redis 配置
+// InitConfig initialize redis's config file
 func InitConfig() error {
 	var cover string
 	if IsExist() {

@@ -28,16 +28,16 @@ func TestViperInit(t *testing.T) {
 	tc := &Zap{}
 	config := ViperConfig{
 		Directory: g.ConfigDir,
-		Name:      "zap", // 名称需要和结构体名称对应 zap => type Zap struct
+		Name:      "zap", // zap => type Zap struct
 		Type:      g.ConfigType,
 		Watch: func(vi *viper.Viper) error {
 			if err := vi.Unmarshal(tc); err != nil {
-				return fmt.Errorf("反序列化错误: %v", err)
+				return fmt.Errorf("get Unarshal error: %v", err)
 			}
 			vi.SetConfigName("zap")
 			return nil
 		},
-		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
+		//
 		Default: []byte(`{
 "level": "info",
 "format": "console",
@@ -66,7 +66,7 @@ func TestViperInit(t *testing.T) {
 
 	err := Init(config)
 	if err != nil {
-		t.Errorf("初始化 %s 的配置返回错误: %v", str.Join(config.Name, ".", config.Type), err)
+		t.Errorf("init %s's config get error: %v", str.Join(config.Name, ".", config.Type), err)
 	}
 	if want.Level != tc.Level {
 		t.Errorf("want %+v but get %+v", want.Level, tc.Level)
@@ -121,7 +121,7 @@ func TestViperInit(t *testing.T) {
 
 	err = Init(config)
 	if err != nil {
-		t.Errorf("初始化 %s 的配置返回错误: %v", str.Join(config.Name, ".", config.Type), err)
+		t.Errorf("init %s's config get error: %v", str.Join(config.Name, ".", config.Type), err)
 	}
 
 	time.Sleep(5 * time.Second)

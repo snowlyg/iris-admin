@@ -31,12 +31,12 @@ type Model struct {
 	DeletedAt string `json:"deletedAt" uri:"deletedAt" form:"deletedAt" param:"deletedAt"`
 }
 
-// ReqId 获取id请求参数
+// ReqId the struct has used to get id form the context of every query
 type ReqId struct {
 	Id uint `json:"id" uri:"id" form:"id" param:"id"`
 }
 
-// Request 读取数据
+// Request get id data form the context of every query
 func (req *ReqId) Request(ctx interface{}) error {
 	if c, ok := ctx.(iris.Context); ok {
 		return req.irisReadParams(c)
@@ -63,7 +63,7 @@ func (req *ReqId) ginShouldBindUri(ctx *gin.Context) error {
 	return nil
 }
 
-// Paginate 验证请求参数
+// Paginate param for paginate query
 type Paginate struct {
 	Page     int    `json:"page" form:"page"`
 	PageSize int    `json:"pageSize" form:"pageSize"`
@@ -71,7 +71,7 @@ type Paginate struct {
 	Sort     string `json:"sort" form:"sort"`
 }
 
-// Request 读取数据
+// Request
 func (req *Paginate) Request(ctx interface{}) error {
 	if c, ok := ctx.(iris.Context); ok {
 		return req.irisReadQuerys(c)
@@ -101,7 +101,7 @@ func (req *Paginate) ginShouldBind(ctx *gin.Context) error {
 	return nil
 }
 
-// PaginateScope 分页 scope
+// PaginateScope paginate scope
 func (req *Paginate) PaginateScope() func(db *gorm.DB) *gorm.DB {
 	return scope.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)
 }

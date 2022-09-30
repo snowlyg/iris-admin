@@ -12,21 +12,21 @@ import (
 
 const ConfigFileName = "zap.yaml"
 
-// level 日志级别
+// level log level
 var (
 	level  zapcore.Level
 	ZAPLOG *zap.Logger
 )
 
-// init 初始化日志服务
+// init
 func init() {
 	var logger *zap.Logger
 	viper_server.Init(getViperConfig())
 
-	if !dir.IsExist(CONFIG.Director) { // 判断是否有Director文件夹
+	if !dir.IsExist(CONFIG.Director) {
 		dir.InsureDir(CONFIG.Director)
 	}
-	switch CONFIG.Level { // 初始化配置文件的Level
+	switch CONFIG.Level {
 	case "debug":
 		level = zap.DebugLevel
 	case "info":
@@ -72,13 +72,13 @@ func getEncoderConfig() (conf zapcore.EncoderConfig) {
 		EncodeCaller:   zapcore.FullCallerEncoder,
 	}
 	switch {
-	case CONFIG.EncodeLevel == "LowercaseLevelEncoder": // 小写编码器(默认)
+	case CONFIG.EncodeLevel == "LowercaseLevelEncoder":
 		conf.EncodeLevel = zapcore.LowercaseLevelEncoder
-	case CONFIG.EncodeLevel == "LowercaseColorLevelEncoder": // 小写编码器带颜色
+	case CONFIG.EncodeLevel == "LowercaseColorLevelEncoder":
 		conf.EncodeLevel = zapcore.LowercaseColorLevelEncoder
-	case CONFIG.EncodeLevel == "CapitalLevelEncoder": // 大写编码器
+	case CONFIG.EncodeLevel == "CapitalLevelEncoder":
 		conf.EncodeLevel = zapcore.CapitalLevelEncoder
-	case CONFIG.EncodeLevel == "CapitalColorLevelEncoder": // 大写编码器带颜色
+	case CONFIG.EncodeLevel == "CapitalColorLevelEncoder":
 		conf.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	default:
 		conf.EncodeLevel = zapcore.LowercaseLevelEncoder
@@ -86,7 +86,7 @@ func getEncoderConfig() (conf zapcore.EncoderConfig) {
 	return conf
 }
 
-// getEncoder 获取zapcore.Encoder
+// getEncoder
 func getEncoder() zapcore.Encoder {
 	if CONFIG.Format == "json" {
 		return zapcore.NewJSONEncoder(getEncoderConfig())
@@ -94,9 +94,9 @@ func getEncoder() zapcore.Encoder {
 	return zapcore.NewConsoleEncoder(getEncoderConfig())
 }
 
-// getEncoderCore 获取Encoder的zapcore.Core
+// getEncoderCore
 func getEncoderCore() (core zapcore.Core) {
-	writer, err := GetWriteSyncer() // 使用file-rotatelogs进行日志分割
+	writer, err := GetWriteSyncer()
 	if err != nil {
 		fmt.Printf("Get Write Syncer Failed err:%v", err.Error())
 		return
@@ -104,14 +104,13 @@ func getEncoderCore() (core zapcore.Core) {
 	return zapcore.NewCore(getEncoder(), writer, level)
 }
 
-// 自定义日志输出时间格式
 func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format(CONFIG.Prefix + "2006/01/02 - 15:04:05.000"))
 }
 
 type StringsArray [][]string
 
-// MarshalLogArray 序列化数组日志
+// MarshalLogArray
 func (ss StringsArray) MarshalLogArray(arr zapcore.ArrayEncoder) error {
 	for i := range ss {
 		for ii := range ss[i] {

@@ -14,7 +14,7 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 )
 
-// InitRouter 初始化模块路由
+// InitRouter
 func (ws *WebServer) InitRouter() error {
 	app := ws.app.Party("/").AllowMethods(iris.MethodOptions)
 	{
@@ -52,9 +52,9 @@ func (ws *WebServer) InitRouter() error {
 	return nil
 }
 
-// GetSources 获取系统路由
-// - PermRoutes 权鉴路由
-// - NoPermRoutes 公共路由
+// GetSources
+// - PermRoutes
+// - NoPermRoutes
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 	methodExcepts := strings.Split(web.CONFIG.Except.Method, ";")
 	uris := strings.Split(web.CONFIG.Except.Uri, ";")
@@ -69,13 +69,11 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			"act":  r.Method,
 		}
 
-		// 过滤不需要的方法
 		if !arr.InArray([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) {
 			noPermRoutes = append(noPermRoutes, route)
 			continue
 		}
 
-		// 过滤不需要的请求
 		if len(methodExcepts) > 0 && len(uris) > 0 && len(methodExcepts) == len(uris) {
 			for i := 0; i < len(methodExcepts); i++ {
 				if strings.EqualFold(r.Method, strings.ToLower(methodExcepts[i])) && strings.EqualFold(r.Path, strings.ToLower(uris[i])) {

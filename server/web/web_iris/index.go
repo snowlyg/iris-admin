@@ -14,14 +14,14 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
 )
 
-var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
+var ErrAuthDriverEmpty = errors.New("auth driver initialize fail")
 
-// WebServer web服务
+// WebServer
 // - app iris application
 // - idleConnsClosed
-// - addr  服务访问地址
-// - timeFormat  时间格式
-// - staticPrefix  静态文件访问地址前缀
+// - addr
+// - timeFormat
+// - staticPrefix
 
 type WebServer struct {
 	app             *iris.Application
@@ -31,27 +31,26 @@ type WebServer struct {
 	timeFormat      string
 }
 
-// Party 功能模块
-// - perfix 模块路由路径
-// - partyFunc 模块
+// Party
+// - perfix
+// - partyFunc
 type Party struct {
 	Perfix    string
 	PartyFunc func(index iris.Party)
 }
 
-// Init 初始化web服务
-// 先初始化基础服务 config , zap , database , casbin  e.g.
+// Init
 func Init() *WebServer {
 	web.InitWeb()
 	app := iris.New()
 	if web.CONFIG.System.Tls {
-		app.Use(middleware.LoadTls()) // 打开就能玩https了
+		app.Use(middleware.LoadTls())
 	}
 	app.Use(recover.New())
-	app.Validator = validator.New() //参数验证
+	app.Validator = validator.New()
 	app.Logger().SetLevel(web.CONFIG.System.Level)
 	idleConnsClosed := make(chan struct{})
-	iris.RegisterOnInterrupt(func() { //优雅退出
+	iris.RegisterOnInterrupt(func() {
 		timeout := 10 * time.Second
 		ctx, cancel := stdContext.WithTimeout(stdContext.Background(), timeout)
 		defer cancel()
@@ -69,17 +68,17 @@ func Init() *WebServer {
 	}
 }
 
-// GetEngine 增加灵活性
+// GetEngine
 func (ws *WebServer) GetEngine() *iris.Application {
 	return ws.app
 }
 
-// AddModule 添加模块
+// AddModule
 func (ws *WebServer) AddModule(parties ...Party) {
 	ws.parties = append(ws.parties, parties...)
 }
 
-// AddWebStatic 添加前端访问地址
+// AddWebStatic
 func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
 	if str.InStrArray(webPrefix, webPrefixs) {
@@ -95,14 +94,14 @@ func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...stri
 	web.CONFIG.System.WebPrefix = str.Join(web.CONFIG.System.WebPrefix, ",", webPrefix)
 }
 
-// AddUploadStatic 添加上传文件访问地址
+// AddUploadStatic
 func (ws *WebServer) AddUploadStatic(webPrefix, staticAbsPath string) {
 	fsOrDir := iris.Dir(staticAbsPath)
 	ws.app.HandleDir(webPrefix, fsOrDir)
 	web.CONFIG.System.StaticPrefix = webPrefix
 }
 
-// Run 启动web服务
+// Run
 func (ws *WebServer) Run() {
 	ws.app.Listen(
 		ws.addr,

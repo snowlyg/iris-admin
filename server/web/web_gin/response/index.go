@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	ResponseOkMessage    = "操作成功"
-	ResponseErrorMessage = "操作失败"
+	ResponseOkMessage    = "OK"
+	ResponseErrorMessage = "FAIL"
 )
 
 type Response struct {

@@ -8,9 +8,9 @@ import (
 	"github.com/snowlyg/iris-admin/server/database"
 )
 
-// MigrationCmd 迁移 cmd
-// MigrationCollection 迁移集合,数据表迁移方法
-// SeedCollection 数据填充集合
+// MigrationCmd migration cmd
+// MigrationCollection migration collections
+// SeedCollection data seed collection
 type MigrationCmd struct {
 	MigrationCollection []*gormigrate.Migration
 	SeedCollection      []seed.SeedFunc
@@ -26,44 +26,44 @@ func New() *MigrationCmd {
 	return mc
 }
 
-// AddMigration 添加 *gormigrate.Migration
+// AddMigration add *gormigrate.Migration
 func (mc *MigrationCmd) AddMigration(m ...*gormigrate.Migration) {
 	mc.MigrationCollection = append(mc.MigrationCollection, m...)
 }
 
-// MigrationLen MigrationCollection 的长度
+// MigrationLen length of MigrationCollection
 func (mc *MigrationCmd) MigrationLen() int {
 	return len(mc.MigrationCollection)
 }
 
-// AddSeed 添加 seed
+// AddSeed add SeedFunc
 func (mc *MigrationCmd) AddSeed(sf ...seed.SeedFunc) {
 	mc.SeedCollection = append(mc.SeedCollection, sf...)
 }
 
-// SeedlLen SeedCollection 的长度
+// SeedlLen length of  SeedCollection
 func (mc *MigrationCmd) SeedlLen() int {
 	return len(mc.SeedCollection)
 }
 
-// Refresh 重置项目迁移
+// Refresh refresh migration
 func (mc *MigrationCmd) Refresh() error {
-	if mc.getFirstMigrateion() == "" {
+	if mc.getFirstMigration() == "" {
 		return nil
 	}
-	err := mc.rollbackTo(mc.getFirstMigrateion())
+	err := mc.rollbackTo(mc.getFirstMigration())
 	if !errors.Is(gormigrate.ErrMigrationIDDoesNotExist, err) && err != nil {
 		return err
 	}
 	return mc.Migrate()
 }
 
-// rollbackTo 回滚迁移到 migrationId 位置
+// rollbackTo roolback migration to migrationId
 func (mc *MigrationCmd) rollbackTo(migrationId string) error {
 	return mc.gormigrate().RollbackTo(migrationId)
 }
 
-// Rollback 回滚迁移到
+// Rollback roolback migrations
 func (mc *MigrationCmd) Rollback(migrationId string) error {
 	if mc.MigrationLen() == 0 {
 		return nil
@@ -82,12 +82,12 @@ func (mc *MigrationCmd) Rollback(migrationId string) error {
 	return nil
 }
 
-// rollbackLast 回滚最后一次迁移
+// rollbackLast roolback the lasted migration
 func (mc *MigrationCmd) rollbackLast() error {
 	return mc.gormigrate().RollbackLast()
 }
 
-// Migrate 执行迁移
+// Migrate exec migration cmd
 func (mc *MigrationCmd) Migrate() error {
 	m := mc.gormigrate()
 	err := m.Migrate()
@@ -97,7 +97,7 @@ func (mc *MigrationCmd) Migrate() error {
 	return nil
 }
 
-// Seed 填充数据
+// Seed seed data into database
 func (mc *MigrationCmd) Seed() error {
 	if mc.SeedCollection == nil {
 		return nil
@@ -105,15 +105,15 @@ func (mc *MigrationCmd) Seed() error {
 	return seed.Seed(mc.SeedCollection...)
 }
 
-// getFirstMigrateion 第一次迁移ID
-func (mc *MigrationCmd) getFirstMigrateion() string {
+// getFirstMigration get first migration's id
+func (mc *MigrationCmd) getFirstMigration() string {
 	if mc.MigrationLen() == 0 {
 		return ""
 	}
 	return mc.MigrationCollection[0].ID
 }
 
-// gormigrate 新建 *gormigrate.Gormigrate
+// gormigrate create *gormigrate.Gormigrate
 func (mc *MigrationCmd) gormigrate() *gormigrate.Gormigrate {
 	return gormigrate.New(database.Instance(), gormigrate.DefaultOptions, mc.MigrationCollection)
 }

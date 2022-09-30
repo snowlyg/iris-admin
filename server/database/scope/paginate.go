@@ -5,11 +5,11 @@ import (
 	"gorm.io/gorm"
 )
 
-// PaginateScope 	分页方法
-// - page 			页码
-// - pageSize 		每页数量
-// - sort 			排序方式
-// - orderBy 			排序字段
+// PaginateScope 	return paginate scope for gorm
+// - page 			int
+// - pageSize 	int
+// - sort 			string
+// - orderBy 		string
 func PaginateScope(page, pageSize int, sort, orderBy string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		pageSize := getPageSize(pageSize)
@@ -18,7 +18,7 @@ func PaginateScope(page, pageSize int, sort, orderBy string) func(db *gorm.DB) *
 	}
 }
 
-// getOffset 获取 limit
+// getOffset
 func getOffset(page, pageSize int) int {
 	if page == 0 {
 		page = 1
@@ -30,7 +30,7 @@ func getOffset(page, pageSize int) int {
 	return offset
 }
 
-// getPageSize 获取分页数据
+// getPageSize
 func getPageSize(pageSize int) int {
 	switch {
 	case pageSize > 100:
@@ -43,7 +43,7 @@ func getPageSize(pageSize int) int {
 	return pageSize
 }
 
-// getOrderBy 处理排序逻辑
+// getOrderBy
 func getOrderBy(sort, orderBy string) string {
 	if sort == "" {
 		sort = "desc"

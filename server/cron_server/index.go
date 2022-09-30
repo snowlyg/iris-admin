@@ -1,7 +1,6 @@
 package cron_server
 
 import (
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -10,16 +9,11 @@ import (
 )
 
 var (
-	ErrNotLocalServer = errors.New("不能控制非本机服务")
-	ErrStartServer    = errors.New("服务已经启动")
-)
-
-var (
 	once sync.Once
 	cc   *cron.Cron
 )
 
-// CronInstance cron 单例
+// CronInstance cron single instance
 func CronInstance() *cron.Cron {
 	once.Do(func() {
 		cc = cron.New(cron.WithSeconds())

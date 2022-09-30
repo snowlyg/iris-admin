@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// Init 初始化 mysql 配置
+// Init initialize mysql config file
 func Init() error {
 	var cover string
 	if IsExist() {

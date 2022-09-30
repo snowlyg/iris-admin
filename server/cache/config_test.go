@@ -9,7 +9,7 @@ import (
 
 func TestIsExist(t *testing.T) {
 	viper_server.Init(getViperConfig())
-	t.Run("测试redis配置初始化方法", func(t *testing.T) {
+	t.Run("test redis's IsExist function", func(t *testing.T) {
 		redisPwd := os.Getenv("redisPwd")
 		CONFIG.Password = redisPwd
 		if !IsExist() {

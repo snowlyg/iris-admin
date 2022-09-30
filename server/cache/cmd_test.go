@@ -6,7 +6,7 @@ import (
 )
 
 func TestInitConfig(t *testing.T) {
-	t.Run("测试redis配置初始化方法", func(t *testing.T) {
+	t.Run("test redis's file initialize", func(t *testing.T) {
 		redisPwd := os.Getenv("redisPwd")
 		CONFIG.Password = redisPwd
 		err := InitConfig()

@@ -17,14 +17,14 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_gin/middleware"
 )
 
-var ErrAuthDriverEmpty = errors.New("认证驱动初始化失败")
+var ErrAuthDriverEmpty = errors.New("auth driver initialize fail")
 
-// WebServer web服务
+// WebServer
 // - app gin.Engine
 // - idleConnsClosed
-// - addr  服务访问地址
-// - timeFormat  时间格式
-// - staticPrefix  静态文件访问地址前缀
+// - addr
+// - timeFormat
+// - staticPrefix
 type WebServer struct {
 	app *gin.Engine
 	server
@@ -38,14 +38,13 @@ type WebStatic struct {
 	IndexFile []byte
 }
 
-// Init 初始化web服务
-// 先初始化基础服务 config , zap , database , casbin  e.g.
+// Init
 func Init() *WebServer {
 	web.InitWeb()
 	gin.SetMode(web.CONFIG.System.Level)
 	app := gin.Default()
 	if web.CONFIG.System.Tls {
-		app.Use(middleware.LoadTls()) // 打开就能玩https了
+		app.Use(middleware.LoadTls())
 	}
 	app.Use(middleware.Cors())
 	registerValidation()
@@ -61,14 +60,14 @@ func Init() *WebServer {
 	}
 }
 
-// NoRoute 关键点【解决页面刷新404的问题】
+// NoRoute for 404 http status
 func (ws *WebServer) NoRoute() {
 	if len(ws.webStatics) == 0 {
 		return
 	}
 
 	ws.app.NoRoute(func(ctx *gin.Context) {
-		// 拦截 /v1 等接口路径
+		// excepte for /v0 /v1 and so on
 		reg := `^/v[0-9]+$|^(/v[0-9]+)/`
 		ok, _ := regexp.MatchString(reg, ctx.Request.RequestURI)
 		if ok {
@@ -79,7 +78,7 @@ func (ws *WebServer) NoRoute() {
 
 		var indexFile []byte
 		for _, wp := range ws.webStatics {
-			// 匹配 /admin or /admin/***
+			// match /admin or /admin/***
 			reg := str.Join("^", wp.Prefix, "$|^(", wp.Prefix, ")/")
 			ok, err := regexp.MatchString(reg, ctx.Request.RequestURI)
 			if err != nil || !ok {
@@ -87,7 +86,7 @@ func (ws *WebServer) NoRoute() {
 			}
 			indexFile = wp.IndexFile
 		}
-		// 关键点【解决页面刷新404的问题】
+
 		ctx.Writer.WriteHeader(http.StatusOK)
 		ctx.Writer.Write(indexFile)
 
@@ -96,12 +95,12 @@ func (ws *WebServer) NoRoute() {
 	})
 }
 
-// GetEngine 增加灵活性
+// GetEngine return *gin.Engine
 func (ws *WebServer) GetEngine() *gin.Engine {
 	return ws.app
 }
 
-// AddWebStatic 添加前端访问地址
+// AddWebStatic
 func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
 	if str.InStrArray(webPrefix, webPrefixs) {
@@ -114,7 +113,6 @@ func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...stri
 	ws.app.Static(str.Join(webPrefix, "/favicon.ico"), favicon)
 	ws.app.StaticFile(webPrefix, index)
 
-	// 加载次级目录
 	if len(paths) > 0 {
 		for _, path := range paths {
 			static := filepath.Join(staticAbsPath, path)
@@ -132,13 +130,13 @@ func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...stri
 
 }
 
-// AddUploadStatic 添加上传文件访问地址
+// AddUploadStatic
 func (ws *WebServer) AddUploadStatic(webPrefix, staticAbsPath string) {
 	ws.app.StaticFS(webPrefix, http.Dir(staticAbsPath))
 	web.CONFIG.System.StaticPrefix = webPrefix
 }
 
-// Run 启动web服务
+// Run
 func (ws *WebServer) Run() {
 	ws.NoRoute()
 	s := initServer(web.CONFIG.System.Addr, ws.app)

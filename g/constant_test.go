@@ -3,7 +3,7 @@ package g
 import "testing"
 
 func TestCons(t *testing.T) {
-	t.Run("测试常量参数", func(t *testing.T) {
+	t.Run("test constant param", func(t *testing.T) {
 		if ConfigType != "json" {
 			t.Errorf("ConfigType want %s but get %s", "json", ConfigType)
 		}

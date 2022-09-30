@@ -5,7 +5,7 @@ import (
 	"github.com/kataras/iris/v12/context"
 )
 
-// CrsAuth 跨域中间件
+// CrsAuth
 func CrsAuth() context.Handler {
 	return cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"}, // allows everything, use that to change the hosts.

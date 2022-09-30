@@ -32,22 +32,22 @@ type Mysql struct {
 	LogZap       string `mapstructure:"log-zap" json:"log-zap" yaml:"log-zap"` //silent,error,warn,info,zap
 }
 
-// Dsn 获取 mysql dsn
+// Dsn return mysql dsn
 func (m *Mysql) Dsn() string {
 	return fmt.Sprintf("%s%s?%s", m.BaseDsn(), m.Dbname, m.Config)
 }
 
-// Dsn 获取 mysql dsn
+// Dsn return 
 func (m *Mysql) BaseDsn() string {
 	return fmt.Sprintf("%s:%s@tcp(%s)/", m.Username, m.Password, m.Path)
 }
 
-// IsExist 配置文件是否存在
+// IsExist config file is exist
 func IsExist() bool {
 	return getViperConfig().IsFileExist()
 }
 
-// Remove 删除配置文件
+// Remove remove config file
 func Remove() error {
 	err := getViperConfig().Remove()
 	if err != nil {
@@ -56,7 +56,7 @@ func Remove() error {
 	return nil
 }
 
-// getViperConfig 获取初始化配置
+// getViperConfig get viper config
 func getViperConfig() viper_server.ViperConfig {
 	configName := "mysql"
 	mxIdleConns := fmt.Sprintf("%d", CONFIG.MaxIdleConns)
@@ -69,13 +69,13 @@ func getViperConfig() viper_server.ViperConfig {
 		Type:      g.ConfigType,
 		Watch: func(vi *viper.Viper) error {
 			if err := vi.Unmarshal(&CONFIG); err != nil {
-				return fmt.Errorf("反序列化错误: %v", err)
+				return fmt.Errorf("get Unarshal error: %v", err)
 			}
-			// 监控配置文件变化
+			// watch config file change
 			vi.SetConfigName(configName)
 			return nil
 		},
-		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
+		//
 		Default: []byte(`
 {
 	"path": "` + CONFIG.Path + `",

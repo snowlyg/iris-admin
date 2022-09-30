@@ -5,7 +5,7 @@ import (
 )
 
 func TestIsExist(t *testing.T) {
-	t.Run("测试mongodb配置初始化方法", func(t *testing.T) {
+	t.Run("test mongodb config IsExist function", func(t *testing.T) {
 		if !IsExist() {
 			t.Errorf("config's files is not exist.")
 		}

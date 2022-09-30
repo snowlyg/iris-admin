@@ -18,16 +18,15 @@ var (
 	enforcer *casbin.Enforcer
 )
 
-// Instance casbin 单例
+// Instance casbin instance
 func Instance() *casbin.Enforcer {
 	once.Do(func() {
-		new()
 		enforcer = getEnforcer()
 	})
 	return enforcer
 }
 
-// getEnforcer 获取 casbin.Enforcer
+// getEnforcer get casbin.Enforcer
 func getEnforcer() *casbin.Enforcer {
 	if database.Instance() == nil {
 		zap_server.ZAPLOG.Error(database.ErrDatabaseInit.Error())
@@ -44,7 +43,7 @@ func getEnforcer() *casbin.Enforcer {
 	}
 
 	if enforcer == nil {
-		zap_server.ZAPLOG.Error("Casbin 未初始化")
+		zap_server.ZAPLOG.Error("Casbin init")
 		return nil
 	}
 
@@ -56,7 +55,7 @@ func getEnforcer() *casbin.Enforcer {
 	return enforcer
 }
 
-// GetRolesForUser 获取角色
+// GetRolesForUser get user's roles
 func GetRolesForUser(uid uint) []string {
 	uids, err := Instance().GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
 	if err != nil {
@@ -66,7 +65,7 @@ func GetRolesForUser(uid uint) []string {
 	return uids
 }
 
-// ClearCasbin 清除权限
+// ClearCasbin clean rules
 func ClearCasbin(v int, p ...string) error {
 	_, err := Instance().RemoveFilteredPolicy(v, p...)
 	if err != nil {

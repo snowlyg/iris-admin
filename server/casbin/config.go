@@ -8,7 +8,7 @@ import (
 	"github.com/snowlyg/iris-admin/g"
 )
 
-// Remove 删除配置文件
+// Remove del config file
 func Remove() error {
 	casbinPath := getCasbinPath()
 	if dir.IsExist(casbinPath) && dir.IsFile(casbinPath) {
@@ -21,12 +21,12 @@ func getCasbinPath() string {
 	return filepath.Join(dir.GetCurrentAbPath(), g.CasbinFileName)
 }
 
-// new 初始化系统配置
-// - 第一次初始化系统配置，会自动生成casbin 的规则文件 rbac_model.conf
-func new() {
+// init initialize config file
+// - initialize casbin's config file as rbac_model.conf name
+func init() {
 	casbinPath := getCasbinPath()
-	fmt.Printf("casbin rbac_model.conf 位于： %s\n\n", casbinPath)
-	if !dir.IsExist(casbinPath) { // casbin rbac_model.conf 文件
+	fmt.Printf("casbin rbac_model.conf's path: %s\n\n", casbinPath)
+	if !dir.IsExist(casbinPath) { // casbin rbac_model.conf file
 		var rbacModelConf = []byte(`[request_definition]
 	r = sub, obj, act
 
@@ -43,7 +43,7 @@ func new() {
 	m = g(r.sub, p.sub) && keyMatch2(r.obj, p.obj) && (r.act == p.act || p.act == "*")`)
 		_, err := dir.WriteBytes(casbinPath, rbacModelConf)
 		if err != nil {
-			panic(fmt.Errorf("初始化 casbin rbac_model.conf 文件错误: %w ", err))
+			panic(fmt.Errorf("initialize casbin rbac_model.conf file return error: %w ", err))
 		}
 	}
 }

@@ -14,12 +14,12 @@ import (
 	"gorm.io/gorm/utils"
 )
 
-// writer  日志打印接口
+// writer
 type writer interface {
 	Printf(string, ...interface{})
 }
 
-// config 配置
+// config
 type config struct {
 	SlowThreshold time.Duration
 	Colorful      bool
@@ -68,7 +68,7 @@ func New(writer writer, config config) logger.Interface {
 	}
 }
 
-// customLogger 自定义日志
+// customLogger
 type customLogger struct {
 	writer
 	config
@@ -76,7 +76,7 @@ type customLogger struct {
 	traceStr, traceErrStr, traceWarnStr string
 }
 
-// LogMode 日志模式
+// LogMode
 func (c *customLogger) LogMode(level logger.LogLevel) logger.Interface {
 	newLogger := *c
 	newLogger.LogLevel = level
@@ -135,7 +135,7 @@ func (c *customLogger) Trace(ctx context.Context, begin time.Time, fc func() (st
 	}
 }
 
-// Printf 
+// Printf
 func (c *customLogger) Printf(message string, data ...interface{}) {
 	if CONFIG.LogZap != "" {
 		switch len(data) {

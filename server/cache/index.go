@@ -17,12 +17,12 @@ var (
 	cacheClient redis.UniversalClient
 )
 
-// init 初始化配置
+// init  initialize
 func init() {
 	viper_server.Init(getViperConfig())
 }
 
-// Instance 初始化缓存服务
+// Instance get instance
 func Instance() redis.UniversalClient {
 	once.Do(func() {
 		universalOptions := &redis.UniversalOptions{
@@ -37,7 +37,7 @@ func Instance() redis.UniversalClient {
 	return cacheClient
 }
 
-// SetCache 缓存数据
+// SetCache
 func SetCache(key string, value interface{}, expiration time.Duration) error {
 	err := Instance().Set(context.Background(), key, value, expiration).Err()
 	if err != nil {
@@ -46,12 +46,12 @@ func SetCache(key string, value interface{}, expiration time.Duration) error {
 	return nil
 }
 
-// DeleteCache 删除缓存数据
+// DeleteCache
 func DeleteCache(key string) (int64, error) {
 	return Instance().Del(context.Background(), key).Result()
 }
 
-// GetCacheString 获取字符串类型数据
+// GetCacheString
 func GetCacheString(key string) (string, error) {
 	value, err := GetCacheBytes(key)
 	if err != nil {
@@ -60,12 +60,12 @@ func GetCacheString(key string) (string, error) {
 	return string(value), nil
 }
 
-// GetCacheBytes 获取bytes类型数据
+// GetCacheBytes
 func GetCacheBytes(key string) ([]byte, error) {
 	return Instance().Get(context.Background(), key).Bytes()
 }
 
-// GetCacheUint 获取uint类型数据
+// GetCacheUint
 func GetCacheUint(key string) (uint64, error) {
 	return Instance().Get(context.Background(), key).Uint64()
 }

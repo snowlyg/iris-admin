@@ -14,28 +14,27 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-var ErrDatabaseInit = errors.New("数据库初始化失败")
+var ErrDatabaseInit = errors.New("database initialize fail")
 
 var (
 	once sync.Once
 	db   *gorm.DB
 )
 
-// InitMysql 初始化数据库
-func InitMysql() {
+// init
+func init() {
 	viper_server.Init(getViperConfig())
 }
 
-// Instance 数据库单例
+// Instance
 func Instance() *gorm.DB {
 	once.Do(func() {
-		InitMysql()
 		db = gormMysql()
 	})
 	return db
 }
 
-// gormMysql 初始化Mysql数据库
+// gormMysql get *gorm.DB
 func gormMysql() *gorm.DB {
 	if CONFIG.Dbname == "" {
 		fmt.Println("config dbname is empty")
@@ -47,12 +46,12 @@ func gormMysql() *gorm.DB {
 		return nil
 	}
 	mysqlConfig := mysql.Config{
-		DSN:                       CONFIG.Dsn(), // DSN data source name
-		DefaultStringSize:         191,          // string 类型字段的默认长度
-		DisableDatetimePrecision:  true,         // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
-		DontSupportRenameIndex:    true,         // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
-		DontSupportRenameColumn:   true,         // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
-		SkipInitializeWithVersion: false,        // 根据版本自动配置
+		DSN:                       CONFIG.Dsn(),
+		DefaultStringSize:         191,
+		DisableDatetimePrecision:  true,
+		DontSupportRenameIndex:    true,
+		DontSupportRenameColumn:   true,
+		SkipInitializeWithVersion: false,
 	}
 	if db, err := gorm.Open(mysql.New(mysqlConfig), gormConfig(CONFIG.LogMode)); err != nil {
 		fmt.Printf("open mysql is failed %v \n", err)
@@ -65,7 +64,7 @@ func gormMysql() *gorm.DB {
 	}
 }
 
-// gormConfig 根据配置决定是否开启日志
+// gormConfig get gorm config
 func gormConfig(mod bool) *gorm.Config {
 	var config = &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
 	switch CONFIG.LogZap {
@@ -89,7 +88,7 @@ func gormConfig(mod bool) *gorm.Config {
 	return config
 }
 
-// createTable 创建数据库(mysql)
+// createTable create database(mysql)
 func createTable(dsn, driver, dbName string) error {
 	createSql := fmt.Sprintf("CREATE DATABASE IF NOT EXISTS `%s` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;", dbName)
 	db, err := sql.Open(driver, dsn)

@@ -72,16 +72,16 @@ type System struct {
 
 // Verfiy
 func Verfiy() {
-	if CONFIG.System.Addr == "" { // 默认 8085
+	if CONFIG.System.Addr == "" {
 		CONFIG.System.Addr = "127.0.0.1:8085"
 	}
 
-	if CONFIG.System.TimeFormat == "" { // 默认 80
+	if CONFIG.System.TimeFormat == "" {
 		CONFIG.System.TimeFormat = "2006-01-02 15:04:05"
 	}
 }
 
-// ToStaticUrl 静态地址url
+// ToStaticUrl
 func ToStaticUrl(uri string) string {
 	path := filepath.Join(CONFIG.System.Addr, CONFIG.System.StaticPrefix, uri)
 	if CONFIG.System.Tls {
@@ -90,12 +90,12 @@ func ToStaticUrl(uri string) string {
 	return filepath.ToSlash(str.Join("http://", path))
 }
 
-// IsExist 配置文件是否存在
+// IsExist config file is exist
 func IsExist() bool {
 	return getViperConfig().IsFileExist()
 }
 
-// Remove 删除配置文件
+// Remove remove config file
 func Remove() error {
 	err := getViperConfig().Remove()
 	if err != nil {
@@ -104,7 +104,7 @@ func Remove() error {
 	return nil
 }
 
-// getViperConfig 获取初始化配置
+// getViperConfig get viper config
 func getViperConfig() viper_server.ViperConfig {
 	maxSize := strconv.FormatInt(CONFIG.MaxSize, 10)
 	keyLong := strconv.FormatInt(int64(CONFIG.Captcha.KeyLong), 10)
@@ -122,13 +122,13 @@ func getViperConfig() viper_server.ViperConfig {
 		Type:      g.ConfigType,
 		Watch: func(vi *viper.Viper) error {
 			if err := vi.Unmarshal(&CONFIG); err != nil {
-				return fmt.Errorf("反序列化错误: %v", err)
+				return fmt.Errorf("get Unarshal error: %v", err)
 			}
-			// 监控配置文件变化
+			// watch config file change
 			vi.SetConfigName(configName)
 			return nil
 		},
-		// 注意:设置默认配置值的时候,前面不能有空格等其他符号.必须紧贴左侧.
+		//
 		Default: []byte(`
 {
 	"max-size": ` + maxSize + `,

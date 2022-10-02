@@ -1,8 +1,10 @@
 package database
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/spf13/viper"
@@ -37,7 +39,7 @@ func (m *Mysql) Dsn() string {
 	return fmt.Sprintf("%s%s?%s", m.BaseDsn(), m.Dbname, m.Config)
 }
 
-// Dsn return 
+// Dsn return
 func (m *Mysql) BaseDsn() string {
 	return fmt.Sprintf("%s:%s@tcp(%s)/", m.Username, m.Password, m.Path)
 }
@@ -49,11 +51,16 @@ func IsExist() bool {
 
 // Remove remove config file
 func Remove() error {
-	err := getViperConfig().Remove()
+	return getViperConfig().Remove()
+}
+
+// Recover
+func Recover() error {
+	b, err := json.Marshal(CONFIG)
 	if err != nil {
 		return err
 	}
-	return nil
+	return getViperConfig().Recover(b)
 }
 
 // getViperConfig get viper config
@@ -72,7 +79,10 @@ func getViperConfig() viper_server.ViperConfig {
 				return fmt.Errorf("get Unarshal error: %v", err)
 			}
 			// watch config file change
-			vi.SetConfigName(configName)
+			vi.OnConfigChange(func(e fsnotify.Event) {
+				fmt.Println("Config file changed:", e.Name)
+			})
+			vi.WatchConfig()
 			return nil
 		},
 		//

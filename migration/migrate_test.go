@@ -1,11 +1,10 @@
 package migration
 
 import (
-	"os"
-	"strings"
 	"testing"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 	"gorm.io/gorm"
@@ -55,8 +54,8 @@ func TestAddSeed(t *testing.T) {
 func TestMigrate(t *testing.T) {
 	defer zap_server.Remove()
 	defer database.Remove()
-	database.CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
-	database.CONFIG.Password = os.Getenv("mysqlPwd")
+	database.CONFIG.Path = g.TestMysqlAddr
+	database.CONFIG.Password = g.TestMysqlPwd
 	migrate := New()
 	migrate.AddMigration(m)
 	t.Run("migrate migrate", func(t *testing.T) {
@@ -69,8 +68,8 @@ func TestMigrate(t *testing.T) {
 func TestRollback(t *testing.T) {
 	defer zap_server.Remove()
 	defer database.Remove()
-	database.CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
-	database.CONFIG.Password = os.Getenv("mysqlPwd")
+	database.CONFIG.Path = g.TestMysqlAddr
+	database.CONFIG.Password = g.TestMysqlPwd
 	migrate := New()
 	t.Run("migrate rollback no migrate with id", func(t *testing.T) {
 		err := migrate.Rollback(id)
@@ -107,8 +106,8 @@ func TestRollback(t *testing.T) {
 func TestRefresh(t *testing.T) {
 	defer zap_server.Remove()
 	defer database.Remove()
-	database.CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
-	database.CONFIG.Password = os.Getenv("mysqlPwd")
+	database.CONFIG.Path = g.TestMysqlAddr
+	database.CONFIG.Password = g.TestMysqlPwd
 	migrate := New()
 
 	t.Run("migrate refresh no migrate", func(t *testing.T) {

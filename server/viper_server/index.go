@@ -47,6 +47,12 @@ func (vc ViperConfig) Remove() error {
 	return dir.Remove(vc.getConfigFilePath())
 }
 
+// Recover recover config file content
+func (vc ViperConfig) Recover(b []byte) error {
+	_, err := dir.WriteBytes(vc.getConfigFilePath(), b)
+	return err
+}
+
 // Init
 func Init(vc ViperConfig) error {
 
@@ -69,6 +75,7 @@ func Init(vc ViperConfig) error {
 	if vc.Debug {
 		fmt.Printf("this config file's type is [%s]\n", vc.Type)
 	}
+	vi.SetConfigName(vc.Name)
 	vi.SetConfigType(vc.Type)
 	vi.AddConfigPath(vc.Directory)
 

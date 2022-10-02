@@ -41,7 +41,6 @@ type Party struct {
 
 // Init
 func Init() *WebServer {
-	web.InitWeb()
 	app := iris.New()
 	if web.CONFIG.System.Tls {
 		app.Use(middleware.LoadTls())

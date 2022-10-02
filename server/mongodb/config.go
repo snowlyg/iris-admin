@@ -1,6 +1,7 @@
 package mongodb
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -9,6 +10,11 @@ import (
 	"github.com/snowlyg/iris-admin/server/viper_server"
 	"github.com/spf13/viper"
 )
+
+// init  initialize
+func init() {
+	viper_server.Init(getViperConfig())
+}
 
 var CONFIG = MongoDB{
 	DB:      "mongo_test",
@@ -33,16 +39,16 @@ func IsExist() bool {
 
 // Remove remove config file
 func Remove() error {
-	err := getViperConfig().Remove()
+	return getViperConfig().Remove()
+}
+
+// Recover
+func Recover() error {
+	b, err := json.Marshal(CONFIG)
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-// init  initialize
-func init() {
-	viper_server.Init(getViperConfig())
+	return getViperConfig().Recover(b)
 }
 
 // getViperConfig get viper config

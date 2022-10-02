@@ -3,11 +3,11 @@ package database
 import (
 	_ "embed"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/snowlyg/helper/str"
+	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
@@ -17,8 +17,8 @@ func TestMain(m *testing.M) {
 	uuid := str.Join("database", "_", node.Generate().String())
 
 	CONFIG.Dbname = uuid
-	CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
-	CONFIG.Password = strings.TrimSpace(os.Getenv("mysqlPwd"))
+	CONFIG.Path = g.TestMysqlAddr
+	CONFIG.Password = g.TestMysqlPwd
 
 	Instance()
 

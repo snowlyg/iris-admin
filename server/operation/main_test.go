@@ -3,11 +3,11 @@ package operation
 import (
 	_ "embed"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/snowlyg/helper/str"
+	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 )
@@ -18,8 +18,8 @@ func TestMain(m *testing.M) {
 	uuid := str.Join("operation", "_", node.Generate().String())
 
 	database.CONFIG.Dbname = uuid
-	database.CONFIG.Path = strings.TrimSpace(os.Getenv("mysqlAddr"))
-	database.CONFIG.Password = strings.TrimSpace(os.Getenv("mysqlPwd"))
+	database.CONFIG.Path = g.TestMysqlAddr
+	database.CONFIG.Password = g.TestMysqlPwd
 	database.Instance()
 
 	code := m.Run()

@@ -21,4 +21,5 @@ example/iris/tmp
 example/iris/www
 example/iris/config
 .idea/
+.DS_Store
 

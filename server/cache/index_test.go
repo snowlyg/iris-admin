@@ -1,19 +1,18 @@
 package cache
 
 import (
-	"os"
 	"reflect"
 	"testing"
 	"time"
 
+	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
 func TestSetCacheString(t *testing.T) {
 	defer Remove()
 	defer zap_server.Remove()
-	redisPwd := os.Getenv("redisPwd")
-	CONFIG.Password = redisPwd
+	CONFIG.Password = g.TestRedisPwd
 	t.Run("test set cache string", func(t *testing.T) {
 		key := "test_set_cache"
 		want := "test_set_cache_value"
@@ -39,8 +38,7 @@ func TestSetCacheString(t *testing.T) {
 func TestSetCacheUint(t *testing.T) {
 	defer Remove()
 	defer zap_server.Remove()
-	redisPwd := os.Getenv("redisPwd")
-	CONFIG.Password = redisPwd
+	CONFIG.Password = g.TestRedisPwd
 	t.Run("test set cache uint", func(t *testing.T) {
 		key := "test_set_cache"
 		var want uint64 = 123
@@ -65,8 +63,7 @@ func TestSetCacheUint(t *testing.T) {
 func TestSetCacheBytes(t *testing.T) {
 	defer Remove()
 	defer zap_server.Remove()
-	redisPwd := os.Getenv("redisPwd")
-	CONFIG.Password = redisPwd
+	CONFIG.Password = g.TestRedisPwd
 	t.Run("test set cache bytes", func(t *testing.T) {
 		key := "test_set_cache"
 		want := []byte("test_set_cache_value")

@@ -5,6 +5,11 @@ import (
 	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
+// init
+func init() {
+	viper_server.Init(getViperConfig())
+}
+
 type WebBaseFunc interface {
 	AddWebStatic(staticAbsPath, webPrefix string, paths ...string)
 	AddUploadStatic(staticAbsPath, webPrefix string)
@@ -38,14 +43,4 @@ func StartTest(wf WebFunc) {
 	if err != nil {
 		zap_server.ZAPLOG.Error(err.Error())
 	}
-}
-
-// InitWeb
-func InitWeb() error {
-	err := viper_server.Init(getViperConfig())
-	if err != nil {
-		zap_server.ZAPLOG.Error(err.Error())
-		return err
-	}
-	return nil
 }

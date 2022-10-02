@@ -5,10 +5,11 @@ import (
 	"strings"
 
 	"github.com/snowlyg/iris-admin/server/database"
+	"github.com/snowlyg/iris-admin/server/viper_server"
 )
 
-// Init  initialize
-func Init() error {
+// Initialize  initialize
+func Initialize() error {
 	var cover string
 	if IsExist() {
 		fmt.Println("Your web config is initialized , reinitialized web will cover your web config.")
@@ -67,7 +68,7 @@ func initConfig() error {
 	if systemAddr != "" {
 		CONFIG.System.Addr = systemAddr
 	}
-	err := InitWeb()
+	err := viper_server.Init(getViperConfig())
 	if err != nil {
 		return err
 	}

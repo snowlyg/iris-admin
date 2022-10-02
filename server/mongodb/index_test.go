@@ -2,10 +2,10 @@ package mongodb
 
 import (
 	"context"
-	"os"
 	"testing"
 	"time"
 
+	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/cache"
 	_ "github.com/snowlyg/iris-admin/server/cache"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +13,7 @@ import (
 )
 
 func TestGetClient(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
@@ -36,7 +36,7 @@ func TestGetClient(t *testing.T) {
 
 }
 func TestPing(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
@@ -63,7 +63,7 @@ func TestPing(t *testing.T) {
 	})
 }
 func TestInsertOne(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
@@ -95,7 +95,7 @@ func TestInsertOne(t *testing.T) {
 	})
 }
 func TestGetCollection(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
@@ -122,7 +122,7 @@ func TestGetCollection(t *testing.T) {
 }
 
 func TestGetAggregate(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
@@ -166,7 +166,7 @@ func TestGetAggregate(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
@@ -198,7 +198,7 @@ func TestFind(t *testing.T) {
 }
 
 func TestFindOne(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
@@ -226,7 +226,7 @@ func TestFindOne(t *testing.T) {
 }
 
 func TestDeleteOne(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
@@ -255,7 +255,7 @@ func TestDeleteOne(t *testing.T) {
 }
 
 func TestUpdateOne(t *testing.T) {
-	CONFIG.Addr = os.Getenv("mongoAddr")
+	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
 	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)

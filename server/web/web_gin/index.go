@@ -40,7 +40,6 @@ type WebStatic struct {
 
 // Init
 func Init() *WebServer {
-	web.InitWeb()
 	gin.SetMode(web.CONFIG.System.Level)
 	app := gin.Default()
 	if web.CONFIG.System.Tls {

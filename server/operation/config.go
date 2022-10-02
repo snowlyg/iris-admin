@@ -1,6 +1,7 @@
 package operation
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -27,11 +28,16 @@ func IsExist() bool {
 
 // Remove remove config file
 func Remove() error {
-	err := getViperConfig().Remove()
+	return getViperConfig().Remove()
+}
+
+// Recover
+func Recover() error {
+	b, err := json.Marshal(CONFIG)
 	if err != nil {
 		return err
 	}
-	return nil
+	return getViperConfig().Recover(b)
 }
 
 // Operation

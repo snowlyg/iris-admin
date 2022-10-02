@@ -1,6 +1,7 @@
 package zap_server
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -40,11 +41,16 @@ func IsExist() bool {
 
 // Remove remove config file
 func Remove() error {
-	err := getViperConfig().Remove()
+	return getViperConfig().Remove()
+}
+
+// Recover
+func Recover() error {
+	b, err := json.Marshal(CONFIG)
 	if err != nil {
 		return err
 	}
-	return nil
+	return getViperConfig().Recover(b)
 }
 
 // getViperConfig get viper config

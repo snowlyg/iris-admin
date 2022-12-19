@@ -14,7 +14,7 @@ const (
 
 type Response struct {
 	Code int         `json:"status"`
-	Data interface{} `json:"data"`
+	Data interface{} `json:"data,omitempty"`
 	Msg  string      `json:"message"`
 }
 
@@ -63,7 +63,7 @@ func FailWithDetailed(data interface{}, message string, ctx *gin.Context) {
 }
 
 type PageResult struct {
-	List     interface{} `json:"list"`
+	List     interface{} `json:"list,omitempty"`
 	Total    int64       `json:"total"`
 	Page     int         `json:"page"`
 	PageSize int         `json:"pageSize"`

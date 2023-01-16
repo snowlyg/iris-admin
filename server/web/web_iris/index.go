@@ -9,6 +9,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/middleware/recover"
+	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_iris/middleware"
@@ -80,7 +81,9 @@ func (ws *WebServer) AddModule(parties ...Party) {
 // AddWebStatic
 func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
-	if str.InStrArray(webPrefix, webPrefixs) {
+	wp := arr.NewCheckArrayType(2)
+	wp.AddMutil(webPrefixs[0], webPrefixs[1])
+	if wp.Check(webPrefix) {
 		return
 	}
 

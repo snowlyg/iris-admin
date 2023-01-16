@@ -20,7 +20,7 @@ require (
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/mattn/go-colorable v0.1.12
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/snowlyg/helper v0.0.7
+	github.com/snowlyg/helper v0.1.33
 	github.com/spf13/viper v1.12.0
 	github.com/unrolled/secure v1.0.9
 	go.mongodb.org/mongo-driver v1.10.2

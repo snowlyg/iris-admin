@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mattn/go-colorable"
+	"github.com/snowlyg/helper/arr"
 	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/server/web"
@@ -102,7 +103,9 @@ func (ws *WebServer) GetEngine() *gin.Engine {
 // AddWebStatic
 func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
-	if str.InStrArray(webPrefix, webPrefixs) {
+	wp := arr.NewCheckArrayType(2)
+	wp.AddMutil(webPrefixs[0], webPrefixs[1])
+	if wp.Check(webPrefix) {
 		return
 	}
 

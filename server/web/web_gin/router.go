@@ -17,7 +17,7 @@ func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
 	return ws.app.Group(relativePath)
 }
 
-// InitRouter 
+// InitRouter
 func (ws *WebServer) InitRouter() error {
 	ws.app.Use(limit.MaxAllowed(50))
 	ws.app.Use(gin.Recovery())
@@ -26,7 +26,7 @@ func (ws *WebServer) InitRouter() error {
 	}
 	router := ws.app.Group("/")
 	{
-		router.Use(middleware.Cors()) 
+		router.Use(middleware.Cors())
 		// last middleware
 		router.Use(gin.Recovery())
 
@@ -37,9 +37,9 @@ func (ws *WebServer) InitRouter() error {
 	return nil
 }
 
-// GetSources 
-// - PermRoutes 
-// - NoPermRoutes 
+// GetSources
+// - PermRoutes
+// - NoPermRoutes
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 
 	methodExcepts := strings.Split(web.CONFIG.Except.Method, ";")
@@ -62,12 +62,12 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			"group":  bases[0],
 			"method": r.Method,
 		}
-
-		if !arr.InArray([]string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}, r.Method) {
+		httpStatusType := arr.NewCheckArrayType(4)
+		httpStatusType.AddMutil(http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete)
+		if !httpStatusType.Check(r.Method) {
 			noPermRoutes = append(noPermRoutes, route)
 			continue
 		}
-
 
 		if len(methodExcepts) > 0 && len(uriExcepts) > 0 && len(methodExcepts) == len(uriExcepts) {
 			for i := 0; i < len(methodExcepts); i++ {

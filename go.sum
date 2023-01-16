@@ -478,8 +478,8 @@ github.com/sirupsen/logrus v1.4.1/go.mod h1:ni0Sbl8bgC9z8RoU9G6nDWqqs/fq4eDPysMB
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
 github.com/sirupsen/logrus v1.8.1 h1:dJKuHgqk1NNQlqoA6BTlM1Wf9DOH3NBjQyu0h9+AZZE=
 github.com/sirupsen/logrus v1.8.1/go.mod h1:yWOB1SBYBC5VeMP7gHvWumXLIWorT60ONWic61uBYv0=
-github.com/snowlyg/helper v0.0.7 h1:aHpE0BrWUGn4Hu5mSuvmVHDY+I00Q5/pXIHEnKxTruc=
-github.com/snowlyg/helper v0.0.7/go.mod h1:/uAwFSceu4L27DdY0AvRhM5HMO0vhVoIXdFH3CyezZY=
+github.com/snowlyg/helper v0.1.33 h1:iKVcFvT8TAmsrGqFIMGgonmiX2JCbFq5iBkR16gJK44=
+github.com/snowlyg/helper v0.1.33/go.mod h1:/uAwFSceu4L27DdY0AvRhM5HMO0vhVoIXdFH3CyezZY=
 github.com/spaolacci/murmur3 v0.0.0-20180118202830-f09979ecbc72/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=
 github.com/spaolacci/murmur3 v1.1.0/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=
 github.com/spf13/afero v1.1.2/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B0CQ=

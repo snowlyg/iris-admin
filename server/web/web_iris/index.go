@@ -82,7 +82,9 @@ func (ws *WebServer) AddModule(parties ...Party) {
 func (ws *WebServer) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
 	webPrefixs := strings.Split(web.CONFIG.System.WebPrefix, ",")
 	wp := arr.NewCheckArrayType(2)
-	wp.AddMutil(webPrefixs[0], webPrefixs[1])
+	for _, webPrefix := range webPrefixs {
+		wp.Add(webPrefix)
+	}
 	if wp.Check(webPrefix) {
 		return
 	}

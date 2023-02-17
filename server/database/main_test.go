@@ -16,7 +16,7 @@ func TestMain(m *testing.M) {
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("database", "_", node.Generate().String())
 
-	CONFIG.Dbname = uuid
+	CONFIG.DbName = uuid
 	CONFIG.Path = g.TestMysqlAddr
 	CONFIG.Password = g.TestMysqlPwd
 

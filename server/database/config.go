@@ -13,7 +13,7 @@ import (
 var CONFIG = Mysql{
 	Path:         "127.0.0.1:3306",
 	Config:       "charset=utf8mb4&parseTime=True&loc=Local",
-	Dbname:       "iris-admin",
+	DbName:       "iris-admin",
 	Username:     "root",
 	Password:     "",
 	MaxIdleConns: 0,
@@ -25,7 +25,7 @@ var CONFIG = Mysql{
 type Mysql struct {
 	Path         string `mapstructure:"path" json:"path" yaml:"path"`
 	Config       string `mapstructure:"config" json:"config" yaml:"config"`
-	Dbname       string `mapstructure:"db-name" json:"dbname" yaml:"db-name"`
+	DbName       string `mapstructure:"db-name" json:"dbName" yaml:"db-name"`
 	Username     string `mapstructure:"username" json:"username" yaml:"username"`
 	Password     string `mapstructure:"password" json:"password" yaml:"password"`
 	MaxIdleConns int    `mapstructure:"max-idle-conns" json:"max-idle-conns" yaml:"max-idle-conns"`
@@ -36,7 +36,7 @@ type Mysql struct {
 
 // Dsn return mysql dsn
 func (m *Mysql) Dsn() string {
-	return fmt.Sprintf("%s%s?%s", m.BaseDsn(), m.Dbname, m.Config)
+	return fmt.Sprintf("%s%s?%s", m.BaseDsn(), m.DbName, m.Config)
 }
 
 // Dsn return
@@ -90,7 +90,7 @@ func getViperConfig() viper_server.ViperConfig {
 {
 	"path": "` + CONFIG.Path + `",
 	"config": "` + CONFIG.Config + `",
-	"db-name": "` + CONFIG.Dbname + `",
+	"db-name": "` + CONFIG.DbName + `",
 	"username": "` + CONFIG.Username + `",
 	"password": "` + CONFIG.Password + `",
 	"max-idle-conns": ` + mxIdleConns + `,

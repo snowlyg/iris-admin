@@ -43,10 +43,10 @@ func initConfig() error {
 	}
 
 	fmt.Println("Please input your database db-name: ")
-	fmt.Printf("Database db-name default is '%s'\n", CONFIG.Dbname)
+	fmt.Printf("Database db-name default is '%s'\n", CONFIG.DbName)
 	fmt.Scanln(&dbName)
 	if dbName != "" {
-		CONFIG.Dbname = dbName
+		CONFIG.DbName = dbName
 	}
 
 	fmt.Println("Please input your database username: ")

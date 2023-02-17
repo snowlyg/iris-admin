@@ -36,13 +36,13 @@ func Instance() *gorm.DB {
 
 // gormMysql get *gorm.DB
 func gormMysql() *gorm.DB {
-	if CONFIG.Dbname == "" {
+	if CONFIG.DbName == "" {
 		fmt.Println("config dbname is empty")
 		return nil
 	}
-	err := createTable(CONFIG.BaseDsn(), "mysql", CONFIG.Dbname)
+	err := createTable(CONFIG.BaseDsn(), "mysql", CONFIG.DbName)
 	if err != nil {
-		fmt.Printf("create database %s is failed %v \n", CONFIG.Dbname, err)
+		fmt.Printf("create database %s is failed %v \n", CONFIG.DbName, err)
 		return nil
 	}
 	mysqlConfig := mysql.Config{

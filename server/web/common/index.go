@@ -32,7 +32,7 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
 
-	database.CONFIG.Dbname = uuid
+	database.CONFIG.DbName = uuid
 	mysqlPwd := g.TestMysqlPwd
 	if mysqlPwd != "" {
 		database.CONFIG.Password = mysqlPwd
@@ -86,7 +86,7 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("iris", "_", node.Generate().String())
 
-	database.CONFIG.Dbname = uuid
+	database.CONFIG.DbName = uuid
 	mysqlPwd := g.TestMysqlPwd
 	if mysqlPwd != "" {
 		database.CONFIG.Password = mysqlPwd

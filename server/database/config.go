@@ -25,7 +25,7 @@ var CONFIG = Mysql{
 type Mysql struct {
 	Path         string `mapstructure:"path" json:"path" yaml:"path"`
 	Config       string `mapstructure:"config" json:"config" yaml:"config"`
-	DbName       string `mapstructure:"db-name" json:"dbName" yaml:"db-name"`
+	DbName       string `mapstructure:"db-name" json:"db-name" yaml:"db-name"`
 	Username     string `mapstructure:"username" json:"username" yaml:"username"`
 	Password     string `mapstructure:"password" json:"password" yaml:"password"`
 	MaxIdleConns int    `mapstructure:"max-idle-conns" json:"max-idle-conns" yaml:"max-idle-conns"`

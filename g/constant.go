@@ -6,7 +6,7 @@ const (
 	CasbinFileName = "rbac_model.conf" // casbin rule file's name
 )
 
-// Status 0:unkown,1:true,2:false
+// Status 0:unknown,1:true,2:false
 const (
 	StatusUnknown int = iota
 	StatusTrue

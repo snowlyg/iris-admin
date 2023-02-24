@@ -13,7 +13,8 @@ import (
 )
 
 var CONFIG = Web{
-	MaxSize: 1024,
+	FileMaxSize:    1024, // upload file size limit 1024M
+	SessionTimeout: 60,   // session timeout after 60 Minute
 	Except: Route{
 		Uri:    "",
 		Method: "",
@@ -38,11 +39,12 @@ var CONFIG = Web{
 }
 
 type Web struct {
-	MaxSize int64   `mapstructure:"max-size" json:"burst" yaml:"max-size"`
-	Except  Route   `mapstructure:"except" json:"except" yaml:"except"`
-	System  System  `mapstructure:"system" json:"system" yaml:"system"`
-	Limit   Limit   `mapstructure:"limit" json:"limit" yaml:"limit"`
-	Captcha Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
+	FileMaxSize    int64   `mapstructure:"file-max-size" json:"file-max-siz" yaml:"file-max-siz"`
+	SessionTimeout int64   `mapstructure:"session-timeout" json:"session-timeout" yaml:"session-timeout"`
+	Except         Route   `mapstructure:"except" json:"except" yaml:"except"`
+	System         System  `mapstructure:"system" json:"system" yaml:"system"`
+	Limit          Limit   `mapstructure:"limit" json:"limit" yaml:"limit"`
+	Captcha        Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 }
 type Route struct {
 	Uri    string `mapstructure:"uri" json:"uri" yaml:"uri"`
@@ -112,7 +114,8 @@ func Recover() error {
 
 // getViperConfig get viper config
 func getViperConfig() viper_server.ViperConfig {
-	maxSize := strconv.FormatInt(CONFIG.MaxSize, 10)
+	maxSize := strconv.FormatInt(CONFIG.FileMaxSize, 10)
+	sessionTimeout := strconv.FormatInt(CONFIG.SessionTimeout, 10)
 	keyLong := strconv.FormatInt(int64(CONFIG.Captcha.KeyLong), 10)
 	imgWidth := strconv.FormatInt(int64(CONFIG.Captcha.ImgWidth), 10)
 	imgHeight := strconv.FormatInt(int64(CONFIG.Captcha.ImgHeight), 10)
@@ -137,7 +140,8 @@ func getViperConfig() viper_server.ViperConfig {
 		//
 		Default: []byte(`
 {
-	"max-size": ` + maxSize + `,
+	"file-max-size": ` + maxSize + `,
+	"session-timeout": ` + sessionTimeout + `,
 	"except":
 		{ 
 			"uri": "` + CONFIG.Except.Uri + `",

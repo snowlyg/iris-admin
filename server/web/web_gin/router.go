@@ -20,15 +20,12 @@ func (ws *WebServer) GetRouterGroup(relativePath string) *gin.RouterGroup {
 // InitRouter
 func (ws *WebServer) InitRouter() error {
 	ws.app.Use(limit.MaxAllowed(50))
-	ws.app.Use(gin.Recovery())
 	if web.CONFIG.System.Level == "debug" {
 		pprof.Register(ws.app)
 	}
 	router := ws.app.Group("/")
 	{
 		router.Use(middleware.Cors())
-		// last middleware
-		router.Use(gin.Recovery())
 
 		router.GET("/v0/version", func(ctx *gin.Context) {
 			ctx.String(http.StatusOK, "IRIS-ADMIN is running!!!")

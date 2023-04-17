@@ -58,7 +58,7 @@ func Init() *WebServer {
 		close(idleConnsClosed)
 	})
 
-	web.Verfiy()
+	web.SetDefaultAddrAndTimeFormat()
 
 	return &WebServer{
 		app:             app,

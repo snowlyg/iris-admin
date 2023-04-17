@@ -51,7 +51,7 @@ func Init() *WebServer {
 
 	gin.DefaultWriter = colorable.NewColorableStdout()
 
-	web.Verfiy()
+	web.SetDefaultAddrAndTimeFormat()
 
 	return &WebServer{
 		app:        app,

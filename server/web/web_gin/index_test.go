@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/snowlyg/iris-admin/server/database"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/zap_server"
 )
@@ -13,6 +14,7 @@ import (
 func TestStart(t *testing.T) {
 	defer zap_server.Remove()
 	defer web.Remove()
+	defer database.Remove()
 	web.CONFIG.System.Addr = "127.0.0.1:18088"
 	go func() {
 		web.Start(Init())

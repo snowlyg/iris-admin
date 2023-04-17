@@ -15,6 +15,13 @@ import (
 var CONFIG = Web{
 	FileMaxSize:    1024, // upload file size limit 1024M
 	SessionTimeout: 60,   // session timeout after 60 Minute
+	Cors: Cors{
+		AccessOrigin:        "*",
+		AccessHeaders:       "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id",
+		AccessMethods:       "POST,GET,OPTIONS,DELETE,PUT",
+		AccessExposeHeaders: "Content-Length,Access-Control-Allow-Origin,Access-Control-Allow-Headers,Content-Type",
+		AccessCredentials:   "true",
+	},
 	Except: Route{
 		Uri:    "",
 		Method: "",
@@ -39,12 +46,21 @@ var CONFIG = Web{
 }
 
 type Web struct {
-	FileMaxSize    int64   `mapstructure:"file-max-size" json:"file-max-siz" yaml:"file-max-siz"`
+	FileMaxSize    int64   `mapstructure:"file-max-size" json:"file-max-size" yaml:"file-max-siz"`
 	SessionTimeout int64   `mapstructure:"session-timeout" json:"session-timeout" yaml:"session-timeout"`
 	Except         Route   `mapstructure:"except" json:"except" yaml:"except"`
 	System         System  `mapstructure:"system" json:"system" yaml:"system"`
 	Limit          Limit   `mapstructure:"limit" json:"limit" yaml:"limit"`
 	Captcha        Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
+	Cors           Cors    `mapstructure:"cors" json:"cors" yaml:"cors"`
+}
+
+type Cors struct {
+	AccessOrigin        string `mapstructure:"access-origin" json:"burst" access-origin:"access-origin"`
+	AccessHeaders       string `mapstructure:"access-headers" json:"access-headers" yaml:"access-headers"`
+	AccessMethods       string `mapstructure:"access-methods" json:"access-methods" yaml:"access-methods"`
+	AccessExposeHeaders string `mapstructure:"access-expose-headers" json:"access-expose-headers" yaml:"access-expose-headers"`
+	AccessCredentials   string `mapstructure:"access-credentials" json:"access-credentials" yaml:"access-credentials"`
 }
 type Route struct {
 	Uri    string `mapstructure:"uri" json:"uri" yaml:"uri"`
@@ -73,8 +89,8 @@ type System struct {
 	TimeFormat   string `mapstructure:"time-format" json:"time-format" yaml:"time-format"`
 }
 
-// Verfiy
-func Verfiy() {
+// SetDefaultAddrAndTimeFormat
+func SetDefaultAddrAndTimeFormat() {
 	if CONFIG.System.Addr == "" {
 		CONFIG.System.Addr = "127.0.0.1:8085"
 	}
@@ -146,6 +162,14 @@ func getViperConfig() viper_server.ViperConfig {
 		{ 
 			"uri": "` + CONFIG.Except.Uri + `",
 			"method": "` + CONFIG.Except.Method + `"
+		},
+	"cors":
+		{ 
+			"access-origin": "` + CONFIG.Cors.AccessOrigin + `",
+			"access-headers": "` + CONFIG.Cors.AccessHeaders + `",
+			"access-methods": "` + CONFIG.Cors.AccessMethods + `",
+			"access-expose-headers": "` + CONFIG.Cors.AccessExposeHeaders + `",
+			"access-credentials": "` + CONFIG.Cors.AccessCredentials + `"
 		},
 	"captcha":
 		{

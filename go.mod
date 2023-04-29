@@ -23,7 +23,7 @@ require (
 	github.com/snowlyg/helper v0.1.33
 	github.com/spf13/viper v1.12.0
 	github.com/unrolled/secure v1.0.9
-	go.mongodb.org/mongo-driver v1.10.2
+	go.mongodb.org/mongo-driver v1.11.4
 	go.uber.org/zap v1.19.1
 	gorm.io/driver/mysql v1.1.2
 	gorm.io/gorm v1.21.15

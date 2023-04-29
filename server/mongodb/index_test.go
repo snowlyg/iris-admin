@@ -1,9 +1,7 @@
 package mongodb
 
 import (
-	"context"
 	"testing"
-	"time"
 
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/cache"
@@ -16,10 +14,8 @@ func TestGetClient(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb getClient", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -28,7 +24,7 @@ func TestGetClient(t *testing.T) {
 			t.Error("mongodb clinet is nil")
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
@@ -39,10 +35,8 @@ func TestPing(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb ping", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -51,11 +45,11 @@ func TestPing(t *testing.T) {
 			t.Error("mongodb clinet is nil")
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
-		err = client.Ping(ctx)
+		err = client.Ping()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -66,10 +60,8 @@ func TestInsertOne(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb InsertOne", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -78,11 +70,11 @@ func TestInsertOne(t *testing.T) {
 			t.Error("mongodb clinet is nil")
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
-		res, err := client.InsertOne(ctx, "testing", bson.D{
+		res, err := client.InsertOne("testing", bson.D{
 			{Key: "name", Value: "pi"}, {Key: "value", Value: 3.14159},
 		})
 		if err != nil {
@@ -98,10 +90,8 @@ func TestGetCollection(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb GetCollection", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -110,7 +100,7 @@ func TestGetCollection(t *testing.T) {
 			t.Error("mongodb clinet is nil")
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
@@ -125,10 +115,8 @@ func TestGetAggregate(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb Aggregate", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -138,7 +126,7 @@ func TestGetAggregate(t *testing.T) {
 			return
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
@@ -154,7 +142,7 @@ func TestGetAggregate(t *testing.T) {
 				}},
 			},
 		}
-		res, err := client.Aggregate(ctx, "testing", pipeline)
+		res, err := client.Aggregate("testing", pipeline)
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -169,10 +157,8 @@ func TestFind(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb Find", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -182,11 +168,11 @@ func TestFind(t *testing.T) {
 			return
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
-		res, err := client.Find(ctx, "testing", bson.D{{"end", nil}})
+		res, err := client.Find("testing", bson.D{{"end", nil}})
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -201,10 +187,8 @@ func TestFindOne(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb FindOne", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -214,11 +198,11 @@ func TestFindOne(t *testing.T) {
 			return
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
-		res := client.FindOne(ctx, "testing", bson.D{{"end", nil}})
+		res := client.FindOne("testing", bson.D{{"end", nil}})
 		if res == nil {
 			t.Error("Collection return empty")
 		}
@@ -229,10 +213,8 @@ func TestDeleteOne(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb DeleteOne", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -242,11 +224,11 @@ func TestDeleteOne(t *testing.T) {
 			return
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
-		err = client.DeleteOne(ctx, "testing", bson.D{{"end", nil}})
+		err = client.DeleteOne("testing", bson.D{{"end", nil}})
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -258,10 +240,8 @@ func TestUpdateOne(t *testing.T) {
 	CONFIG.Addr = g.TestMongoAddr
 	defer Remove()
 	defer cache.Remove()
-	ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
-	defer cancel()
 	t.Run("test mongodb UpdateOne", func(t *testing.T) {
-		client, err := GetClient(ctx)
+		client, err := GetClient()
 		if err != nil {
 			t.Error(err.Error())
 			return
@@ -271,11 +251,11 @@ func TestUpdateOne(t *testing.T) {
 			return
 		}
 		defer func() {
-			if err = client.Disconnect(ctx); err != nil {
+			if err = client.Disconnect(); err != nil {
 				t.Error(err)
 			}
 		}()
-		id, err := client.InsertOne(ctx, "testing", bson.D{
+		id, err := client.InsertOne("testing", bson.D{
 			{Key: "name", Value: "pi"}, {Key: "value", Value: 3.14159},
 		})
 		if err != nil {
@@ -288,7 +268,7 @@ func TestUpdateOne(t *testing.T) {
 				{Key: "value", Value: 3.1415926},
 			}},
 		}
-		res, err := client.UpdateOne(ctx, "testing", bson.D{{"_id", id}}, b)
+		res, err := client.UpdateOne("testing", bson.D{{"_id", id}}, b)
 		if err != nil {
 			t.Error(err.Error())
 			return

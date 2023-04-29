@@ -13,10 +13,9 @@ type Client struct {
 	mc *mongo.Client
 }
 
-// ctx, cancel := context.WithTimeout(context.Background(), CONFIG.Timeout*time.Second)
 // GetClient
-func GetClient(ctx context.Context) (*Client, error) {
-	mc, err := mongo.Connect(ctx, options.Client().ApplyURI(CONFIG.GetApplyURI()))
+func GetClient() (*Client, error) {
+	mc, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(CONFIG.GetApplyURI()))
 	if err != nil {
 		return nil, err
 	}
@@ -25,8 +24,8 @@ func GetClient(ctx context.Context) (*Client, error) {
 }
 
 // Ping
-func (c *Client) Ping(ctx context.Context) error {
-	return c.mc.Ping(ctx, readpref.Primary())
+func (c *Client) Ping() error {
+	return c.mc.Ping(context.TODO(), readpref.Primary())
 }
 
 // getCollection
@@ -35,39 +34,39 @@ func (c *Client) getCollection(name string) *mongo.Collection {
 }
 
 // Aggregate
-func (c *Client) Aggregate(ctx context.Context, name string, groupStage mongo.Pipeline) ([]bson.M, error) {
+func (c *Client) Aggregate(name string, groupStage mongo.Pipeline) ([]bson.M, error) {
 	// pass the stage into a pipeline
 	// pass the pipeline as the second paramter in the Aggregate() method
-	cursor, err := c.getCollection(name).Aggregate(ctx, groupStage)
+	cursor, err := c.getCollection(name).Aggregate(context.TODO(), groupStage)
 	if err != nil {
 		return nil, err
 	}
 	// display the results
 	results := []bson.M{}
-	if err = cursor.All(ctx, &results); err != nil {
+	if err = cursor.All(context.TODO(), &results); err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
+	defer cursor.Close(context.TODO())
 	return results, nil
 }
 
 // Find
-func (c *Client) Find(ctx context.Context, name string, filters ...interface{}) ([]bson.M, error) {
+func (c *Client) Find(name string, filters ...interface{}) ([]bson.M, error) {
 	var cursor *mongo.Cursor
 	var err error
 	if len(filters) == 0 {
-		cursor, err = c.getCollection(name).Find(ctx, bson.D{})
+		cursor, err = c.getCollection(name).Find(context.TODO(), bson.D{})
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		cursor, err = c.getCollection(name).Find(ctx, filters[0])
+		cursor, err = c.getCollection(name).Find(context.TODO(), filters[0])
 		if err != nil {
 			return nil, err
 		}
 	}
 	var results []bson.M
-	for cursor.Next(ctx) {
+	for cursor.Next(context.TODO()) {
 		b := bson.M{}
 		err := cursor.Decode(b)
 		if err != nil {
@@ -79,18 +78,18 @@ func (c *Client) Find(ctx context.Context, name string, filters ...interface{}) 
 }
 
 // FindOne
-func (c *Client) FindOne(ctx context.Context, name string, filter interface{}) *mongo.SingleResult {
-	return c.getCollection(name).FindOne(ctx, filter)
+func (c *Client) FindOne(name string, filter interface{}) *mongo.SingleResult {
+	return c.getCollection(name).FindOne(context.TODO(), filter)
 }
 
 // Disconnect
-func (c *Client) Disconnect(ctx context.Context) error {
-	return c.mc.Disconnect(ctx)
+func (c *Client) Disconnect() error {
+	return c.mc.Disconnect(context.TODO())
 }
 
 // InsertOne
-func (c *Client) InsertOne(ctx context.Context, name string, filter interface{}) (interface{}, error) {
-	cur, err := c.getCollection(name).InsertOne(ctx, filter)
+func (c *Client) InsertOne(name string, filter interface{}) (interface{}, error) {
+	cur, err := c.getCollection(name).InsertOne(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +97,8 @@ func (c *Client) InsertOne(ctx context.Context, name string, filter interface{})
 }
 
 // DeleteOne
-func (c *Client) DeleteOne(ctx context.Context, name string, filter interface{}) error {
-	_, err := c.getCollection(name).DeleteOne(ctx, filter)
+func (c *Client) DeleteOne(name string, filter interface{}) error {
+	_, err := c.getCollection(name).DeleteOne(context.TODO(), filter)
 	if err != nil {
 		return err
 	}
@@ -107,6 +106,6 @@ func (c *Client) DeleteOne(ctx context.Context, name string, filter interface{})
 }
 
 // UpdateByID
-func (c *Client) UpdateOne(ctx context.Context, name string, filter, update interface{}) (*mongo.UpdateResult, error) {
-	return c.getCollection(name).UpdateOne(ctx, filter, update)
+func (c *Client) UpdateOne(name string, filter, update interface{}) (*mongo.UpdateResult, error) {
+	return c.getCollection(name).UpdateOne(context.TODO(), filter, update)
 }

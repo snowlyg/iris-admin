@@ -26,6 +26,10 @@ var CONFIG = Web{
 		Uri:    "",
 		Method: "",
 	},
+	Menu: Route{
+		Uri:    "",
+		Method: "",
+	},
 	System: System{
 		Tls:        false,
 		Level:      "debug",
@@ -49,6 +53,7 @@ type Web struct {
 	FileMaxSize    int64   `mapstructure:"file-max-size" json:"file-max-size" yaml:"file-max-siz"`
 	SessionTimeout int64   `mapstructure:"session-timeout" json:"session-timeout" yaml:"session-timeout"`
 	Except         Route   `mapstructure:"except" json:"except" yaml:"except"`
+	Menu           Route   `mapstructure:"menu" json:"menu" yaml:"menu"`
 	System         System  `mapstructure:"system" json:"system" yaml:"system"`
 	Limit          Limit   `mapstructure:"limit" json:"limit" yaml:"limit"`
 	Captcha        Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
@@ -162,6 +167,11 @@ func getViperConfig() viper_server.ViperConfig {
 		{ 
 			"uri": "` + CONFIG.Except.Uri + `",
 			"method": "` + CONFIG.Except.Method + `"
+		},
+	"menu":
+		{ 
+			"uri": "` + CONFIG.Menu.Uri + `",
+			"method": "` + CONFIG.Menu.Method + `"
 		},
 	"cors":
 		{ 

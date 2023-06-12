@@ -41,6 +41,8 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 
 	methodExcepts := strings.Split(web.CONFIG.Except.Method, ";")
 	uriExcepts := strings.Split(web.CONFIG.Except.Uri, ";")
+	methodMenus := strings.Split(web.CONFIG.Menu.Method, ";")
+	uriMenus := strings.Split(web.CONFIG.Menu.Uri, ";")
 
 	routeLen := len(ws.app.Routes())
 	permRoutes := make([]map[string]string, 0, routeLen)
@@ -52,13 +54,21 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			continue
 		}
 		path := filepath.ToSlash(filepath.Clean(r.Path))
-
 		route := map[string]string{
-			"path":   path,
-			"desc":   bases[1],
-			"group":  bases[0],
-			"method": r.Method,
+			"path":    path,
+			"desc":    bases[1],
+			"group":   bases[0],
+			"method":  r.Method,
+			"is_menu": "0",
 		}
+		if len(methodMenus) > 0 && len(uriMenus) > 0 && len(methodMenus) == len(uriMenus) {
+			for i := 0; i < len(methodMenus); i++ {
+				if strings.EqualFold(r.Method, strings.ToLower(methodMenus[i])) && strings.EqualFold(path, strings.ToLower(uriMenus[i])) {
+					route["is_menu"] = "1"
+				}
+			}
+		}
+
 		httpStatusType := arr.NewCheckArrayType(4)
 		httpStatusType.AddMutil(http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete)
 		if !httpStatusType.Check(r.Method) {
@@ -74,7 +84,6 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 				}
 			}
 		}
-
 		permRoutes = append(permRoutes, route)
 	}
 	return permRoutes, noPermRoutes

@@ -58,6 +58,10 @@ func (ws *WebServer) InitRouter() error {
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 	methodExcepts := strings.Split(web.CONFIG.Except.Method, ";")
 	uris := strings.Split(web.CONFIG.Except.Uri, ";")
+
+	methodMenus := strings.Split(web.CONFIG.Menu.Method, ";")
+	uriMenus := strings.Split(web.CONFIG.Menu.Uri, ";")
+
 	routeLen := len(ws.app.GetRoutes())
 	permRoutes := make([]map[string]string, 0, routeLen)
 	noPermRoutes := make([]map[string]string, 0, routeLen)
@@ -68,6 +72,14 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 			"name": r.Name,
 			"act":  r.Method,
 		}
+		if len(methodMenus) > 0 && len(uriMenus) > 0 && len(methodMenus) == len(uriMenus) {
+			for i := 0; i < len(methodMenus); i++ {
+				if strings.EqualFold(r.Method, strings.ToLower(methodMenus[i])) && strings.EqualFold(r.Path, strings.ToLower(uriMenus[i])) {
+					route["is_menu"] = "1"
+				}
+			}
+		}
+		
 		httpStatusType := arr.NewCheckArrayType(4)
 		httpStatusType.AddMutil(http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete)
 		if !httpStatusType.Check(r.Method) {

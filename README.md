@@ -588,7 +588,11 @@ func Delete(TestClient *httptest.Client, id uint) {
 
 #### 打赏
 > 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
-![](https://mjj.today/i/sHB65J)
-[https://mjj.today/i/s9aKTk](https://mjj.today/i/sHB86I)
+
+<div>
+	<img src="https://ice.frostsky.com/2023/09/19/469c2727cb1a4f9cc0d819a18059c7ab.jpeg" alt="469c2727cb1a4f9cc0d819a18059c7ab.jpeg" border="0" width=150 />
+<!-- 	<img src="https://ice.frostsky.com/2023/09/19/e9939a7e92f32337871feb22e06bd05a.jpeg" alt="e9939a7e92f32337871feb22e06bd05a.jpeg" border="0" width=150 />	 -->
+</div>
+
 - [为爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)

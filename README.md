@@ -588,5 +588,7 @@ func Delete(TestClient *httptest.Client, id uint) {
 
 #### 打赏
 > 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
+![](https://mjj.today/i/sHB65J)
+[https://mjj.today/i/s9aKTk](https://mjj.today/i/sHB86I)
 - [为爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)

@@ -20,7 +20,8 @@
 - [IRIS V12 中文文档](https://github.com/snowlyg/iris/wiki)
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
 
-[![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Join the chat at https://gitter.im/iris-go-tenancy/iris-admin](https://badges.gitter.im/iris-go-tenancy/iris-admin.svg)](https://gitter.im/iris-go-tenancy/iris-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<a href="https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/iris-go-tenancy/community.svg" alt="e9939a7e92f32337871feb22e06bd05a.jpeg" border="0" width=120 /></a>
+<a href="https://discord.gg/pytCGMSBgA"> <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="e9939a7e92f32337871feb22e06bd05a.jpeg" border="0" width=30 /></a>
 
 #### iris 学习记录分享
 
@@ -591,7 +592,7 @@ func Delete(TestClient *httptest.Client, id uint) {
 
 <div>
 	<img src="https://ice.frostsky.com/2023/09/19/469c2727cb1a4f9cc0d819a18059c7ab.jpeg" alt="469c2727cb1a4f9cc0d819a18059c7ab.jpeg" border="0" width=150 />
-<!-- 	<img src="https://ice.frostsky.com/2023/09/19/e9939a7e92f32337871feb22e06bd05a.jpeg" alt="e9939a7e92f32337871feb22e06bd05a.jpeg" border="0" width=150 />	 -->
+ 	<img src="https://ice.frostsky.com/2023/09/19/e9939a7e92f32337871feb22e06bd05a.jpeg" alt="e9939a7e92f32337871feb22e06bd05a.jpeg" border="0" width=150 />
 </div>
 
 - [为爱发电](https://afdian.net/@snowlyg/plan)

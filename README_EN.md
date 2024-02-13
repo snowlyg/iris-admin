@@ -6,12 +6,14 @@
 [![go report](https://goreportcard.com/badge/github.com/snowlyg/iris-admin)](https://goreportcard.com/badge/github.com/snowlyg/iris-admin)
 [![Build Status](https://codecov.io/gh/snowlyg/iris-admin/branch/master/graph/badge.svg)](https://codecov.io/gh/snowlyg/iris-admin)
 
-[简体中文](./README.md)  | English
+[简体中文](./README.md) | English
 
 #### Project url
 
 [GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin)
-****
+
+---
+
 > This project just for learning golang, welcome to give your suggestions!
 
 #### Documentation
@@ -21,11 +23,12 @@
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
 
 [![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Join the chat at https://gitter.im/iris-go-tenancy/iris-admin](https://badges.gitter.im/iris-go-tenancy/iris-admin.svg)](https://gitter.im/iris-go-tenancy/iris-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 #### BLOG
 
-- [REST API with iris-go web framework](https://blog.snowlyg.com/iris-go-api-1/)
+- [REST API with iris-go web framework](https://snowlyg.github.io/iris-go-api-1/)
 
-- [How to user iris-go with casbin](https://blog.snowlyg.com/iris-go-api-2/)
+- [How to user iris-go with casbin](https://snowlyg.github.io/iris-go-api-2/)
 
 ---
 
@@ -44,7 +47,7 @@
 - [viper_server]
   - The plugin configuration is initialized and generate a local configuration file.
   - Use [github.com/spf13/viper](https://github.com/spf13/viper) third party package.
-  - Need implement  `func getViperConfig() viper_server.ViperConfig` function.
+  - Need implement `func getViperConfig() viper_server.ViperConfig` function.
 
 ```go
 package cache
@@ -98,7 +101,7 @@ pool-size: ` + poolSize),
   - Plugin logging.
   - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
   - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
-  
+
 ```go
   zap_server.ZAPLOG.Info("Registration data table error", zap.Any("err", err))
   zap_server.ZAPLOG.Debug("Registration data table error", zap.Any("err", err))
@@ -110,7 +113,7 @@ pool-size: ` + poolSize),
   - database plugin [only support mysql now].
   - Use [gorm.io/gorm](https://github.com/go-gorm/gorm) third party package.
   - Through single instance `database.Instance()` operating data.
-  
+
 ```go
   database.Instance().Model(&User{}).Where("name = ?","name").Find(&user)
   ...
@@ -118,13 +121,13 @@ pool-size: ` + poolSize),
 
 - [casbin]
   - Access control management plugin.
-  - Use [casbin](github.com/casbin/casbin/v2 ) third party package.
+  - Use [casbin](github.com/casbin/casbin/v2) third party package.
   - Through use `casbin.Instance()` middleware on route,implement interface authority authentication
 
 ```go
-	_, err := casbin.Instance().AddRoleForUser("1", "999") 
-	uids, err := casbin.Instance().GetRolesForUser("1") 
-	_, err := casbin.Instance().RemoveFilteredPolicy(v, p...) 
+	_, err := casbin.Instance().AddRoleForUser("1", "999")
+	uids, err := casbin.Instance().GetRolesForUser("1")
+	_, err := casbin.Instance().RemoveFilteredPolicy(v, p...)
   ...
 ```
 
@@ -141,6 +144,7 @@ pool-size: ` + poolSize),
 ```
 
 - [operation]
+
   - System operation log plugin.
   - Through use `index.Use(operation.OperationRecord())` middleware on route , realize the interface to automatically generate operation logs.
 
@@ -148,18 +152,19 @@ pool-size: ` + poolSize),
   - Job server
   - Use [robfig/cron](https://github.com/robfig/cron) third party package.
   - Through single instance `cron_server.Instance()` to add job or func.
-  
+
 ```go
   cron_server.CronInstance().AddJob("@every 1m",YourJob)
-  // or 
+  // or
   cron_server.CronInstance().AddFunc("@every 1m",YourFunc)
   ...
 ```
 
 - [web]
+
   - web_iris [Go-Iris](https://github.com/kataras/iris) web framework plugin.
   - web_gin [Go-gin web](https://github.com/gin-gonic/gin) web framework plugin.
-  - web framework plugin need implement `type WebFunc interface {}`  interface.
+  - web framework plugin need implement `type WebFunc interface {}` interface.
 
 -
 
@@ -175,7 +180,7 @@ type WebBaseFunc interface {
 // - GetTestClient test client
 // - GetTestLogin test for login
 // - AddWebStatic add web static path
-// - AddUploadStatic add upload static path 
+// - AddUploadStatic add upload static path
 // - Run start
 type WebFunc interface {
   WebBaseFunc
@@ -212,8 +217,8 @@ func main() {
 ##### Custom migrate tools
 
 - Use `gormigrate` third party package. Tt's helpful for database migrate and program development.
-- Detail is see  [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go).
-  
+- Detail is see [iris-admin-cmd](https://github.com/snowlyg/iris-admin-example/blob/main/iris/cmd/main.go).
+
 ---
 
 - Add main.go file.
@@ -234,7 +239,7 @@ func main() {
 
 #### Run project
 
-- When you first run this cmd `go run main.go` , you can see some config files in  the `config` directory,
+- When you first run this cmd `go run main.go` , you can see some config files in the `config` directory,
 - and `rbac_model.conf` will be created in your project root directory.
 
 ```sh
@@ -286,7 +291,7 @@ system:
 
 - Default,you must build vue to the `dist` directory.
 - Naturally you can set this config key `web-path` to change the default directory.
-  
+
 ```go
 package main
 
@@ -304,7 +309,7 @@ func main() {
 ```
 
 - Front-end page reference/borrowing:
- *notice: The front-end only realizes preview effect simply*
+  _notice: The front-end only realizes preview effect simply_
 - [gin-vue-admin](https://github.com/flipped-aurora/gin-vue-admin/tree/master/web)
 - [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin)
 
@@ -320,17 +325,18 @@ func main() {
 #### Unit test and documentation
 
 - Before start unit tests, you need to set two system environment variables `mysqlPwd` and `mysqlAddr`,that will be used when running the test instance。
-- [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) package the unit test used, it's  simple package base on [httpexpect/v2](https://github.com/gavv/httpexpect).
+- [helper/tests](https://github.com/snowlyg/helper/tree/main/tests) package the unit test used, it's simple package base on [httpexpect/v2](https://github.com/gavv/httpexpect).
 - [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/iris/perm/tests)
 - [example for unit test](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)
 
 Before create a http api unit test , you need create a base test file named `main_test.go` , this file have some unit test step ：
-***Suggest use docker mysql, otherwise if the test fails, there will be a lot of test data left behind***
+**_Suggest use docker mysql, otherwise if the test fails, there will be a lot of test data left behind_**
+
 - 1.create database before test start and delete database when test finish.
 - 2.create tables and seed test data at once time.
 - 3.`PartyFunc` and `SeedFunc` use to custom someting for your test model.
-内容如下所示:
-***main_test.go***
+  内容如下所示:
+  **_main_test.go_**
 
 ```go
 package test
@@ -359,7 +365,7 @@ func TestMain(m *testing.M) {
 
 ```
 
-***index_test.go***
+**_index_test.go_**
 
 ```go
 package test
@@ -577,8 +583,6 @@ func Delete(TestClient *httptest.Client, id uint) {
 ## ☕️ Buy me a coffee
 
 > Please be sure to leave your name, GitHub account or other social media accounts when you donate by the following means so that I can add it to the list of donors as a token of my appreciation.
+
 - [为爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)
-
-
-

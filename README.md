@@ -10,7 +10,7 @@
 
 #### 项目地址
 
-[GITHUB](https://github.com/snowlyg/iris-admin) | [GITEE](https://gitee.com/snowlyg/iris-admin)
+[GITHUB](https://github.com/snowlyg/iris-admin)
 
 > 简单项目仅供学习，欢迎指点！
 
@@ -25,9 +25,9 @@
 
 #### iris 学习记录分享
 
-- [Iris-go 项目登陆 API 构建细节实现过程](https://blog.snowlyg.com/iris-go-api-1/)
+- [Iris-go 项目登陆 API 构建细节实现过程](https://snowlyg.github.io/iris-go-api-1/)
 
-- [iris + casbin 从陌生到学会使用的过程](https://blog.snowlyg.com/iris-go-api-2/)
+- [iris + casbin 从陌生到学会使用的过程](https://snowlyg.github.io/iris-go-api-2/)
 
 ---
 
@@ -40,7 +40,6 @@
 ```
 
 #### 项目介绍
-
 
 ##### 项目由多个插件构成,每个插件有不同的功能
 
@@ -70,7 +69,7 @@ type Redis struct {
   PoolSize int    `mapstructure:"pool-size" json:"poolSize" yaml:"pool-size"`
 }
 
-// getViperConfig get viper config 
+// getViperConfig get viper config
 func getViperConfig() viper_server.ViperConfig {
   configName := "redis"
   db := fmt.Sprintf("%d", CONFIG.DB)
@@ -87,7 +86,7 @@ func getViperConfig() viper_server.ViperConfig {
       vi.SetConfigName(configName)
       return nil
     },
-    //  
+    //
     Default: []byte(`
 db: ` + db + `
 addr: "` + CONFIG.Addr + `"
@@ -121,13 +120,13 @@ pool-size: ` + poolSize),
 
 - [casbin]
   - 权限控制管理插件
-  - 使用 [casbin](github.com/casbin/casbin/v2 ) 第三方包实现
+  - 使用 [casbin](github.com/casbin/casbin/v2) 第三方包实现
   - 并通过 `casbin.Instance()` 使用中间件,实现接口权限认证
 
 ```go
-	_, err := casbin.Instance().AddRoleForUser("1", "999") 
-	uids, err := casbin.Instance().GetRolesForUser("1") 
-	_, err := casbin.Instance().RemoveFilteredPolicy(v, p...) 
+	_, err := casbin.Instance().AddRoleForUser("1", "999")
+	uids, err := casbin.Instance().GetRolesForUser("1")
+	_, err := casbin.Instance().RemoveFilteredPolicy(v, p...)
   ...
 ```
 
@@ -144,9 +143,9 @@ pool-size: ` + poolSize),
 ```
 
 - [operation]
+
   - 系统操作日志插件
   - 并通过 `index.Use(operation.OperationRecord())` 使用中间件,实现接口自动生成操作日志
-
 
 - [cron_server]
   - 任务插件
@@ -155,7 +154,7 @@ pool-size: ` + poolSize),
 
 ```go
   cron_server.CronInstance().AddJob("@every 1m",YourJob)
-  // 或者 
+  // 或者
   cron_server.CronInstance().AddFunc("@every 1m",YourFunc)
   ...
 ```
@@ -163,7 +162,7 @@ pool-size: ` + poolSize),
 - [web]
   - web_iris [Go-Iris](https://github.com/kataras/iris) web 框架插件
   - web_gin [Go-gin web](https://github.com/gin-gonic/gin) web 框架插件
-  - web 框架插件需要实现 `type WebFunc interface {}`  接口
+  - web 框架插件需要实现 `type WebFunc interface {}` 接口
 
 ```go
 type WebBaseFunc interface {
@@ -183,7 +182,7 @@ type WebFunc interface {
   WebBaseFunc
 }
 ```
-  
+
 - [mongodb]
   - mongodb
   - 使用 [mongodb](https://www.mongodb.com/) 第三方包实现.
@@ -248,7 +247,7 @@ go run main.go
 #### 添加模块
 
 - 如果需要权鉴管理，可以使用 [iris-admin-rbac](https://github.com/snowlyg/iris-admin-rbac) 项目快速集成权鉴功能
-- 可以使用 AddModule() 增加其他 admin模块
+- 可以使用 AddModule() 增加其他 admin 模块
 
 ```go
 package main
@@ -333,13 +332,14 @@ func main() {
 - [接口单元测试例子](https://github.com/snowlyg/iris-admin-rbac/tree/main/gin/authority/test)
 
 接口单元测试需要新建 `main_test.go` 文件,该文件定义了单元测试的一些通用基础步骤：
-***建议采用docker部署mysql,否则测试错误失败后会有大量测试数据遗留***
+**_建议采用 docker 部署 mysql,否则测试错误失败后会有大量测试数据遗留_**
+
 - 1.测试数据库的数据库的创建和摧毁
 - 2.数据表的新建和表数据的填充
 - 3. `PartyFunc` , `SeedFunc` 方法需要根据对应的测试模块自定义
-内容如下所示:
+     内容如下所示:
 
-***main_test.go***
+**_main_test.go_**
 
 ```go
 package test
@@ -369,7 +369,7 @@ func TestMain(m *testing.M) {
 
 ```
 
-***index_test.go***
+**_index_test.go_**
 
 ```go
 package test
@@ -588,6 +588,7 @@ func Delete(TestClient *httptest.Client, id uint) {
 <a href="https://www.jetbrains.com/?from=iris-admin" target="_blank"><img src="https://raw.githubusercontent.com/snowlyg/illustrations/master/jetbrains/jetbrains-variant-4.png" width="230" align="middle"/></a>
 
 #### 打赏
+
 > 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
 
 <div>

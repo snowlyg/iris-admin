@@ -24,9 +24,9 @@
 [![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Join the chat at https://gitter.im/iris-go-tenancy/iris-admin](https://badges.gitter.im/iris-go-tenancy/iris-admin.svg)](https://gitter.im/iris-go-tenancy/iris-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 #### BLOG
 
-- [REST API with iris-go web framework](https://blog.snowlyg.com/iris-go-api-1/)
+- [REST API with iris-go web framework](https://snowlyg.github.io/iris-go-api-1/)
 
-- [How to user iris-go with casbin](https://blog.snowlyg.com/iris-go-api-2/)
+- [How to user iris-go with casbin](https://snowlyg.github.io/iris-go-api-2/)
 
 ---
 

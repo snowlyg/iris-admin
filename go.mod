@@ -56,13 +56,13 @@ require (
 	github.com/iris-contrib/jade v1.1.4 // indirect
 	github.com/iris-contrib/schema v0.0.6 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
-	github.com/jackc/pgconn v1.8.0 // indirect
+	github.com/jackc/pgconn v1.14.3 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
-	github.com/jackc/pgproto3/v2 v2.0.6 // indirect
-	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
-	github.com/jackc/pgtype v1.6.2 // indirect
-	github.com/jackc/pgx/v4 v4.10.1 // indirect
+	github.com/jackc/pgproto3/v2 v2.3.3 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
+	github.com/jackc/pgtype v1.14.0 // indirect
+	github.com/jackc/pgx/v4 v4.18.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
 	github.com/jonboulle/clockwork v0.2.2 // indirect
@@ -109,13 +109,12 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
-	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
+	golang.org/x/crypto v0.20.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220608164250-635b8c9b7f68 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
-	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.66.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

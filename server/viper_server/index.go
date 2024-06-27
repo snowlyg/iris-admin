@@ -18,6 +18,7 @@ var (
 type ViperConfig struct {
 	Debug     bool
 	Directory string
+	AbPath    string
 	Name      string
 	Type      string
 	Default   []byte
@@ -26,7 +27,10 @@ type ViperConfig struct {
 
 // getConfigFilePath
 func (vc ViperConfig) getConfigFilePath() string {
-	return filepath.Join(dir.GetCurrentAbPath(), vc.Directory, str.Join(vc.Name, ".", vc.Type))
+	if vc.AbPath == "" {
+		vc.AbPath = dir.GetCurrentAbPath()
+	}
+	return filepath.Join(vc.AbPath, vc.Directory, str.Join(vc.Name, ".", vc.Type))
 }
 
 // getConfigFileDir

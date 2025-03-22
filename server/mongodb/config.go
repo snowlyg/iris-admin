@@ -39,12 +39,12 @@ func IsExist() bool {
 
 // Remove remove config file
 func Remove() error {
-	return getViperConfig().Remove()
+	return getViperConfig().RemoveFile()
 }
 
 // Recover
 func Recover() error {
-	b, err := json.Marshal(CONFIG)
+	b, err := json.MarshalIndent(CONFIG, "", "\t")
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,6 @@ func Recover() error {
 func getViperConfig() viper_server.ViperConfig {
 	configName := "mongo"
 	return viper_server.ViperConfig{
-		Debug:     true,
 		Directory: g.ConfigDir,
 		Name:      configName,
 		Type:      g.ConfigType,

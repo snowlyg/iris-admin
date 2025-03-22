@@ -37,5 +37,5 @@ type Oplog struct {
 	Body         string        `json:"body" form:"body" gorm:"type:longtext;column:body;comment:body"`
 	Resp         string        `json:"resp" form:"resp" gorm:"type:longtext;column:resp;comment:resp"`
 	UserID       uint          `json:"userId" form:"userId" gorm:"column:user_id;comment:user_id"`
-	TenancyId    uint          `json:"tenancyId" form:"tenancyId" gorm:"column:tenancy_id;comment:tenancyId"`
+	IsSuperAdmin bool          `json:"isSuperAdmin" form:"isSuperAdmin" gorm:"column:tenancy_id;comment:isSuperAdmin"`
 }

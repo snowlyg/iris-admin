@@ -25,7 +25,6 @@ func getCasbinPath() string {
 // - initialize casbin's config file as rbac_model.conf name
 func init() {
 	casbinPath := getCasbinPath()
-	fmt.Printf("casbin rbac_model.conf's path: %s\n\n", casbinPath)
 	if !dir.IsExist(casbinPath) { // casbin rbac_model.conf file
 		var rbacModelConf = []byte(`[request_definition]
 	r = sub, obj, act

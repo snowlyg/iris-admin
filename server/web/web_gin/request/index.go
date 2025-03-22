@@ -10,7 +10,7 @@ type PageInfo struct {
 
 // Find by id structure
 type IdBinding struct {
-	Id uint `json:"id" uri:"id" form:"id" binding:"required"`
+	Id uint `json:"id" uri:"id" binding:"required"`
 }
 
 type IdsBinding struct {

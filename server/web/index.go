@@ -1,8 +1,10 @@
 package web
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/snowlyg/iris-admin/server/viper_server"
-	"github.com/snowlyg/iris-admin/server/zap_server"
 )
 
 // init
@@ -28,19 +30,18 @@ type WebFunc interface {
 }
 
 // Start
-func Start(wf WebFunc) {
-	err := wf.InitRouter()
-	if err != nil {
-		zap_server.ZAPLOG.Error(err.Error())
-		return
+func Start(wf WebFunc) error {
+	if err := wf.InitRouter(); err != nil {
+		return fmt.Errorf("init router fail:%s", err.Error())
 	}
 	wf.Run()
+	return nil
 }
 
 // StartTest
 func StartTest(wf WebFunc) {
 	err := wf.InitRouter()
 	if err != nil {
-		zap_server.ZAPLOG.Error(err.Error())
+		log.Printf("start test fail:%s\n", err.Error())
 	}
 }

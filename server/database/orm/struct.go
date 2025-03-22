@@ -18,9 +18,9 @@ type ErrMsg struct {
 }
 
 var (
-	ErrParamValidate      = errors.New("参数验证失败")
-	ErrPaginateParam      = errors.New("分页查询参数缺失")
-	ErrUnSupportFramework = errors.New("不支持的框架")
+	ErrParamValidate      = errors.New("param unvalidate")
+	ErrPaginateParam      = errors.New("paginate param unvalidate")
+	ErrUnSupportFramework = errors.New("unsupport framework")
 )
 
 // Model

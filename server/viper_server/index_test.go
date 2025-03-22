@@ -50,7 +50,7 @@ func TestViperInit(t *testing.T) {
 "log-in-console": true}`),
 	}
 
-	defer config.Remove()
+	defer config.RemoveFile()
 
 	want := Zap{
 		Level:         "info",

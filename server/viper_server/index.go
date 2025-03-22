@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/snowlyg/helper/dir"
@@ -16,7 +17,6 @@ var (
 )
 
 type ViperConfig struct {
-	Debug     bool
 	Directory string
 	Name      string
 	Type      string
@@ -42,9 +42,14 @@ func (vc ViperConfig) IsFileExist() bool {
 	return dir.IsExist(vc.getConfigFilePath())
 }
 
-// Remove remove config file
-func (vc ViperConfig) Remove() error {
+// RemoveFile remove config file
+func (vc ViperConfig) RemoveFile() error {
 	return dir.Remove(vc.getConfigFilePath())
+}
+
+// RemoveDir remove config dir
+func (vc ViperConfig) RemoveDir() error {
+	return os.RemoveAll(filepath.Dir(vc.getConfigFilePath()))
 }
 
 // Recover recover config file content
@@ -55,7 +60,6 @@ func (vc ViperConfig) Recover(b []byte) error {
 
 // Init
 func Init(vc ViperConfig) error {
-
 	if vc.Name == "" {
 		return ErrEmptyName
 	}
@@ -67,23 +71,14 @@ func Init(vc ViperConfig) error {
 	vc.Directory = vc.getConfigFileDir()
 
 	filePath := vc.getConfigFilePath()
-	if vc.Debug {
-		fmt.Printf("\nthis config file's path is [%s]\n", filePath)
-	}
 
 	vi := viper.New()
-	if vc.Debug {
-		fmt.Printf("this config file's type is [%s]\n", vc.Type)
-	}
 	vi.SetConfigName(vc.Name)
 	vi.SetConfigType(vc.Type)
 	vi.AddConfigPath(vc.Directory)
 
 	isExist := dir.IsExist(filePath)
 	if !isExist {
-		if vc.Debug {
-			fmt.Printf("this config [%s] is not exist\n", filePath)
-		}
 		if vc.Directory != "./" {
 			err := dir.InsureDir(filepath.Dir(filePath))
 			if err != nil {
@@ -93,9 +88,6 @@ func Init(vc ViperConfig) error {
 
 		// ReadConfig
 		if err := vi.ReadConfig(bytes.NewBuffer(vc.Default)); err != nil {
-			if vc.Debug {
-				fmt.Println(string(vc.Default))
-			}
 			return fmt.Errorf("read default config fail : %w ", err)
 		}
 
@@ -105,19 +97,14 @@ func Init(vc ViperConfig) error {
 		}
 
 	} else {
-		if vc.Debug {
-			fmt.Printf("this config file [%s] is existed\n", filePath)
-		}
 		vi.SetConfigFile(filePath)
-		err := vi.ReadInConfig()
-		if err != nil {
+		if err := vi.ReadInConfig(); err != nil {
 			return fmt.Errorf("read config fail: %w ", err)
 		}
 	}
 
-	err := vc.Watch(vi)
-	if err != nil {
-		return err
+	if err := vc.Watch(vi); err != nil {
+		return fmt.Errorf("watch config fail: %w ", err)
 	}
 
 	return nil

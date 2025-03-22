@@ -38,7 +38,6 @@ func (ws *WebServer) InitRouter() error {
 // - PermRoutes
 // - NoPermRoutes
 func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
-
 	methodExcepts := strings.Split(web.CONFIG.Except.Method, ";")
 	uriExcepts := strings.Split(web.CONFIG.Except.Uri, ";")
 	methodMenus := strings.Split(web.CONFIG.Menu.Method, ";")
@@ -46,7 +45,7 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 
 	routeLen := len(ws.app.Routes())
 	permRoutes := make([]map[string]string, 0, routeLen)
-	noPermRoutes := make([]map[string]string, 0, routeLen)
+	otherMethodTypes := make([]map[string]string, 0, routeLen)
 
 	for _, r := range ws.app.Routes() {
 		bases := strings.Split(filepath.Base(r.Handler), ".")
@@ -72,19 +71,19 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 		httpStatusType := arr.NewCheckArrayType(4)
 		httpStatusType.AddMutil(http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete)
 		if !httpStatusType.Check(r.Method) {
-			noPermRoutes = append(noPermRoutes, route)
+			otherMethodTypes = append(otherMethodTypes, route)
 			continue
 		}
 
 		if len(methodExcepts) > 0 && len(uriExcepts) > 0 && len(methodExcepts) == len(uriExcepts) {
 			for i := 0; i < len(methodExcepts); i++ {
 				if strings.EqualFold(r.Method, strings.ToLower(methodExcepts[i])) && strings.EqualFold(path, strings.ToLower(uriExcepts[i])) {
-					noPermRoutes = append(noPermRoutes, route)
+					otherMethodTypes = append(otherMethodTypes, route)
 					continue
 				}
 			}
 		}
 		permRoutes = append(permRoutes, route)
 	}
-	return permRoutes, noPermRoutes
+	return permRoutes, otherMethodTypes
 }

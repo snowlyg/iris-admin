@@ -2,48 +2,57 @@ package common
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/migration"
-	"github.com/snowlyg/iris-admin/server/casbin"
+	"github.com/snowlyg/iris-admin/server/cache"
 	"github.com/snowlyg/iris-admin/server/database"
-	"github.com/snowlyg/iris-admin/server/operation"
 	"github.com/snowlyg/iris-admin/server/web"
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 	"github.com/snowlyg/iris-admin/server/zap_server"
-	"go.uber.org/zap"
 )
 
 // BeforeTestMainGin
 func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
-	fmt.Println("+++++ TEST BEGAIN +++++")
 	zap_server.CONFIG.LogInConsole = true
-	zap_server.Recover()
+	if err := zap_server.Recover(); err != nil {
+		log.Printf("zap recover fail:%s\n", err.Error())
+	}
 
 	dbType := g.TestDbType
 	if dbType != "" {
 		web.CONFIG.System.DbType = dbType
 	}
-	web.Recover()
+	if dbType == "redis" {
+		if err := cache.Recover(); err != nil {
+			log.Printf("cache recover fail:%s\n", err.Error())
+		}
+	}
+	if err := web.Recover(); err != nil {
+		log.Printf("web recover fail:%s\n", err.Error())
+	}
 
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("gin", "_", node.Generate().String())
 
 	database.CONFIG.DbName = uuid
-	mysqlPwd := g.TestMysqlPwd
-	if mysqlPwd != "" {
-		database.CONFIG.Password = mysqlPwd
+	if user := g.TestMysqlName; user != "" {
+		database.CONFIG.Username = user
 	}
-	mysqlAddr := g.TestMysqlAddr
-	if mysqlAddr != "" {
-		database.CONFIG.Path = mysqlAddr
+	if pwd := g.TestMysqlPwd; pwd != "" {
+		database.CONFIG.Password = pwd
+	}
+	if addr := g.TestMysqlAddr; addr != "" {
+		database.CONFIG.Path = addr
 	}
 	database.CONFIG.LogMode = true
-
-	database.Recover()
+	if err := database.Recover(); err != nil {
+		log.Printf("databse recover fail:%s\n", err.Error())
+	}
 
 	if database.Instance() == nil {
 		fmt.Println("database instance is nil")
@@ -55,7 +64,6 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 	web.StartTest(wi)
 
 	mc := migration.New()
-	fmt.Println("++++++ add data to database ++++++")
 	seed(wi, mc)
 	err := mc.Migrate()
 	if err != nil {
@@ -73,7 +81,6 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 
 // BeforeTestMainIris
 func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_iris.WebServer, mc *migration.MigrationCmd)) (string, *web_iris.WebServer) {
-	fmt.Println("+++++ TEST BEGAIN +++++")
 	zap_server.CONFIG.LogInConsole = true
 	zap_server.Recover()
 
@@ -81,26 +88,31 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 	if dbType != "" {
 		web.CONFIG.System.DbType = dbType
 	}
-	web.Recover()
+	if err := web.Recover(); err != nil {
+		log.Printf("web config recover fail %s\n", err.Error())
+	}
 
 	node, _ := snowflake.NewNode(1)
 	uuid := str.Join("iris", "_", node.Generate().String())
 
 	database.CONFIG.DbName = uuid
-	mysqlPwd := g.TestMysqlPwd
-	if mysqlPwd != "" {
-		database.CONFIG.Password = mysqlPwd
+	if user := g.TestMysqlName; user != "" {
+		database.CONFIG.Username = user
 	}
-	mysqlAddr := g.TestMysqlAddr
-	if mysqlAddr != "" {
-		database.CONFIG.Path = mysqlAddr
+	if pwd := g.TestMysqlPwd; pwd != "" {
+		database.CONFIG.Password = pwd
+	}
+	if addr := g.TestMysqlAddr; addr != "" {
+		database.CONFIG.Path = addr
 	}
 	database.CONFIG.LogMode = true
 
-	database.Recover()
+	if err := database.Recover(); err != nil {
+		log.Printf("database config recover fail %s\n", err.Error())
+	}
 
 	if database.Instance() == nil {
-		fmt.Println("database instance is nil")
+		log.Println("database instance is nil")
 		return uuid, nil
 	}
 
@@ -110,17 +122,13 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 
 	mc := migration.New()
 
-	fmt.Println("++++++ add datas to database ++++++")
-
 	seed(wi, mc)
-	err := mc.Migrate()
-	if err != nil {
-		fmt.Printf("migrate fail: [%s]", err.Error())
+	if err := mc.Migrate(); err != nil {
+		log.Printf("migrate fail: [%s]\n", err.Error())
 		return uuid, nil
 	}
-	err = mc.Seed()
-	if err != nil {
-		fmt.Printf("seed fail: [%s]", err.Error())
+	if err := mc.Seed(); err != nil {
+		log.Printf("seed fail: [%s]\n", err.Error())
 		return uuid, nil
 	}
 
@@ -128,26 +136,20 @@ func BeforeTestMainIris(party func(wi *web_iris.WebServer), seed func(wi *web_ir
 }
 
 func AfterTestMain(uuid string, isDelDb bool) {
-	defer fmt.Println("++++++++ AFTER END ++++++++")
 	if isDelDb {
-		err := database.DorpDB(database.CONFIG.BaseDsn(), "mysql", uuid)
-		if err != nil {
-			zap_server.ZAPLOG.Error("delete database fail", zap.String("uuid", uuid), zap.String("err", err.Error()))
+		dsn := database.CONFIG.BaseDsn()
+		if err := database.DorpDB(dsn, "mysql", uuid); err != nil {
+			log.Printf("drop table(%s) on dsn(%s) fail %s\n", uuid, dsn, err.Error())
 		}
 	}
-	fmt.Println("++++++++ DELETE DATABASE ++++++++")
 
-	db, err := database.Instance().DB()
-	if err != nil {
-		zap_server.ZAPLOG.Error(str.Join("get database instance fail:", err.Error()))
-	}
-	if db != nil {
+	if db, _ := database.Instance().DB(); db != nil {
 		db.Close()
 	}
 
-	defer zap_server.Remove()
-	defer operation.Remove()
-	defer casbin.Remove()
-	defer web.Remove()
-	defer database.Remove()
+	// defer zap_server.Remove()
+	// defer operation.Remove()
+	// defer casbin.Remove()
+	// defer web.Remove()
+	// defer database.Remove()
 }

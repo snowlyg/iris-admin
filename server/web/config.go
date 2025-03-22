@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/viper_server"
@@ -13,8 +14,8 @@ import (
 )
 
 var CONFIG = Web{
-	FileMaxSize:    1024, // upload file size limit 1024M
-	SessionTimeout: 60,   // session timeout after 60 Minute
+	FileMaxSize:    1024,   // upload file size limit 1024M
+	SessionTimeout: 172800, // session timeout after 4 months
 	Cors: Cors{
 		AccessOrigin:        "*",
 		AccessHeaders:       "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id",
@@ -32,8 +33,9 @@ var CONFIG = Web{
 	},
 	System: System{
 		Tls:        false,
+		GinMode:    gin.ReleaseMode,
 		Level:      "debug",
-		Addr:       "127.0.0.1:8085",
+		Addr:       "127.0.0.1:80",
 		DbType:     "mysql",
 		TimeFormat: "2006-01-02 15:04:05",
 	},
@@ -43,7 +45,7 @@ var CONFIG = Web{
 		Burst:   5,
 	},
 	Captcha: Captcha{
-		KeyLong:   4,
+		KeyLong:   0,
 		ImgWidth:  240,
 		ImgHeight: 80,
 	},
@@ -85,7 +87,8 @@ type Limit struct {
 }
 
 type System struct {
-	Tls          bool   `mapstructure:"tls" json:"tls" yaml:"tls"`       // debug,release,test
+	Tls          bool   `mapstructure:"tls" json:"tls" yaml:"tls"`
+	GinMode      string `mapstructure:"gin-mode" json:"gin-mode" yaml:"gin-mode"`
 	Level        string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
 	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
 	StaticPrefix string `mapstructure:"static-prefix" json:"static-prefix" yaml:"static-prefix"`
@@ -121,14 +124,14 @@ func IsExist() bool {
 
 // Remove remove config file
 func Remove() error {
-	return getViperConfig().Remove()
+	return getViperConfig().RemoveFile()
 }
 
 // Recover
 func Recover() error {
-	b, err := json.Marshal(CONFIG)
+	b, err := json.MarshalIndent(CONFIG, "", "\t")
 	if err != nil {
-		return err
+		return fmt.Errorf("iris-admin recover config faild:%w", err)
 	}
 	return getViperConfig().Recover(b)
 }
@@ -146,7 +149,6 @@ func getViperConfig() viper_server.ViperConfig {
 	tls := strconv.FormatBool(CONFIG.System.Tls)
 	configName := "web"
 	return viper_server.ViperConfig{
-		Debug:     true,
 		Directory: g.ConfigDir,
 		Name:      configName,
 		Type:      g.ConfigType,
@@ -197,6 +199,7 @@ func getViperConfig() viper_server.ViperConfig {
 		{
 			"tls": ` + tls + `,
 			"level": "` + CONFIG.System.Level + `",
+			"gin-mode": "` + CONFIG.System.GinMode + `",
 			"addr": "` + CONFIG.System.Addr + `",
 			"db-type": "` + CONFIG.System.DbType + `",
 			"time-format": "` + CONFIG.System.TimeFormat + `"

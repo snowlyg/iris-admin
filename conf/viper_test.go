@@ -17,7 +17,7 @@ func TestNewViperConfFail(t *testing.T) {
 	if err := NewViperConf(nil); !errors.Is(err, e.ErrViperConfInvalid) {
 		t.Errorf("new viper conf with nil return err not confi invalid:%v", err)
 	}
-	if err := NewViperConf(&ViperConf{}); !errors.Is(err, e.ErrEmptyName) {
+	if err := NewViperConf(&ViperConf{}); !errors.Is(err, e.ErrConfigNameEmpty) {
 		t.Errorf("new viper conf with nil return err not emtpy name:%v", err)
 	}
 }

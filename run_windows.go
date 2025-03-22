@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func initServer(address string, router *gin.Engine) server {
+func run(address string, router *gin.Engine) serve {
 	return &http.Server{
 		Addr:           address,
 		Handler:        router,

@@ -86,7 +86,7 @@ func NewViperConf(vc *ViperConf) error {
 		return e.ErrViperConfInvalid
 	}
 	if vc.name == "" {
-		return e.ErrEmptyName
+		return e.ErrConfigNameEmpty
 	}
 	if vc.t == "" {
 		vc.t = "yaml"

@@ -1,5 +1,5 @@
 package admin
 
-type server interface {
+type serve interface {
 	ListenAndServe() error
 }

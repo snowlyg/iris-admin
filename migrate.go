@@ -7,6 +7,24 @@ import (
 	"gorm.io/gorm"
 )
 
+type SeedFunc interface {
+	Init() (err error)
+}
+
+// Seed exec seed funcs
+func Seed(SeedFunctions ...SeedFunc) error {
+	if len(SeedFunctions) == 0 {
+		return nil
+	}
+	for _, v := range SeedFunctions {
+		err := v.Init()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // Migrate migration cmd
 // MigrationCollection migration collections
 // SeedCollection data seed collection

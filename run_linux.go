@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func initServer(address string, router *gin.Engine) server {
+func run(address string, router *gin.Engine) serve {
 	s := endless.NewServer(address, router)
 	s.ReadHeaderTimeout = 10 * time.Millisecond
 	s.WriteTimeout = 10 * time.Second

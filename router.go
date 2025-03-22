@@ -12,16 +12,16 @@ import (
 )
 
 func (ws *WebServe) GetRouterGroup(relativePath string) *gin.RouterGroup {
-	return ws.app.Group(relativePath)
+	return ws.engine.Group(relativePath)
 }
 
 // InitRouter
 func (ws *WebServe) InitRouter() error {
-	ws.app.Use(limit.MaxAllowed(50))
+	ws.engine.Use(limit.MaxAllowed(50))
 	if ws.conf.System.Level == "debug" {
-		pprof.Register(ws.app)
+		pprof.Register(ws.engine)
 	}
-	router := ws.app.Group("/")
+	router := ws.engine.Group("/")
 	{
 		// router.Use(Cors())
 
@@ -41,11 +41,11 @@ func (ws *WebServe) GetSources() ([]map[string]string, []map[string]string) {
 	methodMenus := strings.Split(ws.conf.Menu.Method, ";")
 	uriMenus := strings.Split(ws.conf.Menu.Uri, ";")
 
-	routeLen := len(ws.app.Routes())
+	routeLen := len(ws.engine.Routes())
 	permRoutes := make([]map[string]string, 0, routeLen)
 	otherMethodTypes := make([]map[string]string, 0, routeLen)
 
-	for _, r := range ws.app.Routes() {
+	for _, r := range ws.engine.Routes() {
 		bases := strings.Split(filepath.Base(r.Handler), ".")
 		if len(bases) != 2 {
 			continue

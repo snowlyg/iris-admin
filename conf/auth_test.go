@@ -12,11 +12,11 @@ func TestNewRbacModel(t *testing.T) {
 		t.Errorf("rbac model path:%s empty", conf.getPath())
 	}
 	conf.newRbacModel()
-	if !dir.IsExist(rbacName) {
+	if !dir.IsExist(RbacName) {
 		t.Error("rbac_model.conf not exist after conf not init and new rbac model")
 	}
 	conf.RemoveRbacModel()
-	if dir.IsExist(rbacName) {
+	if dir.IsExist(RbacName) {
 		t.Error("rbac_model.conf exist after conf not init and new rbac model")
 	}
 }

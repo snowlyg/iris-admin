@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func initServer(address string, router *gin.Engine) server {
+func run(address string, router *gin.Engine) serve {
 	s := endless.NewServer(address, router)
 	s.BeforeBegin = func(add string) {
 		fmt.Printf("Actual pid is %d\n", syscall.Getpid())

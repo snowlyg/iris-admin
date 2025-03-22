@@ -1,51 +1,58 @@
 package conf
 
-// func TestIsExist(t *testing.T) {
-// 	t.Run("test web config IsExist function", func(t *testing.T) {
-// 		if !IsExist() {
-// 			t.Errorf("config's files is not exist.")
-// 		}
-// 	})
+import "testing"
 
-// 	t.Run("Test Remove function", func(t *testing.T) {
-// 		if err := Remove(); err != nil {
-// 			t.Error(err)
-// 		}
-// 		if IsExist() {
-// 			t.Errorf("config's files remove is fail.")
-// 		}
-// 	})
-// }
+func TestSetDefaultAddrAndTimeFormat(t *testing.T) {
+	dc := &Conf{}
+	addr := ""
+	if dc.System.Addr != addr {
+		t.Errorf("config system addr want '%s' but get '%s'", addr, dc.System.Addr)
+	}
+	timeFormat := ""
+	if dc.System.TimeFormat != timeFormat {
+		t.Errorf("config system time format want '%s' but get '%s'", timeFormat, dc.System.TimeFormat)
+	}
+	dc.SetDefaultAddrAndTimeFormat()
+	addr = "127.0.0.1:80"
+	if dc.System.Addr != addr {
+		t.Errorf("config system addr want '%s' but get '%s'", addr, dc.System.Addr)
+	}
+	timeFormat = "2006-01-02 15:04:05"
+	if dc.System.TimeFormat != timeFormat {
+		t.Errorf("config system time format want '%s' but get '%s'", timeFormat, dc.System.TimeFormat)
+	}
 
-// func TestSetDefaultAddrAndTimeFormat(t *testing.T) {
-// 	CONFIG.System.Addr = ""
-// 	CONFIG.System.TimeFormat = ""
-// 	t.Run("test set defualt addr and time format", func(t *testing.T) {
-// 		setDefaultAddrAndTimeFormat()
-// 		if CONFIG.System.Addr != "127.0.0.1:80" {
-// 			t.Errorf("applyURI want %s but get %s", "127.0.0.1:80", CONFIG.System.Addr)
-// 		}
-// 		if CONFIG.System.TimeFormat != "2006-01-02 15:04:05" {
-// 			t.Errorf("applyURI want %s but get %s", "2006-01-02 15:04:05", CONFIG.System.TimeFormat)
-// 		}
-// 	})
-// }
+	c := NewConf()
+	if c.IsExist() {
+		t.Error("config exist before init")
+	}
+	addr = "127.0.0.1:80"
+	if c.System.Addr != addr {
+		t.Errorf("config system addr want '%s' but get '%s'", addr, c.System.Addr)
+	}
+	timeFormat = "2006-01-02 15:04:05"
+	if c.System.TimeFormat != timeFormat {
+		t.Errorf("config system time format want '%s' but get '%s'", timeFormat, c.System.TimeFormat)
+	}
 
-// func TestToStaticUrl(t *testing.T) {
-// 	setDefaultAddrAndTimeFormat()
-// 	CONFIG.System.StaticPrefix = "/admin"
-// 	t.Run("test to static url with tls", func(t *testing.T) {
-// 		CONFIG.System.Tls = true
-// 		staticPath := toStaticUrl("/uploads/123.png")
-// 		if staticPath != "https://127.0.0.1:80/admin/uploads/123.png" {
-// 			t.Errorf("applyURI want %s but get %s", "https://127.0.0.1:80/admin/uploads/123.png", staticPath)
-// 		}
-// 	})
-// 	t.Run("test to static url with tls", func(t *testing.T) {
-// 		CONFIG.System.Tls = false
-// 		staticPath := toStaticUrl("/uploads/123.png")
-// 		if staticPath != "http://127.0.0.1:80/admin/uploads/123.png" {
-// 			t.Errorf("applyURI want %s but get %s", "https://127.0.0.1:80/admin/uploads/123.png", staticPath)
-// 		}
-// 	})
-// }
+	if err := c.Recover(); err != nil {
+		t.Error(err.Error())
+	}
+	defer func() {
+		if err := c.getViperConfig().RemoveDir(); err != nil {
+			t.Error(err.Error())
+		}
+		c.RemoveRbacModel()
+	}()
+	if !c.IsExist() {
+		t.Error("config not exist after recover")
+	}
+	c.RemoveFile()
+	if c.IsExist() {
+		t.Error("config exist after remove")
+	}
+	wantUri := "mongodb://localhost:27017"
+	if c.Mongo.GetApplyURI() != wantUri {
+		t.Errorf("config mongodb uri want '%s' but get '%s'", wantUri, c.Mongo.GetApplyURI())
+	}
+}

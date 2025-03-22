@@ -174,13 +174,14 @@ func (conf *Conf) IsExist() bool {
 	return conf.getViperConfig().IsExist()
 }
 
-// Remove remove config file
-func (conf *Conf) Remove() error {
+// RemoveFile remove config file
+func (conf *Conf) RemoveFile() error {
 	return conf.getViperConfig().RemoveFile()
 }
 
 // Recover
 func (conf *Conf) Recover() error {
+	conf.newRbacModel()
 	b, err := json.MarshalIndent(conf, "", "\t")
 	if err != nil {
 		return fmt.Errorf("iris-admin recover config faild:%w", err)
@@ -190,8 +191,6 @@ func (conf *Conf) Recover() error {
 
 // getViperConfig get viper config
 func (conf *Conf) getViperConfig() *ViperConf {
-	conf.newRbacModel()
-
 	maxSize := strconv.FormatInt(conf.FileMaxSize, 10)
 	sessionTimeout := strconv.FormatInt(conf.SessionTimeout, 10)
 	keyLong := strconv.FormatInt(int64(conf.Captcha.KeyLong), 10)

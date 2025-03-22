@@ -8,9 +8,14 @@ import (
 	"github.com/snowlyg/helper/dir"
 )
 
+const rbacName = "rbac_model.conf"
+
 // Remove del config file
-func (conf *Conf) RemoveRabcModel() error {
+func (conf *Conf) RemoveRbacModel() error {
 	p := conf.getPath()
+	if filepath.Base(p) != rbacName {
+		return nil
+	}
 	if dir.IsExist(p) && dir.IsFile(p) {
 		return dir.Remove(p)
 	}
@@ -19,11 +24,11 @@ func (conf *Conf) RemoveRabcModel() error {
 
 // getPath
 func (conf *Conf) getPath() string {
-	return filepath.Join(dir.GetCurrentAbPath(), "rbac_model.conf")
+	return filepath.Join(dir.GetCurrentAbPath(), rbacName)
 }
 
-// newRabcModel initialize casbin's config file as rbac_model.conf name
-func (conf *Conf) newRabcModel() {
+// newRbacModel initialize casbin's config file as rbac_model.conf name
+func (conf *Conf) newRbacModel() {
 	if dir.IsExist(conf.getPath()) {
 		// casbin rbac_model.conf file
 		log.Printf("rbac_model.conf file is existed.")

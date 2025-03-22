@@ -4,17 +4,6 @@ import (
 	"strings"
 )
 
-var CONFIG = Operate{
-	Except: Route{
-		Uri:    "api/v1/upload;api/v1/upload",
-		Method: "post;put",
-	},
-	Include: Route{
-		Uri:    "api/v1/menus",
-		Method: "get",
-	},
-}
-
 // Operate
 // Except set which routers don't generate system log, use ';' to separate.
 // Include set which routers need to generate system log, use ';' to separate.
@@ -22,11 +11,6 @@ type Operate struct {
 	Except  Route `mapstructure:"except" json:"except" yaml:"except"`
 	Include Route `mapstructure:"include" json:"include" yaml:"include"`
 }
-
-// type Route struct {
-// 	Uri    string `mapstructure:"uri" json:"uri" yaml:"uri"`
-// 	Method string `mapstructure:"method" json:"method" yaml:"method"`
-// }
 
 // GetExcept return routers which need to excepted
 func (op Operate) GetExcept() ([]string, []string) {

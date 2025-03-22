@@ -142,6 +142,13 @@ type System struct {
 	TimeFormat   string `mapstructure:"time-format" json:"time-format" yaml:"time-format"`
 }
 
+type Redis struct {
+	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
+	Addr     string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	Password string `mapstructure:"password" json:"password" yaml:"password"`
+	PoolSize int    `mapstructure:"pool-size" json:"pool-size" yaml:"pool-size"`
+}
+
 // SetDefaultAddrAndTimeFormat
 func (conf *Conf) SetDefaultAddrAndTimeFormat() {
 	if conf.System.Addr == "" {
@@ -164,7 +171,7 @@ func (conf *Conf) SetDefaultAddrAndTimeFormat() {
 
 // IsExist config file is exist
 func (conf *Conf) IsExist() bool {
-	return conf.getViperConfig().IsFileExist()
+	return conf.getViperConfig().IsExist()
 }
 
 // Remove remove config file
@@ -182,8 +189,8 @@ func (conf *Conf) Recover() error {
 }
 
 // getViperConfig get viper config
-func (conf *Conf) getViperConfig() ViperConf {
-	conf.newRabcModel()
+func (conf *Conf) getViperConfig() *ViperConf {
+	conf.newRbacModel()
 
 	maxSize := strconv.FormatInt(conf.FileMaxSize, 10)
 	sessionTimeout := strconv.FormatInt(conf.SessionTimeout, 10)
@@ -200,10 +207,10 @@ func (conf *Conf) getViperConfig() ViperConf {
 	logMode := fmt.Sprintf("%t", conf.Mysql.LogMode)
 
 	configName := "web"
-	return ViperConf{
-		directory: ConfigDir,
-		name:      configName,
-		t:         ConfigType,
+	return &ViperConf{
+		dir:  ConfigDir,
+		name: configName,
+		t:    ConfigType,
 		watch: func(vi *viper.Viper) error {
 			if err := vi.Unmarshal(&conf); err != nil {
 				return fmt.Errorf("get Unarshal error: %v", err)

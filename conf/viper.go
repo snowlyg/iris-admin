@@ -13,49 +13,78 @@ import (
 )
 
 type ViperConf struct {
-	directory string
-	name      string
-	t         string
-	Default   []byte
-	watch     func(*viper.Viper) error
+	dir     string
+	name    string
+	t       string
+	Default []byte
+	watch   func(*viper.Viper) error
 }
 
-// getConfigFilePath
-func (vc ViperConf) getConfigFilePath() string {
-	return filepath.Join(dir.GetCurrentAbPath(), vc.directory, str.Join(vc.name, ".", vc.t))
-}
-
-// getConfigFileDir
-func (vc ViperConf) getConfigFileDir() string {
-	if vc.directory == "" {
-		return "config"
+// getConfPath
+func (vc *ViperConf) getConfPath() string {
+	if vc == nil {
+		return ""
 	}
-	return vc.directory
+	return filepath.Join(dir.GetCurrentAbPath(), vc.Dir(), str.Join(vc.name, ".", vc.t))
 }
 
-// IsFileExist
-func (vc ViperConf) IsFileExist() bool {
-	return dir.IsExist(vc.getConfigFilePath())
+// Dir
+func (vc *ViperConf) Dir() string {
+	if vc.dir == "" {
+		vc.dir = "config"
+		return vc.dir
+	}
+	return vc.dir
+}
+
+// IsExist
+func (vc *ViperConf) IsExist() bool {
+	if vc == nil {
+		return false
+	}
+	return dir.IsExist(vc.getConfPath())
 }
 
 // RemoveFile remove config file
-func (vc ViperConf) RemoveFile() error {
-	return dir.Remove(vc.getConfigFilePath())
+func (vc *ViperConf) RemoveFile() error {
+	if vc == nil {
+		return e.ErrViperConfInvalid
+	}
+	d := filepath.Dir(vc.getConfPath())
+	b := filepath.Base(d)
+	if b != vc.Dir() {
+		return nil
+	}
+	return dir.Remove(vc.getConfPath())
 }
 
 // RemoveDir remove config dir
-func (vc ViperConf) RemoveDir() error {
-	return os.RemoveAll(filepath.Dir(vc.getConfigFilePath()))
+func (vc *ViperConf) RemoveDir() error {
+	if vc == nil {
+		return e.ErrViperConfInvalid
+	}
+	d := filepath.Dir(vc.getConfPath())
+	b := filepath.Base(d)
+	if b != vc.Dir() {
+		return fmt.Errorf("%s viper conf base '%s' want but get '%s'", d, b, vc.Dir())
+	}
+	return os.RemoveAll(d)
 }
 
-// Recover recover config file content
-func (vc ViperConf) Recover(b []byte) error {
-	_, err := dir.WriteBytes(vc.getConfigFilePath(), b)
+// Recover
+func (vc *ViperConf) Recover(b []byte) error {
+	if vc == nil {
+		return e.ErrViperConfInvalid
+	}
+	_, err := dir.WriteBytes(vc.getConfPath(), b)
 	return err
 }
 
 // NewViperConf
-func NewViperConf(vc ViperConf) error {
+func NewViperConf(vc *ViperConf) error {
+	if vc == nil {
+		return e.ErrViperConfInvalid
+	}
 	if vc.name == "" {
 		return e.ErrEmptyName
 	}
@@ -63,18 +92,17 @@ func NewViperConf(vc ViperConf) error {
 		vc.t = "yaml"
 	}
 
-	vc.directory = vc.getConfigFileDir()
-	filePath := vc.getConfigFilePath()
+	vc.dir = vc.Dir()
+	filePath := vc.getConfPath()
 
 	vi := viper.New()
 	vi.SetConfigName(vc.name)
 	vi.SetConfigType(vc.t)
-	vi.AddConfigPath(vc.directory)
+	vi.AddConfigPath(vc.dir)
 	isExist := dir.IsExist(filePath)
 	if !isExist {
-		if vc.directory != "./" {
-			err := dir.InsureDir(filepath.Dir(filePath))
-			if err != nil {
+		if vc.Dir() != "./" {
+			if err := dir.InsureDir(filepath.Dir(filePath)); err != nil {
 				return fmt.Errorf("create dir %s fail : %v", filePath, err)
 			}
 		}

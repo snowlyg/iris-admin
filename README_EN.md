@@ -54,7 +54,7 @@ import (
 
   "github.com/fsnotify/fsnotify"
   "github.com/snowlyg/iris-admin/g"
-  "github.com/snowlyg/iris-admin/server/viper_server"
+  "github.com/snowlyg/iris-admin/viper_server"
   "github.com/spf13/viper"
 )
 
@@ -94,17 +94,6 @@ pool-size: ` + poolSize),
 }
 ```
 
-- [zap_server]
-  - Plugin logging.
-  - Use [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) third party package.
-  - Through global variables `zap_server.ZAPLOG` record the log of the corresponding level.
-  
-```go
-  zap_server.ZAPLOG.Info("Registration data table error", zap.Any("err", err))
-  zap_server.ZAPLOG.Debug("Registration data table error", zap.Any("err", err))
-  zap_server.ZAPLOG.Error("Registration data table error", zap.Any("err", err))
-  ...
-```
 
 - [database]
   - database plugin [only support mysql now].
@@ -155,12 +144,6 @@ pool-size: ` + poolSize),
   cron_server.CronInstance().AddFunc("@every 1m",YourFunc)
   ...
 ```
-
-- [web]
-  - web_iris [Go-Iris](https://github.com/kataras/iris) web framework plugin.
-  - web_gin [Go-gin web](https://github.com/gin-gonic/gin) web framework plugin.
-  - web framework plugin need implement `type WebFunc interface {}`  interface.
-
 -
 
 ```go
@@ -196,12 +179,9 @@ type WebFunc interface {
 package main
 
 import (
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/snowlyg/iris-admin/server/web/web_iris"
-  "github.com/snowlyg/iris-admin-rbac/iris/perm"
-  "github.com/snowlyg/iris-admin-rbac/iris/role"
-  "github.com/snowlyg/iris-admin/server/database"
-  "github.com/snowlyg/iris-admin/server/operation"
+  "github.com/snowlyg/iris-admin/web"
+  "github.com/snowlyg/iris-admin/database"
+  "github.com/snowlyg/iris-admin/operation"
 )
 
 func main() {
@@ -222,12 +202,11 @@ func main() {
 package main
 
 import (
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/web"
 )
 
 func main() {
-  wi := web_iris.Init()
+  wi := web.Init()
   web.Start(wi)
 }
 ```
@@ -250,19 +229,17 @@ go run main.go
 package main
 
 import (
-  rbac "github.com/snowlyg/iris-admin-rbac/iris"
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/web"
 )
 
 func main() {
-  wi := web_iris.Init()
-  rbacParty := web_iris.Party{
+  wi := web.Init()
+  rbacParty := web.Party{
     Perfix:    "/api/v1",
     PartyFunc: rbac.Party(),
   }
   wi.AddModule(rbacParty)
-  web.Start(web_iris.Init())
+  web.Start(web.Init())
 }
 ```
 
@@ -274,7 +251,7 @@ func main() {
 
 ```yaml
 system:
-  addr: "127.0.0.1:8085"
+  addr: "127.0.0.1:80"
   db-type: ""
   level: debug
   static-prefix: /upload
@@ -292,11 +269,11 @@ package main
 
 import (
   "github.com/kataras/iris/v12"
-  "github.com/snowlyg/iris-admin/server/web"
+  "github.com/snowlyg/iris-admin/web"
 )
 
 func main() {
-  webServer := web_iris.Init()
+  webServer := web.Init()
   wi.AddUploadStatic("/upload", "/var/static")
   wi.AddWebStatic("/", "/var/static")
   webServer.Run()
@@ -341,18 +318,17 @@ import (
 
   "github.com/snowlyg/httptest"
   rbac "github.com/snowlyg/iris-admin-rbac/gin"
-  "github.com/snowlyg/iris-admin/server/web/common"
-  "github.com/snowlyg/iris-admin/server/web/web_gin"
+  "github.com/snowlyg/iris-admin/web"
 )
 
-var TestServer *web_gin.WebServer
+var TestServer *web.WebServer
 var TestClient *httptest.Client
 
 func TestMain(m *testing.M) {
   var uuid string
-  uuid, TestServer = common.BeforeTestMainGin(rbac.PartyFunc, rbac.SeedFunc)
+  uuid, TestServer = web.BeforeTestMainGin(rbac.PartyFunc, rbac.SeedFunc)
   code := m.Run()
-  common.AfterTestMain(uuid, true)
+  web.AfterTestMain(uuid, true)
 
   os.Exit(code)
 }
@@ -374,8 +350,7 @@ import (
   "github.com/snowlyg/httptest"
   rbac "github.com/snowlyg/iris-admin-rbac/gin"
   "github.com/snowlyg/iris-admin/g"
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/snowlyg/iris-admin/server/web/web_gin/response"
+  "github.com/snowlyg/iris-admin/web"
 )
 
 var (

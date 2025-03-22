@@ -56,7 +56,7 @@ import (
 
   "github.com/fsnotify/fsnotify"
   "github.com/snowlyg/iris-admin/g"
-  "github.com/snowlyg/iris-admin/server/viper_server"
+  "github.com/snowlyg/iris-admin/viper_server"
   "github.com/spf13/viper"
 )
 
@@ -94,18 +94,6 @@ password: "` + CONFIG.Password + `"
 pool-size: ` + poolSize),
   }
 }
-```
-
-- [zap_server]
-  - 插件日志记录
-  - 使用 [go.uber.org/zap](https://pkg.go.dev/go.uber.org/zap) 第三方包实现
-  - 通过全局变量 `zap_server.ZAPLOG` 记录对应级别的日志
-
-```go
-  zap_server.ZAPLOG.Info("注册数据表错误", zap.Any("err", err))
-  zap_server.ZAPLOG.Debug("注册数据表错误", zap.Any("err", err))
-  zap_server.ZAPLOG.Error("注册数据表错误", zap.Any("err", err))
-  ...
 ```
 
 - [database]
@@ -158,30 +146,6 @@ pool-size: ` + poolSize),
   cron_server.CronInstance().AddFunc("@every 1m",YourFunc)
   ...
 ```
-
-- [web]
-  - web_iris [Go-Iris](https://github.com/kataras/iris) web 框架插件
-  - web_gin [Go-gin web](https://github.com/gin-gonic/gin) web 框架插件
-  - web 框架插件需要实现 `type WebFunc interface {}`  接口
-
-```go
-type WebBaseFunc interface {
-  AddWebStatic(staticAbsPath, webPrefix string, paths ...string)
-  AddUploadStatic(staticAbsPath, webPrefix string)
-  InitRouter() error
-  Run()
-}
-
-// WebFunc 框架插件接口
-// - GetTestClient 测试客户端
-// - GetTestLogin 测试登录
-// - AddWebStatic 添加静态页面
-// - AddUploadStatic 上传文件路径
-// - Run 启动
-type WebFunc interface {
-  WebBaseFunc
-}
-```
   
 - [mongodb]
   - mongodb
@@ -199,12 +163,11 @@ type WebFunc interface {
 package main
 
 import (
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/web"
   "github.com/snowlyg/iris-admin-rbac/iris/perm"
   "github.com/snowlyg/iris-admin-rbac/iris/role"
-  "github.com/snowlyg/iris-admin/server/database"
-  "github.com/snowlyg/iris-admin/server/operation"
+  "github.com/snowlyg/iris-admin/database"
+  "github.com/snowlyg/iris-admin/operation"
 )
 
 func main() {
@@ -225,12 +188,11 @@ func main() {
 package main
 
 import (
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/web"
 )
 
 func main() {
-  wi := web_iris.Init()
+  wi := web.Init()
   web.Start(wi)
 }
 ```
@@ -253,19 +215,17 @@ go run main.go
 package main
 
 import (
-  rbac "github.com/snowlyg/iris-admin-rbac/iris"
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/snowlyg/iris-admin/server/web/web_iris"
+  "github.com/snowlyg/iris-admin/web"
 )
 
 func main() {
-  wi := web_iris.Init()
-  rbacParty := web_iris.Party{
+  wi := web.Init()
+  rbacParty := web.Party{
     Perfix:    "/api/v1",
     PartyFunc: rbac.Party(),
   }
   wi.AddModule(rbacParty)
-  web.Start(web_iris.Init())
+  web.Start(web.Init())
 }
 ```
 
@@ -279,7 +239,7 @@ func main() {
 
 ```yaml
 system:
-  addr: "127.0.0.1:8085"
+  addr: "127.0.0.1:80"
   db-type: ""
   level: debug
   static-prefix: /upload
@@ -300,11 +260,11 @@ package main
 
 import (
   "github.com/kataras/iris/v12"
-  "github.com/snowlyg/iris-admin/server/web"
+  "github.com/snowlyg/iris-admin/web"
 )
 
 func main() {
-  webServer := web_iris.Init()
+  webServer := web.Init()
   wi.AddUploadStatic("/upload", "/var/static")
   wi.AddWebStatic("/", "/var/static")
   webServer.Run()
@@ -349,19 +309,18 @@ import (
 
   "github.com/snowlyg/httptest"
   rbac "github.com/snowlyg/iris-admin-rbac/gin"
-  "github.com/snowlyg/iris-admin/server/web/common"
-  "github.com/snowlyg/iris-admin/server/web/web_gin"
+  "github.com/snowlyg/iris-admin/web"
 )
 
-var TestServer *web_gin.WebServer
+var TestServer *web.WebServer
 var TestClient *httptest.Client
 
 func TestMain(m *testing.M) {
 
   var uuid string
-  uuid, TestServer = common.BeforeTestMainGin(rbac.PartyFunc, rbac.SeedFunc)
+  uuid, TestServer = web.BeforeTestMainGin(rbac.PartyFunc, rbac.SeedFunc)
   code := m.Run()
-  common.AfterTestMain(uuid, true)
+  web.AfterTestMain(uuid, true)
 
   os.Exit(code)
 }
@@ -383,8 +342,7 @@ import (
   "github.com/snowlyg/httptest"
   rbac "github.com/snowlyg/iris-admin-rbac/gin"
   "github.com/snowlyg/iris-admin/g"
-  "github.com/snowlyg/iris-admin/server/web"
-  "github.com/snowlyg/iris-admin/server/web/web_gin/response"
+  "github.com/snowlyg/iris-admin/web"
 )
 
 var (

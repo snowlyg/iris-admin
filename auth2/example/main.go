@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
-	multi "github.com/snowlyg/multi/v2"
+	"github.com/snowlyg/iris-admin/auth2"
 )
 
 // init 初始化认证驱动
@@ -30,7 +30,7 @@ func init() {
 		// },
 	}
 
-	err := multi.InitDriver(&multi.Config{
+	err := auth2.InitDriver(&auth2.Config{
 		DriverType:      "redis",
 		TokenMaxCount:   10,
 		UniversalClient: redis.NewUniversalClient(options)})
@@ -40,8 +40,8 @@ func init() {
 }
 
 func auth() gin.HandlerFunc {
-	verifier := multi.NewVerifier()
-	verifier.Extractors = []multi.TokenExtractor{multi.FromHeader} // extract token only from Authorization: Bearer $token
+	verifier := auth2.NewVerifier()
+	verifier.Extractors = []auth2.TokenExtractor{auth2.FromHeader} // extract token only from Authorization: Bearer $token
 	return verifier.Verify()
 }
 
@@ -68,18 +68,18 @@ func main() {
 
 func generateToken() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		claims := &multi.MultiClaims{
+		claims := &auth2.MultiClaims{
 			Id:            "1",
 			Username:      "your name",
 			AuthorityId:   "your authority id",
-			AuthorityType: multi.AdminAuthority,
-			LoginType:     multi.LoginTypeWeb,
-			AuthType:      multi.AuthPwd,
+			AuthorityType: auth2.AdminAuthority,
+			LoginType:     auth2.LoginTypeWeb,
+			AuthType:      auth2.AuthPwd,
 			CreationTime:  time.Now().Local().Unix(),
-			ExpiresAt:     time.Now().Local().Add(multi.RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:     time.Now().Local().Add(auth2.RedisSessionTimeoutWeb).Unix(),
 		}
 
-		token, _, err := multi.AuthDriver.GenerateToken(claims)
+		token, _, err := auth2.AuthDriver.GenerateToken(claims)
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
@@ -90,17 +90,17 @@ func generateToken() gin.HandlerFunc {
 }
 
 func protected(ctx *gin.Context) {
-	claims := multi.Get(ctx)
+	claims := auth2.Get(ctx)
 	ctx.JSON(http.StatusOK, fmt.Sprintf("claims=%+v\n", claims))
 }
 
 func logout(ctx *gin.Context) {
-	token := multi.GetVerifiedToken(ctx)
+	token := auth2.GetVerifiedToken(ctx)
 	if token == nil {
 		ctx.String(http.StatusOK, "授权凭证为空")
 		return
 	}
-	err := multi.AuthDriver.DelUserTokenCache(string(token))
+	err := auth2.AuthDriver.DelUserTokenCache(string(token))
 	if err != nil {
 		ctx.JSON(http.StatusOK, err.Error())
 		return

@@ -1,4 +1,4 @@
-package v2
+package auth2
 
 import (
 	"bytes"
@@ -18,10 +18,7 @@ var (
 
 // GetToken 雪花算法,支持分布式集群方式
 func GetToken() (string, error) {
-	v4, err := uuid.NewV4()
-	if err != nil {
-		return "", fmt.Errorf("mutil: create token %w", err)
-	}
+	v4 := uuid.NewV4()
 	node, err := snowflake.NewNode(1)
 	if err != nil {
 		return "", fmt.Errorf("mutil: create token %w", err)

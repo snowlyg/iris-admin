@@ -43,4 +43,4 @@ options := &redis.UniversalOptions{
 	}
 */
 
-package v2
+package auth2

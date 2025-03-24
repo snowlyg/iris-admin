@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	claimsContextKey        = "gin.multi.claims"
-	verifiedTokenContextKey = "gin.multi.token"
+	claimsContextKey        = "gin.auth2.claims"
+	verifiedTokenContextKey = "gin.auth2.token"
 )
 
 // Get returns the claims decoded by a verifier.

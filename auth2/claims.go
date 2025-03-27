@@ -37,7 +37,7 @@ const (
 // ExpiresIn expires time
 type MultiClaims struct {
 	Id            string `json:"id,omitempty" redis:"id"`
-	SuperAdmin    bool   `json:"superAdmin,omitempty" redis:"superAdmin"`
+	SuperAdmin    bool   `json:"superAdmin,omitempty" redis:"super_admin"`
 	Username      string `json:"username,omitempty" redis:"username"`
 	AuthorityId   string `json:"authorityId,omitempty" redis:"authority_id"`
 	AuthorityType int    `json:"authorityType,omitempty" redis:"authority_type"`

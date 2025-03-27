@@ -18,7 +18,7 @@ var (
 
 // GetToken 雪花算法,支持分布式集群方式
 func GetToken() (string, error) {
-	v4 := uuid.NewV4()
+	v4 := uuid.NewV5(uuid.NamespaceDNS, "iris-admin")
 	node, err := snowflake.NewNode(1)
 	if err != nil {
 		return "", fmt.Errorf("mutil: create token %w", err)

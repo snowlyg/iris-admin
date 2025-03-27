@@ -65,10 +65,10 @@ func getViperConfig() viper_server.ViperConfig {
 		},
 		Default: []byte(`
 {
-	"db": ` + strconv.FormatInt(int64(CONFIG.DB), 10) + `,
+	"db": ` + strconv.FormatInt(int64(CONFIG.DB), 20) + `,
 	"addr": "` + CONFIG.Addr + `",
 	"password": "` + CONFIG.Password + `",
-	"pool-size": ` + strconv.FormatInt(int64(CONFIG.PoolSize), 10) + `
+	"pool-size": ` + strconv.FormatInt(int64(CONFIG.PoolSize), 20) + `
 }`),
 	}
 }

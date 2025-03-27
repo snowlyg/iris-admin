@@ -1,7 +1,6 @@
 package common
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/bwmarrin/snowflake"
@@ -14,10 +13,11 @@ import (
 	"github.com/snowlyg/iris-admin/server/web/web_gin"
 	"github.com/snowlyg/iris-admin/server/web/web_iris"
 	"github.com/snowlyg/iris-admin/server/zap_server"
+	"gorm.io/gorm"
 )
 
 // BeforeTestMainGin
-func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer) {
+func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.WebServer, mc *migration.MigrationCmd)) (string, *web_gin.WebServer, error) {
 	zap_server.CONFIG.LogInConsole = true
 	if err := zap_server.Recover(); err != nil {
 		log.Printf("zap recover fail:%s\n", err.Error())
@@ -55,8 +55,7 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 	}
 
 	if database.Instance() == nil {
-		fmt.Println("database instance is nil")
-		return uuid, nil
+		return uuid, nil, gorm.ErrInvalidDB
 	}
 
 	wi := web_gin.Init()
@@ -67,16 +66,16 @@ func BeforeTestMainGin(party func(wi *web_gin.WebServer), seed func(wi *web_gin.
 	seed(wi, mc)
 	err := mc.Migrate()
 	if err != nil {
-		fmt.Printf("migrate fail: [%s]", err.Error())
-		return uuid, nil
+		// fmt.Printf("migrate fail: [%s]", err.Error())
+		return uuid, nil, err
 	}
 	err = mc.Seed()
 	if err != nil {
-		fmt.Printf("seed fail: [%s]", err.Error())
-		return uuid, nil
+		// fmt.Printf("seed fail: [%s]", err.Error())
+		return uuid, nil, err
 	}
 
-	return uuid, wi
+	return uuid, wi, nil
 }
 
 // BeforeTestMainIris
@@ -146,10 +145,4 @@ func AfterTestMain(uuid string, isDelDb bool) {
 	if db, _ := database.Instance().DB(); db != nil {
 		db.Close()
 	}
-
-	// defer zap_server.Remove()
-	// defer operation.Remove()
-	// defer casbin.Remove()
-	// defer web.Remove()
-	// defer database.Remove()
 }

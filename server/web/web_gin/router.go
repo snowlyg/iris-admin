@@ -50,6 +50,7 @@ func (ws *WebServer) GetSources() ([]map[string]string, []map[string]string) {
 	for _, r := range ws.app.Routes() {
 		bases := strings.Split(filepath.Base(r.Handler), ".")
 		if len(bases) != 2 {
+			// log.Printf("bases len != 2 %v\n", bases)
 			continue
 		}
 		path := filepath.ToSlash(filepath.Clean(r.Path))

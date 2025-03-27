@@ -30,6 +30,7 @@ func Instance() redis.UniversalClient {
 			Password:    CONFIG.Password,
 			PoolSize:    int(CONFIG.PoolSize),
 			IdleTimeout: 300 * time.Second,
+			DB:          CONFIG.DB,
 		}
 		cacheClient = redis.NewUniversalClient(universalOptions)
 	})

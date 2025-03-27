@@ -76,7 +76,6 @@ func TestJwtDelUserTokenCache(t *testing.T) {
 		if err != nil {
 			t.Errorf("get token by claims token want %v but get %v", nil, err)
 		}
-
 	})
 }
 

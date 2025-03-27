@@ -2,6 +2,7 @@ package auth2
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -74,6 +75,7 @@ func (ra *JwtAuth) UpdateUserTokenCacheExpire(token string) error {
 
 // DelUserTokenCache 删除token缓存
 func (ra *JwtAuth) DelUserTokenCache(token string) error {
+	log.Println("auth2: jwt del user token")
 	return nil
 }
 

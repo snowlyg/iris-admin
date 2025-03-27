@@ -3,6 +3,7 @@ package auth2
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
@@ -239,6 +240,7 @@ func (ra *RedisAuth) setExpire(key string, loginType int) error {
 
 // DelUserTokenCache 删除token缓存
 func (ra *RedisAuth) DelUserTokenCache(token string) error {
+	log.Println("auth2: redis del user token")
 	cla, err := ra.GetMultiClaims(token)
 	if err != nil {
 		return err
@@ -247,14 +249,12 @@ func (ra *RedisAuth) DelUserTokenCache(token string) error {
 		return errors.New("del user token, reids cache is nil")
 	}
 
-	err = ra.delUserTokenPrefixToken(cla.AuthorityType, cla.Id, token)
-	if err != nil {
-		return err
+	if e := ra.delUserTokenPrefixToken(cla.AuthorityType, cla.Id, token); e != nil {
+		return e
 	}
 
-	err = ra.delTokenCache(token)
-	if err != nil {
-		return err
+	if e := ra.delTokenCache(token); e != nil {
+		return e
 	}
 	return nil
 }
@@ -318,6 +318,7 @@ func (ra *RedisAuth) IsRole(token string, authorityType int) (bool, error) {
 func (ra *RedisAuth) IsSuperAdmin(token string) bool {
 	rcc, err := ra.GetMultiClaims(token)
 	if err != nil {
+		log.Println("redis IsSuperAdmin:", err.Error())
 		return false
 	}
 	return rcc.SuperAdmin

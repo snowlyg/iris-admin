@@ -3,6 +3,7 @@ package auth2
 import (
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/patrickmn/go-cache"
@@ -70,6 +71,7 @@ func (la *LocalAuth) syncUserTokenCache(token string) error {
 }
 
 func (la *LocalAuth) DelUserTokenCache(token string) error {
+	log.Println("auth2: local del user token")
 	rcc, err := la.GetMultiClaims(token)
 	if err != nil {
 		return err
@@ -249,6 +251,7 @@ func (la *LocalAuth) IsRole(token string, authorityType int) (bool, error) {
 func (la *LocalAuth) IsSuperAdmin(token string) bool {
 	rcc, err := la.GetMultiClaims(token)
 	if err != nil {
+		log.Println("loc IsSuperAdmin:", err.Error())
 		return false
 	}
 	return rcc.SuperAdmin

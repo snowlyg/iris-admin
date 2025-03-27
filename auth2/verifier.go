@@ -1,6 +1,7 @@
 package auth2
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,10 +18,12 @@ const (
 func Get(ctx *gin.Context) *MultiClaims {
 	v, b := ctx.Get(claimsContextKey)
 	if !b {
+		log.Println("auth2: key not exist")
 		return nil
 	}
 	tok, ok := v.(*MultiClaims)
 	if !ok {
+		log.Println("auth2: object not claims")
 		return nil
 	}
 	return tok
@@ -59,6 +62,7 @@ func GetUserId(ctx *gin.Context) uint {
 func IsSuperAdmin(ctx *gin.Context) bool {
 	v := Get(ctx)
 	if v == nil {
+		log.Println("auth2: Claim is nil")
 		return false
 	}
 	return v.SuperAdmin

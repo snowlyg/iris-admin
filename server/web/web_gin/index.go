@@ -21,11 +21,6 @@ import (
 var ErrAuthDriverEmpty = errors.New("auth driver initialize fail")
 
 // WebServer
-// - app gin.Engine
-// - idleConnsClosed
-// - addr
-// - timeFormat
-// - staticPrefix
 type WebServer struct {
 	app *gin.Engine
 	server
@@ -41,7 +36,6 @@ type WebStatic struct {
 
 // Init
 func Init() *WebServer {
-	gin.SetMode(web.CONFIG.System.GinMode)
 	app := gin.Default()
 	if web.CONFIG.System.Tls {
 		app.Use(middleware.LoadTls())

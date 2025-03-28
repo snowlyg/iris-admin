@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/str"
 	"github.com/snowlyg/iris-admin/g"
 	"github.com/snowlyg/iris-admin/server/viper_server"
@@ -33,7 +32,6 @@ var CONFIG = Web{
 	},
 	System: System{
 		Tls:        false,
-		GinMode:    gin.ReleaseMode,
 		Level:      "debug",
 		Addr:       "127.0.0.1:80",
 		DbType:     "mysql",
@@ -88,7 +86,6 @@ type Limit struct {
 
 type System struct {
 	Tls          bool   `mapstructure:"tls" json:"tls" yaml:"tls"`
-	GinMode      string `mapstructure:"gin-mode" json:"gin-mode" yaml:"gin-mode"`
 	Level        string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
 	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
 	StaticPrefix string `mapstructure:"static-prefix" json:"static-prefix" yaml:"static-prefix"`
@@ -110,11 +107,15 @@ func SetDefaultAddrAndTimeFormat() {
 
 // ToStaticUrl
 func ToStaticUrl(uri string) string {
-	path := filepath.Join(CONFIG.System.Addr, CONFIG.System.StaticPrefix, uri)
+	return filepath.Join(CONFIG.SystemAddr(), CONFIG.System.StaticPrefix, uri)
+}
+
+// SystemAddr
+func (w *Web) SystemAddr() string {
 	if CONFIG.System.Tls {
-		return filepath.ToSlash(str.Join("https://", path))
+		return filepath.ToSlash(str.Join("https://", CONFIG.System.Addr))
 	}
-	return filepath.ToSlash(str.Join("http://", path))
+	return filepath.ToSlash(str.Join("http://", CONFIG.System.Addr))
 }
 
 // IsExist config file is exist
@@ -199,7 +200,6 @@ func getViperConfig() viper_server.ViperConfig {
 		{
 			"tls": ` + tls + `,
 			"level": "` + CONFIG.System.Level + `",
-			"gin-mode": "` + CONFIG.System.GinMode + `",
 			"addr": "` + CONFIG.System.Addr + `",
 			"db-type": "` + CONFIG.System.DbType + `",
 			"time-format": "` + CONFIG.System.TimeFormat + `"

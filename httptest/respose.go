@@ -67,7 +67,7 @@ func Test(value *httpexpect.Value, reses ...interface{}) {
 					max = length
 				}
 				for i := 0; i < max; i++ {
-					ks.([]Responses)[i].Test(value.Array().Element(i))
+					ks.([]Responses)[i].Test(value.Array().Value(i))
 				}
 			}
 
@@ -94,7 +94,7 @@ func Test(value *httpexpect.Value, reses ...interface{}) {
 					max = length
 				}
 				for i := 0; i < max; i++ {
-					value.Array().Element(i).Number().IsEqual(ks.([]uint)[i])
+					value.Array().Value(i).Number().IsEqual(ks.([]uint)[i])
 				}
 			}
 
@@ -108,7 +108,7 @@ func Test(value *httpexpect.Value, reses ...interface{}) {
 					max = length
 				}
 				for i := 0; i < max; i++ {
-					value.Array().Element(i).String().IsEqual(ks.([]string)[i])
+					value.Array().Value(i).String().IsEqual(ks.([]string)[i])
 				}
 			}
 		case "map[int]string":
@@ -148,7 +148,7 @@ func Scan(object *httpexpect.Object, reses ...Responses) {
 		if res == nil {
 			return
 		}
-		res.Scan(object.Value("data").Array().Element(m).Object())
+		res.Scan(object.Value("data").Array().Value(m).Object())
 	}
 }
 
@@ -206,7 +206,7 @@ func (res Responses) Test(value *httpexpect.Value) {
 					}
 					if valueLen > 0 {
 						for i := 0; i < max; i++ {
-							rs.Value.([]Responses)[i].Test(value.Object().Value(rs.Key).Array().Element(i))
+							rs.Value.([]Responses)[i].Test(value.Object().Value(rs.Key).Array().Value(i))
 						}
 					}
 				}
@@ -271,7 +271,7 @@ func (res Responses) Test(value *httpexpect.Value) {
 				}
 			case "map[int]string":
 				if strings.ToLower(rs.Type) == "null" {
-					value.Object().Value(rs.Key).Null()
+					value.Object().Value(rs.Key).IsNull()
 				} else if strings.ToLower(rs.Type) == "notnull" {
 					value.Object().Value(rs.Key).NotNull()
 				} else {
@@ -331,7 +331,7 @@ func (res Responses) Scan(object *httpexpect.Object) {
 				}
 				if valueLen > 0 {
 					for i := 0; i < max; i++ {
-						res[k].Value.([]Responses)[i].Scan(object.Value(rk.Key).Array().Element(i).Object())
+						res[k].Value.([]Responses)[i].Scan(object.Value(rk.Key).Array().Value(i).Object())
 					}
 				}
 			}
@@ -351,7 +351,7 @@ func (res Responses) Scan(object *httpexpect.Object) {
 				if ok {
 					var strings []string
 					for i := 0; i < length; i++ {
-						strings = append(reskey, object.Value(rk.Key).Array().Element(i).String().Raw())
+						strings = append(reskey, object.Value(rk.Key).Array().Value(i).String().Raw())
 					}
 					res[k].Value = strings
 				}

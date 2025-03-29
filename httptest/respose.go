@@ -3,9 +3,12 @@ package httptest
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"errors"
 
 	"github.com/gavv/httpexpect/v2"
 )
@@ -374,39 +377,43 @@ func Exist(object *httpexpect.Object, key string) bool {
 }
 
 // GetString return string value.
-func (res Responses) GetString(key ...string) string {
-	if len(key) == 0 {
+func (resps Responses) GetString(keys ...string) string {
+	if len(keys) == 0 || keys[0] == "" {
+		log.Println("get string keys is nil")
 		return ""
 	}
 
-	if len(key) == 1 {
-		k := key[0]
+	if len(keys) == 1 {
+		k := keys[0]
 		if strings.Contains(k, ".") {
-			keys := strings.Split(k, ".")
-			if len(keys) == 0 {
+			spKeys := strings.Split(k, ".")
+			if len(spKeys) == 0 {
+				log.Println("get string split key is nil")
 				return ""
 			}
-			key = keys
+			keys = spKeys
 		}
 	}
 
-	for i := 0; i < len(key); i++ {
-		for m, rk := range res {
+	for i := range keys {
+		indexKey := keys[i]
+		for m, rk := range resps {
 			if rk.Value == nil {
-				return ""
+				log.Printf("get string '%s' [%d:%v] value is nil\n", indexKey, m, rk)
+				continue
 			}
 			reflectTypeString := reflect.TypeOf(rk.Value).String()
-			if key[i] == rk.Key {
+			if indexKey == rk.Key {
 				switch reflectTypeString {
 				case "string":
 					return rk.Value.(string)
 				case "httptest.Responses":
-					return res[m].Value.(Responses).GetString(key[i+1:]...)
+					return resps[m].Value.(Responses).GetString(keys[i+1:]...)
 				}
 			}
 		}
-
 	}
+	log.Println("get string return nothing")
 	return ""
 }
 
@@ -631,10 +638,10 @@ func (res Responses) GetId(key ...string) uint {
 }
 
 // Schema
-func Schema(str []byte) (Responses, error) {
+func Schema(data []byte) (Responses, error) {
 	objs := Responses{}
 	j := map[string]any{}
-	if err := json.Unmarshal(str, &j); err != nil {
+	if err := json.Unmarshal(data, &j); err != nil {
 		return objs, fmt.Errorf("json unmarshal error %w", err)
 	}
 	if o, err := schema(j); err != nil {
@@ -649,13 +656,14 @@ func Schema(str []byte) (Responses, error) {
 func schema(j map[string]any) (Responses, error) {
 	objs := Responses{}
 	if j == nil {
-		return objs, nil
+		return objs, errors.New("schema data is nil")
 	}
 	for k, v := range j {
 		if k == "" {
+			log.Printf("key %s is empty\n", k)
 			continue
 		}
-		obj := schemaResponse(k, v)
+		obj := schemaResponses(k, v)
 		objs = append(objs, obj)
 	}
 	return objs, nil
@@ -665,20 +673,22 @@ func schema(j map[string]any) (Responses, error) {
 func schemaSliceResponse(v any) Responses {
 	obj := Responses{}
 	for k2, v2 := range v.(map[string]interface{}) {
-		obj = append(obj, schemaResponse(k2, v2))
+		// log.Printf("schema slice response key:'%s'\n", k2)
+		obj = append(obj, schemaResponses(k2, v2))
 	}
 	return obj
 }
 
-// schemaResponse
-func schemaResponse(k string, v any) Response {
+// schemaResponses
+func schemaResponses(k string, v any) Response {
 	obj := Response{}
 	obj.Key = k
-
 	if v == nil {
+		log.Printf("schema response data is empty\n")
 		return obj
 	}
 	typeName := reflect.TypeOf(v).String()
+	// log.Printf("schema response key:'%s' typeName:'%s'\n", obj.Key, typeName)
 	switch typeName {
 	case "bool":
 		obj.Value = v.(bool)

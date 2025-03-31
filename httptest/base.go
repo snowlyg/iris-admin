@@ -220,7 +220,7 @@ func NewClient(t *testing.T, handler http.Handler, confs ...ClientConf) *Client 
 	return c
 }
 
-func (c *Client) Switch(t *testing.T) *Client {
+func (c *Client) SwitchT(t *testing.T) {
 	c.t = t
 	c.conf.TestName = t.Name()
 	c.conf.Reporter = httpexpect.NewAssertReporter(t)
@@ -230,7 +230,9 @@ func (c *Client) Switch(t *testing.T) *Client {
 		// httpexpect.NewCurlPrinter(t),
 	}
 	c.expect = httpexpect.WithConfig(c.conf)
-	return c
+	c.expect = c.expect.Builder(func(req *httpexpect.Request) {
+		req.WithHeaders(c.headers)
+	})
 }
 
 // Login for http login

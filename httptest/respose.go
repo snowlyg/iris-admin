@@ -15,11 +15,11 @@ type Responses []Response
 
 // Response
 type Response struct {
-	Type   string                // httpest type , if empty use  IsEqual() function to test
-	Key    string                // httptest data's key
-	Value  interface{}           // httptest data's value
-	Length int                   // httptest data's length,when the data are array or map
-	Func   func(obj interface{}) // httpest func, you can add your test logic ,can be empty
+	Type   string        // httpest type , if empty use  IsEqual() function to test
+	Key    string        // httptest data's key
+	Value  any           // httptest data's value
+	Length int           // httptest data's length,when the data are array or map
+	Func   func(obj any) // httpest func, you can add your test logic ,can be empty
 }
 
 // Keys return Responses object key array
@@ -39,7 +39,7 @@ func IdKeys() Responses {
 }
 
 // Test for data test
-func Test(value *httpexpect.Value, reses ...interface{}) {
+func Test(value *httpexpect.Value, reses ...any) {
 	for _, ks := range reses {
 		if ks == nil {
 			return
@@ -664,7 +664,7 @@ func schema(j map[string]any) (Responses, error) {
 // schemaResponse
 func schemaSliceResponse(v any) Responses {
 	obj := Responses{}
-	for k2, v2 := range v.(map[string]interface{}) {
+	for k2, v2 := range v.(map[string]any) {
 		obj = append(obj, schemaResponse(k2, v2))
 	}
 	return obj
@@ -697,12 +697,12 @@ func schemaResponse(k string, v any) Response {
 	case "float64":
 		obj.Value = v.(float64)
 	case "map[string]interface {}":
-		if value, _ := schema(v.(map[string]interface{})); value != nil {
+		if value, _ := schema(v.(map[string]any)); value != nil {
 			obj.Value = value
 		}
 	case "[]interface {}":
 		list := []Responses{}
-		for _, v1 := range v.([]interface{}) {
+		for _, v1 := range v.([]any) {
 			list = append(list, schemaSliceResponse(v1))
 		}
 		obj.Value = list

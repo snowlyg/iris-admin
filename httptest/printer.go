@@ -3,6 +3,7 @@ package httptest
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
 	"strings"
@@ -20,6 +21,8 @@ type DebugPrinter struct {
 	body   bool
 }
 
+var contentTypes = "text/html,image/jpeg,image/png,video/mp4"
+
 // NewDebugPrinter returns a new DebugPrinter given a logger and body
 // flag. If body is true, request and response body is also printed.
 func NewDebugPrinter(logger httpexpect.Logger, body bool) DebugPrinter {
@@ -31,9 +34,18 @@ func (p DebugPrinter) Request(req *http.Request) {
 	if req == nil {
 		return
 	}
-
-	if req.Header.Get("Content-Type") == "text/html" || req.URL.Path == "/api/v1/file/upload" {
+	log.Printf("Content-Type:%s\n", req.Header.Get("Content-Type"))
+	if req.URL.Path == "/api/v1/file/upload" || strings.Contains(req.Header.Get("Content-Type"), "multipart/form-data") {
 		p.body = false
+	}
+
+	for _, contentType := range strings.Split(contentTypes, ",") {
+		if !p.body {
+			continue
+		}
+		if req.Header.Get("Content-Type") == contentType {
+			p.body = false
+		}
 	}
 
 	dump, err := httputil.DumpRequest(req, p.body)
@@ -48,8 +60,13 @@ func (p DebugPrinter) Response(resp *http.Response, duration time.Duration) {
 	if resp == nil {
 		return
 	}
-	if resp.Header.Get("Content-Type") == "image/jpeg" || resp.Header.Get("Content-Type") == "image/png" || resp.Header.Get("Content-Type") == "text/html" {
-		p.body = false
+	for _, contentType := range strings.Split(contentTypes, ",") {
+		if !p.body {
+			continue
+		}
+		if resp.Header.Get("Content-Type") == contentType {
+			p.body = false
+		}
 	}
 
 	dump, err := httputil.DumpResponse(resp, p.body)

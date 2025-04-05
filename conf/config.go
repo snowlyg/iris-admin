@@ -3,7 +3,9 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -14,11 +16,22 @@ import (
 const (
 	ConfigType = "json"   // config's type
 	ConfigDir  = "config" // config's dir
+)
 
+var (
+	// redis mysql mongo cache default config
+	redisAddrKey = "IRIS_ADMIN_REDIS_ADDR"
+	redisPwdKey  = "IRIS_ADMIN_REDIS_PWD"
+	mysqlAddrKey = "IRIS_ADMIN_MYSQL_ADDR"
+	mysqlPwdKey  = "IRIS_ADMIN_MYSQL_PWD"
+	mysqlNameKey = "IRIS_ADMIN_MYSQL_NAME"
+	mongoAddrKey = "IRIS_ADMIN_MONGO_ADDR"
+	dbTypeKey    = "IRIS_ADMIN_DB_TYPE"
+	webAddrKey   = "IRIS_ADMIN_WEB_ADDR"
 )
 
 func NewConf() *Conf {
-	return &Conf{
+	c := &Conf{
 		Locale:         "zh",
 		FileMaxSize:    1024,   // upload file size limit 1024M
 		SessionTimeout: 172800, // session timeout after 4 months
@@ -84,6 +97,40 @@ func NewConf() *Conf {
 			},
 		},
 	}
+	redisAddr := strings.TrimSpace(os.Getenv(redisAddrKey))
+	redisPwd := strings.TrimSpace(os.Getenv(redisPwdKey))
+	mysqlAddr := strings.TrimSpace(os.Getenv(mysqlAddrKey))
+	mysqlPwd := strings.TrimSpace(os.Getenv(mysqlPwdKey))
+	mysqlName := strings.TrimSpace(os.Getenv(mysqlNameKey))
+	mongoAddr := strings.TrimSpace(os.Getenv(mongoAddrKey))
+	dbType := strings.TrimSpace(os.Getenv(dbTypeKey))
+	webAddr := strings.TrimSpace(os.Getenv(webAddrKey))
+	if redisAddr != "" {
+		c.Redis.Addr = redisAddr
+	}
+	if redisPwd != "" {
+		c.Redis.Password = redisPwd
+	}
+	if mysqlAddr != "" {
+		c.Mysql.Path = mysqlAddr
+	}
+	if mysqlPwd != "" {
+		c.Mysql.Password = mysqlPwd
+	}
+	if mysqlName != "" {
+		c.Mysql.DbName = mysqlName
+	}
+	if mongoAddr != "" {
+		c.Mongo.Addr = mongoAddr
+	}
+	if dbType != "" {
+		c.System.DbType = dbType
+	}
+	if webAddr != "" {
+		c.System.Addr = webAddr
+	}
+
+	return c
 }
 
 type Conf struct {

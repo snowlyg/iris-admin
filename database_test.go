@@ -1,15 +1,24 @@
 package admin
 
-// func TestInstanceMysql(t *testing.T) {
-// 	mysql := Instance()
-// 	if mysql == nil {
-// 		t.Error("mysql instance is nil")
-// 	}
-// }
+import (
+	"testing"
 
-// func TestGormMysql(t *testing.T) {
-// 	gormDb := gormMysql()
-// 	if gormDb == nil {
-// 		t.Error("gorm db is nil")
-// 	}
-// }
+	"github.com/snowlyg/iris-admin/conf"
+)
+
+func TestGormDb(t *testing.T) {
+	c := conf.NewConf()
+	if err := c.Recover(); err != nil {
+		t.Fatal(err.Error())
+	}
+	if c.Mysql.Password != "123456" {
+		t.Errorf("mysql password want '123456' but get '%s'", c.Mysql.Password)
+	}
+	gormDb, err := gormDb(&c.Mysql)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	if gormDb.Exec("show databases;").Error != nil {
+		t.Fatal(err.Error())
+	}
+}

@@ -3,12 +3,14 @@ package admin
 import (
 	"io"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 )
 
 func TestStart(t *testing.T) {
 	go func() {
+		os.Setenv("IRIS_ADMIN_WEB_ADDR", "127.0.0.1:18088")
 		if serve, err := NewServe(); err != nil {
 			t.Error(err.Error())
 		} else {

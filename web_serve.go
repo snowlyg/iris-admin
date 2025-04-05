@@ -23,7 +23,6 @@ type WebServe struct {
 
 // NewServe
 func NewServe() (*WebServe, error) {
-
 	config := conf.NewConf()
 	gin.SetMode(config.System.GinMode)
 	app := gin.Default()

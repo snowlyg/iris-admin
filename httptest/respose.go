@@ -74,8 +74,8 @@ func Test(value *httpexpect.Value, reses ...any) {
 		case "map[int][]httptest.Responses":
 			values := ks.(map[int][]Responses)
 			length := len(values)
+			value.Object().Keys().Length().IsEqual(length)
 			if length > 0 {
-				value.Object().Keys().Length().IsEqual(length)
 				for key, v := range values {
 					for _, vres := range v {
 						vres.Test(value.Object().Value(strconv.FormatInt(int64(key), 10)))
@@ -153,8 +153,8 @@ func Scan(object *httpexpect.Object, reses ...Responses) {
 }
 
 // Test Test Responses object
-func (res Responses) Test(value *httpexpect.Value) {
-	for _, rs := range res {
+func (resp Responses) Test(value *httpexpect.Value) {
+	for _, rs := range resp {
 		if rs.Value == nil {
 			continue
 		}
@@ -193,9 +193,7 @@ func (res Responses) Test(value *httpexpect.Value) {
 			case "[]httptest.Responses":
 				valueLen := len(rs.Value.([]Responses))
 				length := int(value.Object().Value(rs.Key).Array().Length().Raw())
-				if rs.Length == 0 {
-					value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
-				}
+				value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
 				if length > 0 {
 					max := 1
 					if rs.Length > 0 {
@@ -214,8 +212,8 @@ func (res Responses) Test(value *httpexpect.Value) {
 			case "map[int][]httptest.Responses":
 				values := rs.Value.(map[int][]Responses)
 				length := len(values)
+				value.Object().Value(rs.Key).Object().Keys().Length().IsEqual(length)
 				if length > 0 {
-					value.Object().Value(rs.Key).Object().Keys().Length().IsEqual(length)
 					for key, v := range values {
 						for _, vres := range v {
 							vres.Test(value.Object().Value(rs.Key).Object().Value(strconv.FormatInt(int64(key), 10)))
@@ -225,11 +223,8 @@ func (res Responses) Test(value *httpexpect.Value) {
 			case "httptest.Responses":
 				rs.Value.(Responses).Test(value.Object().Value(rs.Key))
 			case "[]uint":
-
 				valueLen := len(rs.Value.([]uint))
-				if rs.Length == 0 {
-					value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
-				}
+				value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
 				length := int(value.Object().Value(rs.Key).Array().Length().Raw())
 				if length > 0 {
 					max := 1
@@ -247,14 +242,12 @@ func (res Responses) Test(value *httpexpect.Value) {
 			case "[]string":
 
 				if strings.ToLower(rs.Type) == "null" {
-					value.Object().Value(rs.Key).Null()
+					value.Object().Value(rs.Key).IsNull()
 				} else if strings.ToLower(rs.Type) == "notnull" {
 					value.Object().Value(rs.Key).NotNull()
 				} else {
 					valueLen := len(rs.Value.([]string))
-					if rs.Length == 0 {
-						value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
-					}
+					value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
 					length := int(value.Object().Value(rs.Key).Array().Length().Raw())
 					if length > 0 {
 						max := 1
@@ -286,7 +279,7 @@ func (res Responses) Test(value *httpexpect.Value) {
 			}
 		}
 	}
-	res.Scan(value.Object())
+	resp.Scan(value.Object())
 }
 
 // Scan Scan response data to Responses object.
@@ -317,9 +310,7 @@ func (res Responses) Scan(object *httpexpect.Object) {
 			if rk.Length > 0 {
 				valueLen = rk.Length
 			}
-			if rk.Length == 0 {
-				object.Value(rk.Key).Array().Length().IsEqual(valueLen)
-			}
+			object.Value(rk.Key).Array().Length().IsEqual(valueLen)
 			length := int(object.Value(rk.Key).Array().Length().Raw())
 			if length > 0 {
 				max := 1

@@ -14,13 +14,13 @@ import (
 var (
 	c *Client
 	// default page request params
-	GetRequestFunc = NewWithQueryObjectParamFunc(map[string]interface{}{"page": 1, "pageSize": 10})
+	GetRequestFunc = NewWithQueryObjectParamFunc(map[string]any{"page": 1, "pageSize": 10})
 
 	// default page request params
-	PostRequestFunc = NewWithJsonParamFunc(map[string]interface{}{"page": 1, "pageSize": 10})
+	PostRequestFunc = NewWithJsonParamFunc(map[string]any{"page": 1, "pageSize": 10})
 
 	// default login request params
-	LoginFunc = NewWithJsonParamFunc(map[string]interface{}{"username": "admin", "password": "123456"})
+	LoginFunc = NewWithJsonParamFunc(map[string]any{"username": "admin", "password": "123456"})
 
 	// default login response params
 	LoginResponse = Responses{
@@ -54,21 +54,21 @@ var (
 type paramFunc func(req *httpexpect.Request) *httpexpect.Request
 
 // NewWithJsonParamFunc return req.WithJSON
-func NewWithJsonParamFunc(query map[string]interface{}) paramFunc {
+func NewWithJsonParamFunc(query map[string]any) paramFunc {
 	return func(req *httpexpect.Request) *httpexpect.Request {
 		return req.WithJSON(query)
 	}
 }
 
 // NewWithQueryObjectParamFunc query for get method
-func NewWithQueryObjectParamFunc(query map[string]interface{}) paramFunc {
+func NewWithQueryObjectParamFunc(query map[string]any) paramFunc {
 	return func(req *httpexpect.Request) *httpexpect.Request {
 		return req.WithQueryObject(query)
 	}
 }
 
 // NewWithFileParamFunc return req.WithFile
-func NewWithFileParamFunc(fs []File, query map[string]interface{}) paramFunc {
+func NewWithFileParamFunc(fs []File, query map[string]any) paramFunc {
 	return func(req *httpexpect.Request) *httpexpect.Request {
 		if len(fs) == 0 {
 			return req
@@ -85,7 +85,7 @@ func NewWithFileParamFunc(fs []File, query map[string]interface{}) paramFunc {
 }
 
 // NewWithFormParamFunc
-func NewWithFormParamFunc(query map[string]interface{}) paramFunc {
+func NewWithFormParamFunc(query map[string]any) paramFunc {
 	return func(req *httpexpect.Request) *httpexpect.Request {
 		if query == nil {
 			return req
@@ -169,7 +169,6 @@ func NewLoginApiConf(value string) ClientConf {
 func NewLogoutApiConf(value string) ClientConf {
 	return ClientConf{Key: LogoutApi, Value: value}
 }
-
 // NewClient return test client instance
 func NewClient(t *testing.T, handler http.Handler, confs ...ClientConf) *Client {
 	c = &Client{
@@ -286,24 +285,24 @@ func (c *Client) SetStatus(status int) *Client {
 	return c
 }
 
-// SetHeaders set http request headers
-func (c *Client) SetHeaders(headers map[string]string) *Client {
-	c.headers = headers
+// AddHeader
+func (c *Client) AddHeader(k, v string) *Client {
+	c.headers[k] = v
 	return c
 }
 
 // POST
-func (c *Client) POST(url string, res interface{}, paramFuncs ...paramFunc) {
+func (c *Client) POST(url string, resps any, paramFuncs ...paramFunc) {
 	req := c.expect.POST(url)
 	if len(paramFuncs) > 0 {
 		for _, f := range paramFuncs {
 			req = f(req)
 		}
 	}
-	if testRes, ok := res.(Responses); ok {
+	if testRes, ok := resps.(Responses); ok {
 		obj := req.Expect().Status(c.checkStatus()).JSON()
 		testRes.Test(obj)
-	} else if testRes, ok := res.([]Responses); ok {
+	} else if testRes, ok := resps.([]Responses); ok {
 		array := req.Expect().Status(c.checkStatus()).JSON().Array()
 		for i, v := range testRes {
 			v.Test(array.Value(i))
@@ -314,17 +313,17 @@ func (c *Client) POST(url string, res interface{}, paramFuncs ...paramFunc) {
 }
 
 // PUT
-func (c *Client) PUT(url string, res interface{}, paramFuncs ...paramFunc) {
+func (c *Client) PUT(url string, resps any, paramFuncs ...paramFunc) {
 	req := c.expect.PUT(url)
 	if len(paramFuncs) > 0 {
 		for _, f := range paramFuncs {
 			req = f(req)
 		}
 	}
-	if testRes, ok := res.(Responses); ok {
+	if testRes, ok := resps.(Responses); ok {
 		obj := req.Expect().Status(c.checkStatus()).JSON()
 		testRes.Test(obj)
-	} else if testRes, ok := res.([]Responses); ok {
+	} else if testRes, ok := resps.([]Responses); ok {
 		array := req.Expect().Status(c.checkStatus()).JSON().Array()
 		for i, v := range testRes {
 			v.Test(array.Value(i))
@@ -335,17 +334,17 @@ func (c *Client) PUT(url string, res interface{}, paramFuncs ...paramFunc) {
 }
 
 // UPLOAD
-func (c *Client) UPLOAD(url string, res interface{}, paramFuncs ...paramFunc) {
+func (c *Client) UPLOAD(url string, resps any, paramFuncs ...paramFunc) {
 	req := c.expect.POST(url)
 	if len(paramFuncs) > 0 {
 		for _, f := range paramFuncs {
 			req = f(req)
 		}
 	}
-	if testRes, ok := res.(Responses); ok {
+	if testRes, ok := resps.(Responses); ok {
 		obj := req.Expect().Status(c.checkStatus()).JSON()
 		testRes.Test(obj)
-	} else if testRes, ok := res.([]Responses); ok {
+	} else if testRes, ok := resps.([]Responses); ok {
 		array := req.Expect().Status(c.checkStatus()).JSON().Array()
 		for i, v := range testRes {
 			v.Test(array.Value(i))
@@ -356,19 +355,19 @@ func (c *Client) UPLOAD(url string, res interface{}, paramFuncs ...paramFunc) {
 }
 
 // GET
-func (c *Client) GET(url string, res interface{}, paramFuncs ...paramFunc) {
+func (c *Client) GET(url string, resps any, paramFuncs ...paramFunc) {
 	req := c.expect.GET(url)
 	if len(paramFuncs) > 0 {
 		for _, f := range paramFuncs {
 			req = f(req)
 		}
 	}
-	if testRes, ok := res.(Responses); ok {
+	if resp, ok := resps.(Responses); ok {
 		obj := req.Expect().Status(c.checkStatus()).JSON()
-		testRes.Test(obj)
-	} else if testRes, ok := res.([]Responses); ok {
+		resp.Test(obj)
+	} else if resp, ok := resps.([]Responses); ok {
 		array := req.Expect().Status(c.checkStatus()).JSON().Array()
-		for i, v := range testRes {
+		for i, v := range resp {
 			v.Test(array.Value(i))
 		}
 	} else {
@@ -377,7 +376,7 @@ func (c *Client) GET(url string, res interface{}, paramFuncs ...paramFunc) {
 }
 
 // DOWNLOAD
-func (c *Client) DOWNLOAD(url string, res interface{}, paramFuncs ...paramFunc) string {
+func (c *Client) DOWNLOAD(url string, resps any, paramFuncs ...paramFunc) string {
 	req := c.expect.GET(url)
 	if len(paramFuncs) > 0 {
 		for _, f := range paramFuncs {
@@ -389,17 +388,17 @@ func (c *Client) DOWNLOAD(url string, res interface{}, paramFuncs ...paramFunc) 
 }
 
 // DELETE
-func (c *Client) DELETE(url string, res interface{}, paramFuncs ...paramFunc) {
+func (c *Client) DELETE(url string, resps any, paramFuncs ...paramFunc) {
 	req := c.expect.DELETE(url)
 	if len(paramFuncs) > 0 {
 		for _, f := range paramFuncs {
 			req = f(req)
 		}
 	}
-	if testRes, ok := res.(Responses); ok {
+	if testRes, ok := resps.(Responses); ok {
 		obj := req.Expect().Status(c.checkStatus()).JSON()
 		testRes.Test(obj)
-	} else if testRes, ok := res.([]Responses); ok {
+	} else if testRes, ok := resps.([]Responses); ok {
 		array := req.Expect().Status(c.checkStatus()).JSON().Array()
 		for i, v := range testRes {
 			v.Test(array.Value(i))

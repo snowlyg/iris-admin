@@ -10,12 +10,12 @@ var (
 	jwtClaims = NewClaims(
 		&Agent{
 			Id:        uint(8457585),
-			Username:  "username",
+			Username:  "jwt username",
 			AuthIds:   []string{"999"},
 			RoleType:  RoleAdmin,
 			LoginType: LoginTypeWeb,
 			AuthType:  AuthPwd,
-			ExpiresAt: time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt: time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 )
@@ -61,20 +61,8 @@ func TestJwtGenerateToken(t *testing.T) {
 	}
 }
 
-func TestJwtDelUserTokenCache(t *testing.T) {
-	token, _, _ := jwtAuth.Generate(jwtClaims)
-	if token == "" {
-		t.Error("generate token is empty")
-	}
-	err := jwtAuth.DelCache(token)
-	if err != nil {
-		t.Errorf("get token by claims token want %v but get %v", nil, err)
-	}
-
-}
-
 func TestJwtSetUserTokenMaxCount(t *testing.T) {
-	err := jwtAuth.SetMaxCount(3)
+	err := jwtAuth.SetLimit(3)
 	if err != nil {
 		t.Errorf("get token by claims token want %v but get %v", nil, err)
 	}
@@ -109,8 +97,22 @@ func TestJwtGetMultiClaims(t *testing.T) {
 }
 
 func TestJwtGetTokenByClaims(t *testing.T) {
-	_, err := jwtAuth.Get(jwtClaims)
+	_, err := jwtAuth.Token(jwtClaims)
 	if err != nil {
 		t.Errorf("get token by claims token want %v but get %v", nil, err)
+	}
+}
+
+func TestJwtDelUserTokenCache(t *testing.T) {
+	token, _, _ := jwtAuth.Generate(jwtClaims)
+	if token == "" {
+		t.Error("generate token is empty")
+	}
+	err := jwtAuth.DelCache(token)
+	if err != nil {
+		t.Errorf("del token fail:%v", err.Error())
+	}
+	if _, err := jwtAuth.GetClaims(token); err == nil {
+		t.Error("del user token fail")
 	}
 }

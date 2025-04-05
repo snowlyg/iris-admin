@@ -74,7 +74,7 @@ func generateToken() gin.HandlerFunc {
 			LoginType:    auth2.LoginTypeWeb,
 			AuthType:     auth2.AuthPwd,
 			CreationTime: time.Now().Local().Unix(),
-			ExpiresAt:    time.Now().Local().Add(auth2.RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:    time.Now().Local().Add(auth2.TimeoutWeb).Unix(),
 		})
 
 		token, _, err := auth2.AuthAgent.Generate(claims)

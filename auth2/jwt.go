@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/snowlyg/helper/arr"
 )
 
 var hmacSampleSecret = []byte("updPA0L2uQ56LwHZoyUX")
@@ -12,12 +13,14 @@ var hmacSampleSecret = []byte("updPA0L2uQ56LwHZoyUX")
 // JwtAuth
 type JwtAuth struct {
 	HmacSecret []byte
+	delToken   arr.ArrayType
 }
 
 // NewJwt
 func NewJwt(hmacSecret []byte) *JwtAuth {
 	ja := &JwtAuth{
 		HmacSecret: hmacSecret,
+		delToken:   arr.NewCheckArrayType(0),
 	}
 	if ja.HmacSecret == nil {
 		ja.HmacSecret = hmacSampleSecret
@@ -37,13 +40,17 @@ func (ra *JwtAuth) Generate(claims *Claims) (string, int64, error) {
 	return tokenString, 0, nil
 }
 
-// Get 获取用户信息
-func (ra *JwtAuth) Get(cla *Claims) (string, error) {
+// Token
+func (ra *JwtAuth) Token(cla *Claims) (string, error) {
+	log.Printf("jwt:get token not support\n")
 	return "", nil
 }
 
 // GetClaims
 func (ra *JwtAuth) GetClaims(tokenString string) (*Claims, error) {
+	if ra.delToken.Check(tokenString) {
+		return nil, fmt.Errorf("jwt:token deleted %w", ErrTokenInvalid)
+	}
 	mc := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, mc, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
@@ -63,24 +70,27 @@ func (ra *JwtAuth) GetClaims(tokenString string) (*Claims, error) {
 	}
 }
 
-// SetMaxCount
-func (ra *JwtAuth) SetMaxCount(tokenMaxCount int64) error {
+// SetLimit
+func (ra *JwtAuth) SetLimit(limit int64) error {
+	log.Printf("jwt:set max count not support\n")
 	return nil
 }
 
 // UpdateCacheExpire
 func (ra *JwtAuth) UpdateCacheExpire(token string) error {
+	log.Printf("jwt:UpdateCacheExpire not support\n")
 	return nil
 }
 
 // DelCache
 func (ra *JwtAuth) DelCache(token string) error {
-	log.Println("auth2: jwt del user token")
+	ra.delToken.Add(token)
 	return nil
 }
 
 // CleanCache
 func (ra *JwtAuth) CleanCache(roleType RoleType, userId string) error {
+	log.Printf("jwt:CleanCache not support")
 	return nil
 }
 
@@ -88,7 +98,7 @@ func (ra *JwtAuth) CleanCache(roleType RoleType, userId string) error {
 func (ra *JwtAuth) IsRole(token string, roleType RoleType) (bool, error) {
 	rcc, err := ra.GetClaims(token)
 	if err != nil {
-		return false, fmt.Errorf("get User's infomation return error: %w", err)
+		return false, fmt.Errorf("jwt:get User's infomation return error: %w", err)
 	}
 	return rcc.roleType() == roleType, nil
 }
@@ -97,11 +107,11 @@ func (ra *JwtAuth) IsRole(token string, roleType RoleType) (bool, error) {
 func (ra *JwtAuth) IsSuperAdmin(token string) bool {
 	rcc, err := ra.GetClaims(token)
 	if err != nil {
+		log.Printf("jwt:get claims fail:%s\n", err.Error())
 		return false
 	}
 	return rcc.SuperAdmin
 }
 
 // Close
-func (ra *JwtAuth) Close() {
-}
+func (ra *JwtAuth) Close() {}

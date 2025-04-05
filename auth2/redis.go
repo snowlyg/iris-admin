@@ -16,12 +16,12 @@ type RedisAuth struct {
 
 // NewRedis
 func NewRedis(client redis.UniversalClient) (*RedisAuth, error) {
+	if client == nil {
+		return nil, errors.New("redis client is nil")
+	}
 	_, err := client.Ping(context.Background()).Result()
 	if err != nil {
 		return nil, err
-	}
-	if client == nil {
-		return nil, errors.New("redis client is nil")
 	}
 	return &RedisAuth{
 		Client: client,
@@ -30,8 +30,7 @@ func NewRedis(client redis.UniversalClient) (*RedisAuth, error) {
 
 // Generate
 func (ra *RedisAuth) Generate(claims *Claims) (string, int64, error) {
-
-	token, err := ra.Get(claims)
+	token, err := ra.Token(claims)
 	if err != nil {
 		return "", int64(claims.ExpiresAt), err
 	}
@@ -60,9 +59,9 @@ func (ra *RedisAuth) Generate(claims *Claims) (string, int64, error) {
 	return token, int64(claims.ExpiresAt), nil
 }
 
-// toCache 缓存 token
+// toCache
 func (ra *RedisAuth) toCache(token string, cla *Claims) error {
-	sKey := GtSessionTokenPrefix + token
+	sKey := TokenPrefix + token
 	if _, err := ra.Client.HMSet(context.Background(), sKey,
 		"id", cla.Id,
 		"super_admin", cla.SuperAdmin,
@@ -84,8 +83,8 @@ func (ra *RedisAuth) toCache(token string, cla *Claims) error {
 	return nil
 }
 
-// Get 获取用户信息
-func (ra *RedisAuth) Get(cla *Claims) (string, error) {
+// Token
+func (ra *RedisAuth) Token(cla *Claims) (string, error) {
 	userTokens, err := ra.getUserTokens(cla.roleType(), cla.Id)
 	if err != nil {
 		return "", err
@@ -103,9 +102,9 @@ func (ra *RedisAuth) Get(cla *Claims) (string, error) {
 	return "", nil
 }
 
-// getMultiClaimses 获取用户信息
+// getMultiClaimses
 func (ra *RedisAuth) getMultiClaimses(tokens []string) (map[string]*Claims, error) {
-	clas := make(map[string]*Claims, ra.getUserTokenMaxCount())
+	clas := make(map[string]*Claims, ra.getUserTokenLimit())
 	for _, token := range tokens {
 		cla, err := ra.GetClaims(token)
 		if err != nil {
@@ -117,10 +116,10 @@ func (ra *RedisAuth) getMultiClaimses(tokens []string) (map[string]*Claims, erro
 	return clas, nil
 }
 
-// GetClaims 获取用户信息
+// GetClaims
 func (ra *RedisAuth) GetClaims(token string) (*Claims, error) {
 	cla := new(Claims)
-	if err := ra.Client.HGetAll(context.Background(), GtSessionTokenPrefix+token).Scan(cla); err != nil {
+	if err := ra.Client.HGetAll(context.Background(), TokenPrefix+token).Scan(cla); err != nil {
 		return nil, fmt.Errorf("get custom claims redis hgetall %w", err)
 	}
 
@@ -131,16 +130,16 @@ func (ra *RedisAuth) GetClaims(token string) (*Claims, error) {
 	return cla, nil
 }
 
-// isUserTokenOver 超过登录设备限制
+// isUserTokenOver
 func (ra *RedisAuth) isUserTokenOver(roleType RoleType, userId string) (bool, error) {
 	max, err := ra.getUserTokenCount(roleType, userId)
 	if err != nil {
 		return true, err
 	}
-	return max >= ra.getUserTokenMaxCount(), nil
+	return max >= ra.getUserTokenLimit(), nil
 }
 
-// getUserTokens 获取登录数量
+// getUserTokens
 func (ra *RedisAuth) getUserTokens(roleType RoleType, userId string) ([]string, error) {
 	userTokens, err := ra.Client.SMembers(context.Background(), getPrefixKey(roleType, userId)).Result()
 	if err != nil {
@@ -149,7 +148,7 @@ func (ra *RedisAuth) getUserTokens(roleType RoleType, userId string) ([]string, 
 	return userTokens, nil
 }
 
-// getUserTokenCount 获取登录数量
+// getUserTokenCount
 func (ra *RedisAuth) getUserTokenCount(roleType RoleType, userId string) (int64, error) {
 	var count int64
 	userTokens, err := ra.getUserTokens(roleType, userId)
@@ -165,34 +164,34 @@ func (ra *RedisAuth) getUserTokenCount(roleType RoleType, userId string) (int64,
 	return count, nil
 }
 
-// checkUserTokenCount 验证登录数量,清除 userPrefixKey 下无效 token
+// checkUserTokenCount
 func (ra *RedisAuth) checkUserTokenCount(token, userPrefixKey string) int64 {
-	mun, err := ra.Client.Exists(context.Background(), GtSessionTokenPrefix+token).Result()
+	mun, err := ra.Client.Exists(context.Background(), TokenPrefix+token).Result()
 	if err != nil || mun == 0 {
 		ra.Client.SRem(context.Background(), userPrefixKey, token)
 	}
 	return mun
 }
 
-// getUserTokenMaxCount 最大登录限制
-func (ra *RedisAuth) getUserTokenMaxCount() int64 {
-	count, err := ra.Client.Get(context.Background(), GtSessionUserMaxTokenPrefix).Int64()
+// getUserTokenLimit
+func (ra *RedisAuth) getUserTokenLimit() int64 {
+	count, err := ra.Client.Get(context.Background(), LimitTokenPrefix).Int64()
 	if err != nil {
-		return GtSessionUserMaxTokenDefault
+		return LimitTokenDefault
 	}
 	return count
 }
 
-// SetMaxCount 最大登录限制
-func (ra *RedisAuth) SetMaxCount(tokenMaxCount int64) error {
-	err := ra.Client.Set(context.Background(), GtSessionUserMaxTokenPrefix, tokenMaxCount, 0).Err()
+// SetLimit
+func (ra *RedisAuth) SetLimit(limit int64) error {
+	err := ra.Client.Set(context.Background(), LimitTokenPrefix, limit, 0).Err()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// syncUserTokenCache 同步 token 到用户缓存
+// syncUserTokenCache
 func (ra *RedisAuth) syncUserTokenCache(token string) error {
 	cla, err := ra.GetClaims(token)
 	if err != nil {
@@ -203,7 +202,7 @@ func (ra *RedisAuth) syncUserTokenCache(token string) error {
 		return fmt.Errorf("sync user token cache redis sadd %w", err)
 	}
 
-	bindUserPrefixKey := GtSessionBindUserPrefix + token
+	bindUserPrefixKey := BindUserPrefix + token
 	_, err = ra.Client.Set(context.Background(), bindUserPrefixKey, userPrefixKey, getExpire(cla.loginType())).Result()
 	if err != nil {
 		return fmt.Errorf("sync user token cache %w", err)
@@ -211,7 +210,7 @@ func (ra *RedisAuth) syncUserTokenCache(token string) error {
 	return nil
 }
 
-// UpdateCacheExpire 更新过期时间
+// UpdateCacheExpire
 func (ra *RedisAuth) UpdateCacheExpire(token string) error {
 	rcc, err := ra.GetClaims(token)
 	if err != nil {
@@ -220,10 +219,10 @@ func (ra *RedisAuth) UpdateCacheExpire(token string) error {
 	if rcc == nil {
 		return errors.New("token cache is nil")
 	}
-	if err = ra.setExpire(GtSessionTokenPrefix+token, rcc.loginType()); err != nil {
+	if err = ra.setExpire(TokenPrefix+token, rcc.loginType()); err != nil {
 		return fmt.Errorf("update user token cache expire redis expire %w", err)
 	}
-	if err = ra.setExpire(GtSessionBindUserPrefix+token, rcc.loginType()); err != nil {
+	if err = ra.setExpire(BindUserPrefix+token, rcc.loginType()); err != nil {
 		return fmt.Errorf("update user token cache expire redis expire %w", err)
 	}
 	return nil
@@ -236,7 +235,7 @@ func (ra *RedisAuth) setExpire(key string, loginType LoginType) error {
 	return nil
 }
 
-// DelCache 删除token缓存
+// DelCache
 func (ra *RedisAuth) DelCache(token string) error {
 	log.Println("auth2: redis del user token")
 	cla, err := ra.GetClaims(token)
@@ -258,7 +257,7 @@ func (ra *RedisAuth) DelCache(token string) error {
 	return nil
 }
 
-// delUserTokenPrefixToken 删除 user token缓存
+// delUserTokenPrefixToken
 func (ra *RedisAuth) delUserTokenPrefixToken(roleType RoleType, id, token string) error {
 	_, err := ra.Client.SRem(context.Background(), getPrefixKey(roleType, id), token).Result()
 	if err != nil {
@@ -267,15 +266,15 @@ func (ra *RedisAuth) delUserTokenPrefixToken(roleType RoleType, id, token string
 	return nil
 }
 
-// delTokenCache 删除token缓存
+// delTokenCache
 func (ra *RedisAuth) delTokenCache(token string) error {
-	sKey2 := GtSessionBindUserPrefix + token
+	sKey2 := BindUserPrefix + token
 	_, err := ra.Client.Del(context.Background(), sKey2).Result()
 	if err != nil {
 		return fmt.Errorf("del user token cache redis del2  %w", err)
 	}
 
-	sKey3 := GtSessionTokenPrefix + token
+	sKey3 := TokenPrefix + token
 	_, err = ra.Client.Del(context.Background(), sKey3).Result()
 	if err != nil {
 		return fmt.Errorf("del user token cache redis del3  %w", err)
@@ -284,7 +283,7 @@ func (ra *RedisAuth) delTokenCache(token string) error {
 	return nil
 }
 
-// CleanCache 清空token缓存
+// CleanCache
 func (ra *RedisAuth) CleanCache(roleType RoleType, userId string) error {
 	allTokens, err := ra.getUserTokens(roleType, userId)
 	if err != nil {

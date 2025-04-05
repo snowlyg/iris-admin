@@ -9,15 +9,15 @@ import (
 )
 
 const (
-	GtSessionTokenPrefix        = "GST:"
-	GtSessionBindUserPrefix     = "GSBU:"
-	GtSessionUserPrefix         = "GSU:"
-	GtSessionUserMaxTokenPrefix = "GT_USER_MAX_TOKEN"
+	TokenPrefix      = "GST:"
+	BindUserPrefix   = "GSBU:"
+	UserPrefix       = "GSU:"
+	LimitTokenPrefix = "GT_LIMIT_TOKEN"
 )
 
 var (
-	AuthTypeSplit                      = "-"
-	GtSessionUserMaxTokenDefault int64 = 10
+	AuthTypeSplit           = "-"
+	LimitTokenDefault int64 = 10
 )
 
 var (
@@ -54,10 +54,10 @@ const (
 )
 
 var (
-	RedisSessionTimeoutWeb    = 4 * time.Hour
-	RedisSessionTimeoutApp    = 7 * 24 * time.Hour
-	RedisSessionTimeoutWx     = 5 * 52 * 168 * time.Hour
-	RedisSessionTimeoutDevice = 5 * 52 * 168 * time.Hour
+	TimeoutWeb    = 4 * time.Hour
+	TimeoutApp    = 7 * 24 * time.Hour
+	TimeoutWx     = 5 * 52 * 168 * time.Hour
+	TimeoutDevice = 5 * 52 * 168 * time.Hour
 )
 
 func NewAgent(c *Config) error {
@@ -72,13 +72,13 @@ func NewAgent(c *Config) error {
 		}
 
 		AuthAgent = agent
-		err = AuthAgent.SetMaxCount(c.Max)
+		err = AuthAgent.SetLimit(c.Max)
 		if err != nil {
 			return err
 		}
 	case "local":
 		AuthAgent = NewLocal()
-		err := AuthAgent.SetMaxCount(c.Max)
+		err := AuthAgent.SetLimit(c.Max)
 		if err != nil {
 			return err
 		}
@@ -146,9 +146,9 @@ type Authentication interface {
 	DelCache(token string) error
 	UpdateCacheExpire(token string) error
 	GetClaims(token string) (*Claims, error)
-	Get(claims *Claims) (string, error)
+	Token(claims *Claims) (string, error)
 	CleanCache(roleType RoleType, userId string) error
-	SetMaxCount(max int64) error
+	SetLimit(max int64) error
 	IsRole(token string, roleType RoleType) (bool, error)
 	IsSuperAdmin(token string) bool
 	Close()
@@ -158,19 +158,19 @@ type Authentication interface {
 func getExpire(loginType LoginType) time.Duration {
 	switch loginType {
 	case LoginTypeWeb:
-		return RedisSessionTimeoutWeb
+		return TimeoutWeb
 	case LoginTypeWx:
-		return RedisSessionTimeoutWx
+		return TimeoutWx
 	case LoginTypeApp:
-		return RedisSessionTimeoutApp
+		return TimeoutApp
 	case LoginTypeDevice:
-		return RedisSessionTimeoutDevice
+		return TimeoutDevice
 	default:
-		return RedisSessionTimeoutWeb
+		return TimeoutWeb
 	}
 }
 
 // getPrefixKey
 func getPrefixKey(roleType RoleType, id string) string {
-	return fmt.Sprintf("%s%d_%s", GtSessionUserPrefix, roleType, id)
+	return fmt.Sprintf("%s%d_%s", UserPrefix, roleType, id)
 }

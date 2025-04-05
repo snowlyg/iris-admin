@@ -43,7 +43,7 @@ func (la *LocalAuth) Generate(claims *Claims) (string, int64, error) {
 }
 
 func (la *LocalAuth) toCache(token string, rcc *Claims) error {
-	sKey := GtSessionTokenPrefix + token
+	sKey := TokenPrefix + token
 	la.Cache.Set(sKey, rcc, getExpire(rcc.loginType()))
 	return nil
 }
@@ -60,7 +60,7 @@ func (la *LocalAuth) syncUserCache(token string) error {
 	}
 	ts = append(ts, token)
 	la.Cache.Set(userPrefixKey, ts, cache.NoExpiration)
-	la.Cache.Set(GtSessionBindUserPrefix+token, userPrefixKey, getExpire(rcc.loginType()))
+	la.Cache.Set(BindUserPrefix+token, userPrefixKey, getExpire(rcc.loginType()))
 	return nil
 }
 
@@ -87,10 +87,10 @@ func (la *LocalAuth) DelCache(token string) error {
 	return nil
 }
 
-// delTokenCache 删除token缓存
+// delTokenCache
 func (la *LocalAuth) delTokenCache(token string) error {
-	la.Cache.Delete(GtSessionBindUserPrefix + token)
-	la.Cache.Delete(GtSessionTokenPrefix + token)
+	la.Cache.Delete(BindUserPrefix + token)
+	la.Cache.Delete(TokenPrefix + token)
 	return nil
 }
 
@@ -102,13 +102,13 @@ func (la *LocalAuth) UpdateCacheExpire(token string) error {
 	if rsv2 == nil {
 		return errors.New("token cache is nil")
 	}
-	la.Cache.Set(GtSessionBindUserPrefix+token, rsv2, getExpire(rsv2.loginType()))
-	la.Cache.Set(GtSessionTokenPrefix+token, rsv2, getExpire(rsv2.loginType()))
+	la.Cache.Set(BindUserPrefix+token, rsv2, getExpire(rsv2.loginType()))
+	la.Cache.Set(TokenPrefix+token, rsv2, getExpire(rsv2.loginType()))
 	return nil
 }
 
 func (la *LocalAuth) GetClaims(token string) (*Claims, error) {
-	sKey := GtSessionTokenPrefix + token
+	sKey := TokenPrefix + token
 	if food, found := la.Cache.Get(sKey); !found || food == nil {
 		return nil, fmt.Errorf("token not found:%w", ErrTokenInvalid)
 	} else {
@@ -116,8 +116,8 @@ func (la *LocalAuth) GetClaims(token string) (*Claims, error) {
 	}
 }
 
-// Get 获取用户信息
-func (la *LocalAuth) Get(cla *Claims) (string, error) {
+// Token
+func (la *LocalAuth) Token(cla *Claims) (string, error) {
 	userTokens, err := la.getUserTokens(cla.roleType(), cla.Id)
 	if err != nil {
 		return "", err
@@ -138,7 +138,7 @@ func (la *LocalAuth) Get(cla *Claims) (string, error) {
 	return "", nil
 }
 
-// getUserTokens 获取登录数量
+// getUserTokens
 func (la *LocalAuth) getUserTokens(roleType RoleType, userId string) (tokens, error) {
 	if utokens, ok := la.Cache.Get(getPrefixKey(roleType, userId)); ok && utokens != nil {
 		return utokens.(tokens), nil
@@ -175,7 +175,7 @@ func (la *LocalAuth) checkMaxCount(roleType RoleType, userId string) int64 {
 		return 0
 	}
 	for index, u := range utokens {
-		if _, found := la.Cache.Get(GtSessionTokenPrefix + u); !found {
+		if _, found := la.Cache.Get(TokenPrefix + u); !found {
 			if len(utokens) == 1 {
 				utokens = nil
 			} else {
@@ -188,22 +188,22 @@ func (la *LocalAuth) checkMaxCount(roleType RoleType, userId string) int64 {
 
 }
 
-// getUserTokenMaxCount 最大登录限制
+// getUserTokenMaxCount
 func (la *LocalAuth) getUserTokenMaxCount() int64 {
-	if count, found := la.Cache.Get(GtSessionUserMaxTokenPrefix); !found {
-		return GtSessionUserMaxTokenDefault
+	if count, found := la.Cache.Get(LimitTokenPrefix); !found {
+		return LimitTokenDefault
 	} else {
 		return count.(int64)
 	}
 }
 
-// SetMaxCount 最大登录限制
-func (la *LocalAuth) SetMaxCount(tokenMaxCount int64) error {
-	la.Cache.Set(GtSessionUserMaxTokenPrefix, tokenMaxCount, cache.NoExpiration)
+// SetLimit
+func (la *LocalAuth) SetLimit(tokenMaxCount int64) error {
+	la.Cache.Set(LimitTokenPrefix, tokenMaxCount, cache.NoExpiration)
 	return nil
 }
 
-// CleanCache 清空token缓存
+// CleanCache
 func (la *LocalAuth) CleanCache(roleType RoleType, userId string) error {
 	utokens, _ := la.getUserTokens(roleType, userId)
 	if utokens == nil {
@@ -237,5 +237,4 @@ func (la *LocalAuth) IsSuperAdmin(token string) bool {
 	return rcc.SuperAdmin
 }
 
-// 兼容 redis
 func (la *LocalAuth) Close() {}

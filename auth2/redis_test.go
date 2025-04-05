@@ -41,7 +41,7 @@ var (
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	ruserKey = getPrefixKey(logTypeWeb.roleType(), logTypeWeb.Id)
@@ -101,7 +101,7 @@ func TestRedisGenerateToken(t *testing.T) {
 			t.Errorf("user prefix value want %v but get %v", ruserKey, uTokens)
 		}
 	}
-	bindKey := GtSessionBindUserPrefix + token
+	bindKey := BindUserPrefix + token
 	key, err := redisAuth.Client.Get(context.Background(), bindKey).Result()
 	if err != nil {
 		t.Fatal(err)
@@ -116,7 +116,7 @@ func TestRedisToCache(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	defer redisAuth.Client.Del(context.Background(), GtSessionTokenPrefix+rToken)
+	defer redisAuth.Client.Del(context.Background(), TokenPrefix+rToken)
 	if err := redisAuth.toCache(rToken, logTypeWeb); err != nil {
 		t.Fatalf("generate token %v", err)
 	}
@@ -161,7 +161,7 @@ func TestRedisDelUserTokenCache(t *testing.T) {
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
@@ -182,12 +182,12 @@ func TestRedisDelUserTokenCache(t *testing.T) {
 		t.Fatalf("get custom claims err want '%v' but get  '%v'", ErrEmptyToken, err)
 	}
 
-	if uTokens, err := redisAuth.Client.SMembers(context.Background(), GtSessionUserPrefix+cc.Id).Result(); err != nil {
+	if uTokens, err := redisAuth.Client.SMembers(context.Background(), UserPrefix+cc.Id).Result(); err != nil {
 		t.Fatalf("user prefix value wantget %v", err)
 	} else if len(uTokens) != 0 {
 		t.Errorf("user prefix value want empty but get %+v", uTokens)
 	}
-	bindKey := GtSessionBindUserPrefix + token
+	bindKey := BindUserPrefix + token
 	key, _ := redisAuth.Client.Get(context.Background(), bindKey).Result()
 	if key != "" {
 		t.Errorf("bind user prefix value want empty but get %v", key)
@@ -204,7 +204,7 @@ func TestRedisIsUserTokenOver(t *testing.T) {
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
@@ -212,7 +212,7 @@ func TestRedisIsUserTokenOver(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	defer redisAuth.CleanCache(cc.roleType(), cc.Id)
-	if err := redisAuth.SetMaxCount(10); err != nil {
+	if err := redisAuth.SetLimit(10); err != nil {
 		t.Fatalf("set user token max count %v", err)
 	}
 	var wantTokenLen int64 = 0
@@ -248,7 +248,7 @@ func TestRedisSetUserTokenMaxCount(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	defer redisAuth.CleanCache(logTypeWeb.roleType(), logTypeWeb.Id)
-	if err := redisAuth.SetMaxCount(10); err != nil {
+	if err := redisAuth.SetLimit(10); err != nil {
 		t.Fatalf("set user token max count %v", err)
 	}
 	for i := LoginTypeWeb; i <= LoginTypeWx; i++ {
@@ -260,10 +260,10 @@ func TestRedisSetUserTokenMaxCount(t *testing.T) {
 		}(i)
 		wg.Wait()
 	}
-	if err := redisAuth.SetMaxCount(3); err != nil {
+	if err := redisAuth.SetLimit(3); err != nil {
 		t.Fatalf("set user token max count %v", err)
 	}
-	count := redisAuth.getUserTokenMaxCount()
+	count := redisAuth.getUserTokenLimit()
 	if count != 3 {
 		t.Errorf("user token max count want %v  but get %v", 3, count)
 	}
@@ -343,7 +343,7 @@ func TestRedisGetUserTokens(t *testing.T) {
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
@@ -390,7 +390,7 @@ func TestRedisGetTokenByClaims(t *testing.T) {
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
@@ -418,7 +418,7 @@ func TestRedisGetTokenByClaims(t *testing.T) {
 		t.Fatal("get token by claims generate token is empty \n")
 	}
 
-	userToken, err := redisAuth.Get(logTypeWeb)
+	userToken, err := redisAuth.Token(logTypeWeb)
 	if err != nil {
 		t.Fatalf("get token by claims %v", err)
 	}

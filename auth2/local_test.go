@@ -18,7 +18,7 @@ var (
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	userKey = getPrefixKey(loginTypeApp.roleType(), loginTypeApp.Id)
@@ -80,7 +80,7 @@ func TestGenerateToken(t *testing.T) {
 	} else {
 		t.Error("user prefix value is emptpy")
 	}
-	bindKey := GtSessionBindUserPrefix + token
+	bindKey := BindUserPrefix + token
 	if uTokens, uFound := localAuth.Cache.Get(bindKey); uFound {
 		if uTokens != userKey {
 			t.Errorf("bind user prefix value want %v but get %v", userKey, uTokens)
@@ -136,7 +136,7 @@ func TestDelUserTokenCache(t *testing.T) {
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	token, _, _ := localAuth.Generate(cc)
@@ -153,10 +153,10 @@ func TestDelUserTokenCache(t *testing.T) {
 		t.Fatalf("get custom claims err want %v but get  %v", ErrTokenInvalid, err)
 	}
 
-	if uTokens, uFound := localAuth.Cache.Get(GtSessionUserPrefix + cc.Id); uFound && uTokens != nil {
+	if uTokens, uFound := localAuth.Cache.Get(UserPrefix + cc.Id); uFound && uTokens != nil {
 		t.Errorf("user prefix value want empty but get %v", uTokens)
 	}
-	bindKey := GtSessionBindUserPrefix + token
+	bindKey := BindUserPrefix + token
 	if key, uFound := localAuth.Cache.Get(bindKey); uFound {
 		t.Errorf("bind user prefix value want empty but get %v", key)
 	}
@@ -172,7 +172,7 @@ func TestIsUserTokenOver(t *testing.T) {
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	for i := 0; i < 6; i++ {
@@ -191,7 +191,7 @@ func TestSetUserTokenMaxCount(t *testing.T) {
 	for i := 0; i < 6; i++ {
 		localAuth.Generate(loginTypeApp)
 	}
-	if err := localAuth.SetMaxCount(5); err != nil {
+	if err := localAuth.SetLimit(5); err != nil {
 		t.Fatalf("set user token max count %v", err)
 	}
 	count := localAuth.getUserTokenMaxCount()
@@ -252,7 +252,7 @@ func TestLocalGetUserTokens(t *testing.T) {
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 
@@ -301,7 +301,7 @@ func TestLocalGetTokenByClaims(t *testing.T) {
 			RoleType:   RoleAdmin,
 			LoginType:  LoginTypeWeb,
 			AuthType:   AuthPwd,
-			ExpiresAt:  time.Now().Local().Add(RedisSessionTimeoutWeb).Unix(),
+			ExpiresAt:  time.Now().Local().Add(TimeoutWeb).Unix(),
 		},
 	)
 	defer localAuth.CleanCache(LoginTypeWeb.roleType(), LoginTypeWeb.Id)
@@ -325,7 +325,7 @@ func TestLocalGetTokenByClaims(t *testing.T) {
 		t.Fatal("get token by claims generate token is empty \n")
 	}
 
-	userToken, err := localAuth.Get(loginTypeApp)
+	userToken, err := localAuth.Token(loginTypeApp)
 	if err != nil {
 		t.Fatalf("get token by claims %v", err)
 	}

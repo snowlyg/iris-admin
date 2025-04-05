@@ -4,8 +4,25 @@ import (
 	"testing"
 
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/snowlyg/iris-admin/conf"
 	"gorm.io/gorm"
 )
+
+func testInitMigrate() (*Migrate, error) {
+	config := conf.NewConf()
+	if err := config.Recover(); err != nil {
+		return nil, err
+	}
+	db, err := gormDb(&config.Mysql)
+	if err != nil {
+		return nil, err
+	}
+	return &Migrate{
+		db:    db,
+		items: nil,
+		seeds: nil,
+	}, nil
+}
 
 type Test struct {
 	gorm.Model
@@ -23,14 +40,15 @@ var m = &gormigrate.Migration{
 }
 
 func TestAddMigration(t *testing.T) {
-	migrate := New()
-	t.Run("migrate add migration", func(t *testing.T) {
-		migrate.AddMigration(m)
-		l := migrate.MigrationLen()
-		if l != 1 {
-			t.Errorf("MigrationLen want %d but get %d", 1, l)
-		}
-	})
+	migrate, err := testInitMigrate()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	migrate.AddMigration(m)
+	l := migrate.MigrationLen()
+	if l != 1 {
+		t.Errorf("MigrationLen want %d but get %d", 1, l)
+	}
 }
 
 type testSeed struct{}
@@ -39,89 +57,66 @@ func (ts *testSeed) Init() error {
 	return nil
 }
 func TestAddSeed(t *testing.T) {
-	migrate := New()
-	t.Run("migrate add seed", func(t *testing.T) {
-		migrate.AddSeed(&testSeed{})
-		l := migrate.SeedlLen()
-		if l != 1 {
-			t.Errorf("SeedlLen want %d but get %d", 1, l)
-		}
-	})
+	migrate, err := testInitMigrate()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	migrate.AddSeed(&testSeed{})
+	l := migrate.SeedlLen()
+	if l != 1 {
+		t.Errorf("SeedlLen want %d but get %d", 1, l)
+	}
 }
 func TestMigrate(t *testing.T) {
-	// defer Remove()
-	// CONFIG.Mysql.Path = TestMysqlAddr
-	// CONFIG.Mysql.Password = TestMysqlPwd
-	migrate := New()
+	migrate, err := testInitMigrate()
+	if err != nil {
+		t.Fatal(err.Error())
+	}
 	migrate.AddMigration(m)
-	t.Run("migrate migrate", func(t *testing.T) {
-		err := migrate.Migrate()
-		if err != nil {
-			t.Error(err.Error())
-		}
-	})
+	if err := migrate.Migrate(); err != nil {
+		t.Error(err.Error())
+	}
 }
 func TestRollback(t *testing.T) {
-	// defer Remove()
-	// CONFIG.Mysql.Path = TestMysqlAddr
-	// CONFIG.Mysql.Password = TestMysqlPwd
-	migrate := New()
-	t.Run("migrate rollback no migrate with id", func(t *testing.T) {
-		err := migrate.Rollback(id)
-		if err != nil {
-			t.Error(err.Error())
-		}
-	})
-	t.Run("migrate rollback no migrate without id", func(t *testing.T) {
-		err := migrate.Rollback("")
-		if err != nil {
-			t.Error(err.Error())
-		}
-	})
-	migrate.AddMigration(m)
-	err := migrate.Migrate()
+	migrate, err := testInitMigrate()
 	if err != nil {
+		t.Fatal(err.Error())
+	}
+	if err := migrate.Rollback(id); err != nil {
+		t.Error(err.Error())
+	}
+	if err := migrate.Rollback(""); err != nil {
+		t.Error(err.Error())
+	}
+	migrate.AddMigration(m)
+	if err := migrate.Migrate(); err != nil {
 		t.Error(err.Error())
 	}
 
-	t.Run("migrate rollback after migrate with id", func(t *testing.T) {
-		err := migrate.Rollback(id)
-		if err != nil {
-			t.Error(err.Error())
-		}
-	})
-	t.Run("migrate rollback after migrate without id", func(t *testing.T) {
-		err := migrate.Rollback("")
-		if err != nil {
-			t.Error(err.Error())
-		}
-	})
+	if err := migrate.Rollback(id); err != nil {
+		t.Error(err.Error())
+	}
+	if err := migrate.Rollback(""); err != nil {
+		t.Error(err.Error())
+	}
 }
 
 func TestRefresh(t *testing.T) {
-	// defer Remove()
-	// CONFIG.Mysql.Path = TestMysqlAddr
-	// CONFIG.Mysql.Password = TestMysqlPwd
-	migrate := New()
-
-	t.Run("migrate refresh no migrate", func(t *testing.T) {
-		err := migrate.Refresh()
-		if err != nil {
-			t.Error(err.Error())
-		}
-	})
-
-	migrate.AddMigration(m)
-	err := migrate.Migrate()
+	migrate, err := testInitMigrate()
 	if err != nil {
+		t.Fatal(err.Error())
+	}
+	if err := migrate.Refresh(); err != nil {
 		t.Error(err.Error())
 	}
 
-	t.Run("migrate refresh after migrate", func(t *testing.T) {
-		err := migrate.Refresh()
-		if err != nil {
-			t.Error(err.Error())
-		}
-	})
+	migrate.AddMigration(m)
+	if err := migrate.Migrate(); err != nil {
+		t.Error(err.Error())
+	}
+
+	if err := migrate.Refresh(); err != nil {
+		t.Error(err.Error())
+	}
 
 }

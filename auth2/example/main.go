@@ -10,8 +10,6 @@ import (
 	"github.com/snowlyg/iris-admin/auth2"
 )
 
-// init 初始化认证驱动
-// 驱动类型： 可选 redis ,local,jwt
 func init() {
 	options := &redis.UniversalOptions{
 		Addrs:       []string{"127.0.0.1:6379"},
@@ -30,9 +28,9 @@ func init() {
 		// },
 	}
 
-	err := auth2.InitDriver(&auth2.Config{
-		DriverType:      "redis",
-		TokenMaxCount:   10,
+	err := auth2.NewAgent(&auth2.Config{
+		Type:            "redis",
+		Max:             10,
 		UniversalClient: redis.NewUniversalClient(options)})
 	if err != nil {
 		panic(fmt.Sprintf("auth is not init get err %v\n", err))
@@ -68,18 +66,18 @@ func main() {
 
 func generateToken() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		claims := &auth2.MultiClaims{
-			Id:            "1",
-			Username:      "your name",
-			AuthorityId:   "your authority id",
-			AuthorityType: auth2.AdminAuthority,
-			LoginType:     auth2.LoginTypeWeb,
-			AuthType:      auth2.AuthPwd,
-			CreationTime:  time.Now().Local().Unix(),
-			ExpiresAt:     time.Now().Local().Add(auth2.RedisSessionTimeoutWeb).Unix(),
-		}
+		claims := auth2.NewClaims(&auth2.Agent{
+			Id:           1,
+			Username:     "your name",
+			AuthIds:      []string{"your authority id"},
+			RoleType:     auth2.RoleAdmin,
+			LoginType:    auth2.LoginTypeWeb,
+			AuthType:     auth2.AuthPwd,
+			CreationTime: time.Now().Local().Unix(),
+			ExpiresAt:    time.Now().Local().Add(auth2.RedisSessionTimeoutWeb).Unix(),
+		})
 
-		token, _, err := auth2.AuthDriver.GenerateToken(claims)
+		token, _, err := auth2.AuthAgent.Generate(claims)
 		if err != nil {
 			ctx.AbortWithStatus(http.StatusInternalServerError)
 			return
@@ -97,10 +95,10 @@ func protected(ctx *gin.Context) {
 func logout(ctx *gin.Context) {
 	token := auth2.GetVerifiedToken(ctx)
 	if token == nil {
-		ctx.String(http.StatusOK, "授权凭证为空")
+		ctx.String(http.StatusOK, auth2.ErrEmptyToken.Error())
 		return
 	}
-	err := auth2.AuthDriver.DelUserTokenCache(string(token))
+	err := auth2.AuthAgent.DelCache(string(token))
 	if err != nil {
 		ctx.JSON(http.StatusOK, err.Error())
 		return

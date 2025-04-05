@@ -16,7 +16,7 @@ type LocalAuth struct {
 	Cache *cache.Cache
 }
 
-func NewLocalAuth() *LocalAuth {
+func NewLocal() *LocalAuth {
 	if localCache == nil {
 		localCache = cache.New(4*time.Hour, 24*time.Minute)
 	}
@@ -25,60 +25,51 @@ func NewLocalAuth() *LocalAuth {
 	}
 }
 
-// GenerateToken
-func (la *LocalAuth) GenerateToken(claims *MultiClaims) (string, int64, error) {
-	if la.isUserTokenOver(claims.AuthorityType, claims.Id) {
-		return "", 0, ErrOverMaxTokenCount
-	}
-	token, err := GetToken()
-	if err != nil {
-		return "", 0, err
-	}
-	err = la.toCache(token, claims)
-	if err != nil {
-		return "", 0, err
-	}
-	if err = la.syncUserTokenCache(token); err != nil {
-		return "", 0, err
-	}
+// Generate
+func (la *LocalAuth) Generate(claims *Claims) (string, int64, error) {
 
-	return token, int64(claims.ExpiresAt), err
+	if la.isUserTokenOver(claims.roleType(), claims.Id) {
+		return "", 0, fmt.Errorf("local: is user token over fail:%w", ErrOverLimit)
+	}
+	token, err := getToken()
+	if err != nil {
+		return "", 0, fmt.Errorf("local: get token fail:%w", err)
+	}
+	la.toCache(token, claims)
+	if e := la.syncUserCache(token); e != nil {
+		return "", 0, fmt.Errorf("local: sync user token fail:%w", e)
+	}
+	return token, int64(claims.ExpiresAt), nil
 }
 
-func (la *LocalAuth) toCache(token string, rcc *MultiClaims) error {
+func (la *LocalAuth) toCache(token string, rcc *Claims) error {
 	sKey := GtSessionTokenPrefix + token
-	la.Cache.Set(sKey, rcc, GetTokenExpire(rcc.LoginType))
+	la.Cache.Set(sKey, rcc, getExpire(rcc.loginType()))
 	return nil
 }
 
-func (la *LocalAuth) syncUserTokenCache(token string) error {
-	rcc, err := la.GetMultiClaims(token)
+func (la *LocalAuth) syncUserCache(token string) error {
+	rcc, err := la.GetClaims(token)
 	if err != nil {
 		return err
 	}
-
-	userPrefixKey := GetUserPrefixKey(rcc.AuthorityType, rcc.Id)
+	userPrefixKey := getPrefixKey(rcc.roleType(), rcc.Id)
 	ts := tokens{}
 	if uTokens, ok := la.Cache.Get(userPrefixKey); ok && uTokens != nil {
 		ts = uTokens.(tokens)
 	}
 	ts = append(ts, token)
 	la.Cache.Set(userPrefixKey, ts, cache.NoExpiration)
-
-	la.Cache.Set(GtSessionBindUserPrefix+token, userPrefixKey, GetTokenExpire(rcc.LoginType))
+	la.Cache.Set(GtSessionBindUserPrefix+token, userPrefixKey, getExpire(rcc.loginType()))
 	return nil
 }
 
-func (la *LocalAuth) DelUserTokenCache(token string) error {
-	rcc, err := la.GetMultiClaims(token)
+func (la *LocalAuth) DelCache(token string) error {
+	rcc, err := la.GetClaims(token)
 	if err != nil {
 		return err
 	}
-	if rcc == nil {
-		return errors.New("token cache is nil")
-	}
-
-	userPrefixKey := GetUserPrefixKey(rcc.AuthorityType, rcc.Id)
+	userPrefixKey := getPrefixKey(rcc.roleType(), rcc.Id)
 	if utokens, ok := la.Cache.Get(userPrefixKey); ok && utokens != nil {
 		t := utokens.(tokens)
 		for index, u := range t {
@@ -91,13 +82,8 @@ func (la *LocalAuth) DelUserTokenCache(token string) error {
 			}
 		}
 		la.Cache.Set(userPrefixKey, utokens, cache.NoExpiration)
-
 	}
-	err = la.delTokenCache(token)
-	if err != nil {
-		return err
-	}
-
+	la.delTokenCache(token)
 	return nil
 }
 
@@ -108,32 +94,31 @@ func (la *LocalAuth) delTokenCache(token string) error {
 	return nil
 }
 
-func (la *LocalAuth) UpdateUserTokenCacheExpire(token string) error {
-	rsv2, err := la.GetMultiClaims(token)
+func (la *LocalAuth) UpdateCacheExpire(token string) error {
+	rsv2, err := la.GetClaims(token)
 	if err != nil {
 		return err
 	}
 	if rsv2 == nil {
 		return errors.New("token cache is nil")
 	}
-	la.Cache.Set(GtSessionBindUserPrefix+token, rsv2, GetTokenExpire(rsv2.LoginType))
-	la.Cache.Set(GtSessionTokenPrefix+token, rsv2, GetTokenExpire(rsv2.LoginType))
-
+	la.Cache.Set(GtSessionBindUserPrefix+token, rsv2, getExpire(rsv2.loginType()))
+	la.Cache.Set(GtSessionTokenPrefix+token, rsv2, getExpire(rsv2.loginType()))
 	return nil
 }
 
-func (la *LocalAuth) GetMultiClaims(token string) (*MultiClaims, error) {
+func (la *LocalAuth) GetClaims(token string) (*Claims, error) {
 	sKey := GtSessionTokenPrefix + token
 	if food, found := la.Cache.Get(sKey); !found || food == nil {
-		return nil, ErrTokenInvalid
+		return nil, fmt.Errorf("token not found:%w", ErrTokenInvalid)
 	} else {
-		return food.(*MultiClaims), nil
+		return food.(*Claims), nil
 	}
 }
 
-// GetTokenByClaims 获取用户信息
-func (la *LocalAuth) GetTokenByClaims(cla *MultiClaims) (string, error) {
-	userTokens, err := la.getUserTokens(cla.AuthorityType, cla.Id)
+// Get 获取用户信息
+func (la *LocalAuth) Get(cla *Claims) (string, error) {
+	userTokens, err := la.getUserTokens(cla.roleType(), cla.Id)
 	if err != nil {
 		return "", err
 	}
@@ -144,8 +129,8 @@ func (la *LocalAuth) GetTokenByClaims(cla *MultiClaims) (string, error) {
 	for token, existCla := range clas {
 		if cla.AuthType == existCla.AuthType &&
 			cla.Id == existCla.Id &&
-			cla.AuthorityType == existCla.AuthorityType &&
-			cla.AuthorityId == existCla.AuthorityId &&
+			cla.RoleType == existCla.RoleType &&
+			cla.AuthId == existCla.AuthId &&
 			cla.LoginType == existCla.LoginType {
 			return token, nil
 		}
@@ -154,18 +139,18 @@ func (la *LocalAuth) GetTokenByClaims(cla *MultiClaims) (string, error) {
 }
 
 // getUserTokens 获取登录数量
-func (la *LocalAuth) getUserTokens(authorityType int, userId string) (tokens, error) {
-	if utokens, ok := la.Cache.Get(GetUserPrefixKey(authorityType, userId)); ok && utokens != nil {
+func (la *LocalAuth) getUserTokens(roleType RoleType, userId string) (tokens, error) {
+	if utokens, ok := la.Cache.Get(getPrefixKey(roleType, userId)); ok && utokens != nil {
 		return utokens.(tokens), nil
 	}
 	return nil, nil
 }
 
 // getMultiClaimses 获取用户信息
-func (la *LocalAuth) getMultiClaimses(tokens tokens) (map[string]*MultiClaims, error) {
-	clas := make(map[string]*MultiClaims, la.getUserTokenMaxCount())
+func (la *LocalAuth) getMultiClaimses(tokens tokens) (map[string]*Claims, error) {
+	clas := make(map[string]*Claims, la.getUserTokenMaxCount())
 	for _, token := range tokens {
-		cla, err := la.GetMultiClaims(token)
+		cla, err := la.GetClaims(token)
 		if err != nil {
 			continue
 		}
@@ -175,17 +160,17 @@ func (la *LocalAuth) getMultiClaimses(tokens tokens) (map[string]*MultiClaims, e
 	return clas, nil
 }
 
-func (la *LocalAuth) isUserTokenOver(authorityType int, userId string) bool {
-	return la.getUserTokenCount(authorityType, userId) >= la.getUserTokenMaxCount()
+func (la *LocalAuth) isUserTokenOver(roleType RoleType, userId string) bool {
+	return la.getUserTokenCount(roleType, userId) >= la.getUserTokenMaxCount()
 }
 
 // getUserTokenCount 获取登录数量
-func (la *LocalAuth) getUserTokenCount(authorityType int, userId string) int64 {
-	return la.checkMaxCount(authorityType, userId)
+func (la *LocalAuth) getUserTokenCount(roleType RoleType, userId string) int64 {
+	return la.checkMaxCount(roleType, userId)
 }
 
-func (la *LocalAuth) checkMaxCount(authorityType int, userId string) int64 {
-	utokens, _ := la.getUserTokens(authorityType, userId)
+func (la *LocalAuth) checkMaxCount(roleType RoleType, userId string) int64 {
+	utokens, _ := la.getUserTokens(roleType, userId)
 	if utokens == nil {
 		return 0
 	}
@@ -198,7 +183,7 @@ func (la *LocalAuth) checkMaxCount(authorityType int, userId string) int64 {
 			}
 		}
 	}
-	la.Cache.Set(GetUserPrefixKey(authorityType, userId), utokens, cache.NoExpiration)
+	la.Cache.Set(getPrefixKey(roleType, userId), utokens, cache.NoExpiration)
 	return int64(len(utokens))
 
 }
@@ -212,42 +197,40 @@ func (la *LocalAuth) getUserTokenMaxCount() int64 {
 	}
 }
 
-// SetUserTokenMaxCount 最大登录限制
-func (la *LocalAuth) SetUserTokenMaxCount(tokenMaxCount int64) error {
+// SetMaxCount 最大登录限制
+func (la *LocalAuth) SetMaxCount(tokenMaxCount int64) error {
 	la.Cache.Set(GtSessionUserMaxTokenPrefix, tokenMaxCount, cache.NoExpiration)
 	return nil
 }
 
-// CleanUserTokenCache 清空token缓存
-func (la *LocalAuth) CleanUserTokenCache(authorityType int, userId string) error {
-	utokens, _ := la.getUserTokens(authorityType, userId)
+// CleanCache 清空token缓存
+func (la *LocalAuth) CleanCache(roleType RoleType, userId string) error {
+	utokens, _ := la.getUserTokens(roleType, userId)
 	if utokens == nil {
 		return nil
 	}
-
 	for _, token := range utokens {
 		err := la.delTokenCache(token)
 		if err != nil {
 			continue
 		}
 	}
-	la.Cache.Delete(GetUserPrefixKey(authorityType, userId))
-
+	la.Cache.Delete(getPrefixKey(roleType, userId))
 	return nil
 }
 
 // IsRole
-func (la *LocalAuth) IsRole(token string, authorityType int) (bool, error) {
-	rcc, err := la.GetMultiClaims(token)
+func (la *LocalAuth) IsRole(token string, roleType RoleType) (bool, error) {
+	rcc, err := la.GetClaims(token)
 	if err != nil {
-		return false, fmt.Errorf("get User's infomation return error: %w", err)
+		return false, fmt.Errorf("local: get multi claims fail %w", err)
 	}
-	return rcc.AuthorityType == authorityType, nil
+	return rcc.roleType() == roleType, nil
 }
 
 // IsRole
 func (la *LocalAuth) IsSuperAdmin(token string) bool {
-	rcc, err := la.GetMultiClaims(token)
+	rcc, err := la.GetClaims(token)
 	if err != nil {
 		return false
 	}

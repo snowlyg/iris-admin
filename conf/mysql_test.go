@@ -20,8 +20,8 @@ func TestMysqlBaseDsn(t *testing.T) {
 		t.Errorf("mysql config base dsn want '%s' but get '%s'", want, b)
 	}
 	dsn := m.Dsn()
-	wantDsn := "name:pwd@tcp(127.0.0.1:3306)/charset=utf8mb4"
-	if b != wantDsn {
+	wantDsn := "name:pwd@tcp(127.0.0.1:3306)/db_name?charset=utf8mb4"
+	if dsn != wantDsn {
 		t.Errorf("mysql config base dsn want '%s' but get '%s'", wantDsn, dsn)
 	}
 }

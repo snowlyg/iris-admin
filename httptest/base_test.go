@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/snowlyg/helper/dir"
 )
 
 type Request struct {
@@ -207,10 +208,15 @@ func TestNewResponsesWithLength(t *testing.T) {
 }
 
 func TestNewWithFileParamFunc(t *testing.T) {
+	name := "test_img.jpg"
+	if _, err := dir.WriteString("./"+name, ""); err != nil {
+		t.Fatal(err.Error())
+	}
+	defer os.Remove("./" + name)
+
 	engine := gin.New()
 	// Create httpexpect instance
 	client := NewClient(t, GinHandler(engine))
-	name := "test_img.jpg"
 	fh, _ := os.Open("./" + name)
 	defer fh.Close()
 

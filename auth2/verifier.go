@@ -1,6 +1,7 @@
 package auth2
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,35 +15,37 @@ const (
 )
 
 // Get returns the claims decoded by a verifier.
-func Get(ctx *gin.Context) *MultiClaims {
+func Get(ctx *gin.Context) *Claims {
 	v, b := ctx.Get(claimsContextKey)
 	if !b {
+		log.Println("verifier: key not exist")
 		return nil
 	}
-	tok, ok := v.(*MultiClaims)
+	tok, ok := v.(*Claims)
 	if !ok {
+		log.Println("verifier: object not claims")
 		return nil
 	}
 	return tok
 }
 
-// GetAuthorityType 角色类型
-func GetAuthorityType(ctx *gin.Context) int {
+// GetType
+func GetType(ctx *gin.Context) RoleType {
 	if v := Get(ctx); v != nil {
-		return v.AuthorityType
+		return v.roleType()
 	}
 	return 0
 }
 
-// GetAuthorityId 角色id
-func GetAuthorityId(ctx *gin.Context) []string {
+// GetAuthId
+func GetAuthId(ctx *gin.Context) []string {
 	if v := Get(ctx); v != nil {
-		return strings.Split(v.AuthorityId, AuthorityTypeSplit)
+		return strings.Split(v.AuthId, AuthTypeSplit)
 	}
 	return nil
 }
 
-// GetUserId 用户id
+// GetUserId
 func GetUserId(ctx *gin.Context) uint {
 	v := Get(ctx)
 	if v == nil {
@@ -55,16 +58,17 @@ func GetUserId(ctx *gin.Context) uint {
 	return uint(id)
 }
 
-// IsSuperAdmin 用户id
+// IsSuperAdmin
 func IsSuperAdmin(ctx *gin.Context) bool {
 	v := Get(ctx)
 	if v == nil {
+		log.Println("verifier: Claim is nil")
 		return false
 	}
 	return v.SuperAdmin
 }
 
-// GetUsername 用户名
+// GetUsername
 func GetUsername(ctx *gin.Context) string {
 	if v := Get(ctx); v != nil {
 		return v.Username
@@ -72,7 +76,7 @@ func GetUsername(ctx *gin.Context) string {
 	return ""
 }
 
-// GetCreationDate 登录时间
+// GetCreationDate
 func GetCreationDate(ctx *gin.Context) int64 {
 	if v := Get(ctx); v != nil {
 		return v.CreationTime
@@ -80,7 +84,7 @@ func GetCreationDate(ctx *gin.Context) int64 {
 	return 0
 }
 
-// GetExpiresIn 有效期
+// GetExpiresIn
 func GetExpiresIn(ctx *gin.Context) int64 {
 	if v := Get(ctx); v != nil {
 		return v.ExpiresAt
@@ -99,12 +103,12 @@ func GetVerifiedToken(ctx *gin.Context) []byte {
 	return nil
 }
 
-func IsRole(ctx *gin.Context, authorityType int) bool {
+func IsRole(ctx *gin.Context, roleType RoleType) bool {
 	v := GetVerifiedToken(ctx)
 	if v == nil {
 		return false
 	}
-	b, err := AuthDriver.IsRole(string(v), authorityType)
+	b, err := AuthAgent.IsRole(string(v), roleType)
 	if err != nil {
 		return false
 	}
@@ -112,7 +116,7 @@ func IsRole(ctx *gin.Context, authorityType int) bool {
 }
 
 func IsAdmin(ctx *gin.Context) bool {
-	return IsRole(ctx, AdminAuthority)
+	return IsRole(ctx, RoleAdmin)
 }
 
 type Verifier struct {
@@ -149,7 +153,7 @@ func (v *Verifier) RequestToken(ctx *gin.Context) (token string) {
 	return
 }
 
-func (v *Verifier) VerifyToken(token []byte, validators ...TokenValidator) ([]byte, *MultiClaims, error) {
+func (v *Verifier) VerifyToken(token []byte, validators ...TokenValidator) ([]byte, *Claims, error) {
 	if len(token) == 0 {
 		return nil, nil, ErrEmptyToken
 	}
@@ -157,7 +161,7 @@ func (v *Verifier) VerifyToken(token []byte, validators ...TokenValidator) ([]by
 	for _, validator := range validators {
 		// A token validator can skip the builtin validation and return a nil error,
 		// in that case the previous error is skipped.
-		if err = validator.ValidateToken(token, err); err != nil {
+		if err = validator.Validater(token, err); err != nil {
 			break
 		}
 	}
@@ -165,7 +169,7 @@ func (v *Verifier) VerifyToken(token []byte, validators ...TokenValidator) ([]by
 		// Exit on parsing standard claims error(when Plain is missing) or standard claims validation error or custom validators.
 		return nil, nil, err
 	}
-	rcc, err := AuthDriver.GetMultiClaims(string(token))
+	rcc, err := AuthAgent.GetClaims(string(token))
 	if err != nil {
 		return nil, nil, err
 	}

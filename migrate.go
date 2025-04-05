@@ -35,12 +35,12 @@ type Migrate struct {
 }
 
 // New MigrationCmd
-func New() *Migrate {
+func New(db *gorm.DB) *Migrate {
 	mc := &Migrate{
+		db:    db,
 		items: nil,
 		seeds: nil,
 	}
-
 	return mc
 }
 
@@ -108,8 +108,7 @@ func (mc *Migrate) rollbackLast() error {
 // Migrate exec migration cmd
 func (mc *Migrate) Migrate() error {
 	m := mc.gormigrate()
-	err := m.Migrate()
-	if err != nil {
+	if err := m.Migrate(); err != nil {
 		return err
 	}
 	return nil

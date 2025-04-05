@@ -2,6 +2,7 @@ package auth2
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -13,8 +14,8 @@ type JwtAuth struct {
 	HmacSecret []byte
 }
 
-// NewJwtAuth
-func NewJwtAuth(hmacSecret []byte) *JwtAuth {
+// NewJwt
+func NewJwt(hmacSecret []byte) *JwtAuth {
 	ja := &JwtAuth{
 		HmacSecret: hmacSecret,
 	}
@@ -24,8 +25,8 @@ func NewJwtAuth(hmacSecret []byte) *JwtAuth {
 	return ja
 }
 
-// GenerateToken
-func (ra *JwtAuth) GenerateToken(claims *MultiClaims) (string, int64, error) {
+// Generate
+func (ra *JwtAuth) Generate(claims *Claims) (string, int64, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Sign and get the complete encoded token as a string using the secret
@@ -36,18 +37,18 @@ func (ra *JwtAuth) GenerateToken(claims *MultiClaims) (string, int64, error) {
 	return tokenString, 0, nil
 }
 
-// GetTokenByClaims 获取用户信息
-func (ra *JwtAuth) GetTokenByClaims(cla *MultiClaims) (string, error) {
+// Get 获取用户信息
+func (ra *JwtAuth) Get(cla *Claims) (string, error) {
 	return "", nil
 }
 
-// GetMultiClaims 获取用户信息
-func (ra *JwtAuth) GetMultiClaims(tokenString string) (*MultiClaims, error) {
-	mc := &MultiClaims{}
+// GetClaims
+func (ra *JwtAuth) GetClaims(tokenString string) (*Claims, error) {
+	mc := &Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, mc, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("不支持的签名方法: %v", token.Header["alg"])
+			return nil, fmt.Errorf("incorrect signing method: %v", token.Header["alg"])
 		}
 		return ra.HmacSecret, nil
 	})
@@ -55,45 +56,46 @@ func (ra *JwtAuth) GetMultiClaims(tokenString string) (*MultiClaims, error) {
 		return nil, err
 	}
 
-	if _, ok := token.Claims.(*MultiClaims); ok && token.Valid {
+	if _, ok := token.Claims.(*Claims); ok && token.Valid {
 		return mc, nil
 	} else {
-		return nil, ErrTokenInvalid
+		return nil, fmt.Errorf("token[%s]:%w", tokenString, ErrTokenInvalid)
 	}
 }
 
-// SetUserTokenMaxCount 最大登录限制
-func (ra *JwtAuth) SetUserTokenMaxCount(tokenMaxCount int64) error {
+// SetMaxCount
+func (ra *JwtAuth) SetMaxCount(tokenMaxCount int64) error {
 	return nil
 }
 
-// UpdateUserTokenCacheExpire 更新过期时间
-func (ra *JwtAuth) UpdateUserTokenCacheExpire(token string) error {
+// UpdateCacheExpire
+func (ra *JwtAuth) UpdateCacheExpire(token string) error {
 	return nil
 }
 
-// DelUserTokenCache 删除token缓存
-func (ra *JwtAuth) DelUserTokenCache(token string) error {
+// DelCache
+func (ra *JwtAuth) DelCache(token string) error {
+	log.Println("auth2: jwt del user token")
 	return nil
 }
 
-// CleanUserTokenCache 清空token缓存
-func (ra *JwtAuth) CleanUserTokenCache(authorityType int, userId string) error {
+// CleanCache
+func (ra *JwtAuth) CleanCache(roleType RoleType, userId string) error {
 	return nil
 }
 
 // IsRole
-func (ra *JwtAuth) IsRole(token string, authorityType int) (bool, error) {
-	rcc, err := ra.GetMultiClaims(token)
+func (ra *JwtAuth) IsRole(token string, roleType RoleType) (bool, error) {
+	rcc, err := ra.GetClaims(token)
 	if err != nil {
 		return false, fmt.Errorf("get User's infomation return error: %w", err)
 	}
-	return rcc.AuthorityType == authorityType, nil
+	return rcc.roleType() == roleType, nil
 }
 
 // IsSuperAdmin
 func (ra *JwtAuth) IsSuperAdmin(token string) bool {
-	rcc, err := ra.GetMultiClaims(token)
+	rcc, err := ra.GetClaims(token)
 	if err != nil {
 		return false
 	}

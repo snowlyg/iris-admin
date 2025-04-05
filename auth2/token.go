@@ -16,12 +16,12 @@ var (
 	padStr = string(pad)
 )
 
-// GetToken 雪花算法,支持分布式集群方式
-func GetToken() (string, error) {
+// getToken
+func getToken() (string, error) {
 	v4 := uuid.NewV4()
 	node, err := snowflake.NewNode(1)
 	if err != nil {
-		return "", fmt.Errorf("mutil: create token %w", err)
+		return "", fmt.Errorf("token: get token %w", err)
 	}
 
 	// 混入两个时间，防止并发token重复

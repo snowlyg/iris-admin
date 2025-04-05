@@ -17,10 +17,13 @@ type WebServe struct {
 	enforcer *casbin.Enforcer
 	engine   *gin.Engine
 	conf     *conf.Conf
+	validate *Validator
+	m        *Migrate
 }
 
 // NewServe
 func NewServe() (*WebServe, error) {
+
 	config := conf.NewConf()
 	gin.SetMode(config.System.GinMode)
 	app := gin.Default()
@@ -31,6 +34,7 @@ func NewServe() (*WebServe, error) {
 	// registerValidation()
 	gin.DefaultWriter = colorable.NewColorableStdout()
 	config.SetDefaultAddrAndTimeFormat()
+
 	db, err := gormDb(&config.Mysql)
 	if err != nil {
 		return nil, err
@@ -39,12 +43,26 @@ func NewServe() (*WebServe, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &WebServe{
+	webServe := &WebServe{
 		conf:     config,
 		engine:   app,
 		enforcer: auth,
 		db:       db,
-	}, nil
+		m: &Migrate{
+			db:    db,
+			items: nil,
+			seeds: nil,
+		},
+	}
+	switch config.Locale {
+	case "en":
+		webServe.validate = newEn()
+	case "zh":
+		webServe.validate = newZh()
+	default:
+		webServe.validate = newZh()
+	}
+	return webServe, nil
 }
 
 // Engine return *gin.Engine

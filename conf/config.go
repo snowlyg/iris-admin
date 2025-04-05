@@ -19,6 +19,7 @@ const (
 
 func NewConf() *Conf {
 	return &Conf{
+		Locale:         "zh",
 		FileMaxSize:    1024,   // upload file size limit 1024M
 		SessionTimeout: 172800, // session timeout after 4 months
 		CorsConf: CorsConf{
@@ -86,6 +87,7 @@ func NewConf() *Conf {
 }
 
 type Conf struct {
+	Locale         string   `mapstructure:"locale" json:"locale" yaml:"locale"`
 	FileMaxSize    int64    `mapstructure:"file-max-size" json:"file-max-size" yaml:"file-max-siz"`
 	SessionTimeout int64    `mapstructure:"session-timeout" json:"session-timeout" yaml:"session-timeout"`
 	Except         Route    `mapstructure:"except" json:"except" yaml:"except"`
@@ -214,6 +216,7 @@ func (conf *Conf) getViperConfig() *ViperConf {
 		//
 		Default: []byte(`
 {
+	"locale": "` + conf.Locale + `",
 	"file-max-size": ` + maxSize + `,
 	"session-timeout": ` + sessionTimeout + `,
 	"except":

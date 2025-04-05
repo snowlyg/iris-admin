@@ -1,6 +1,7 @@
 package auth2
 
 import (
+	"log"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -43,28 +44,32 @@ func FromQuery(ctx *gin.Context) string {
 func FromJSON(jsonKey string) TokenExtractor {
 	return func(ctx *gin.Context) string {
 		if ctx.ContentType() != binding.MIMEJSON {
+			log.Printf("extractor: content-type %s not supported\n", ctx.ContentType())
 			return ""
 		}
 
 		var m gin.H
 		if err := ctx.BindJSON(&m); err != nil {
+			log.Println("extractor: bind json error:", err.Error())
 			return ""
 		}
 
 		if m == nil {
+			log.Println("extractor: json is empty")
 			return ""
 		}
 
 		v, ok := m[jsonKey]
 		if !ok {
+			log.Printf("extractor: key %s not found\n", jsonKey)
 			return ""
 		}
 
 		tok, ok := v.(string)
 		if !ok {
+			log.Printf("extractor: key %s value:[%v] is not a string\n", jsonKey, v)
 			return ""
 		}
-
 		return tok
 	}
 }

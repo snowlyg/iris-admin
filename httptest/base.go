@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	httpTestClient *Client
+	c *Client
 	// default page request params
 	GetRequestFunc = NewWithQueryObjectParamFunc(map[string]interface{}{"page": 1, "pageSize": 10})
 
@@ -133,60 +133,118 @@ func NewResponses(status int, message string, data ...Responses) Responses {
 
 type Client struct {
 	t       *testing.T
+	conf    httpexpect.Config
 	expect  *httpexpect.Expect
 	status  int
 	headers map[string]string
+
+	tokenIndex string
+	loginApi   string
+	logoutApi  string
+}
+
+type ClientConf struct {
+	Key   string
+	Value string
+}
+
+const (
+	BASE_URL    = "base_url"
+	TOKEN_INDEX = "token_index"
+	LoginApi    = "login_api"
+	LogoutApi   = "logout_api"
+)
+
+func NewBaseUrlConf(value string) ClientConf {
+	return ClientConf{Key: BASE_URL, Value: value}
+}
+
+func NewTokenIndexConf(value string) ClientConf {
+	return ClientConf{Key: TOKEN_INDEX, Value: value}
+}
+
+func NewLoginApiConf(value string) ClientConf {
+	return ClientConf{Key: LoginApi, Value: value}
+}
+func NewLogoutApiConf(value string) ClientConf {
+	return ClientConf{Key: LogoutApi, Value: value}
 }
 
 // NewClient return test client instance
-func NewClient(t *testing.T, handler http.Handler, url ...string) *Client {
-	config := httpexpect.Config{
-		TestName: t.Name(),
-		Client: &http.Client{
-			Transport: httpexpect.NewBinder(handler),
-			Jar:       httpexpect.NewCookieJar(),
+func NewClient(t *testing.T, handler http.Handler, confs ...ClientConf) *Client {
+	c = &Client{
+		t: t,
+		conf: httpexpect.Config{
+			TestName: t.Name(),
+			Client: &http.Client{
+				Transport: httpexpect.NewBinder(handler),
+				Jar:       httpexpect.NewCookieJar(),
+			},
+			Reporter: httpexpect.NewAssertReporter(t),
+			Printers: []httpexpect.Printer{
+				NewDebugPrinter(t, true),
+				// httpexpect.NewCompactPrinter(t),
+				// httpexpect.NewCurlPrinter(t),
+			},
+			// Printers: []httpexpect.Printer{
+			// 	httpexpect.NewCompactPrinter(t),
+			// },
+			Formatter: &httpexpect.DefaultFormatter{
+				// DisablePaths: true,
+				// DisableDiffs: true,
+				// FloatFormat:  httpexpect.FloatFormatScientific,
+				ColorMode: httpexpect.ColorModeAlways,
+				// LineWidth:    80,
+			},
 		},
-		Reporter: httpexpect.NewAssertReporter(t),
-		Printers: []httpexpect.Printer{
-			NewDebugPrinter(t, true),
-			// httpexpect.NewCompactPrinter(t),
-			// httpexpect.NewCurlPrinter(t),
-		},
-		// Printers: []httpexpect.Printer{
-		// 	httpexpect.NewCompactPrinter(t),
-		// },
-		Formatter: &httpexpect.DefaultFormatter{
-			// DisablePaths: true,
-			// DisableDiffs: true,
-			// FloatFormat:  httpexpect.FloatFormatScientific,
-			ColorMode: httpexpect.ColorModeAlways,
-			// LineWidth:    80,
-		},
+		headers:    map[string]string{},
+		tokenIndex: "data.accessToken",
+		loginApi:   "/login",
+		logoutApi:  "/logout",
 	}
-	if len(url) == 1 && url[0] != "" {
-		config.BaseURL = url[0]
+	if len(confs) > 0 {
+		for _, conf := range confs {
+			switch conf.Key {
+			case BASE_URL:
+				c.conf.BaseURL = conf.Value
+			case TOKEN_INDEX:
+				c.tokenIndex = conf.Value
+			case LoginApi:
+				c.loginApi = conf.Value
+			case LogoutApi:
+				c.logoutApi = conf.Value
+			}
+		}
 	}
-	httpTestClient = &Client{
-		t:       t,
-		expect:  httpexpect.WithConfig(config),
-		headers: map[string]string{},
+	c.expect = httpexpect.WithConfig(c.conf)
+	return c
+}
+
+func (c *Client) SwitchT(t *testing.T) {
+	c.t = t
+	c.conf.TestName = t.Name()
+	c.conf.Reporter = httpexpect.NewAssertReporter(t)
+	c.conf.Printers = []httpexpect.Printer{
+		NewDebugPrinter(t, true),
+		// httpexpect.NewCompactPrinter(t),
+		// httpexpect.NewCurlPrinter(t),
 	}
-	return httpTestClient
+	c.expect = httpexpect.WithConfig(c.conf)
+	c.expect = c.expect.Builder(func(req *httpexpect.Request) {
+		req.WithHeaders(c.headers)
+	})
 }
 
 // Login for http login
-func (c *Client) Login(url, tokenIndex string, res Responses, paramFuncs ...paramFunc) error {
+func (c *Client) Login(res Responses, paramFuncs ...paramFunc) error {
 	if len(paramFuncs) == 0 {
 		paramFuncs = append(paramFuncs, LoginFunc)
 	}
-	c.POST(url, res, paramFuncs...)
-	token := res.GetString("data.accessToken")
-	if tokenIndex != "" {
-		token = res.GetString(tokenIndex)
-	}
-	fmt.Printf("access_token is '%s'\n", token)
+	c.POST(c.loginApi, res, paramFuncs...)
+	token := res.GetString(c.tokenIndex)
+	fmt.Printf("token %s is '%s'\n", c.tokenIndex, token)
 	if token == "" {
-		return fmt.Errorf("access_token is empty")
+		return fmt.Errorf("token %s is empty", c.tokenIndex)
 	}
 	c.headers["Authorization"] = str.Join("Bearer ", token)
 	c.expect = c.expect.Builder(func(req *httpexpect.Request) {
@@ -196,11 +254,16 @@ func (c *Client) Login(url, tokenIndex string, res Responses, paramFuncs ...para
 }
 
 // Logout for http logout
-func (c *Client) Logout(url string, res Responses) {
+func (c *Client) Logout(res Responses) {
 	if res == nil {
 		res = SuccessResponse
 	}
-	c.GET(url, res)
+	c.GET(c.logoutApi, res)
+
+	c.headers["Authorization"] = ""
+	c.expect = c.expect.Builder(func(req *httpexpect.Request) {
+		req.WithHeaders(c.headers)
+	})
 }
 
 type File struct {

@@ -221,9 +221,9 @@ func TestNewWithFileParamFunc(t *testing.T) {
 func TestLogin(t *testing.T) {
 	engine := gin.New()
 	// Create httpexpect instance
-	client := NewClient(t, GinHandler(engine))
+	client := NewClient(t, GinHandler(engine), NewTokenIndexConf("data.AccessToken"))
 	x := Responses{{Key: "AccessToken", Value: "EIIDFJDIKFJJIdfdkfk.uisdifsdfisdouf"}, {Key: "user", Value: Responses{{Key: "id", Value: 1}}}}
-	err := client.Login("/login", "data.AccessToken", NewResponses(http.StatusOK, "OK", x))
+	err := client.Login(NewResponses(http.StatusOK, "OK", x))
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -236,5 +236,5 @@ func TestLogin(t *testing.T) {
 func TestLogout(t *testing.T) {
 	engine := gin.New()
 	client := NewClient(t, GinHandler(engine))
-	client.Logout("/logout", SuccessResponse)
+	client.Logout(SuccessResponse)
 }

@@ -23,8 +23,6 @@ func (ws *WebServe) InitRouter() error {
 	}
 	router := ws.engine.Group("/")
 	{
-		// router.Use(Cors())
-
 		router.GET("/v0/version", func(ctx *gin.Context) {
 			ctx.String(http.StatusOK, "IRIS-ADMIN is running!!!")
 		})
@@ -38,8 +36,6 @@ func (ws *WebServe) InitRouter() error {
 func (ws *WebServe) GetSources() ([]map[string]string, []map[string]string) {
 	methodExcepts := strings.Split(ws.conf.Except.Method, ";")
 	uriExcepts := strings.Split(ws.conf.Except.Uri, ";")
-	methodMenus := strings.Split(ws.conf.Menu.Method, ";")
-	uriMenus := strings.Split(ws.conf.Menu.Uri, ";")
 
 	routeLen := len(ws.engine.Routes())
 	permRoutes := make([]map[string]string, 0, routeLen)
@@ -52,18 +48,10 @@ func (ws *WebServe) GetSources() ([]map[string]string, []map[string]string) {
 		}
 		path := filepath.ToSlash(filepath.Clean(r.Path))
 		route := map[string]string{
-			"path":    path,
-			"desc":    bases[1],
-			"group":   bases[0],
-			"method":  r.Method,
-			"is_menu": "0",
-		}
-		if len(methodMenus) > 0 && len(uriMenus) > 0 && len(methodMenus) == len(uriMenus) {
-			for i := 0; i < len(methodMenus); i++ {
-				if strings.EqualFold(r.Method, strings.ToLower(methodMenus[i])) && strings.EqualFold(path, strings.ToLower(uriMenus[i])) {
-					route["is_menu"] = "1"
-				}
-			}
+			"path":   path,
+			"desc":   bases[1],
+			"group":  bases[0],
+			"method": r.Method,
 		}
 
 		httpStatusType := arr.NewCheckArrayType(4)

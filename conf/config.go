@@ -32,10 +32,6 @@ func NewConf() *Conf {
 			Uri:    "",
 			Method: "",
 		},
-		Menu: Route{
-			Uri:    "",
-			Method: "",
-		},
 		System: System{
 			Tls:        false,
 			GinMode:    gin.ReleaseMode,
@@ -93,7 +89,6 @@ type Conf struct {
 	FileMaxSize    int64    `mapstructure:"file-max-size" json:"file-max-size" yaml:"file-max-siz"`
 	SessionTimeout int64    `mapstructure:"session-timeout" json:"session-timeout" yaml:"session-timeout"`
 	Except         Route    `mapstructure:"except" json:"except" yaml:"except"`
-	Menu           Route    `mapstructure:"menu" json:"menu" yaml:"menu"`
 	System         System   `mapstructure:"system" json:"system" yaml:"system"`
 	Limit          Limit    `mapstructure:"limit" json:"limit" yaml:"limit"`
 	Captcha        Captcha  `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
@@ -132,14 +127,12 @@ type Limit struct {
 }
 
 type System struct {
-	Tls          bool   `mapstructure:"tls" json:"tls" yaml:"tls"`
-	GinMode      string `mapstructure:"gin-mode" json:"gin-mode" yaml:"gin-mode"`
-	Level        string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
-	Addr         string `mapstructure:"addr" json:"addr" yaml:"addr"`
-	StaticPrefix string `mapstructure:"static-prefix" json:"static-prefix" yaml:"static-prefix"`
-	WebPrefix    string `mapstructure:"web-prefix" json:"web-prefix" yaml:"web-prefix"`
-	DbType       string `mapstructure:"db-type" json:"db-type" yaml:"db-type"`
-	TimeFormat   string `mapstructure:"time-format" json:"time-format" yaml:"time-format"`
+	GinMode    string `mapstructure:"gin-mode" json:"gin-mode" yaml:"gin-mode"`
+	Tls        bool   `mapstructure:"tls" json:"tls" yaml:"tls"`
+	Level      string `mapstructure:"level" json:"level" yaml:"level"` // debug,release,test
+	Addr       string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	DbType     string `mapstructure:"db-type" json:"db-type" yaml:"db-type"`
+	TimeFormat string `mapstructure:"time-format" json:"time-format" yaml:"time-format"`
 }
 
 type Redis struct {
@@ -227,11 +220,6 @@ func (conf *Conf) getViperConfig() *ViperConf {
 		{ 
 			"uri": "` + conf.Except.Uri + `",
 			"method": "` + conf.Except.Method + `"
-		},
-	"menu":
-		{ 
-			"uri": "` + conf.Menu.Uri + `",
-			"method": "` + conf.Menu.Method + `"
 		},
 	"cors":
 		{ 

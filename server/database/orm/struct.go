@@ -69,6 +69,8 @@ type Paginate struct {
 	PageSize int    `json:"pageSize" form:"pageSize"`
 	OrderBy  string `json:"orderBy" form:"orderBy"`
 	Sort     string `json:"sort" form:"sort"`
+
+	tableName string
 }
 
 // Request
@@ -103,7 +105,12 @@ func (req *Paginate) ginShouldBind(ctx *gin.Context) error {
 
 // PaginateScope paginate scope
 func (req *Paginate) PaginateScope() func(db *gorm.DB) *gorm.DB {
-	return scope.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)
+	return scope.PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy, req.tableName)
+}
+
+// SetTableName
+func (req *Paginate) SetTableName(tableName string) {
+	req.tableName = tableName
 }
 
 // Response

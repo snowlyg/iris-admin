@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gavv/httpexpect/v2"
+	"github.com/snowlyg/helper/arr"
 )
 
 // Responses
@@ -621,6 +622,8 @@ func (res Responses) GetId(key ...string) uint {
 	return res.GetUint(key...)
 }
 
+var NotEmptyKey = arr.NewCheckArrayType(0)
+
 // Schema
 func Schema(str []byte) (Responses, error) {
 	objs := Responses{}
@@ -653,15 +656,6 @@ func schema(j map[string]any) (Responses, error) {
 }
 
 // schemaResponse
-func schemaSliceResponse(v any) Responses {
-	obj := Responses{}
-	for k2, v2 := range v.(map[string]any) {
-		obj = append(obj, schemaResponse(k2, v2))
-	}
-	return obj
-}
-
-// schemaResponse
 func schemaResponse(k string, v any) Response {
 	obj := Response{}
 	obj.Key = k
@@ -676,6 +670,8 @@ func schemaResponse(k string, v any) Response {
 	case "string":
 		if obj.Key == "createdAt" || obj.Key == "updatedAt" || obj.Key == "deletedAt" {
 			obj.Type = "notempty"
+		} else if NotEmptyKey.Len() > 0 && NotEmptyKey.Check(obj.Key) {
+			obj.Type = "notempty"
 		} else {
 			obj.Value = v.(string)
 		}
@@ -687,6 +683,8 @@ func schemaResponse(k string, v any) Response {
 		obj.Value = v.(int32)
 	case "float64":
 		obj.Value = v.(float64)
+	case "[]string":
+		obj.Value = v.([]string)
 	case "map[string]interface {}":
 		if value, _ := schema(v.(map[string]any)); value != nil {
 			obj.Value = value
@@ -694,11 +692,18 @@ func schemaResponse(k string, v any) Response {
 	case "[]interface {}":
 		list := []Responses{}
 		for _, v1 := range v.([]any) {
-			list = append(list, schemaSliceResponse(v1))
+			listObj := Responses{}
+			if v3, ok := v1.(map[string]any); ok {
+				for k2, v2 := range v3 {
+					listObj = append(listObj, schemaResponse(k2, v2))
+				}
+				list = append(list, listObj)
+				obj.Value = list
+			} else if _, ok := v1.(string); ok {
+				obj.Value = v
+			}
 		}
-		obj.Value = list
-	case "[]string":
-		obj.Value = v.([]string)
+
 	default:
 		fmt.Printf("schemaResponse key:%s valueTypeName:%s\n", k, typeName)
 	}

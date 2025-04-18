@@ -3,14 +3,12 @@ package httptest
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
 	"strconv"
 	"strings"
 
-	"errors"
-
 	"github.com/gavv/httpexpect/v2"
+	"github.com/snowlyg/helper/arr"
 )
 
 // Responses
@@ -18,11 +16,11 @@ type Responses []Response
 
 // Response
 type Response struct {
-	Type   string                // httpest type , if empty use  IsEqual() function to test
-	Key    string                // httptest data's key
-	Value  interface{}           // httptest data's value
-	Length int                   // httptest data's length,when the data are array or map
-	Func   func(obj interface{}) // httpest func, you can add your test logic ,can be empty
+	Type   string        // httpest type , if empty use  IsEqual() function to test
+	Key    string        // httptest data's key
+	Value  any           // httptest data's value
+	Length int           // httptest data's length,when the data are array or map
+	Func   func(obj any) // httpest func, you can add your test logic ,can be empty
 }
 
 // Keys return Responses object key array
@@ -42,7 +40,7 @@ func IdKeys() Responses {
 }
 
 // Test for data test
-func Test(value *httpexpect.Value, reses ...interface{}) {
+func Test(value *httpexpect.Value, reses ...any) {
 	for _, ks := range reses {
 		if ks == nil {
 			return
@@ -70,15 +68,15 @@ func Test(value *httpexpect.Value, reses ...interface{}) {
 					max = length
 				}
 				for i := 0; i < max; i++ {
-					ks.([]Responses)[i].Test(value.Array().Element(i))
+					ks.([]Responses)[i].Test(value.Array().Value(i))
 				}
 			}
 
 		case "map[int][]httptest.Responses":
 			values := ks.(map[int][]Responses)
 			length := len(values)
+			value.Object().Keys().Length().IsEqual(length)
 			if length > 0 {
-				value.Object().Keys().Length().IsEqual(length)
 				for key, v := range values {
 					for _, vres := range v {
 						vres.Test(value.Object().Value(strconv.FormatInt(int64(key), 10)))
@@ -97,7 +95,7 @@ func Test(value *httpexpect.Value, reses ...interface{}) {
 					max = length
 				}
 				for i := 0; i < max; i++ {
-					value.Array().Element(i).Number().IsEqual(ks.([]uint)[i])
+					value.Array().Value(i).Number().IsEqual(ks.([]uint)[i])
 				}
 			}
 
@@ -111,7 +109,7 @@ func Test(value *httpexpect.Value, reses ...interface{}) {
 					max = length
 				}
 				for i := 0; i < max; i++ {
-					value.Array().Element(i).String().IsEqual(ks.([]string)[i])
+					value.Array().Value(i).String().IsEqual(ks.([]string)[i])
 				}
 			}
 		case "map[int]string":
@@ -151,13 +149,13 @@ func Scan(object *httpexpect.Object, reses ...Responses) {
 		if res == nil {
 			return
 		}
-		res.Scan(object.Value("data").Array().Element(m).Object())
+		res.Scan(object.Value("data").Array().Value(m).Object())
 	}
 }
 
 // Test Test Responses object
-func (res Responses) Test(value *httpexpect.Value) {
-	for _, rs := range res {
+func (resp Responses) Test(value *httpexpect.Value) {
+	for _, rs := range resp {
 		if rs.Value == nil {
 			continue
 		}
@@ -196,9 +194,7 @@ func (res Responses) Test(value *httpexpect.Value) {
 			case "[]httptest.Responses":
 				valueLen := len(rs.Value.([]Responses))
 				length := int(value.Object().Value(rs.Key).Array().Length().Raw())
-				if rs.Length == 0 {
-					value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
-				}
+				value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
 				if length > 0 {
 					max := 1
 					if rs.Length > 0 {
@@ -209,7 +205,7 @@ func (res Responses) Test(value *httpexpect.Value) {
 					}
 					if valueLen > 0 {
 						for i := 0; i < max; i++ {
-							rs.Value.([]Responses)[i].Test(value.Object().Value(rs.Key).Array().Element(i))
+							rs.Value.([]Responses)[i].Test(value.Object().Value(rs.Key).Array().Value(i))
 						}
 					}
 				}
@@ -217,8 +213,8 @@ func (res Responses) Test(value *httpexpect.Value) {
 			case "map[int][]httptest.Responses":
 				values := rs.Value.(map[int][]Responses)
 				length := len(values)
+				value.Object().Value(rs.Key).Object().Keys().Length().IsEqual(length)
 				if length > 0 {
-					value.Object().Value(rs.Key).Object().Keys().Length().IsEqual(length)
 					for key, v := range values {
 						for _, vres := range v {
 							vres.Test(value.Object().Value(rs.Key).Object().Value(strconv.FormatInt(int64(key), 10)))
@@ -228,11 +224,8 @@ func (res Responses) Test(value *httpexpect.Value) {
 			case "httptest.Responses":
 				rs.Value.(Responses).Test(value.Object().Value(rs.Key))
 			case "[]uint":
-
 				valueLen := len(rs.Value.([]uint))
-				if rs.Length == 0 {
-					value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
-				}
+				value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
 				length := int(value.Object().Value(rs.Key).Array().Length().Raw())
 				if length > 0 {
 					max := 1
@@ -250,14 +243,12 @@ func (res Responses) Test(value *httpexpect.Value) {
 			case "[]string":
 
 				if strings.ToLower(rs.Type) == "null" {
-					value.Object().Value(rs.Key).Null()
+					value.Object().Value(rs.Key).IsNull()
 				} else if strings.ToLower(rs.Type) == "notnull" {
 					value.Object().Value(rs.Key).NotNull()
 				} else {
 					valueLen := len(rs.Value.([]string))
-					if rs.Length == 0 {
-						value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
-					}
+					value.Object().Value(rs.Key).Array().Length().IsEqual(valueLen)
 					length := int(value.Object().Value(rs.Key).Array().Length().Raw())
 					if length > 0 {
 						max := 1
@@ -274,7 +265,7 @@ func (res Responses) Test(value *httpexpect.Value) {
 				}
 			case "map[int]string":
 				if strings.ToLower(rs.Type) == "null" {
-					value.Object().Value(rs.Key).Null()
+					value.Object().Value(rs.Key).IsNull()
 				} else if strings.ToLower(rs.Type) == "notnull" {
 					value.Object().Value(rs.Key).NotNull()
 				} else {
@@ -289,7 +280,7 @@ func (res Responses) Test(value *httpexpect.Value) {
 			}
 		}
 	}
-	res.Scan(value.Object())
+	resp.Scan(value.Object())
 }
 
 // Scan Scan response data to Responses object.
@@ -320,9 +311,7 @@ func (res Responses) Scan(object *httpexpect.Object) {
 			if rk.Length > 0 {
 				valueLen = rk.Length
 			}
-			if rk.Length == 0 {
-				object.Value(rk.Key).Array().Length().IsEqual(valueLen)
-			}
+			object.Value(rk.Key).Array().Length().IsEqual(valueLen)
 			length := int(object.Value(rk.Key).Array().Length().Raw())
 			if length > 0 {
 				max := 1
@@ -334,7 +323,7 @@ func (res Responses) Scan(object *httpexpect.Object) {
 				}
 				if valueLen > 0 {
 					for i := 0; i < max; i++ {
-						res[k].Value.([]Responses)[i].Scan(object.Value(rk.Key).Array().Element(i).Object())
+						res[k].Value.([]Responses)[i].Scan(object.Value(rk.Key).Array().Value(i).Object())
 					}
 				}
 			}
@@ -354,7 +343,7 @@ func (res Responses) Scan(object *httpexpect.Object) {
 				if ok {
 					var strings []string
 					for i := 0; i < length; i++ {
-						strings = append(reskey, object.Value(rk.Key).Array().Element(i).String().Raw())
+						strings = append(reskey, object.Value(rk.Key).Array().Value(i).String().Raw())
 					}
 					res[k].Value = strings
 				}
@@ -377,43 +366,39 @@ func Exist(object *httpexpect.Object, key string) bool {
 }
 
 // GetString return string value.
-func (resps Responses) GetString(keys ...string) string {
-	if len(keys) == 0 || keys[0] == "" {
-		log.Println("get string keys is nil")
+func (res Responses) GetString(key ...string) string {
+	if len(key) == 0 {
 		return ""
 	}
 
-	if len(keys) == 1 {
-		k := keys[0]
+	if len(key) == 1 {
+		k := key[0]
 		if strings.Contains(k, ".") {
-			spKeys := strings.Split(k, ".")
-			if len(spKeys) == 0 {
-				log.Println("get string split key is nil")
+			keys := strings.Split(k, ".")
+			if len(keys) == 0 {
 				return ""
 			}
-			keys = spKeys
+			key = keys
 		}
 	}
 
-	for i := range keys {
-		indexKey := keys[i]
-		for m, rk := range resps {
+	for i := 0; i < len(key); i++ {
+		for m, rk := range res {
 			if rk.Value == nil {
-				log.Printf("get string '%s' [%d:%v] value is nil\n", indexKey, m, rk)
-				continue
+				return ""
 			}
 			reflectTypeString := reflect.TypeOf(rk.Value).String()
-			if indexKey == rk.Key {
+			if key[i] == rk.Key {
 				switch reflectTypeString {
 				case "string":
 					return rk.Value.(string)
 				case "httptest.Responses":
-					return resps[m].Value.(Responses).GetString(keys[i+1:]...)
+					return res[m].Value.(Responses).GetString(key[i+1:]...)
 				}
 			}
 		}
+
 	}
-	log.Println("get string return nothing")
 	return ""
 }
 
@@ -637,11 +622,13 @@ func (res Responses) GetId(key ...string) uint {
 	return res.GetUint(key...)
 }
 
+var NotEmptyKey = arr.NewCheckArrayType(0)
+
 // Schema
-func Schema(data []byte) (Responses, error) {
+func Schema(str []byte) (Responses, error) {
 	objs := Responses{}
 	j := map[string]any{}
-	if err := json.Unmarshal(data, &j); err != nil {
+	if err := json.Unmarshal(str, &j); err != nil {
 		return objs, fmt.Errorf("json unmarshal error %w", err)
 	}
 	if o, err := schema(j); err != nil {
@@ -656,44 +643,34 @@ func Schema(data []byte) (Responses, error) {
 func schema(j map[string]any) (Responses, error) {
 	objs := Responses{}
 	if j == nil {
-		return objs, errors.New("schema data is nil")
+		return objs, nil
 	}
 	for k, v := range j {
 		if k == "" {
-			log.Printf("key %s is empty\n", k)
 			continue
 		}
-		obj := schemaResponses(k, v)
+		obj := schemaResponse(k, v)
 		objs = append(objs, obj)
 	}
 	return objs, nil
 }
 
 // schemaResponse
-func schemaSliceResponse(v any) Responses {
-	obj := Responses{}
-	for k2, v2 := range v.(map[string]interface{}) {
-		// log.Printf("schema slice response key:'%s'\n", k2)
-		obj = append(obj, schemaResponses(k2, v2))
-	}
-	return obj
-}
-
-// schemaResponses
-func schemaResponses(k string, v any) Response {
+func schemaResponse(k string, v any) Response {
 	obj := Response{}
 	obj.Key = k
+
 	if v == nil {
-		log.Printf("schema response data is empty\n")
 		return obj
 	}
 	typeName := reflect.TypeOf(v).String()
-	// log.Printf("schema response key:'%s' typeName:'%s'\n", obj.Key, typeName)
 	switch typeName {
 	case "bool":
 		obj.Value = v.(bool)
 	case "string":
 		if obj.Key == "createdAt" || obj.Key == "updatedAt" || obj.Key == "deletedAt" {
+			obj.Type = "notempty"
+		} else if NotEmptyKey.Len() > 0 && NotEmptyKey.Check(obj.Key) {
 			obj.Type = "notempty"
 		} else {
 			obj.Value = v.(string)
@@ -706,18 +683,27 @@ func schemaResponses(k string, v any) Response {
 		obj.Value = v.(int32)
 	case "float64":
 		obj.Value = v.(float64)
+	case "[]string":
+		obj.Value = v.([]string)
 	case "map[string]interface {}":
-		if value, _ := schema(v.(map[string]interface{})); value != nil {
+		if value, _ := schema(v.(map[string]any)); value != nil {
 			obj.Value = value
 		}
 	case "[]interface {}":
 		list := []Responses{}
-		for _, v1 := range v.([]interface{}) {
-			list = append(list, schemaSliceResponse(v1))
+		for _, v1 := range v.([]any) {
+			listObj := Responses{}
+			if v3, ok := v1.(map[string]any); ok {
+				for k2, v2 := range v3 {
+					listObj = append(listObj, schemaResponse(k2, v2))
+				}
+				list = append(list, listObj)
+				obj.Value = list
+			} else if _, ok := v1.(string); ok {
+				obj.Value = v
+			}
 		}
-		obj.Value = list
-	case "[]string":
-		obj.Value = v.([]string)
+
 	default:
 		fmt.Printf("schemaResponse key:%s valueTypeName:%s\n", k, typeName)
 	}

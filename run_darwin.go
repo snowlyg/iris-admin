@@ -13,7 +13,6 @@ func run(address string, router *gin.Engine) serve {
 	s := endless.NewServer(address, router)
 	s.BeforeBegin = func(add string) {
 		fmt.Printf("Actual pid is %d\n", syscall.Getpid())
-		// save it somehow
 	}
 	s.ReadHeaderTimeout = 10 * time.Millisecond
 	s.WriteTimeout = 10 * time.Second

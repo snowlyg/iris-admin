@@ -1,4 +1,4 @@
-package admin
+package httptest
 
 // // BeforeTestMainGin
 // func BeforeTestMainGin(party func(wi *WebServer), seed func(wi *WebServer, mc *MigrationCmd)) (string, *WebServer) {

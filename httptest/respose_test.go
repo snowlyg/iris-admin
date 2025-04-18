@@ -170,7 +170,7 @@ func TestSchemaResponse(t *testing.T) {
 	}
 	log.Printf("j %+v\n", j)
 	wantKey := "data"
-	resp := schemaResponses(wantKey, j)
+	resp := schemaResponse(wantKey, j)
 
 	if value, ok := resp.Value.(Responses); !ok {
 		t.Error("schema response return value not Responses")
@@ -197,68 +197,6 @@ func TestSchemaResponse(t *testing.T) {
 		}
 		if !keys.Check("status") {
 			t.Error("status not in keys")
-		}
-	}
-}
-func TestSchemaSliceResponse(t *testing.T) {
-	data := `[
-				{
-					"createdAt": "2025-03-21T16:27:20+08:00",
-					"deletedAt": "",
-					"updatedAt": "2025-03-21T16:27:20+08:00",
-					"dev_remark": "",
-					"pac_room_id": 1,
-					"room_desc": "1413-301"
-				}
-			]`
-	j := []map[string]any{}
-	if err := json.Unmarshal([]byte(data), &j); err != nil {
-		t.Error(err.Error())
-	}
-	log.Printf("j %+v\n", j)
-	for _, v := range j {
-		value := schemaSliceResponse(v)
-		keys := arr.NewCheckArrayType(0)
-		for _, v := range value {
-			keys.Add(v.Key)
-			if v.Key == "room_desc" {
-				wantValue := "1413-301"
-				if v.Value != wantValue {
-					t.Errorf("%s Value want '%v' but get '%v'", v.Key, wantValue, v.Value)
-				}
-			} else if v.Key == "deletedAt" {
-				wantType := "notempty"
-				if v.Type != wantType {
-					t.Errorf("%s Value want '%v' but get '%v'", v.Key, wantType, v.Value)
-				}
-			} else if v.Key == "createdAt" {
-				wantType := "notempty"
-				if v.Type != wantType {
-					t.Errorf("%s Value want '%v' but get '%v'", v.Key, wantType, v.Value)
-				}
-			} else if v.Key == "updatedAt" {
-				wantType := "notempty"
-				if v.Type != wantType {
-					t.Errorf("%s Value want '%v' but get '%v'", v.Key, wantType, v.Value)
-				}
-			} else if v.Key == "dev_remark" {
-				wantValue := ""
-				if v.Value != wantValue {
-					t.Errorf("%s Value want '%v' but get '%v'", v.Key, wantValue, v.Value)
-				}
-			} else if v.Key == "pac_room_id" {
-				var wantValue float64 = 1
-				if v.Value != wantValue {
-					t.Errorf("%s Value want '%v' but get '%v'", v.Key, wantValue, v.Value)
-				}
-			} else {
-				t.Errorf("key %s is in response", v.Key)
-			}
-		}
-		for _, v := range []string{"room_desc", "pac_room_id", "dev_remark", "updatedAt", "createdAt", "deletedAt"} {
-			if !keys.Check(v) {
-				t.Errorf("%s not in keys\n", v)
-			}
 		}
 	}
 }

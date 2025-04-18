@@ -11,6 +11,13 @@ import (
 	"gorm.io/gorm"
 )
 
+// Status
+const (
+	StatusUnknown int = iota
+	StatusTrue
+	StatusFalse
+)
+
 type WebServe struct {
 	serve
 	db       *gorm.DB

@@ -29,19 +29,6 @@ type Model struct {
 	DeletedAt string `json:"deletedAt"`
 }
 
-// UriId the struct has used to get id form the context of every query
-type UriId struct {
-	Id uint `json:"id" uri:"id"`
-}
-
-// Request get id data form the context of every query
-func (req *UriId) Request(ctx *gin.Context) error {
-	if err := ctx.ShouldBindUri(req); err != nil {
-		return ErrParamValidate
-	}
-	return nil
-}
-
 // Paginate param for paginate query
 type Paginate struct {
 	Page     int    `json:"page" form:"page"`
@@ -63,15 +50,13 @@ func (req *Paginate) PaginateScope() func(db *gorm.DB) *gorm.DB {
 }
 
 // IdScope
-// - id uint
-func IdScope(id uint) func(db *gorm.DB) *gorm.DB {
+func IdScope(id any) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("id = ?", id)
 	}
 }
 
 // InIdsScope
-// - ids []uint
 func InIdsScope(ids []uint) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("id in ?", ids)
@@ -79,7 +64,6 @@ func InIdsScope(ids []uint) func(db *gorm.DB) *gorm.DB {
 }
 
 // InNamesScope
-// - names []string
 func InNamesScope(names []string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("name in ?", names)
@@ -87,7 +71,6 @@ func InNamesScope(names []string) func(db *gorm.DB) *gorm.DB {
 }
 
 // InUuidsScope
-// - uuids []string
 func InUuidsScope(uuids []string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("uuid in ?", uuids)
@@ -95,18 +78,13 @@ func InUuidsScope(uuids []string) func(db *gorm.DB) *gorm.DB {
 }
 
 // NeIdScope
-// - id uint
-func NeIdScope(id uint) func(db *gorm.DB) *gorm.DB {
+func NeIdScope(id any) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where("id != ?", id)
 	}
 }
 
 // PaginateScope 	return paginate scope for gorm
-// - page 			int
-// - pageSize 	int
-// - sort 			string
-// - orderBy 		string
 func PaginateScope(page, pageSize int, sort, orderBy string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		pageSize := getPageSize(pageSize)
@@ -157,60 +135,60 @@ const (
 )
 
 type Response struct {
-	Code int         `json:"status"`
-	Data interface{} `json:"data,omitempty"`
-	Msg  string      `json:"message"`
+	Code int    `json:"status"`
+	Data any    `json:"data,omitempty"`
+	Msg  string `json:"message"`
 }
 
-func Result(code int, data interface{}, msg string, ctx *gin.Context) {
+func Result(code int, data any, msg string, ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, Response{code, data, msg})
 }
 
 func Ok(ctx *gin.Context) {
-	Result(http.StatusOK, map[string]interface{}{}, ResponseOkMessage, ctx)
+	Result(http.StatusOK, map[string]any{}, ResponseOkMessage, ctx)
 }
 
 func OkWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusOK, map[string]interface{}{}, message, ctx)
+	Result(http.StatusOK, map[string]any{}, message, ctx)
 }
 
-func OkWithData(data interface{}, ctx *gin.Context) {
+func OkWithData(data any, ctx *gin.Context) {
 	Result(http.StatusOK, data, ResponseOkMessage, ctx)
 }
 
-func OkWithDetailed(data interface{}, message string, ctx *gin.Context) {
+func OkWithDetailed(data any, message string, ctx *gin.Context) {
 	Result(http.StatusOK, data, message, ctx)
 }
 
 func Fail(ctx *gin.Context) {
-	Result(http.StatusBadRequest, map[string]interface{}{}, ResponseErrorMessage, ctx)
+	Result(http.StatusBadRequest, map[string]any{}, ResponseErrorMessage, ctx)
 }
 
 func UnauthorizedFailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusUnauthorized, map[string]interface{}{}, message, ctx)
+	Result(http.StatusUnauthorized, map[string]any{}, message, ctx)
 }
 
-func UnauthorizedFailWithDetailed(data interface{}, message string, ctx *gin.Context) {
+func UnauthorizedFailWithDetailed(data any, message string, ctx *gin.Context) {
 	Result(http.StatusUnauthorized, data, message, ctx)
 }
 
 func ForbiddenFailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusForbidden, map[string]interface{}{}, message, ctx)
+	Result(http.StatusForbidden, map[string]any{}, message, ctx)
 }
 
 func FailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusBadRequest, map[string]interface{}{}, message, ctx)
+	Result(http.StatusBadRequest, map[string]any{}, message, ctx)
 }
 
-func FailWithDetailed(data interface{}, message string, ctx *gin.Context) {
+func FailWithDetailed(data any, message string, ctx *gin.Context) {
 	Result(http.StatusBadRequest, data, message, ctx)
 }
 
 type PageResult struct {
-	List     interface{} `json:"list,omitempty"`
-	Total    int64       `json:"total"`
-	Page     int         `json:"page"`
-	PageSize int         `json:"pageSize"`
+	List     any   `json:"list,omitempty"`
+	Total    int64 `json:"total"`
+	Page     int   `json:"page"`
+	PageSize int   `json:"pageSize"`
 }
 
 type BaseResponse struct {
@@ -221,14 +199,35 @@ type BaseResponse struct {
 
 // Paging common input parameter structure
 type PageInfo struct {
-	Page     int    `json:"page" form:"page" binding:"required"`
-	PageSize int    `json:"pageSize" form:"pageSize" binding:"required"`
+	Page     int    `json:"page" form:"page" validate:"required"`
+	PageSize int    `json:"pageSize" form:"pageSize" validate:"required"`
 	OrderBy  string `json:"orderBy" form:"orderBy"`
 	SortBy   string `json:"sortBy" form:"sortBy"`
 }
 
 type IdsBinding struct {
-	Ids []uint `json:"ids" form:"ids" binding:"required,dive,required"`
+	Ids []uint `json:"ids" form:"ids" validate:"required,dive,required"`
+}
+
+// Request get id data form the context of every query
+func (req *IdsBinding) Request(ctx *gin.Context) error {
+	if err := ctx.ShouldBind(req); err != nil {
+		return ErrParamValidate
+	}
+	return nil
+}
+
+// Id the struct has used to get id form the context of every query
+type Id struct {
+	Id uint `json:"id" uri:"id"`
+}
+
+// Request get id data form the context of every query
+func (req *Id) Request(ctx *gin.Context) error {
+	if err := ctx.ShouldBindUri(req); err != nil {
+		return ErrParamValidate
+	}
+	return nil
 }
 
 type Empty struct{}

@@ -11,11 +11,10 @@ import (
 	"github.com/snowlyg/helper/arr"
 )
 
-func (ws *WebServe) GetRouterGroup(relativePath string) *gin.RouterGroup {
+func (ws *WebServe) Group(relativePath string) *gin.RouterGroup {
 	return ws.engine.Group(relativePath)
 }
 
-// InitRouter
 func (ws *WebServe) InitRouter() error {
 	ws.engine.Use(limit.MaxAllowed(50))
 	if ws.conf.System.Level == "debug" {
@@ -23,16 +22,13 @@ func (ws *WebServe) InitRouter() error {
 	}
 	router := ws.engine.Group("/")
 	{
-		router.GET("/v0/version", func(ctx *gin.Context) {
+		router.GET("/health", func(ctx *gin.Context) {
 			ctx.String(http.StatusOK, "IRIS-ADMIN is running!!!")
 		})
 	}
 	return nil
 }
 
-// GetSources
-// - PermRoutes
-// - NoPermRoutes
 func (ws *WebServe) GetSources() ([]map[string]string, []map[string]string) {
 	methodExcepts := strings.Split(ws.conf.Except.Method, ";")
 	uriExcepts := strings.Split(ws.conf.Except.Uri, ";")

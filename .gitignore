@@ -6,20 +6,10 @@
 *.out
 *.txt
 *.yaml
-.air.*
 *.jpg
 *.json
 
 # file
-latest_log
 rbac_model.conf
 
-
-
-#dir
-example/iris/tmp
-example/iris/www
-example/iris/config
-.idea/
-.DS_Store
 

@@ -1,6 +1,7 @@
 module github.com/snowlyg/iris-admin
 
 go 1.22.6
+toolchain go1.24.1
 
 require (
 	github.com/aviddiviner/gin-limit v0.0.0-20170918012823-43b5f79762c1
@@ -12,6 +13,8 @@ require (
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
+	github.com/go-playground/locales v0.14.0
+	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -44,8 +47,6 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/glebarez/go-sqlite v1.20.3 // indirect
 	github.com/glebarez/sqlite v1.7.0 // indirect
-	github.com/go-playground/locales v0.14.0 // indirect
-	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.9.8-0.20220506185958-23bd66f4c0d5 // indirect
@@ -98,11 +99,11 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	github.com/yudai/gojsondiff v1.0.0 // indirect
 	github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.66.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

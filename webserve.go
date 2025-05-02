@@ -2,6 +2,7 @@ package admin
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 	"time"
 
@@ -88,46 +89,32 @@ func getEnforcer(db *gorm.DB) (*casbin.Enforcer, error) {
 	return enforcer, nil
 }
 
-// // GetRolesForUser get user's roles
-// func (ws *WebServe) GetRolesForUser(uid uint) []string {
-// 	uids, err := ws.Auth().GetRolesForUser(strconv.FormatUint(uint64(uid), 10))
-// 	if err != nil {
-// 		return []string{}
-// 	}
-
-// 	return uids
-// }
-
-// // ClearCasbin clean rules
-// func (ws *WebServe) ClearCasbin(v int, p ...string) error {
-// 	_, err := ws.Auth().RemoveFilteredPolicy(v, p...)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
-
 // NewServe
 func NewServe() (*WebServe, error) {
 	config := conf.NewConf()
 	gin.SetMode(config.System.GinMode)
+	log.Printf("set mode:%s\n", config.System.GinMode)
 	app := gin.Default()
 	if config.System.Tls {
 		app.Use(LoadTls())
+		log.Printf("use tls\n")
 	}
 	app.Use(config.CorsConf.Cors())
+	log.Printf("use cors\n")
 	// registerValidation()
 	gin.DefaultWriter = colorable.NewColorableStdout()
 	config.SetDefaultAddrAndTimeFormat()
-
+	log.Printf("set default addr:%s and time format:%s\n", config.System.Addr, config.System.TimeFormat)
 	db, err := gormDb(&config.Mysql)
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("init gorm database, dsn: %s\n", config.Mysql.Dsn())
 	auth, err := getEnforcer(db)
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("init casbin\n")
 	webServe := &WebServe{
 		conf:     config,
 		engine:   app,
@@ -170,18 +157,18 @@ func (ws *WebServe) DB() *gorm.DB {
 	return ws.db
 }
 
-// Deprecated: use nginx or apache instead.
-func (ws *WebServe) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
-}
+// // Deprecated: use nginx or apache instead.
+// func (ws *WebServe) AddWebStatic(staticAbsPath, webPrefix string, paths ...string) {
+// }
 
-// Deprecated: use nginx or apache instead.
-func (ws *WebServe) AddUploadStatic(webPrefix, staticAbsPath string) {
-}
+// // Deprecated: use nginx or apache instead.
+// func (ws *WebServe) AddUploadStatic(webPrefix, staticAbsPath string) {
+// }
 
 // Run
 func (ws *WebServe) Run() {
 	if ws.Engine() == nil {
-		return
+		panic("init engine please")
 	}
 
 	// ws.Engine().NoRoute(func(ctx *gin.Context) {

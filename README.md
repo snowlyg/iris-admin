@@ -38,13 +38,6 @@
  go get github.com/snowlyg/iris-admin@master
 ```
 
-
-## 🔋 JetBrains 开源证书支持
-
-[JetBrains](https://www.jetbrains.com/?from=iris-admin) 对本项目的支持。
-
-<a href="https://www.jetbrains.com/?from=iris-admin" target="_blank"><img src="https://raw.githubusercontent.com/snowlyg/illustrations/master/jetbrains/jetbrains-variant-4.png" width="230" align="middle"/></a>
-
 #### 打赏
 > 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
 - [为爱发电](https://afdian.net/@snowlyg/plan)

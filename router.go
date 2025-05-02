@@ -23,7 +23,7 @@ func (ws *WebServe) InitRouter() error {
 	router := ws.engine.Group("/")
 	{
 		router.GET("/health", func(ctx *gin.Context) {
-			ctx.String(http.StatusOK, "IRIS-ADMIN is running!!!")
+			ctx.String(http.StatusOK, "IRIS-ADMIN IS RUNNING!!!")
 		})
 	}
 	return nil

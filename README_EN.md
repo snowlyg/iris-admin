@@ -37,9 +37,6 @@
  go get github.com/snowlyg/iris-admin@master
 ```
 
-## 🔋 JetBrains OS licenses
-
-<a href="https://www.jetbrains.com/?from=iris-admin" target="_blank"><img src="https://raw.githubusercontent.com/panjf2000/illustrations/master/jetbrains/jetbrains-variant-4.png" width="230" align="middle"/></a>
 
 ## ☕️ Buy me a coffee
 

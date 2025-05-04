@@ -8,7 +8,7 @@ import (
 )
 
 type SeedFunc interface {
-	Init() (err error)
+	Insert() (err error)
 }
 
 // Seed exec seed funcs
@@ -17,7 +17,7 @@ func Seed(SeedFunctions ...SeedFunc) error {
 		return nil
 	}
 	for _, v := range SeedFunctions {
-		err := v.Init()
+		err := v.Insert()
 		if err != nil {
 			return err
 		}
@@ -25,47 +25,28 @@ func Seed(SeedFunctions ...SeedFunc) error {
 	return nil
 }
 
-// Migrate migration cmd
-// MigrationCollection migration collections
-// SeedCollection data seed collection
-type Migrate struct {
-	db    *gorm.DB
-	items []*gormigrate.Migration
-	seeds []SeedFunc
-}
-
-// New MigrationCmd
-func New(db *gorm.DB) *Migrate {
-	mc := &Migrate{
-		db:    db,
-		items: nil,
-		seeds: nil,
-	}
-	return mc
-}
-
 // AddMigration add *gormigrate.Migration
-func (mc *Migrate) AddMigration(m ...*gormigrate.Migration) {
-	mc.items = append(mc.items, m...)
+func (ws *WebServe) AddMigration(m ...*gormigrate.Migration) {
+	ws.items = append(ws.items, m...)
 }
 
 // MigrationLen length of MigrationCollection
-func (mc *Migrate) MigrationLen() int {
-	return len(mc.items)
+func (ws *WebServe) MigrationLen() int {
+	return len(ws.items)
 }
 
 // AddSeed add SeedFunc
-func (mc *Migrate) AddSeed(sf ...SeedFunc) {
-	mc.seeds = append(mc.seeds, sf...)
+func (ws *WebServe) AddSeed(sf ...SeedFunc) {
+	ws.seeds = append(ws.seeds, sf...)
 }
 
 // SeedlLen length of  SeedCollection
-func (mc *Migrate) SeedlLen() int {
-	return len(mc.seeds)
+func (ws *WebServe) SeedlLen() int {
+	return len(ws.seeds)
 }
 
 // Refresh refresh migration
-func (mc *Migrate) Refresh() error {
+func (mc *WebServe) Refresh() error {
 	if mc.getFirstMigration() == "" {
 		return nil
 	}
@@ -77,23 +58,23 @@ func (mc *Migrate) Refresh() error {
 }
 
 // rollbackTo roolback migration to migrationId
-func (mc *Migrate) rollbackTo(migrationId string) error {
-	return mc.gormigrate().RollbackTo(migrationId)
+func (ws *WebServe) rollbackTo(migrationId string) error {
+	return ws.m.RollbackTo(migrationId)
 }
 
 // Rollback roolback migrations
-func (mc *Migrate) Rollback(migrationId string) error {
-	if mc.MigrationLen() == 0 {
+func (ws *WebServe) Rollback(migrationId string) error {
+	if ws.MigrationLen() == 0 {
 		return nil
 	}
 	if migrationId == "" {
-		err := mc.rollbackLast()
+		err := ws.rollbackLast()
 		if !errors.Is(err, gormigrate.ErrMigrationIDDoesNotExist) && err != nil {
 			return err
 		}
 		return nil
 	}
-	err := mc.rollbackTo(migrationId)
+	err := ws.rollbackTo(migrationId)
 	if !errors.Is(err, gormigrate.ErrMigrationIDDoesNotExist) && err != nil {
 		return err
 	}
@@ -101,36 +82,47 @@ func (mc *Migrate) Rollback(migrationId string) error {
 }
 
 // rollbackLast roolback the lasted migration
-func (mc *Migrate) rollbackLast() error {
-	return mc.gormigrate().RollbackLast()
+func (ws *WebServe) rollbackLast() error {
+	return ws.m.RollbackLast()
 }
 
 // Migrate exec migration cmd
-func (mc *Migrate) Migrate() error {
-	m := mc.gormigrate()
-	if err := m.Migrate(); err != nil {
+func (ws *WebServe) Migrate() error {
+	// add migrations
+	ws.AddMigration(
+		&gormigrate.Migration{
+			ID: "init_system",
+			Migrate: func(tx *gorm.DB) error {
+				return tx.AutoMigrate(&Router{}, &Menu{})
+			},
+			Rollback: func(tx *gorm.DB) error {
+				return tx.Migrator().DropTable(new(Router).TableName(), new(Menu).TableName())
+			},
+		},
+		// add more migrations
+	)
+	if ws.m == nil {
+		ws.m = gormigrate.New(ws.db, gormigrate.DefaultOptions, ws.items)
+	}
+	if err := ws.m.Migrate(); err != nil {
 		return err
 	}
 	return nil
 }
 
 // Seed seed data into database
-func (mc *Migrate) Seed() error {
-	if mc.seeds == nil {
-		return nil
+func (ws *WebServe) Seed() error {
+	if ws.seeds == nil {
+		ws.seeds = []SeedFunc{}
 	}
-	return Seed(mc.seeds...)
+	ws.Routers()
+	return Seed(ws.seeds...)
 }
 
 // getFirstMigration get first migration's id
-func (mc *Migrate) getFirstMigration() string {
-	if mc.MigrationLen() == 0 {
+func (ws *WebServe) getFirstMigration() string {
+	if ws.MigrationLen() == 0 {
 		return ""
 	}
-	return mc.items[0].ID
-}
-
-// gormigrate create *gormigrate.Gormigrate
-func (mc *Migrate) gormigrate() *gormigrate.Gormigrate {
-	return gormigrate.New(mc.db, gormigrate.DefaultOptions, mc.items)
+	return ws.items[0].ID
 }

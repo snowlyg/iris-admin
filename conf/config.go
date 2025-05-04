@@ -7,10 +7,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/snowlyg/helper/str"
 	"github.com/spf13/viper"
 )
 
@@ -116,16 +114,6 @@ type Conf struct {
 	Operate        Operate  `mapstructure:"operate" json:"operate" yaml:"operate"`
 }
 
-type Mongo struct {
-	Timeout time.Duration `mapstructure:"timeout" json:"timeout" yaml:"timeout"`
-	DB      string        `mapstructure:"db" json:"db" yaml:"db"`
-	Addr    string        `mapstructure:"addr" json:"addr" yaml:"addr"`
-}
-
-func (md *Mongo) GetApplyURI() string {
-	return str.Join("mongodb://", md.Addr)
-}
-
 type Route struct {
 	Uri    string `mapstructure:"uri" json:"uri" yaml:"uri"`
 	Method string `mapstructure:"method" json:"method" yaml:"method"`
@@ -150,13 +138,6 @@ type System struct {
 	Addr       string `mapstructure:"addr" json:"addr" yaml:"addr"`
 	DbType     string `mapstructure:"db-type" json:"db-type" yaml:"db-type"`
 	TimeFormat string `mapstructure:"time-format" json:"time-format" yaml:"time-format"`
-}
-
-type Redis struct {
-	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
-	Addr     string `mapstructure:"addr" json:"addr" yaml:"addr"`
-	Password string `mapstructure:"password" json:"password" yaml:"password"`
-	PoolSize int    `mapstructure:"pool-size" json:"pool-size" yaml:"pool-size"`
 }
 
 // SetDefaultAddrAndTimeFormat

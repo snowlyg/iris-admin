@@ -3,14 +3,12 @@ package admin
 import (
 	"fmt"
 	"log"
-	"path/filepath"
 	"time"
 
 	"github.com/casbin/casbin/v2"
-	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
+	"github.com/go-gormigrate/gormigrate/v2"
 	"github.com/mattn/go-colorable"
-	"github.com/snowlyg/helper/dir"
 	"github.com/snowlyg/iris-admin/conf"
 	"github.com/snowlyg/iris-admin/e"
 
@@ -27,34 +25,19 @@ const (
 
 type WebServe struct {
 	serve
+	conf     *conf.Conf
 	db       *gorm.DB
 	enforcer *casbin.Enforcer
 	engine   *gin.Engine
-	conf     *conf.Conf
+
 	validate *Validator
-	m        *Migrate
-}
 
-// getEnforcer get casbin.Enforcer
-func getEnforcer(db *gorm.DB) (*casbin.Enforcer, error) {
-	if db == nil {
-		return nil, gorm.ErrInvalidDB
-	}
-	c, err := gormadapter.NewAdapterByDBUseTableName(db, "", "casbin_rule") // Your driver and data source.
-	if err != nil {
-		return nil, err
-	}
+	m     *gormigrate.Gormigrate
+	items []*gormigrate.Migration
+	seeds []SeedFunc
 
-	enforcer, err := casbin.NewEnforcer(filepath.Join(dir.GetCurrentAbPath(), conf.CasbinName), c)
-	if err != nil {
-		return nil, err
-	}
-
-	if err = enforcer.LoadPolicy(); err != nil {
-		return nil, err
-	}
-
-	return enforcer, nil
+	permRoutes  []*Router
+	otherRoutes []*Router
 }
 
 // gormDb
@@ -101,10 +84,10 @@ func NewServe(c *conf.Conf) (*WebServe, error) {
 	app := gin.Default()
 	if c.System.Tls {
 		app.Use(LoadTls())
-		log.Printf("use tls\n")
+		log.Printf("use tls middleware\n")
 	}
 	app.Use(c.CorsConf.Cors())
-	log.Printf("use cors\n")
+	log.Printf("use cors middleware\n")
 	// registerValidation()
 	gin.DefaultWriter = colorable.NewColorableStdout()
 	c.SetDefaultAddrAndTimeFormat()
@@ -113,32 +96,29 @@ func NewServe(c *conf.Conf) (*WebServe, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("init gorm database, dsn: %s\n", c.Mysql.Dsn())
-	auth, err := getEnforcer(db)
+	log.Printf("init gorm database, %s\n", c.Mysql.Dsn())
+	auth, err := c.GetEnforcer(db)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("init casbin :%s\n", conf.CasbinName)
-	webServe := &WebServe{
-		conf:     c,
-		engine:   app,
-		enforcer: auth,
-		db:       db,
-		m: &Migrate{
-			db:    db,
-			items: nil,
-			seeds: nil,
-		},
+	ws := &WebServe{
+		conf:        c,
+		engine:      app,
+		enforcer:    auth,
+		db:          db,
+		permRoutes:  []*Router{},
+		otherRoutes: []*Router{},
 	}
+
 	switch c.Locale {
 	case "en":
-		webServe.validate = newEn()
+		ws.validate = newEn()
 	case "zh":
-		webServe.validate = newZh()
+		ws.validate = newZh()
 	default:
-		webServe.validate = newZh()
+		ws.validate = newZh()
 	}
-	return webServe, nil
+	return ws, nil
 }
 
 // Engine return *gin.Engine

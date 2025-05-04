@@ -16,5 +16,9 @@ func main() {
 		panic(err.Error())
 	}
 	s.Engine().Static("/", "./public")
+
+	// migrate and seed before run 
+	// s.Migrate()
+	// s.Seed()
 	s.Run()
 }

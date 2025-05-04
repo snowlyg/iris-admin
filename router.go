@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -9,33 +10,63 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/arr"
+	"gorm.io/gorm"
 )
 
-func (ws *WebServe) Group(relativePath string) *gin.RouterGroup {
-	return ws.engine.Group(relativePath)
+type Router struct {
+	gorm.Model
+	Path     string    `json:"path"`
+	Title    string    `json:"title"`
+	Group    string    `json:"group"`
+	Method   string    `json:"method"`
+	Children []*Router `json:"children" gorm:"-"`
+}
+
+func (m *Router) TableName() string {
+	return "routers"
+}
+
+type Menu struct {
+	gorm.Model
+	Path       string `json:"path"`
+	Component  string `json:"component"`
+	Redirect   string `json:"redirect"`
+	Hidden     bool   `json:"hidden"`
+	AlwaysShow bool   `json:"alwaysShow"`
+	Meta
+	Children []*Menu `json:"children" gorm:"-"`
+}
+
+func (m *Menu) TableName() string {
+	return "menus"
+}
+
+type Meta struct {
+	Roles   []string `json:"roles" gorm:"-"`
+	Title   string   `json:"title"`
+	Icon    string   `json:"icon"`
+	NoCache bool     `json:"noCache"`
 }
 
 func (ws *WebServe) InitRouter() error {
 	ws.engine.Use(limit.MaxAllowed(50))
+	log.Printf("use gin-limit middleware\n")
 	if ws.conf.System.Level == "debug" {
 		pprof.Register(ws.engine)
 	}
-	router := ws.engine.Group("/")
-	{
-		router.GET("/health", func(ctx *gin.Context) {
-			ctx.String(http.StatusOK, "IRIS-ADMIN IS RUNNING!!!")
-		})
-	}
+	ws.engine.GET("/health", func(ctx *gin.Context) {
+		ctx.String(http.StatusOK, "IRIS-ADMIN IS RUNNING!!!")
+	})
 	return nil
 }
 
-func (ws *WebServe) GetSources() ([]map[string]string, []map[string]string) {
+func (ws *WebServe) Routers() {
 	methodExcepts := strings.Split(ws.conf.Except.Method, ";")
 	uriExcepts := strings.Split(ws.conf.Except.Uri, ";")
 
-	routeLen := len(ws.engine.Routes())
-	permRoutes := make([]map[string]string, 0, routeLen)
-	otherMethodTypes := make([]map[string]string, 0, routeLen)
+	// routeLen := len(ws.engine.Routes())
+	// permRoutes := make([]*Router, 0, routeLen)
+	// otherMethodTypes := make([]*Router, 0, routeLen)
 
 	for _, r := range ws.engine.Routes() {
 		bases := strings.Split(filepath.Base(r.Handler), ".")
@@ -43,29 +74,32 @@ func (ws *WebServe) GetSources() ([]map[string]string, []map[string]string) {
 			continue
 		}
 		path := filepath.ToSlash(filepath.Clean(r.Path))
-		route := map[string]string{
-			"path":   path,
-			"desc":   bases[1],
-			"group":  bases[0],
-			"method": r.Method,
+		route := &Router{
+			Path:   path,
+			Title:  bases[1],
+			Group:  bases[0],
+			Method: r.Method,
 		}
 
 		httpStatusType := arr.NewCheckArrayType(4)
 		httpStatusType.AddMutil(http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete)
 		if !httpStatusType.Check(r.Method) {
-			otherMethodTypes = append(otherMethodTypes, route)
+			ws.otherRoutes = append(ws.otherRoutes, route)
 			continue
 		}
 
 		if len(methodExcepts) > 0 && len(uriExcepts) > 0 && len(methodExcepts) == len(uriExcepts) {
 			for i := 0; i < len(methodExcepts); i++ {
 				if strings.EqualFold(r.Method, strings.ToLower(methodExcepts[i])) && strings.EqualFold(path, strings.ToLower(uriExcepts[i])) {
-					otherMethodTypes = append(otherMethodTypes, route)
+					ws.otherRoutes = append(ws.otherRoutes, route)
 					continue
 				}
 			}
 		}
-		permRoutes = append(permRoutes, route)
+		ws.permRoutes = append(ws.permRoutes, route)
 	}
-	return permRoutes, otherMethodTypes
+
+	if ws.db != nil {
+
+	}
 }

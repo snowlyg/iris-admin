@@ -5,7 +5,10 @@ import (
 	"log"
 	"path/filepath"
 
+	"github.com/casbin/casbin/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/snowlyg/helper/dir"
+	"gorm.io/gorm"
 )
 
 const CasbinName = "rbac_model.conf"
@@ -52,4 +55,23 @@ m = g(r.sub, p.sub) && keyMatch2(r.obj, p.obj) && (r.act == p.act || p.act == "*
 	if _, err := dir.WriteBytes(conf.casbinFilePath(), rbacModelConf); err != nil {
 		panic(fmt.Errorf("initialize casbin rbac_model.conf file return error: %w ", err))
 	}
+}
+
+// getEnforcer get casbin.Enforcer
+func (conf *Conf) GetEnforcer(db *gorm.DB) (*casbin.Enforcer, error) {
+	if db == nil {
+		return nil, gorm.ErrInvalidDB
+	}
+	c, err := gormadapter.NewAdapterByDBUseTableName(db, "", "casbin_rule") // Your driver and data source.
+	if err != nil {
+		return nil, err
+	}
+	enforcer, err := casbin.NewEnforcer(conf.casbinFilePath(), c)
+	if err != nil {
+		return nil, err
+	}
+	if err = enforcer.LoadPolicy(); err != nil {
+		return nil, err
+	}
+	return enforcer, nil
 }

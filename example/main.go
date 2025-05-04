@@ -1,21 +1,20 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	admin "github.com/snowlyg/iris-admin"
+	"github.com/snowlyg/iris-admin/conf"
 )
 
 func main() {
-	s, err := admin.NewServe()
+	c := conf.NewConf()
+	// change default config
+	if err := c.Recover(); err != nil {
+		panic(err.Error())
+	}
+	s, err := admin.NewServe(c)
 	if err != nil {
 		panic(err.Error())
 	}
-	// change default config
-	s.Config().System.Addr = "127.0.0.1:8080"
-	s.Config().System.GinMode = gin.DebugMode
-	if err := s.Config().Recover(); err != nil {
-		panic(err.Error())
-	}
-
+	s.Engine().Static("/", "./public")
 	s.Run()
 }

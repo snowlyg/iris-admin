@@ -1,5 +1,13 @@
 # example
 
+## todo
+
+[+] example, one page show repository information.
+[-] menu sync.
+[-] permission & role & user.
+[-] login logout.
+[-] use [xaboty/form-create-designer](https://github.com/xaboy/form-create-designer) create form with gorm model.
+
 1. get [vue-element-admin](https://github.com/PanJiaChen/vue-element-admin.git) 
 
 ```shell

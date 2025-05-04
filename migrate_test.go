@@ -9,11 +9,11 @@ import (
 )
 
 func testInitMigrate() (*Migrate, error) {
-	config := conf.NewConf()
-	if err := config.Recover(); err != nil {
+	c := conf.NewConf()
+	if err := c.Recover(); err != nil {
 		return nil, err
 	}
-	db, err := gormDb(&config.Mysql)
+	db, err := gormDb(c.Mysql)
 	if err != nil {
 		return nil, err
 	}

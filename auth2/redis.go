@@ -250,9 +250,8 @@ func (ra *RedisAuth) DelCache(token string) error {
 		return e
 	}
 
-	err = ra.delTokenCache(token)
-	if err != nil {
-		return err
+	if e := ra.delTokenCache(token); e != nil {
+		return e
 	}
 	return nil
 }

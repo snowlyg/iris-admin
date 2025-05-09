@@ -639,6 +639,53 @@ func Schema(str []byte) (Responses, error) {
 	return objs, nil
 }
 
+func (r Responses) Replace(key string, value any, testType ...string) {
+	if len(r) == 0 {
+		return
+	}
+
+	if !strings.Contains(key, ".") {
+		for i1, k1 := range r {
+			if k1.Key == key {
+				r[i1].Value = value
+				if len(testType) > 0 && testType[0] != "" {
+					r[i1].Type = testType[0]
+				}
+			}
+		}
+		return
+	}
+	keys := strings.Split(key, ".")
+	if len(keys) == 1 {
+		for i1, k1 := range r {
+			if k1.Key == keys[0] {
+				r[i1].Value = value
+				if len(testType) > 0 && testType[0] != "" {
+					r[i1].Type = testType[0]
+				}
+			}
+		}
+		return
+	}
+	for i1, k1 := range r {
+		if k1.Key != keys[0] || k1.Value == nil {
+			continue
+		}
+		tof := reflect.TypeOf(k1.Value).String()
+		if tof == "httptest.Responses" {
+			r[i1].Value.(Responses).Replace(strings.Join(keys[1:], "."), value, testType...)
+		} else if tof == "[]httptest.Responses" {
+			if len(keys) <= 1 {
+				continue
+			}
+			key1, _ := strconv.Atoi(keys[1])
+			if r[i1].Value.([]Responses)[key1] != nil {
+				r[i1].Value.([]Responses)[key1].Replace(strings.Join(keys[2:], "."), value, testType...)
+			}
+		}
+	}
+}
+
 // schema
 func schema(j map[string]any) (Responses, error) {
 	objs := Responses{}

@@ -90,7 +90,7 @@ func NewConf() *Conf {
 		c.Mysql.Password = mysqlPwd
 	}
 	if mysqlName != "" {
-		c.Mysql.DbName = mysqlName
+		c.Mysql.Username = mysqlName
 	}
 	if webAddr != "" {
 		c.System.Addr = webAddr

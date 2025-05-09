@@ -41,7 +41,7 @@
 ## ☕️ Buy me a coffee
 
 > Please be sure to leave your name, GitHub account or other social media accounts when you donate by the following means so that I can add it to the list of donors as a token of my appreciation.
-- [为爱发电](https://afdian.net/@snowlyg/plan)
+- [爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)
 
 

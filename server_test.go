@@ -17,9 +17,7 @@ func TestStart(t *testing.T) {
 		if serve, err := NewServe(c); err != nil {
 			t.Error(err.Error())
 		} else {
-			if err := serve.InitRouter(); err != nil {
-				t.Error(err.Error())
-			}
+			serve.Engine()
 			serve.Run()
 		}
 	}()

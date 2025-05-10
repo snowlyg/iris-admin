@@ -6,9 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	limit "github.com/aviddiviner/gin-limit"
-	"github.com/gin-contrib/pprof"
-	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/arr"
 	"gorm.io/gorm"
 )
@@ -26,19 +23,7 @@ func (m *Router) TableName() string {
 	return "routers"
 }
 
-func (ws *WebServe) InitRouter() error {
-	ws.engine.Use(limit.MaxAllowed(50))
-	log.Printf("use gin-limit middleware\n")
-	if ws.conf.System.Level == "debug" {
-		pprof.Register(ws.engine)
-	}
-	ws.engine.GET("/health", func(ctx *gin.Context) {
-		ctx.String(http.StatusOK, "IRIS-ADMIN IS RUNNING!!!")
-	})
-	return nil
-}
-
-func (ws *WebServe) Routers() {
+func (ws *WebServe) routers() {
 	methodExcepts := strings.Split(ws.conf.Except.Method, ";")
 	uriExcepts := strings.Split(ws.conf.Except.Uri, ";")
 
@@ -77,7 +62,59 @@ func (ws *WebServe) Routers() {
 		ws.permRoutes = append(ws.permRoutes, route)
 	}
 
-	// if ws.db != nil {
+	log.Printf("permRoutes:%d other:%d\n", len(ws.permRoutes), len(ws.otherRoutes))
 
-	// }
+	if ws.db == nil {
+		return
+	}
+
+	if len(ws.permRoutes) == 0 {
+		return
+	}
+
+	// seed routers
+	olds := []*Router{}
+	dels := []uint{}
+	adds := []*Router{}
+	ws.db.Model(&Router{}).Find(&olds)
+
+	if len(olds) == 0 {
+		if err := ws.db.Create(&ws.permRoutes).Error; err == nil {
+			log.Printf("add %d router\n", len(ws.permRoutes))
+		}
+		return
+	}
+
+	oldCheck := arr.NewCheckArrayType(len(olds))
+	for _, old := range olds {
+		oldCheck.Add(old)
+		found := false
+		for _, a := range ws.permRoutes {
+			if old.Path == a.Path && old.Method == a.Method {
+				found = true
+				break
+			}
+		}
+		if !found {
+			dels = append(dels, old.ID)
+		}
+	}
+
+	if len(dels) > 0 {
+		if err := ws.db.Delete(&Router{}, dels).Error; err == nil {
+			log.Printf("delete %d router\n", len(dels))
+		}
+	}
+	for _, r := range ws.permRoutes {
+		if !oldCheck.Check(r.ID) {
+			adds = append(adds, r)
+		}
+	}
+
+	if len(adds) > 0 {
+		if err := ws.db.Create(&adds).Error; err == nil {
+			log.Printf("add %d router\n", len(adds))
+		}
+	}
+
 }

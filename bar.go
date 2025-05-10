@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"log"
 	"time"
 
 	"github.com/gosuri/uiprogress"
@@ -8,7 +9,6 @@ import (
 )
 
 type progressBar struct {
-	// sync.WaitGroup
 	bar *uiprogress.Bar
 }
 
@@ -17,6 +17,7 @@ var steps = []string{
 	"init casbin authorization",
 	"migrate database",
 	"init locale",
+	"sync router",
 	"run server",
 }
 
@@ -28,19 +29,17 @@ func newBar() *progressBar {
 }
 
 func (pb *progressBar) deploy(app string) {
-	// defer pb.Done()
 	pb.bar.Width = 50
 
 	// prepend the deploy step to the bar
 	pb.bar.PrependFunc(func(b *uiprogress.Bar) string {
-		info := app + ": " + steps[b.Current()-1]
-		return strutil.Resize(info, uint(len(info)))
+		if len(steps) > b.Current()-1 {
+			info := app + ": " + steps[b.Current()-1]
+			return strutil.Resize(info, uint(len(info)))
+		}
+		log.Printf("deploy current:%d %s\n", b.Current(), app)
+		return ""
 	})
-
-	// rand.New(rand.NewSource(500))
-	// for pb.bar.Incr() {
-	// 	time.Sleep(time.Millisecond * time.Duration(rand.Intn(2000)))
-	// }
 }
 
 func (pb *progressBar) Incr() {

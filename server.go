@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	limit "github.com/aviddiviner/gin-limit"
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-gormigrate/gormigrate/v2"
@@ -31,12 +32,13 @@ type WebServe struct {
 	db       *gorm.DB
 	enforcer *casbin.Enforcer
 	engine   *gin.Engine
+	iroutes  *gin.IRoutes
 
 	validate *Validator
 
 	m     *gormigrate.Gormigrate
 	items []*gormigrate.Migration
-	seeds []SeedFunc
+	// seeds []SeedFunc
 
 	permRoutes  []*Router
 	otherRoutes []*Router
@@ -125,12 +127,19 @@ func NewServe(c *conf.Conf) (*WebServe, error) {
 		ws.validate = newZh()
 	}
 	pb.Incr()
+
+	ws.engine.Use(limit.MaxAllowed(50))
+
 	return ws, nil
 }
 
 // Engine return *gin.Engine
 func (ws *WebServe) Engine() *gin.Engine {
 	return ws.engine
+}
+
+func (ws *WebServe) IRoutes() *gin.IRoutes {
+	return ws.iroutes
 }
 
 // Config
@@ -158,7 +167,7 @@ func (ws *WebServe) DB() *gorm.DB {
 
 // Run
 func (ws *WebServe) Run() {
-	if ws.Engine() == nil {
+	if ws.engine == nil {
 		panic("init engine please")
 	}
 
@@ -189,6 +198,9 @@ func (ws *WebServe) Run() {
 	// 	ctx.Writer.Header().Add("Accept", "text/html")
 	// 	ctx.Writer.Flush()
 	// })
+
+	ws.routers()
+	ws.Incr()
 
 	s := run(ws.Config().System.Addr, ws.engine)
 	time.Sleep(10 * time.Microsecond)

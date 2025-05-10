@@ -7,24 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type SeedFunc interface {
-	Insert() (err error)
-}
-
-// Seed exec seed funcs
-func Seed(SeedFunctions ...SeedFunc) error {
-	if len(SeedFunctions) == 0 {
-		return nil
-	}
-	for _, v := range SeedFunctions {
-		err := v.Insert()
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 // AddMigration add *gormigrate.Migration
 func (ws *WebServe) AddMigration(m ...*gormigrate.Migration) {
 	ws.items = append(ws.items, m...)
@@ -33,16 +15,6 @@ func (ws *WebServe) AddMigration(m ...*gormigrate.Migration) {
 // MigrationLen length of MigrationCollection
 func (ws *WebServe) MigrationLen() int {
 	return len(ws.items)
-}
-
-// AddSeed add SeedFunc
-func (ws *WebServe) AddSeed(sf ...SeedFunc) {
-	ws.seeds = append(ws.seeds, sf...)
-}
-
-// SeedlLen length of  SeedCollection
-func (ws *WebServe) SeedlLen() int {
-	return len(ws.seeds)
 }
 
 // Refresh refresh migration
@@ -108,15 +80,6 @@ func (ws *WebServe) Migrate() error {
 		return err
 	}
 	return nil
-}
-
-// Seed seed data into database
-func (ws *WebServe) Seed() error {
-	if ws.seeds == nil {
-		ws.seeds = []SeedFunc{}
-	}
-	ws.Routers()
-	return Seed(ws.seeds...)
 }
 
 // getFirstMigration get first migration's id

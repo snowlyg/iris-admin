@@ -8,6 +8,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-gormigrate/gormigrate/v2"
+	"github.com/gosuri/uiprogress"
 	"github.com/mattn/go-colorable"
 	"github.com/snowlyg/iris-admin/conf"
 	"github.com/snowlyg/iris-admin/e"
@@ -25,6 +26,7 @@ const (
 
 type WebServe struct {
 	serve
+	*progressBar
 	conf     *conf.Conf
 	db       *gorm.DB
 	enforcer *casbin.Enforcer
@@ -48,9 +50,6 @@ func gormDb(m *conf.Mysql) (*gorm.DB, error) {
 	if m.DbName == "" {
 		return nil, e.ErrDbTableNameEmpty
 	}
-	// if err := createTable(conf.BaseDsn(), "mysql", conf.DbName); err != nil {
-	// 	return nil, fmt.Errorf("create database %s is fail:%w", conf.DbName, err)
-	// }
 	mysqlConfig := mysql.Config{
 		DSN:               m.Dsn(),
 		DefaultStringSize: 191,
@@ -79,28 +78,30 @@ func gormDb(m *conf.Mysql) (*gorm.DB, error) {
 
 // NewServe
 func NewServe(c *conf.Conf) (*WebServe, error) {
+	pb := newBar()
+	uiprogress.Start()
+
 	gin.SetMode(c.System.GinMode)
-	log.Printf("set mode:%s\n", c.System.GinMode)
 	app := gin.Default()
 	if c.System.Tls {
 		app.Use(LoadTls())
-		log.Printf("use tls middleware\n")
 	}
 	app.Use(c.CorsConf.Cors())
-	log.Printf("use cors middleware\n")
 	// registerValidation()
 	gin.DefaultWriter = colorable.NewColorableStdout()
 	c.SetDefaultAddrAndTimeFormat()
-	log.Printf("set default addr:%s and time format:%s\n", c.System.Addr, c.System.TimeFormat)
 	db, err := gormDb(c.Mysql)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("init gorm database, %s\n", c.Mysql.Dsn())
+	pb.Incr()
+
 	auth, err := c.GetEnforcer(db)
 	if err != nil {
 		return nil, err
 	}
+	pb.Incr()
+
 	ws := &WebServe{
 		conf:        c,
 		engine:      app,
@@ -109,6 +110,11 @@ func NewServe(c *conf.Conf) (*WebServe, error) {
 		permRoutes:  []*Router{},
 		otherRoutes: []*Router{},
 	}
+	ws.progressBar = pb
+	if err := ws.Migrate(); err != nil {
+		return nil, err
+	}
+	pb.Incr()
 
 	switch c.Locale {
 	case "en":
@@ -118,6 +124,7 @@ func NewServe(c *conf.Conf) (*WebServe, error) {
 	default:
 		ws.validate = newZh()
 	}
+	pb.Incr()
 	return ws, nil
 }
 
@@ -182,8 +189,13 @@ func (ws *WebServe) Run() {
 	// 	ctx.Writer.Header().Add("Accept", "text/html")
 	// 	ctx.Writer.Flush()
 	// })
+
 	s := run(ws.Config().System.Addr, ws.engine)
 	time.Sleep(10 * time.Microsecond)
+
+	ws.Incr()
+	uiprogress.Stop()
+
 	log.Printf("listen on: http://%s\n", ws.Config().System.Addr)
 
 	s.ListenAndServe()

@@ -32,15 +32,15 @@ func (ws *WebServe) routers() {
 	// otherMethodTypes := make([]*Router, 0, routeLen)
 
 	for _, r := range ws.engine.Routes() {
-		bases := strings.Split(filepath.Base(r.Handler), ".")
-		if len(bases) != 2 {
+		// log.Printf("handler:%s, method:%s, path:%s\n", r.Handler, r.Method, r.Path)
+		if strings.Contains(r.Path, "/*filepath") || r.Handler == "github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1" {
 			continue
 		}
 		path := filepath.ToSlash(filepath.Clean(r.Path))
 		route := &Router{
 			Path:   path,
-			Title:  bases[1],
-			Group:  bases[0],
+			Title:  path,
+			Group:  "",
 			Method: r.Method,
 		}
 
@@ -52,7 +52,7 @@ func (ws *WebServe) routers() {
 		}
 
 		if len(methodExcepts) > 0 && len(uriExcepts) > 0 && len(methodExcepts) == len(uriExcepts) {
-			for i := 0; i < len(methodExcepts); i++ {
+			for i := range methodExcepts {
 				if strings.EqualFold(r.Method, strings.ToLower(methodExcepts[i])) && strings.EqualFold(path, strings.ToLower(uriExcepts[i])) {
 					ws.otherRoutes = append(ws.otherRoutes, route)
 					continue
@@ -62,7 +62,7 @@ func (ws *WebServe) routers() {
 		ws.permRoutes = append(ws.permRoutes, route)
 	}
 
-	log.Printf("permRoutes:%d other:%d\n", len(ws.permRoutes), len(ws.otherRoutes))
+	// log.Printf("permRoutes:%d other:%d\n", len(ws.permRoutes), len(ws.otherRoutes))
 
 	if ws.db == nil {
 		return
@@ -76,18 +76,20 @@ func (ws *WebServe) routers() {
 	olds := []*Router{}
 	dels := []uint{}
 	adds := []*Router{}
-	ws.db.Model(&Router{}).Find(&olds)
+	if err := ws.db.Model(&Router{}).Find(&olds).Error; err != nil {
+		log.Printf("iris-admin: old router find get err:%s\n", err.Error())
+	}
 
 	if len(olds) == 0 {
 		if err := ws.db.Create(&ws.permRoutes).Error; err == nil {
-			log.Printf("add %d router\n", len(ws.permRoutes))
+			log.Printf("iris-admin: add %d router \n", len(ws.permRoutes))
 		}
 		return
 	}
 
 	oldCheck := arr.NewCheckArrayType(len(olds))
 	for _, old := range olds {
-		oldCheck.Add(old)
+		oldCheck.Add(old.Path)
 		found := false
 		for _, a := range ws.permRoutes {
 			if old.Path == a.Path && old.Method == a.Method {
@@ -102,18 +104,19 @@ func (ws *WebServe) routers() {
 
 	if len(dels) > 0 {
 		if err := ws.db.Delete(&Router{}, dels).Error; err == nil {
-			log.Printf("delete %d router\n", len(dels))
+			log.Printf("iris-admin: delete %d router\n", len(dels))
 		}
 	}
+
 	for _, r := range ws.permRoutes {
-		if !oldCheck.Check(r.ID) {
+		if !oldCheck.Check(r.Path) {
 			adds = append(adds, r)
 		}
 	}
 
 	if len(adds) > 0 {
 		if err := ws.db.Create(&adds).Error; err == nil {
-			log.Printf("add %d router\n", len(adds))
+			log.Printf("iris-admin: add %d router,old:%d\n", len(adds), len(olds))
 		}
 	}
 

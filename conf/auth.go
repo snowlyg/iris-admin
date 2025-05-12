@@ -2,7 +2,6 @@ package conf
 
 import (
 	"fmt"
-	"log"
 	"path/filepath"
 
 	"github.com/casbin/casbin/v2"
@@ -34,7 +33,7 @@ func (conf *Conf) casbinFilePath() string {
 func (conf *Conf) newRbacModel() {
 	if dir.IsExist(conf.casbinFilePath()) {
 		// casbin rbac_model.conf file
-		log.Printf("rbac_model.conf file is existed.")
+		// log.Printf("rbac_model.conf file is existed.")
 		return
 	}
 

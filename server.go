@@ -9,7 +9,6 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-gormigrate/gormigrate/v2"
-	"github.com/gosuri/uiprogress"
 	"github.com/mattn/go-colorable"
 	"github.com/snowlyg/iris-admin/conf"
 	"github.com/snowlyg/iris-admin/e"
@@ -27,7 +26,6 @@ const (
 
 type WebServe struct {
 	serve
-	*progressBar
 	conf     *conf.Conf
 	db       *gorm.DB
 	enforcer *casbin.Enforcer
@@ -38,7 +36,6 @@ type WebServe struct {
 
 	m     *gormigrate.Gormigrate
 	items []*gormigrate.Migration
-	// seeds []SeedFunc
 
 	permRoutes  []*Router
 	otherRoutes []*Router
@@ -80,8 +77,6 @@ func gormDb(m *conf.Mysql) (*gorm.DB, error) {
 
 // NewServe
 func NewServe(c *conf.Conf) (*WebServe, error) {
-	pb := newBar()
-	uiprogress.Start()
 
 	gin.SetMode(c.System.GinMode)
 	app := gin.Default()
@@ -96,13 +91,11 @@ func NewServe(c *conf.Conf) (*WebServe, error) {
 	if err != nil {
 		return nil, err
 	}
-	pb.Incr()
 
 	auth, err := c.GetEnforcer(db)
 	if err != nil {
 		return nil, err
 	}
-	pb.Incr()
 
 	ws := &WebServe{
 		conf:        c,
@@ -112,11 +105,9 @@ func NewServe(c *conf.Conf) (*WebServe, error) {
 		permRoutes:  []*Router{},
 		otherRoutes: []*Router{},
 	}
-	ws.progressBar = pb
 	if err := ws.Migrate(); err != nil {
 		return nil, err
 	}
-	pb.Incr()
 
 	switch c.Locale {
 	case "en":
@@ -126,7 +117,6 @@ func NewServe(c *conf.Conf) (*WebServe, error) {
 	default:
 		ws.validate = newZh()
 	}
-	pb.Incr()
 
 	ws.engine.Use(limit.MaxAllowed(50))
 
@@ -145,6 +135,11 @@ func (ws *WebServe) IRoutes() *gin.IRoutes {
 // Config
 func (ws *WebServe) Config() *conf.Conf {
 	return ws.conf
+}
+
+// SystemAddr
+func (ws *WebServe) SystemAddr() string {
+	return ws.conf.System.Addr
 }
 
 // Auth
@@ -200,15 +195,12 @@ func (ws *WebServe) Run() {
 	// })
 
 	ws.routers()
-	ws.Incr()
 
-	s := run(ws.Config().System.Addr, ws.engine)
+	systemAddr := ws.SystemAddr()
+	s := run(systemAddr, ws.engine)
 	time.Sleep(10 * time.Microsecond)
 
-	ws.Incr()
-	uiprogress.Stop()
-
-	log.Printf("listen on: http://%s\n", ws.Config().System.Addr)
+	log.Printf("listen on: http://%s\n", systemAddr)
 
 	s.ListenAndServe()
 }

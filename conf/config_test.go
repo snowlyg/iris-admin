@@ -13,7 +13,7 @@ func TestSetDefaultAddrAndTimeFormat(t *testing.T) {
 		t.Errorf("config system time format want '%s' but get '%s'", timeFormat, dc.System.TimeFormat)
 	}
 	dc.SetDefaultAddrAndTimeFormat()
-	addr = "127.0.0.1:80"
+	addr = "127.0.0.1:8080"
 	if dc.System.Addr != addr {
 		t.Errorf("config system addr want '%s' but get '%s'", addr, dc.System.Addr)
 	}
@@ -26,7 +26,7 @@ func TestSetDefaultAddrAndTimeFormat(t *testing.T) {
 	if c.IsExist() {
 		t.Error("config exist before init")
 	}
-	addr = "127.0.0.1:80"
+	addr = "127.0.0.1:8080"
 	if c.System.Addr != addr {
 		t.Errorf("config system addr want '%s' but get '%s'", addr, c.System.Addr)
 	}
@@ -50,9 +50,5 @@ func TestSetDefaultAddrAndTimeFormat(t *testing.T) {
 	c.RemoveFile()
 	if c.IsExist() {
 		t.Error("config exist after remove")
-	}
-	wantUri := "mongodb://localhost:27017"
-	if c.Mongo.GetApplyURI() != wantUri {
-		t.Errorf("config mongodb uri want '%s' but get '%s'", wantUri, c.Mongo.GetApplyURI())
 	}
 }

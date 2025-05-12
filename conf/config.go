@@ -3,13 +3,12 @@ package conf
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/snowlyg/helper/str"
 	"github.com/spf13/viper"
 )
 
@@ -19,14 +18,9 @@ const (
 )
 
 var (
-	// redis mysql mongo cache default config
-	redisAddrKey = "IRIS_ADMIN_REDIS_ADDR"
-	redisPwdKey  = "IRIS_ADMIN_REDIS_PWD"
 	mysqlAddrKey = "IRIS_ADMIN_MYSQL_ADDR"
 	mysqlPwdKey  = "IRIS_ADMIN_MYSQL_PWD"
 	mysqlNameKey = "IRIS_ADMIN_MYSQL_NAME"
-	mongoAddrKey = "IRIS_ADMIN_MONGO_ADDR"
-	dbTypeKey    = "IRIS_ADMIN_DB_TYPE"
 	webAddrKey   = "IRIS_ADMIN_WEB_ADDR"
 )
 
@@ -50,8 +44,7 @@ func NewConf() *Conf {
 			Tls:        false,
 			GinMode:    gin.ReleaseMode,
 			Level:      "debug",
-			Addr:       "127.0.0.1:80",
-			DbType:     "mysql",
+			Addr:       "127.0.0.1:8080",
 			TimeFormat: "2006-01-02 15:04:05",
 		},
 		Limit: Limit{
@@ -64,7 +57,7 @@ func NewConf() *Conf {
 			ImgWidth:  240,
 			ImgHeight: 80,
 		},
-		Mysql: Mysql{
+		Mysql: &Mysql{
 			Path:         "127.0.0.1:3306",
 			Config:       "charset=utf8mb4&parseTime=True&loc=Local",
 			DbName:       "iris-admin",
@@ -74,17 +67,6 @@ func NewConf() *Conf {
 			MaxOpenConns: 0,
 			LogMode:      false,
 			LogZap:       "error",
-		},
-		Redis: Redis{
-			DB:       0,
-			Addr:     "127.0.0.1:6379",
-			Password: "",
-			PoolSize: 0,
-		},
-		Mongo: Mongo{
-			DB:      "mongo_test",
-			Timeout: 10,
-			Addr:    "localhost:27017",
 		},
 		Operate: Operate{
 			Except: Route{
@@ -97,20 +79,10 @@ func NewConf() *Conf {
 			},
 		},
 	}
-	redisAddr := strings.TrimSpace(os.Getenv(redisAddrKey))
-	redisPwd := strings.TrimSpace(os.Getenv(redisPwdKey))
 	mysqlAddr := strings.TrimSpace(os.Getenv(mysqlAddrKey))
 	mysqlPwd := strings.TrimSpace(os.Getenv(mysqlPwdKey))
 	mysqlName := strings.TrimSpace(os.Getenv(mysqlNameKey))
-	mongoAddr := strings.TrimSpace(os.Getenv(mongoAddrKey))
-	dbType := strings.TrimSpace(os.Getenv(dbTypeKey))
 	webAddr := strings.TrimSpace(os.Getenv(webAddrKey))
-	if redisAddr != "" {
-		c.Redis.Addr = redisAddr
-	}
-	if redisPwd != "" {
-		c.Redis.Password = redisPwd
-	}
 	if mysqlAddr != "" {
 		c.Mysql.Path = mysqlAddr
 	}
@@ -118,18 +90,14 @@ func NewConf() *Conf {
 		c.Mysql.Password = mysqlPwd
 	}
 	if mysqlName != "" {
-		c.Mysql.DbName = mysqlName
-	}
-	if mongoAddr != "" {
-		c.Mongo.Addr = mongoAddr
-	}
-	if dbType != "" {
-		c.System.DbType = dbType
+		c.Mysql.Username = mysqlName
 	}
 	if webAddr != "" {
 		c.System.Addr = webAddr
 	}
-
+	if c.Mysql.Path == "" || c.Mysql.Password == "" || c.Mysql.DbName == "" {
+		log.Printf("mysql driver config empty,you can set env %s %s %s to change it.\n", mysqlAddrKey, mysqlPwdKey, mysqlNameKey)
+	}
 	return c
 }
 
@@ -142,20 +110,8 @@ type Conf struct {
 	Limit          Limit    `mapstructure:"limit" json:"limit" yaml:"limit"`
 	Captcha        Captcha  `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 	CorsConf       CorsConf `mapstructure:"cors" json:"cors" yaml:"cors"`
-	Mysql          Mysql    `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
-	Redis          Redis    `mapstructure:"redis" json:"redis" yaml:"redis"`
-	Mongo          Mongo    `mapstructure:"mongo" json:"mongo" yaml:"mongo"`
+	Mysql          *Mysql   `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	Operate        Operate  `mapstructure:"operate" json:"operate" yaml:"operate"`
-}
-
-type Mongo struct {
-	Timeout time.Duration `mapstructure:"timeout" json:"timeout" yaml:"timeout"`
-	DB      string        `mapstructure:"db" json:"db" yaml:"db"`
-	Addr    string        `mapstructure:"addr" json:"addr" yaml:"addr"`
-}
-
-func (md *Mongo) GetApplyURI() string {
-	return str.Join("mongodb://", md.Addr)
 }
 
 type Route struct {
@@ -184,17 +140,10 @@ type System struct {
 	TimeFormat string `mapstructure:"time-format" json:"time-format" yaml:"time-format"`
 }
 
-type Redis struct {
-	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
-	Addr     string `mapstructure:"addr" json:"addr" yaml:"addr"`
-	Password string `mapstructure:"password" json:"password" yaml:"password"`
-	PoolSize int    `mapstructure:"pool-size" json:"pool-size" yaml:"pool-size"`
-}
-
 // SetDefaultAddrAndTimeFormat
 func (conf *Conf) SetDefaultAddrAndTimeFormat() {
 	if conf.System.Addr == "" {
-		conf.System.Addr = "127.0.0.1:80"
+		conf.System.Addr = "127.0.0.1:8080"
 	}
 
 	if conf.System.TimeFormat == "" {
@@ -247,7 +196,7 @@ func (conf *Conf) getViperConfig() *ViperConf {
 	mxOpenConns := fmt.Sprintf("%d", conf.Mysql.MaxOpenConns)
 	logMode := fmt.Sprintf("%t", conf.Mysql.LogMode)
 
-	configName := "web"
+	configName := "iris_admin"
 	return &ViperConf{
 		dir:  ConfigDir,
 		name: configName,
@@ -297,7 +246,6 @@ func (conf *Conf) getViperConfig() *ViperConf {
 			"level": "` + conf.System.Level + `",
 			"gin-mode": "` + conf.System.GinMode + `",
 			"addr": "` + conf.System.Addr + `",
-			"db-type": "` + conf.System.DbType + `",
 			"time-format": "` + conf.System.TimeFormat + `"
 		},
 		"mysql":
@@ -311,19 +259,6 @@ func (conf *Conf) getViperConfig() *ViperConf {
 			"max-open-conns": ` + mxOpenConns + `,
 			"log-mode": ` + logMode + `,
 			"log-zap": "` + conf.Mysql.LogZap + `"
-		},
-		"redis":
-		{
-			"db": ` + strconv.FormatInt(int64(conf.Redis.DB), 10) + `,
-			"addr": "` + conf.Redis.Addr + `",
-			"password": "` + conf.Redis.Password + `",
-			"pool-size": ` + strconv.FormatInt(int64(conf.Redis.PoolSize), 10) + `
-		},
-		"mongo":
-		{
-			"timeout": "` + conf.Mongo.Timeout.String() + `",
-			"db": "` + conf.Mongo.DB + `",
-			"addr": "` + conf.Mongo.Addr + `"
 		},
 		"operate":
 		{

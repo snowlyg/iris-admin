@@ -136,12 +136,12 @@ func TestSchema(t *testing.T) {
 			t.Errorf("list len want %d but get %d", 1, len(list))
 		}
 		first := list[0]
-		log.Printf("first:%+v\n", first)
 		if first.GetId("pac_room_id") != 1 {
 			t.Errorf("pac_room_id want %d but get %d", 1, first.GetId("pac_room_id"))
 		}
-		if first.GetString("room_desc") != "1413-301" {
-			t.Errorf("room_desc want %s but get '%s'", "1413-301", first.GetString("room_desc"))
+		roomDesc := first.GetString("room_desc")
+		if roomDesc != "1413-301" {
+			t.Errorf("room_desc want %s but get '%s'", "1413-301", roomDesc)
 		}
 		if first.GetString("dev_remark") != "" {
 			t.Errorf("dev_remark want %s but get '%s'", "", first.GetString("dev_remark"))

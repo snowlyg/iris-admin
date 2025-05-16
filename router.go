@@ -3,9 +3,9 @@ package admin
 import (
 	"log"
 	"net/http"
-	"path/filepath"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/arr"
 	"gorm.io/gorm"
 )
@@ -23,7 +23,19 @@ func (m *Router) TableName() string {
 	return "routers"
 }
 
-func (ws *WebServe) routers() {
+func Group(group *gin.RouterGroup) {
+	r := group.Group("/routes")
+	{
+		r.GET("/list", func(ctx *gin.Context) {
+			ctx.JSON(http.StatusOK, gin.H{
+				"status":  200,
+				"message": "OK",
+			})
+		})
+	}
+}
+
+func (ws *WebServe) groupRouters() {
 	methodExcepts := strings.Split(ws.conf.Except.Method, ";")
 	uriExcepts := strings.Split(ws.conf.Except.Uri, ";")
 
@@ -36,7 +48,7 @@ func (ws *WebServe) routers() {
 		if strings.Contains(r.Path, "/*filepath") || r.Handler == "github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1" {
 			continue
 		}
-		path := filepath.ToSlash(filepath.Clean(r.Path))
+		path := r.Path
 		route := &Router{
 			Path:   path,
 			Title:  path,
@@ -119,5 +131,4 @@ func (ws *WebServe) routers() {
 			log.Printf("iris-admin: add %d router,old:%d\n", len(adds), len(olds))
 		}
 	}
-
 }

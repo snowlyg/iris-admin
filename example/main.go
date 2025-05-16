@@ -27,6 +27,7 @@ func main() {
 		v1.GET("/health", func(ctx *gin.Context) {
 			ctx.String(http.StatusOK, "OK")
 		})
+		admin.Group(v1)
 	}
 
 	// noitce the static path should not start with /

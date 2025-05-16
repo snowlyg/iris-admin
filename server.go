@@ -194,7 +194,7 @@ func (ws *WebServe) Run() {
 	// 	ctx.Writer.Flush()
 	// })
 
-	ws.routers()
+	ws.groupRouters()
 
 	systemAddr := ws.SystemAddr()
 	s := run(systemAddr, ws.engine)

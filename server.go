@@ -77,7 +77,6 @@ func gormDb(m *conf.Mysql) (*gorm.DB, error) {
 
 // NewServe
 func NewServe(c *conf.Conf) (*WebServe, error) {
-
 	gin.SetMode(c.System.GinMode)
 	app := gin.Default()
 	if c.System.Tls {

@@ -11,7 +11,7 @@ import (
 )
 
 type ErrMsg struct {
-	Code int64  `json:"code"`
+	Code int    `json:"code"`
 	Msg  string `json:"message"`
 }
 
@@ -21,8 +21,8 @@ var (
 	ErrUnSupportFramework = errors.New("unsupport framework")
 )
 
-// Model
-type Model struct {
+// BaseModel
+type BaseModel struct {
 	Id        uint   `json:"id"`
 	UpdatedAt string `json:"updatedAt"`
 	CreatedAt string `json:"createdAt"`
@@ -47,6 +47,13 @@ func (req *Paginate) Request(ctx *gin.Context) error {
 // PaginateScope paginate scope
 func (req *Paginate) PaginateScope() func(db *gorm.DB) *gorm.DB {
 	return PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)
+}
+
+// SoftDeleteScope
+func SoftDeleteScope() func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("deleted_at IS NULL")
+	}
 }
 
 // IdScope
@@ -140,48 +147,57 @@ type Response struct {
 	Msg  string `json:"message"`
 }
 
-func Result(code int, data any, msg string, ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, Response{code, data, msg})
-}
-
 func Ok(ctx *gin.Context) {
-	Result(http.StatusOK, map[string]any{}, ResponseOkMessage, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusOK,
+		Msg:  ResponseOkMessage,
+	})
 }
 
 func OkWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusOK, map[string]any{}, message, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusOK,
+		Msg:  message,
+	})
 }
 
 func OkWithData(data any, ctx *gin.Context) {
-	Result(http.StatusOK, data, ResponseOkMessage, ctx)
-}
-
-func OkWithDetailed(data any, message string, ctx *gin.Context) {
-	Result(http.StatusOK, data, message, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusOK,
+		Msg:  ResponseOkMessage,
+		Data: data,
+	})
 }
 
 func Fail(ctx *gin.Context) {
-	Result(http.StatusBadRequest, map[string]any{}, ResponseErrorMessage, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusBadRequest,
+		Msg:  ResponseErrorMessage,
+	})
 }
 
-func UnauthorizedFailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusUnauthorized, map[string]any{}, message, ctx)
-}
+// func UnauthorizedFailWithMessage(message string, ctx *gin.Context) {
+// }
 
-func UnauthorizedFailWithDetailed(data any, message string, ctx *gin.Context) {
-	Result(http.StatusUnauthorized, data, message, ctx)
-}
+// func UnauthorizedFailWithDetailed(data any, message string, ctx *gin.Context) {
+// }
 
-func ForbiddenFailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusForbidden, map[string]any{}, message, ctx)
-}
+// func ForbiddenFailWithMessage(message string, ctx *gin.Context) {
+// }
 
 func FailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusBadRequest, map[string]any{}, message, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusBadRequest,
+		Msg:  message,
+	})
 }
 
 func FailWithDetailed(data any, message string, ctx *gin.Context) {
-	Result(http.StatusBadRequest, data, message, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusBadRequest,
+		Msg:  message,
+		Data: data,
+	})
 }
 
 type PageResult struct {

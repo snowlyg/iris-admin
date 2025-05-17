@@ -27,7 +27,7 @@ func main() {
 		v1.GET("/health", func(ctx *gin.Context) {
 			ctx.String(http.StatusOK, "OK")
 		})
-		admin.Group(v1)
+		s.Resource(v1, new(admin.Router))
 	}
 
 	// noitce the static path should not start with /

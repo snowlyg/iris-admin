@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/snowlyg/helper/arr"
 	"gorm.io/gorm"
 )
@@ -22,17 +21,8 @@ type Router struct {
 func (m *Router) TableName() string {
 	return "routers"
 }
-
-func Group(group *gin.RouterGroup) {
-	r := group.Group("/routes")
-	{
-		r.GET("/list", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, gin.H{
-				"status":  200,
-				"message": "OK",
-			})
-		})
-	}
+func (m *Router) List() []map[string]any {
+	return []map[string]any{}
 }
 
 func (ws *WebServe) groupRouters() {
@@ -44,7 +34,7 @@ func (ws *WebServe) groupRouters() {
 	// otherMethodTypes := make([]*Router, 0, routeLen)
 
 	for _, r := range ws.engine.Routes() {
-		// log.Printf("handler:%s, method:%s, path:%s\n", r.Handler, r.Method, r.Path)
+		log.Printf("handler:%s, method:%s, path:%s\n", r.Handler, r.Method, r.Path)
 		if strings.Contains(r.Path, "/*filepath") || r.Handler == "github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1" {
 			continue
 		}
@@ -97,6 +87,10 @@ func (ws *WebServe) groupRouters() {
 			log.Printf("iris-admin: add %d router \n", len(ws.permRoutes))
 		}
 		return
+	}
+
+	for _, old := range olds {
+		log.Printf("old id:%d path:%s\n", old.ID, old.Path)
 	}
 
 	oldCheck := arr.NewCheckArrayType(len(olds))

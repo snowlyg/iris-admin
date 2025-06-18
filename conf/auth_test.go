@@ -8,15 +8,16 @@ import (
 
 func TestNewRbacModel(t *testing.T) {
 	conf := new(Conf)
-	if conf.casbinFilePath() == "" {
-		t.Errorf("rbac model path:%s empty", conf.casbinFilePath())
+	cfp := conf.casbinFilePath()
+	if cfp == "" {
+		t.Errorf("rbac model path:%s empty", cfp)
 	}
 	conf.newRbacModel()
-	if !dir.IsExist(CasbinName) {
-		t.Error("rbac_model.conf not exist after conf not init and new rbac model")
+	if !dir.IsExist(cfp) {
+		t.Errorf("%s not exist after conf not init and new rbac model %t", cfp, dir.IsExist(cfp))
 	}
 	conf.RemoveRbacModel()
-	if dir.IsExist(CasbinName) {
-		t.Error("rbac_model.conf exist after conf not init and new rbac model")
+	if dir.IsExist(cfp) {
+		t.Errorf("%s exist after conf not init and new rbac model %t", cfp, dir.IsExist(cfp))
 	}
 }

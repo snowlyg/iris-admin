@@ -48,6 +48,10 @@ var (
 )
 
 func TestRedisGenerateToken(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
 	if err != nil {
 		t.Fatal(err.Error())
@@ -112,6 +116,10 @@ func TestRedisGenerateToken(t *testing.T) {
 }
 
 func TestRedisToCache(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
 	if err != nil {
 		t.Fatal(err.Error())
@@ -152,6 +160,10 @@ func TestRedisToCache(t *testing.T) {
 }
 
 func TestRedisDelUserTokenCache(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	cc := NewClaims(
 		&Agent{
 			Id:         uint(221),
@@ -195,6 +207,10 @@ func TestRedisDelUserTokenCache(t *testing.T) {
 }
 
 func TestRedisIsUserTokenOver(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	cc := NewClaims(
 		&Agent{
 			Id:         uint(3232),
@@ -243,6 +259,10 @@ func TestRedisIsUserTokenOver(t *testing.T) {
 }
 
 func TestRedisSetUserTokenMaxCount(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
 	if err != nil {
 		t.Fatal(err.Error())
@@ -276,6 +296,10 @@ func TestRedisSetUserTokenMaxCount(t *testing.T) {
 	}
 }
 func TestRedisCleanUserTokenCache(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
 	if err != nil {
 		t.Fatal(err.Error())
@@ -303,6 +327,10 @@ func TestRedisCleanUserTokenCache(t *testing.T) {
 }
 
 func TestRedisGetMultiClaims(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
 	if err != nil {
 		t.Fatal(err.Error())
@@ -334,6 +362,10 @@ func TestRedisGetMultiClaims(t *testing.T) {
 }
 
 func TestRedisGetUserTokens(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	cc := NewClaims(
 		&Agent{
 			Id:         uint(121321),
@@ -381,6 +413,10 @@ func TestRedisGetUserTokens(t *testing.T) {
 }
 
 func TestRedisGetTokenByClaims(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	cc := NewClaims(
 		&Agent{
 			Id:         uint(3232),
@@ -432,6 +468,10 @@ func TestRedisGetTokenByClaims(t *testing.T) {
 
 }
 func TestRedisGetMultiClaimses(t *testing.T) {
+	redisPwd := os.Getenv("redisPwd")
+	if redisPwd == "" {
+		t.SkipNow()
+	}
 	redisAuth, err := NewRedis(redis.NewUniversalClient(options))
 	if err != nil {
 		t.Fatal(err.Error())

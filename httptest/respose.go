@@ -3,9 +3,11 @@ package httptest
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/snowlyg/helper/arr"
@@ -382,77 +384,103 @@ func (res Responses) GetString(key ...string) string {
 		}
 	}
 
+	var wg sync.WaitGroup
+	v := ""
 	for i := 0; i < len(key); i++ {
-		for m, rk := range res {
-			if rk.Value == nil {
-				return ""
-			}
-			reflectTypeString := reflect.TypeOf(rk.Value).String()
-			if key[i] == rk.Key {
-				switch reflectTypeString {
-				case "string":
-					return rk.Value.(string)
-				case "httptest.Responses":
-					return res[m].Value.(Responses).GetString(key[i+1:]...)
+		wg.Add(1)
+		go func(x int) {
+			defer wg.Done()
+			for m, rk := range res {
+				if rk.Value == nil {
+					continue
+				}
+				reflectTypeString := reflect.TypeOf(rk.Value).String()
+				if key[i] == rk.Key {
+					switch reflectTypeString {
+					case "string":
+						v = rk.Value.(string)
+					case "httptest.Responses":
+						v = res[m].Value.(Responses).GetString(key[i+1:]...)
+					}
 				}
 			}
-		}
-
+		}(i)
 	}
-	return ""
+	wg.Wait()
+	return v
 }
 
 // GetStrArray return string array value.
 func (rks Responses) GetStrArray(key string) []string {
+	var wg sync.WaitGroup
+	v := []string{}
 	for _, rk := range rks {
-		if key == rk.Key {
-			if rk.Value == nil {
-				return nil
+		wg.Add(1)
+		go func(r Response, k string) {
+			defer wg.Done()
+			if k == r.Key {
+				if rk.Value == nil {
+					return
+				}
+				switch reflect.TypeOf(r.Value).String() {
+				case "[]string":
+					v = r.Value.([]string)
+				}
 			}
-			switch reflect.TypeOf(rk.Value).String() {
-			case "[]string":
-				return rk.Value.([]string)
-			}
-		}
+		}(rk, key)
 	}
-	return nil
+	wg.Wait()
+	return v
 }
 
 // GetResponses return Resposnes Array value
 func (rks Responses) GetResponses(key string) []Responses {
+	var wg sync.WaitGroup
+	var v []Responses
 	for _, rk := range rks {
-		if key == rk.Key {
-			if rk.Value == nil {
-				return nil
+		wg.Add(1)
+		go func(r Response, k string) {
+			defer wg.Done()
+			if k == r.Key {
+				if rk.Value == nil {
+					return
+				}
+				switch reflect.TypeOf(r.Value).String() {
+				case "[]httptest.Responses":
+					v = r.Value.([]Responses)
+				}
 			}
-			switch reflect.TypeOf(rk.Value).String() {
-			case "[]httptest.Responses":
-				return rk.Value.([]Responses)
-			}
-		}
+		}(rk, key)
 	}
-	return nil
+	wg.Wait()
+	return v
 }
 
 // GetResponsereturn Resposnes value
 func (rks Responses) GetResponse(key string) Responses {
+	var wg sync.WaitGroup
+	var v Responses
 	for _, rk := range rks {
-		if key == rk.Key {
-			if rk.Value == nil {
-				return nil
+		wg.Add(1)
+		go func(r Response, k string) {
+			defer wg.Done()
+			if k == r.Key {
+				if rk.Value == nil {
+					return
+				}
+				switch reflect.TypeOf(r.Value).String() {
+				case "httptest.Responses":
+					v = r.Value.(Responses)
+				}
 			}
-			switch reflect.TypeOf(rk.Value).String() {
-			case "httptest.Responses":
-				return rk.Value.(Responses)
-			}
-		}
+		}(rk, key)
 	}
-	return nil
+	wg.Wait()
+	return v
 }
 
 // GetUint return uint value
 func (rks Responses) GetUint(key ...string) uint {
-
 	if len(key) == 0 {
 		return 0
 	}
@@ -468,30 +496,37 @@ func (rks Responses) GetUint(key ...string) uint {
 		}
 	}
 
+	var v uint
+	var wg sync.WaitGroup
 	for i := 0; i < len(key); i++ {
-		for m, rk := range rks {
-			if key[i] == rk.Key {
-				if rk.Value == nil {
-					return 0
-				}
-				valueTypeName := reflect.TypeOf(rk.Value).String()
-				switch valueTypeName {
-				case "float64":
-					return uint(rk.Value.(float64))
-				case "int32":
-					return uint(rk.Value.(int32))
-				case "uint":
-					return rk.Value.(uint)
-				case "int":
-					return uint(rk.Value.(int))
-				case "httptest.Responses":
-					return rks[m].Value.(Responses).GetUint(key[i:]...)
+		wg.Add(1)
+		go func(x int) {
+			defer wg.Done()
+			for m, rk := range rks {
+				if key[x] == rk.Key {
+					if rk.Value == nil {
+						continue
+					}
+					valueTypeName := reflect.TypeOf(rk.Value).String()
+					switch valueTypeName {
+					case "float64":
+						v = uint(rk.Value.(float64))
+					case "int32":
+						v = uint(rk.Value.(int32))
+					case "uint":
+						v = rk.Value.(uint)
+					case "int":
+						v = uint(rk.Value.(int))
+					case "httptest.Responses":
+						k := key[x:]
+						v = rks[m].Value.(Responses).GetUint(strings.Join(k, "."))
+					}
 				}
 			}
-		}
+		}(i)
 	}
-
-	return 0
+	wg.Wait()
+	return v
 }
 
 // GetInt return int value
@@ -511,29 +546,37 @@ func (rks Responses) GetInt(key ...string) int {
 		}
 	}
 
+	var v int
+	var wg sync.WaitGroup
 	for i := 0; i < len(key); i++ {
-		for m, rk := range rks {
-			if key[i] == rk.Key {
-				if rk.Value == nil {
-					return 0
-				}
-				switch reflect.TypeOf(rk.Value).String() {
-				case "float64":
-					return int(rk.Value.(float64))
-				case "int":
-					return rk.Value.(int)
-				case "int32":
-					return int(rk.Value.(int32))
-				case "uint":
-					return int(rk.Value.(uint))
-				case "httptest.Responses":
-					return rks[m].Value.(Responses).GetInt(key[i+1:]...)
+		wg.Add(1)
+		go func(x int) {
+			defer wg.Done()
+			for m, rk := range rks {
+				if key[x] == rk.Key {
+					if rk.Value == nil {
+						continue
+					}
+					switch reflect.TypeOf(rk.Value).String() {
+					case "float64":
+						v = int(rk.Value.(float64))
+					case "int":
+						v = rk.Value.(int)
+					case "int32":
+						v = int(rk.Value.(int32))
+					case "uint":
+						v = int(rk.Value.(uint))
+					case "httptest.Responses":
+						v = rks[m].Value.(Responses).GetInt(key[x+1:]...)
+					}
 				}
 			}
-		}
-	}
+		}(i)
 
-	return 0
+	}
+	wg.Wait()
+
+	return v
 }
 
 // GetInt32 return int32.
@@ -551,28 +594,36 @@ func (rks Responses) GetInt32(key ...string) int32 {
 			key = keys
 		}
 	}
+	var v int32
+	var wg sync.WaitGroup
 	for i := 0; i < len(key); i++ {
-		for m, rk := range rks {
-			if key[i] == rk.Key {
-				if rk.Value == nil {
-					return 0
-				}
-				switch reflect.TypeOf(rk.Value).String() {
-				case "float64":
-					return int32(rk.Value.(float64))
-				case "int32":
-					return rk.Value.(int32)
-				case "int":
-					return int32(rk.Value.(int))
-				case "uint":
-					return int32(rk.Value.(uint))
-				case "httptest.Responses":
-					return rks[m].Value.(Responses).GetInt32(key[i+1:]...)
+		wg.Add(1)
+		go func(x int) {
+			defer wg.Done()
+			for m, rk := range rks {
+				if key[x] == rk.Key {
+					if rk.Value == nil {
+						continue
+					}
+					switch reflect.TypeOf(rk.Value).String() {
+					case "float64":
+						v = int32(rk.Value.(float64))
+					case "int32":
+						v = rk.Value.(int32)
+					case "int":
+						v = int32(rk.Value.(int))
+					case "uint":
+						v = int32(rk.Value.(uint))
+					case "httptest.Responses":
+						v = rks[m].Value.(Responses).GetInt32(key[x+1:]...)
+					}
 				}
 			}
-		}
+		}(i)
 	}
-	return 0
+	wg.Wait()
+
+	return v
 }
 
 // GetFloat64 return float64
@@ -590,28 +641,37 @@ func (rks Responses) GetFloat64(key ...string) float64 {
 			key = keys
 		}
 	}
+	var v float64
+	var wg sync.WaitGroup
 	for i := 0; i < len(key); i++ {
-		for m, rk := range rks {
-			if key[i] == rk.Key {
-				if rk.Value == nil {
-					return 0
-				}
-				switch reflect.TypeOf(rk.Value).String() {
-				case "float64":
-					return rk.Value.(float64)
-				case "int":
-					return float64(rk.Value.(int))
-				case "int32":
-					return float64(rk.Value.(int32))
-				case "uint":
-					return float64(rk.Value.(uint))
-				case "httptest.Responses":
-					return rks[m].Value.(Responses).GetFloat64(key[i+1:]...)
+		wg.Add(1)
+		go func(x int) {
+			defer wg.Done()
+			for m, rk := range rks {
+				if key[x] == rk.Key {
+					if rk.Value == nil {
+						continue
+					}
+					switch reflect.TypeOf(rk.Value).String() {
+					case "float64":
+						v = rk.Value.(float64)
+					case "int":
+						v = float64(rk.Value.(int))
+					case "int32":
+						v = float64(rk.Value.(int32))
+					case "uint":
+						v = float64(rk.Value.(uint))
+					case "httptest.Responses":
+						v = rks[m].Value.(Responses).GetFloat64(key[x+1:]...)
+					}
 				}
 			}
-		}
+		}(i)
+
 	}
-	return 0
+	wg.Wait()
+
+	return v
 }
 
 // GetId return id
@@ -619,7 +679,9 @@ func (res Responses) GetId(key ...string) uint {
 	if len(key) == 0 {
 		key = append(key, "data", "id")
 	}
-	return res.GetUint(key...)
+	u := res.GetUint(key...)
+	log.Printf("GetId key:%s int:%d", key, u)
+	return u
 }
 
 var NotEmptyKey = arr.NewCheckArrayType(0)

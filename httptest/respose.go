@@ -3,7 +3,6 @@ package httptest
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
 	"strconv"
 	"strings"
@@ -680,7 +679,6 @@ func (res Responses) GetId(key ...string) uint {
 		key = append(key, "data", "id")
 	}
 	u := res.GetUint(key...)
-	log.Printf("GetId key:%s int:%d", key, u)
 	return u
 }
 

@@ -15,8 +15,8 @@ var (
 	wg      sync.WaitGroup
 	options = &redis.UniversalOptions{
 		DB:          1,
-		Addrs:       []string{"127.0.0.1:6379"},
-		Password:    os.Getenv("redisPwd"), //
+		Addrs:       []string{os.Getenv("IRIS_ADMIN_REDIS_ADDR")},
+		Password:    os.Getenv("IRIS_ADMIN_REDIS_PWD"),
 		PoolSize:    10,
 		IdleTimeout: 300 * time.Second,
 		// Dialer: func(ctx context.Context, network, addr string) (net.Conn, error) {
@@ -48,7 +48,7 @@ var (
 )
 
 func TestRedisGenerateToken(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -116,7 +116,7 @@ func TestRedisGenerateToken(t *testing.T) {
 }
 
 func TestRedisToCache(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -160,7 +160,7 @@ func TestRedisToCache(t *testing.T) {
 }
 
 func TestRedisDelUserTokenCache(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -207,7 +207,7 @@ func TestRedisDelUserTokenCache(t *testing.T) {
 }
 
 func TestRedisIsUserTokenOver(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -259,7 +259,7 @@ func TestRedisIsUserTokenOver(t *testing.T) {
 }
 
 func TestRedisSetUserTokenMaxCount(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -296,7 +296,7 @@ func TestRedisSetUserTokenMaxCount(t *testing.T) {
 	}
 }
 func TestRedisCleanUserTokenCache(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -327,7 +327,7 @@ func TestRedisCleanUserTokenCache(t *testing.T) {
 }
 
 func TestRedisGetMultiClaims(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -362,7 +362,7 @@ func TestRedisGetMultiClaims(t *testing.T) {
 }
 
 func TestRedisGetUserTokens(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -413,7 +413,7 @@ func TestRedisGetUserTokens(t *testing.T) {
 }
 
 func TestRedisGetTokenByClaims(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}
@@ -468,7 +468,7 @@ func TestRedisGetTokenByClaims(t *testing.T) {
 
 }
 func TestRedisGetMultiClaimses(t *testing.T) {
-	redisPwd := os.Getenv("redisPwd")
+	redisPwd := os.Getenv("IRIS_ADMIN_REDIS_PWD")
 	if redisPwd == "" {
 		t.SkipNow()
 	}

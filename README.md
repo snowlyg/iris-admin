@@ -25,9 +25,9 @@
 
 #### iris 学习记录分享
 
-- [Iris-go 项目登陆 API 构建细节实现过程](https://snowlyg.github.io/iris-go-api-1/)
+- [Iris-go 项目登陆 API 构建细节实现过程](https://snowlyg.github.io/posts/iris-go-api-1/)
 
-- [iris + casbin 从陌生到学会使用的过程](https://snowlyg.github.io/iris-go-api-2/)
+- [iris + casbin 从陌生到学会使用的过程](https://snowlyg.github.io/posts/iris-go-api-2/)
 
 ---
 

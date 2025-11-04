@@ -26,9 +26,9 @@
 
 #### BLOG
 
-- [REST API with iris-go web framework](https://snowlyg.github.io/iris-go-api-1/)
+- [REST API with iris-go web framework](https://snowlyg.github.io/posts/iris-go-api-1/)
 
-- [How to user iris-go with casbin](https://snowlyg.github.io/iris-go-api-2/)
+- [How to user iris-go with casbin](https://snowlyg.github.io/posts/iris-go-api-2/)
 
 ---
 

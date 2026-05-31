@@ -14,13 +14,18 @@
 
 ---
 
-> This project just for learning golang, welcome to give your suggestions!
+IrisAdmin is an Apache-2.0 open-source Go Web Admin / RBAC scaffold for backend services built around Iris/Gin, GORM, Casbin, Redis, Docker, JWT authentication, and REST API workflows.
+
+The project is maintained by [snowlyg](https://github.com/snowlyg). Contributions through issues and pull requests are welcome, especially for documentation, tests, dependency upgrades, and security improvements.
 
 #### Documentation
 
 - [IRIS-ADMIN-DOC](https://doc.snowlyg.com)
 - [IRIS V12 document for chinese](https://github.com/snowlyg/iris/wiki)
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
+- [2026 Roadmap](./ROADMAP.md)
+- [Contributing](./CONTRIBUTING.md)
+- [Security Policy](./SECURITY.md)
 
 [![Gitter](https://badges.gitter.im/iris-go-tenancy/community.svg)](https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Join the chat at https://gitter.im/iris-go-tenancy/iris-admin](https://badges.gitter.im/iris-go-tenancy/iris-admin.svg)](https://gitter.im/iris-go-tenancy/iris-admin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -39,6 +44,16 @@
 ```sh
  go get github.com/snowlyg/iris-admin@master
 ```
+
+#### Maintainer status
+
+IrisAdmin is a long-maintained open-source project. The current maintenance focus is:
+
+- Upgrade Go dependencies and CI workflows.
+- Improve tests for RBAC, Casbin, JWT, middleware, and routing behavior.
+- Improve Docker and local quickstart documentation.
+- Improve English documentation for broader Go developer adoption.
+- Review security-sensitive code paths such as authentication, permission checks, and API middleware.
 
 
 ## ☕️ Buy me a coffee

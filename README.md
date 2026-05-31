@@ -12,13 +12,18 @@
 
 [GITHUB](https://github.com/snowlyg/iris-admin)
 
-> 简单项目仅供学习，欢迎指点！
+IrisAdmin 是一个 Apache-2.0 开源的 Go Web Admin / RBAC 脚手架项目，围绕 Iris/Gin、GORM、Casbin、Redis、Docker、JWT 鉴权和 REST API 工作流沉淀通用后台服务实践。
+
+项目由 [snowlyg](https://github.com/snowlyg) 维护，欢迎通过 issue 和 pull request 参与文档、测试、依赖升级和安全改进。
 
 #### 相关文档
 
 - [IRIS-ADMIN-DOC](https://doc.snowlyg.com)
 - [IRIS V12 中文文档](https://github.com/snowlyg/iris/wiki)
 - [godoc](https://pkg.go.dev/github.com/snowlyg/iris-admin?utm_source=godoc)
+- [2026 Roadmap](./ROADMAP.md)
+- [Contributing](./CONTRIBUTING.md)
+- [Security Policy](./SECURITY.md)
 
 <a href="https://gitter.im/iris-go-tenancy/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge"><img src="https://badges.gitter.im/iris-go-tenancy/community.svg" alt="e9939a7e92f32337871feb22e06bd05a.jpeg" border="0" width=120 /></a>
 <a href="https://discord.gg/pytCGMSBgA"> <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="e9939a7e92f32337871feb22e06bd05a.jpeg" border="0" width=30 /></a>
@@ -38,6 +43,16 @@
 ```sh
  go get github.com/snowlyg/iris-admin@master
 ```
+
+#### Maintainer status
+
+IrisAdmin 作为长期维护的开源项目，后续维护重点包括：
+
+- 升级 Go 依赖和 CI 工作流。
+- 补强 RBAC / Casbin / JWT / middleware 等关键路径测试。
+- 改进 Docker 和本地 quickstart 文档。
+- 完善英文文档，方便更多 Go 开发者阅读和参与。
+- 审查鉴权、权限校验和 API 中间件等安全敏感代码路径。
 
 #### 打赏
 

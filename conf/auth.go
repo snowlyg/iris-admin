@@ -7,6 +7,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/snowlyg/helper/dir"
+	"github.com/snowlyg/iris-admin/e"
 	"gorm.io/gorm"
 )
 
@@ -14,6 +15,9 @@ const CasbinName = "rbac_model.conf"
 
 // Remove del config file
 func (conf *Conf) RemoveRbacModel() error {
+	if conf == nil {
+		return e.ErrConfigInvalid
+	}
 	p := conf.casbinFilePath()
 	if filepath.Base(p) != CasbinName {
 		return nil
@@ -24,17 +28,17 @@ func (conf *Conf) RemoveRbacModel() error {
 	return nil
 }
 
-// casbinFilePath
 func (conf *Conf) casbinFilePath() string {
-	return filepath.Join(dir.GetCurrentAbPath(), ConfigDir, CasbinName)
+	return filepath.Join(conf.configDirectory(), CasbinName)
 }
 
-// newRbacModel initialize casbin's config file as rbac_model.conf name
-func (conf *Conf) newRbacModel() {
+// EnsureRbacModel initializes Casbin's model file when it is missing.
+func (conf *Conf) EnsureRbacModel() error {
+	if conf == nil {
+		return e.ErrConfigInvalid
+	}
 	if dir.IsExist(conf.casbinFilePath()) {
-		// casbin rbac_model.conf file
-		// log.Printf("rbac_model.conf file is existed.")
-		return
+		return nil
 	}
 
 	var rbacModelConf = []byte(`[request_definition]
@@ -52,8 +56,9 @@ e = some(where (p.eft == allow))
 [matchers]
 m = g(r.sub, p.sub) && keyMatch2(r.obj, p.obj) && (r.act == p.act || p.act == "*")`)
 	if _, err := dir.WriteBytes(conf.casbinFilePath(), rbacModelConf); err != nil {
-		panic(fmt.Errorf("initialize casbin rbac_model.conf file return error: %w ", err))
+		return fmt.Errorf("initialize casbin rbac model: %w", err)
 	}
+	return nil
 }
 
 // getEnforcer get casbin.Enforcer

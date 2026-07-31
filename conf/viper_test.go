@@ -20,6 +20,22 @@ func TestNewViperConfFail(t *testing.T) {
 	if err := NewViperConf(&ViperConf{}); !errors.Is(err, e.ErrConfigNameEmpty) {
 		t.Errorf("new viper conf with nil return err not emtpy name:%v", err)
 	}
+	var conf *ViperConf
+	if conf.getConfPath() != "" {
+		t.Fatal("nil ViperConf returned a config path")
+	}
+	if conf.IsExist() {
+		t.Fatal("nil ViperConf exists")
+	}
+	if err := conf.RemoveFile(); !errors.Is(err, e.ErrViperConfInvalid) {
+		t.Fatalf("nil RemoveFile error = %v", err)
+	}
+	if err := conf.RemoveDir(); !errors.Is(err, e.ErrViperConfInvalid) {
+		t.Fatalf("nil RemoveDir error = %v", err)
+	}
+	if err := conf.Recover(nil); !errors.Is(err, e.ErrViperConfInvalid) {
+		t.Fatalf("nil Recover error = %v", err)
+	}
 }
 
 type Zap struct {
@@ -30,8 +46,9 @@ type Zap struct {
 
 func TestViperInit(t *testing.T) {
 	tc := &Zap{}
+	configDir := t.TempDir()
 	vi := &ViperConf{
-		// directory: ConfigDir,
+		dir:  configDir,
 		name: "config",
 		t:    ConfigType,
 		watch: func(vi *viper.Viper) error {
@@ -47,19 +64,13 @@ func TestViperInit(t *testing.T) {
 "stacktrace-key": "stacktrace",
 "log-in-console": true}`),
 	}
-	defer func() {
-		if err := vi.RemoveDir(); err != nil {
-			t.Error(err.Error())
-		}
-	}()
-
 	if vi.IsExist() {
 		t.Error("config exist")
 	}
 
 	vi.Dir()
-	if vi.dir != "config" {
-		t.Errorf("directory want '%s' but get '%s'", "config", vi.dir)
+	if vi.dir != configDir {
+		t.Errorf("directory want '%s' but get '%s'", configDir, vi.dir)
 	}
 
 	want := Zap{
@@ -149,5 +160,43 @@ func TestViperInit(t *testing.T) {
 
 	if vi.IsExist() {
 		t.Error("config file exist after remove")
+	}
+}
+
+func TestViperConfResolvesRelativeAndAbsoluteDirectories(t *testing.T) {
+	relative := &ViperConf{dir: "relative", name: "config", t: "json"}
+	if !filepath.IsAbs(relative.resolvedDir()) {
+		t.Fatalf("relative resolved directory = %q, want absolute", relative.resolvedDir())
+	}
+
+	absoluteDir := t.TempDir()
+	absolute := &ViperConf{dir: absoluteDir, name: "config", t: "json"}
+	if got := absolute.resolvedDir(); got != filepath.Clean(absoluteDir) {
+		t.Fatalf("absolute resolved directory = %q, want %q", got, absoluteDir)
+	}
+}
+
+func TestViperConfRefusesPathTraversalRemoval(t *testing.T) {
+	root := t.TempDir()
+	conf := &ViperConf{dir: root, name: "../outside", t: "json"}
+	if err := conf.RemoveFile(); err == nil {
+		t.Fatal("RemoveFile accepted path traversal")
+	}
+	if err := conf.RemoveDir(); err == nil {
+		t.Fatal("RemoveDir accepted path traversal")
+	}
+}
+
+func TestViperConfRemovesOwnedDirectory(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "owned")
+	conf := &ViperConf{dir: root, name: "config", t: "json"}
+	if err := conf.Recover([]byte(`{}`)); err != nil {
+		t.Fatalf("Recover: %v", err)
+	}
+	if err := conf.RemoveDir(); err != nil {
+		t.Fatalf("RemoveDir: %v", err)
+	}
+	if dir.IsExist(root) {
+		t.Fatalf("owned directory %q still exists", root)
 	}
 }

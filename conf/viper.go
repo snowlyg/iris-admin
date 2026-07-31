@@ -25,7 +25,15 @@ func (vc *ViperConf) getConfPath() string {
 	if vc == nil {
 		return ""
 	}
-	return filepath.Join(dir.GetCurrentAbPath(), vc.Dir(), str.Join(vc.name, ".", vc.t))
+	return filepath.Join(vc.resolvedDir(), str.Join(vc.name, ".", vc.t))
+}
+
+func (vc *ViperConf) resolvedDir() string {
+	configDir := vc.Dir()
+	if !filepath.IsAbs(configDir) {
+		configDir = filepath.Join(dir.GetCurrentAbPath(), configDir)
+	}
+	return filepath.Clean(configDir)
 }
 
 // Dir
@@ -51,9 +59,8 @@ func (vc *ViperConf) RemoveFile() error {
 		return e.ErrViperConfInvalid
 	}
 	d := filepath.Dir(vc.getConfPath())
-	b := filepath.Base(d)
-	if b != vc.Dir() {
-		return nil
+	if d != vc.resolvedDir() {
+		return fmt.Errorf("refuse to remove config outside %q", vc.resolvedDir())
 	}
 	return dir.Remove(vc.getConfPath())
 }
@@ -64,9 +71,8 @@ func (vc *ViperConf) RemoveDir() error {
 		return e.ErrViperConfInvalid
 	}
 	d := filepath.Dir(vc.getConfPath())
-	b := filepath.Base(d)
-	if b != vc.Dir() {
-		return fmt.Errorf("%s viper conf base '%s' want but get '%s'", d, b, vc.Dir())
+	if d != vc.resolvedDir() {
+		return fmt.Errorf("refuse to remove config directory outside %q", vc.resolvedDir())
 	}
 	return os.RemoveAll(d)
 }
@@ -98,7 +104,7 @@ func NewViperConf(vc *ViperConf) error {
 	vi := viper.New()
 	vi.SetConfigName(vc.name)
 	vi.SetConfigType(vc.t)
-	vi.AddConfigPath(vc.dir)
+	vi.AddConfigPath(filepath.Dir(filePath))
 	isExist := dir.IsExist(filePath)
 	if !isExist {
 		if vc.Dir() != "./" {

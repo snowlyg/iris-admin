@@ -1,7 +1,15 @@
 package admin
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+)
+
+const (
+	databaseUnavailableMessage = "database unavailable"
+	databaseQueryFailedMessage = "database query failed"
 )
 
 type Model interface {
@@ -20,13 +28,14 @@ func (ws *WebServe) Resource(group *gin.RouterGroup, model Model) {
 		// should add database operation
 		r.GET("/list", func(ctx *gin.Context) {
 			if ws.db == nil {
-				FailWithMessage("database not found", ctx)
+				ErrorWithStatus(http.StatusInternalServerError, databaseUnavailableMessage, ctx)
 				return
 			}
 			list := model.List()
 
 			if err := ws.db.Table(model.TableName()).Scopes(SoftDeleteScope()).Find(&list).Error; err != nil {
-				FailWithMessage(err.Error(), ctx)
+				log.Printf("iris-admin: list resource table=%q failed: %v", model.TableName(), err)
+				ErrorWithStatus(http.StatusInternalServerError, databaseQueryFailedMessage, ctx)
 				return
 			}
 			OkWithData(list, ctx)

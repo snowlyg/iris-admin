@@ -3,10 +3,11 @@ package admin
 import (
 	"errors"
 	"net/http"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/snowlyg/helper/str"
 	"gorm.io/gorm"
 )
 
@@ -19,6 +20,7 @@ var (
 	ErrParamValidate      = errors.New("param unvalidate")
 	ErrPaginateParam      = errors.New("paginate param unvalidate")
 	ErrUnSupportFramework = errors.New("unsupport framework")
+	orderByPattern        = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*([.][A-Za-z_][A-Za-z0-9_]*)?$`)
 )
 
 // BaseModel
@@ -127,13 +129,15 @@ func getPageSize(pageSize int) int {
 
 // getOrderBy
 func getOrderBy(sort, orderBy string) string {
-	if sort == "" {
+	sort = strings.ToLower(strings.TrimSpace(sort))
+	if sort != "asc" && sort != "desc" {
 		sort = "desc"
 	}
-	if orderBy == "" {
+	orderBy = strings.TrimSpace(orderBy)
+	if !orderByPattern.MatchString(orderBy) {
 		orderBy = "created_at"
 	}
-	return str.Join(orderBy, " ", sort)
+	return orderBy + " " + sort
 }
 
 const (
@@ -169,6 +173,34 @@ func OkWithData(data any, ctx *gin.Context) {
 	})
 }
 
+// ErrorWithStatus writes an error response using the supplied HTTP status.
+func ErrorWithStatus(status int, message string, ctx *gin.Context) {
+	status = normalizeErrorStatus(status)
+	ctx.JSON(status, Response{
+		Code: status,
+		Msg:  message,
+	})
+}
+
+// ErrorWithStatusAndData writes an error response with additional structured data.
+func ErrorWithStatusAndData(status int, data any, message string, ctx *gin.Context) {
+	status = normalizeErrorStatus(status)
+	ctx.JSON(status, Response{
+		Code: status,
+		Msg:  message,
+		Data: data,
+	})
+}
+
+func normalizeErrorStatus(status int) int {
+	if status < http.StatusBadRequest || status > 599 {
+		return http.StatusInternalServerError
+	}
+	return status
+}
+
+// Fail is retained for compatibility and writes HTTP 200 with status 400 in the body.
+// Deprecated: use ErrorWithStatus.
 func Fail(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, Response{
 		Code: http.StatusBadRequest,
@@ -185,6 +217,8 @@ func Fail(ctx *gin.Context) {
 // func ForbiddenFailWithMessage(message string, ctx *gin.Context) {
 // }
 
+// FailWithMessage is retained for compatibility and writes HTTP 200 with status 400 in the body.
+// Deprecated: use ErrorWithStatus.
 func FailWithMessage(message string, ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, Response{
 		Code: http.StatusBadRequest,
@@ -192,6 +226,8 @@ func FailWithMessage(message string, ctx *gin.Context) {
 	})
 }
 
+// FailWithDetailed is retained for compatibility and writes HTTP 200 with status 400 in the body.
+// Deprecated: use ErrorWithStatusAndData.
 func FailWithDetailed(data any, message string, ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, Response{
 		Code: http.StatusBadRequest,

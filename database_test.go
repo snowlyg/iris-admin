@@ -19,6 +19,8 @@ var testDriverSequence atomic.Uint64
 type testSQLDriver struct {
 	query func(string) (driver.Rows, error)
 	exec  func(string) error
+	ping  func() error
+	close func() error
 }
 
 func (d *testSQLDriver) Open(string) (driver.Conn, error) {
@@ -34,6 +36,9 @@ func (c *testSQLConn) Prepare(string) (driver.Stmt, error) {
 }
 
 func (c *testSQLConn) Close() error {
+	if c.driver.close != nil {
+		return c.driver.close()
+	}
 	return nil
 }
 
@@ -42,6 +47,9 @@ func (c *testSQLConn) Begin() (driver.Tx, error) {
 }
 
 func (c *testSQLConn) Ping(context.Context) error {
+	if c.driver.ping != nil {
+		return c.driver.ping()
+	}
 	return nil
 }
 
@@ -122,7 +130,7 @@ func openTestGorm(t *testing.T, scripted *testSQLDriver) *gorm.DB {
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		Conn:                      sqlDB,
 		SkipInitializeWithVersion: true,
-	}), &gorm.Config{})
+	}), &gorm.Config{DisableAutomaticPing: true})
 	if err != nil {
 		t.Fatalf("open test gorm database: %v", err)
 	}

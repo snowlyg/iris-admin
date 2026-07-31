@@ -1,21 +1,23 @@
 package admin
 
 import (
+	"context"
 	"io"
 	"net/http"
+	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/snowlyg/iris-admin/conf"
 )
 
-func baseServer() (*WebServe, error) {
-	c := conf.NewConf()
-	c.System.Addr = "127.0.0.1:8088"
-	// change default config
-	if err := c.Recover(); err != nil {
+func baseServer(t *testing.T) (*WebServe, error) {
+	t.Helper()
+	c, err := conf.LoadConfFile(filepath.Join(t.TempDir(), "iris_admin.json"))
+	if err != nil {
 		return nil, err
 	}
+	c.System.Addr = "127.0.0.1:8088"
 	s, err := NewServe(c)
 	if err != nil {
 		return nil, err
@@ -25,7 +27,7 @@ func baseServer() (*WebServe, error) {
 }
 
 func TestWebServeResource(t *testing.T) {
-	s, err := baseServer()
+	s, err := baseServer(t)
 	if err != nil {
 		t.Fatalf("baseServer err:%s\n", err.Error())
 	}
@@ -37,6 +39,13 @@ func TestWebServeResource(t *testing.T) {
 		s.Resource(v1, new(Router))
 	}
 	go s.Run()
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := s.Shutdown(ctx); err != nil {
+			t.Errorf("shutdown server: %v", err)
+		}
+	}()
 
 	time.Sleep(3 * time.Second)
 

@@ -6,8 +6,9 @@ import (
 )
 
 var (
-	jwtAuth   = NewJwt(nil)
-	jwtClaims = NewClaims(
+	jwtTestSecret = []byte("jwt-test-secret-at-least-32-bytes")
+	jwtAuth       = NewJwt(jwtTestSecret)
+	jwtClaims     = NewClaims(
 		&Agent{
 			Id:        uint(8457585),
 			Username:  "jwt username",

@@ -8,28 +8,43 @@ import (
 	"github.com/snowlyg/helper/arr"
 )
 
-var hmacSampleSecret = []byte("updPA0L2uQ56LwHZoyUX")
-
 // JwtAuth
 type JwtAuth struct {
 	HmacSecret []byte
 	delToken   arr.ArrayType
+	initErr    error
 }
 
-// NewJwt
+// NewJwt returns JWT authentication that fails closed when hmacSecret is empty.
 func NewJwt(hmacSecret []byte) *JwtAuth {
 	ja := &JwtAuth{
-		HmacSecret: hmacSecret,
+		HmacSecret: append([]byte(nil), hmacSecret...),
 		delToken:   arr.NewCheckArrayType(0),
 	}
-	if ja.HmacSecret == nil {
-		ja.HmacSecret = hmacSampleSecret
+	if len(ja.HmacSecret) == 0 {
+		ja.initErr = ErrHMACSecretRequired
 	}
 	return ja
 }
 
+func (ra *JwtAuth) ready() error {
+	if ra == nil {
+		return ErrAuthNotInitialized
+	}
+	if ra.initErr != nil {
+		return ra.initErr
+	}
+	if len(ra.HmacSecret) == 0 {
+		return ErrHMACSecretRequired
+	}
+	return nil
+}
+
 // Generate
 func (ra *JwtAuth) Generate(claims *Claims) (string, int64, error) {
+	if err := ra.ready(); err != nil {
+		return "", 0, err
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Sign and get the complete encoded token as a string using the secret
@@ -48,26 +63,23 @@ func (ra *JwtAuth) Token(cla *Claims) (string, error) {
 
 // GetClaims
 func (ra *JwtAuth) GetClaims(tokenString string) (*Claims, error) {
+	if err := ra.ready(); err != nil {
+		return nil, err
+	}
 	if ra.delToken.Check(tokenString) {
 		return nil, fmt.Errorf("jwt:token deleted %w", ErrTokenInvalid)
 	}
 	mc := &Claims{}
-	token, err := jwt.ParseWithClaims(tokenString, mc, func(token *jwt.Token) (interface{}, error) {
-		// Don't forget to validate the alg is what you expect:
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("incorrect signing method: %v", token.Header["alg"])
+	_, err := jwt.ParseWithClaims(tokenString, mc, func(token *jwt.Token) (interface{}, error) {
+		if token.Method != jwt.SigningMethodHS256 {
+			return nil, fmt.Errorf("jwt: unexpected signing method %q", token.Method.Alg())
 		}
 		return ra.HmacSecret, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-
-	if _, ok := token.Claims.(*Claims); ok && token.Valid {
-		return mc, nil
-	} else {
-		return nil, fmt.Errorf("token[%s]:%w", tokenString, ErrTokenInvalid)
-	}
+	return mc, nil
 }
 
 // SetLimit

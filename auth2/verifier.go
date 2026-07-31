@@ -105,7 +105,7 @@ func GetVerifiedToken(ctx *gin.Context) []byte {
 
 func IsRole(ctx *gin.Context, roleType RoleType) bool {
 	v := GetVerifiedToken(ctx)
-	if v == nil {
+	if v == nil || AuthAgent == nil {
 		return false
 	}
 	b, err := AuthAgent.IsRole(string(v), roleType)
@@ -125,9 +125,10 @@ type Verifier struct {
 	ErrorHandler func(ctx *gin.Context, err error)
 }
 
+// NewVerifier returns a verifier that reads bearer tokens from Authorization by default.
 func NewVerifier(validators ...TokenValidator) *Verifier {
 	return &Verifier{
-		Extractors: []TokenExtractor{FromHeader, FromQuery},
+		Extractors: []TokenExtractor{FromHeader},
 		ErrorHandler: func(ctx *gin.Context, err error) {
 			ctx.AbortWithError(http.StatusUnauthorized, err)
 		},
@@ -169,6 +170,9 @@ func (v *Verifier) VerifyToken(token []byte, validators ...TokenValidator) ([]by
 		// Exit on parsing standard claims error(when Plain is missing) or standard claims validation error or custom validators.
 		return nil, nil, err
 	}
+	if AuthAgent == nil {
+		return nil, nil, ErrAuthNotInitialized
+	}
 	rcc, err := AuthAgent.GetClaims(string(token))
 	if err != nil {
 		return nil, nil, err
@@ -183,7 +187,10 @@ func (v *Verifier) VerifyToken(token []byte, validators ...TokenValidator) ([]by
 func (v *Verifier) Verify(validators ...TokenValidator) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		token := []byte(v.RequestToken(ctx))
-		verifiedToken, rcc, err := v.VerifyToken(token, validators...)
+		allValidators := make([]TokenValidator, 0, len(v.Validators)+len(validators))
+		allValidators = append(allValidators, v.Validators...)
+		allValidators = append(allValidators, validators...)
+		verifiedToken, rcc, err := v.VerifyToken(token, allValidators...)
 		if err != nil {
 			v.invalidate(ctx)
 			v.ErrorHandler(ctx, err)

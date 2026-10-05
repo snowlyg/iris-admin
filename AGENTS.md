@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-The repository is a Go module (`github.com/snowlyg/iris-admin`) targeting Go 1.24.0. Core server, routing, migration, resource, and model code lives in the repository root. Authentication implementations and token handling are under `auth2/`; configuration, MySQL settings, CORS, and Viper integration are under `conf/`. Reusable HTTP test helpers live in `httptest/`, shared errors in `e/`, and runnable examples and static assets in `example/`. Tests are colocated with their packages as `*_test.go`.
+The repository is a Go module (`github.com/snowlyg/iris-admin`) targeting Go 1.25.0. Core server, routing, migration, resource, and model code lives in the repository root. Authentication implementations and token handling are under `auth2/`; configuration, MySQL settings, CORS, and Viper integration are under `conf/`. Reusable HTTP test helpers live in `httptest/`, shared errors in `e/`, and runnable examples and static assets in `example/`. Tests are colocated with their packages as `*_test.go`.
 
 ## Build, Test, and Development Commands
 

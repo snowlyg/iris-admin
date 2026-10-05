@@ -31,9 +31,9 @@ The project is maintained by [snowlyg](https://github.com/snowlyg). Contribution
 
 #### BLOG
 
-- [REST API with iris-go web framework](https://snowlyg.github.io/posts/iris-go-api-1/)
+- [REST API with iris-go web framework](https://www.lodan.me/posts/iris-go-api-1/)
 
-- [How to user iris-go with casbin](https://snowlyg.github.io/posts/iris-go-api-2/)
+- [How to user iris-go with casbin](https://www.lodan.me/posts/iris-go-api-2/)
 
 ---
 
@@ -45,19 +45,7 @@ The project is maintained by [snowlyg](https://github.com/snowlyg). Contribution
  go get github.com/snowlyg/iris-admin@master
 ```
 
-#### Maintainer status
-
-IrisAdmin is a long-maintained open-source project. The current maintenance focus is:
-
-- Upgrade Go dependencies and CI workflows.
-- Improve tests for RBAC, Casbin, JWT, middleware, and routing behavior.
-- Improve Docker and local quickstart documentation.
-- Improve English documentation for broader Go developer adoption.
-- Review security-sensitive code paths such as authentication, permission checks, and API middleware.
-
-
 ## ☕️ Buy me a coffee
 
 > Please be sure to leave your name, GitHub account or other social media accounts when you donate by the following means so that I can add it to the list of donors as a token of my appreciation.
-- [爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)

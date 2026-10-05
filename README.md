@@ -30,9 +30,9 @@ IrisAdmin 是一个 Apache-2.0 开源的 Go Web Admin / RBAC 脚手架项目，�
 
 #### iris 学习记录分享
 
-- [Iris-go 项目登陆 API 构建细节实现过程](https://snowlyg.github.io/posts/iris-go-api-1/)
+- [Iris-go 项目登陆 API 构建细节实现过程](https://www.lodan.me/zh-cn/posts/iris-go-api-1/)
 
-- [iris + casbin 从陌生到学会使用的过程](https://snowlyg.github.io/posts/iris-go-api-2/)
+- [iris + casbin 从陌生到学会使用的过程](https://www.lodan.me/zh-cn/posts/iris-go-api-2/)
 
 ---
 
@@ -44,18 +44,7 @@ IrisAdmin 是一个 Apache-2.0 开源的 Go Web Admin / RBAC 脚手架项目，�
  go get github.com/snowlyg/iris-admin@master
 ```
 
-#### Maintainer status
-
-IrisAdmin 作为长期维护的开源项目，后续维护重点包括：
-
-- 升级 Go 依赖和 CI 工作流。
-- 补强 RBAC / Casbin / JWT / middleware 等关键路径测试。
-- 改进 Docker 和本地 quickstart 文档。
-- 完善英文文档，方便更多 Go 开发者阅读和参与。
-- 审查鉴权、权限校验和 API 中间件等安全敏感代码路径。
-
 #### 打赏
 
 > 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
-- [爱发电](https://afdian.net/@snowlyg/plan)
 - [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)

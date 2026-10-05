@@ -18,17 +18,27 @@ const (
 )
 
 var (
-	mysqlAddrKey = "IRIS_ADMIN_MYSQL_ADDR"
-	mysqlPwdKey  = "IRIS_ADMIN_MYSQL_PWD"
-	mysqlNameKey = "IRIS_ADMIN_MYSQL_NAME"
-	webAddrKey   = "IRIS_ADMIN_WEB_ADDR"
+	mysqlAddrKey   = "IRIS_ADMIN_MYSQL_ADDR"
+	mysqlPwdKey    = "IRIS_ADMIN_MYSQL_PWD"
+	mysqlNameKey   = "IRIS_ADMIN_MYSQL_NAME"
+	mysqlUserKey   = "IRIS_ADMIN_MYSQL_USER"
+	mysqlDbNameKey = "IRIS_ADMIN_MYSQL_DB_NAME"
+	webAddrKey     = "IRIS_ADMIN_WEB_ADDR"
 )
 
+// NewConf returns default configuration with environment overrides.
 func NewConf() *Conf {
-	c := &Conf{
+	c := newDefaultConf()
+	c.applyEnv()
+	c.logWarnings()
+	return c
+}
+
+func newDefaultConf() *Conf {
+	return &Conf{
 		Locale:         "zh",
-		FileMaxSize:    1024,   // upload file size limit 1024M
-		SessionTimeout: 172800, // session timeout after 4 months
+		FileMaxSize:    1024,
+		SessionTimeout: 172800,
 		CorsConf: CorsConf{
 			AccessOrigin:        "*",
 			AccessHeaders:       "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id",
@@ -79,31 +89,53 @@ func NewConf() *Conf {
 			},
 		},
 	}
+}
+
+func (conf *Conf) applyEnv() {
+	if conf == nil {
+		return
+	}
+	webAddr := strings.TrimSpace(os.Getenv(webAddrKey))
+	if webAddr != "" {
+		conf.System.Addr = webAddr
+	}
+	if conf.Mysql == nil {
+		return
+	}
 	mysqlAddr := strings.TrimSpace(os.Getenv(mysqlAddrKey))
 	mysqlPwd := strings.TrimSpace(os.Getenv(mysqlPwdKey))
-	mysqlName := strings.TrimSpace(os.Getenv(mysqlNameKey))
-	webAddr := strings.TrimSpace(os.Getenv(webAddrKey))
+	mysqlUser := strings.TrimSpace(os.Getenv(mysqlUserKey))
+	if mysqlUser == "" {
+		mysqlUser = strings.TrimSpace(os.Getenv(mysqlNameKey))
+	}
+	mysqlDbName := strings.TrimSpace(os.Getenv(mysqlDbNameKey))
 	if mysqlAddr != "" {
-		c.Mysql.Path = mysqlAddr
+		conf.Mysql.Path = mysqlAddr
 	}
 	if mysqlPwd != "" {
-		c.Mysql.Password = mysqlPwd
+		conf.Mysql.Password = mysqlPwd
 	}
-	if mysqlName != "" {
-		c.Mysql.Username = mysqlName
+	if mysqlUser != "" {
+		conf.Mysql.Username = mysqlUser
 	}
-	if webAddr != "" {
-		c.System.Addr = webAddr
+	if mysqlDbName != "" {
+		conf.Mysql.DbName = mysqlDbName
 	}
-	if c.Mysql.Path == "" || c.Mysql.Password == "" || c.Mysql.DbName == "" {
-		log.Printf("mysql driver config empty,you can set env %s %s %s to change it.\n", mysqlAddrKey, mysqlPwdKey, mysqlNameKey)
+}
+
+func (conf *Conf) logWarnings() {
+	if conf == nil || conf.Mysql == nil {
+		return
 	}
-	return c
+	if conf.Mysql.Path == "" || conf.Mysql.Username == "" || conf.Mysql.DbName == "" {
+		log.Printf("mysql driver config incomplete; configure %s, %s, and %s as needed\n",
+			mysqlAddrKey, mysqlUserKey, mysqlDbNameKey)
+	}
 }
 
 type Conf struct {
 	Locale         string   `mapstructure:"locale" json:"locale" yaml:"locale"`
-	FileMaxSize    int64    `mapstructure:"file-max-size" json:"file-max-size" yaml:"file-max-siz"`
+	FileMaxSize    int64    `mapstructure:"file-max-size" json:"file-max-size" yaml:"file-max-size"`
 	SessionTimeout int64    `mapstructure:"session-timeout" json:"session-timeout" yaml:"session-timeout"`
 	Except         Route    `mapstructure:"except" json:"except" yaml:"except"`
 	System         System   `mapstructure:"system" json:"system" yaml:"system"`
@@ -112,6 +144,7 @@ type Conf struct {
 	CorsConf       CorsConf `mapstructure:"cors" json:"cors" yaml:"cors"`
 	Mysql          *Mysql   `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	Operate        Operate  `mapstructure:"operate" json:"operate" yaml:"operate"`
+	configDir      string
 }
 
 type Route struct {
@@ -172,7 +205,9 @@ func (conf *Conf) RemoveFile() error {
 
 // Recover
 func (conf *Conf) Recover() error {
-	conf.newRbacModel()
+	if err := conf.EnsureRbacModel(); err != nil {
+		return err
+	}
 	b, err := json.MarshalIndent(conf, "", "\t")
 	if err != nil {
 		return fmt.Errorf("iris-admin recover config faild:%w", err)
@@ -198,11 +233,11 @@ func (conf *Conf) getViperConfig() *ViperConf {
 
 	configName := "iris_admin"
 	return &ViperConf{
-		dir:  ConfigDir,
+		dir:  conf.configDirectory(),
 		name: configName,
 		t:    ConfigType,
 		watch: func(vi *viper.Viper) error {
-			if err := vi.Unmarshal(&conf); err != nil {
+			if err := vi.Unmarshal(conf); err != nil {
 				return fmt.Errorf("get Unarshal error: %v", err)
 			}
 			// watch config file change

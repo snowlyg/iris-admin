@@ -3,6 +3,7 @@ package auth2
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -21,9 +22,13 @@ var (
 )
 
 var (
-	ErrTokenInvalid = errors.New("token_invalid")
-	ErrEmptyToken   = errors.New("token_empty")
-	ErrOverLimit    = errors.New("token_over_limit")
+	ErrTokenInvalid        = errors.New("token_invalid")
+	ErrEmptyToken          = errors.New("token_empty")
+	ErrOverLimit           = errors.New("token_over_limit")
+	ErrAuthConfigInvalid   = errors.New("auth_config_invalid")
+	ErrAuthTypeUnsupported = errors.New("auth_type_unsupported")
+	ErrAuthNotInitialized  = errors.New("auth_not_initialized")
+	ErrHMACSecretRequired  = errors.New("hmac_secret_required")
 )
 
 type RoleType int
@@ -60,11 +65,19 @@ var (
 	TimeoutDevice = 5 * 52 * 168 * time.Hour
 )
 
+// NewAgent initializes the package authentication agent.
 func NewAgent(c *Config) error {
+	if c == nil {
+		return ErrAuthConfigInvalid
+	}
 	if c.Max == 0 {
 		c.Max = 10
 	}
-	switch c.Type {
+	authType := strings.ToLower(strings.TrimSpace(c.Type))
+	if authType == "" {
+		authType = "jwt"
+	}
+	switch authType {
 	case "redis":
 		agent, err := NewRedis(c.UniversalClient)
 		if err != nil {
@@ -83,9 +96,12 @@ func NewAgent(c *Config) error {
 			return err
 		}
 	case "jwt":
+		if len(c.HmacSecret) == 0 {
+			return ErrHMACSecretRequired
+		}
 		AuthAgent = NewJwt(c.HmacSecret)
 	default:
-		AuthAgent = NewJwt(c.HmacSecret)
+		return fmt.Errorf("%s: %w", c.Type, ErrAuthTypeUnsupported)
 	}
 
 	return nil
@@ -132,8 +148,13 @@ type (
 	ValidatorFunc func(token []byte, err error) error
 )
 
-// ValidateToken completes the ValidateToken interface.
-// It calls itself.
+// Validater completes the TokenValidator interface.
+func (fn ValidatorFunc) Validater(token []byte, err error) error {
+	return fn(token, err)
+}
+
+// ValidateToken is kept for backward compatibility.
+// Deprecated: TokenValidator uses Validater.
 func (fn ValidatorFunc) ValidateToken(token []byte, err error) error {
 	return fn(token, err)
 }

@@ -1,9 +1,10 @@
 package admin
 
 import (
+	"context"
 	"io"
 	"net/http"
-	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -11,14 +12,21 @@ import (
 )
 
 func TestStart(t *testing.T) {
-	go func() {
-		os.Setenv("IRIS_ADMIN_WEB_ADDR", "127.0.0.1:18088")
-		c := conf.NewConf()
-		if serve, err := NewServe(c); err != nil {
-			t.Error(err.Error())
-		} else {
-			serve.Engine()
-			serve.Run()
+	t.Setenv("IRIS_ADMIN_WEB_ADDR", "127.0.0.1:18088")
+	c, err := conf.LoadConfFile(filepath.Join(t.TempDir(), "iris_admin.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	serve, err := NewServe(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	go serve.Run()
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := serve.Shutdown(ctx); err != nil {
+			t.Errorf("shutdown server: %v", err)
 		}
 	}()
 
@@ -26,7 +34,7 @@ func TestStart(t *testing.T) {
 
 	resp, err := http.Get("http://127.0.0.1:18088")
 	if err != nil {
-		t.Errorf("test web start get %v", err)
+		t.Fatalf("test web start get %v", err)
 	}
 	defer resp.Body.Close()
 

@@ -3,15 +3,16 @@ package admin
 import (
 	"errors"
 	"net/http"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/snowlyg/helper/str"
 	"gorm.io/gorm"
 )
 
 type ErrMsg struct {
-	Code int64  `json:"code"`
+	Code int    `json:"code"`
 	Msg  string `json:"message"`
 }
 
@@ -19,10 +20,11 @@ var (
 	ErrParamValidate      = errors.New("param unvalidate")
 	ErrPaginateParam      = errors.New("paginate param unvalidate")
 	ErrUnSupportFramework = errors.New("unsupport framework")
+	orderByPattern        = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*([.][A-Za-z_][A-Za-z0-9_]*)?$`)
 )
 
-// Model
-type Model struct {
+// BaseModel
+type BaseModel struct {
 	Id        uint   `json:"id"`
 	UpdatedAt string `json:"updatedAt"`
 	CreatedAt string `json:"createdAt"`
@@ -47,6 +49,13 @@ func (req *Paginate) Request(ctx *gin.Context) error {
 // PaginateScope paginate scope
 func (req *Paginate) PaginateScope() func(db *gorm.DB) *gorm.DB {
 	return PaginateScope(req.Page, req.PageSize, req.Sort, req.OrderBy)
+}
+
+// SoftDeleteScope
+func SoftDeleteScope() func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("deleted_at IS NULL")
+	}
 }
 
 // IdScope
@@ -120,13 +129,15 @@ func getPageSize(pageSize int) int {
 
 // getOrderBy
 func getOrderBy(sort, orderBy string) string {
-	if sort == "" {
+	sort = strings.ToLower(strings.TrimSpace(sort))
+	if sort != "asc" && sort != "desc" {
 		sort = "desc"
 	}
-	if orderBy == "" {
+	orderBy = strings.TrimSpace(orderBy)
+	if !orderByPattern.MatchString(orderBy) {
 		orderBy = "created_at"
 	}
-	return str.Join(orderBy, " ", sort)
+	return orderBy + " " + sort
 }
 
 const (
@@ -140,48 +151,89 @@ type Response struct {
 	Msg  string `json:"message"`
 }
 
-func Result(code int, data any, msg string, ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, Response{code, data, msg})
-}
-
 func Ok(ctx *gin.Context) {
-	Result(http.StatusOK, map[string]any{}, ResponseOkMessage, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusOK,
+		Msg:  ResponseOkMessage,
+	})
 }
 
 func OkWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusOK, map[string]any{}, message, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusOK,
+		Msg:  message,
+	})
 }
 
 func OkWithData(data any, ctx *gin.Context) {
-	Result(http.StatusOK, data, ResponseOkMessage, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusOK,
+		Msg:  ResponseOkMessage,
+		Data: data,
+	})
 }
 
-func OkWithDetailed(data any, message string, ctx *gin.Context) {
-	Result(http.StatusOK, data, message, ctx)
+// ErrorWithStatus writes an error response using the supplied HTTP status.
+func ErrorWithStatus(status int, message string, ctx *gin.Context) {
+	status = normalizeErrorStatus(status)
+	ctx.JSON(status, Response{
+		Code: status,
+		Msg:  message,
+	})
 }
 
+// ErrorWithStatusAndData writes an error response with additional structured data.
+func ErrorWithStatusAndData(status int, data any, message string, ctx *gin.Context) {
+	status = normalizeErrorStatus(status)
+	ctx.JSON(status, Response{
+		Code: status,
+		Msg:  message,
+		Data: data,
+	})
+}
+
+func normalizeErrorStatus(status int) int {
+	if status < http.StatusBadRequest || status > 599 {
+		return http.StatusInternalServerError
+	}
+	return status
+}
+
+// Fail is retained for compatibility and writes HTTP 200 with status 400 in the body.
+// Deprecated: use ErrorWithStatus.
 func Fail(ctx *gin.Context) {
-	Result(http.StatusBadRequest, map[string]any{}, ResponseErrorMessage, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusBadRequest,
+		Msg:  ResponseErrorMessage,
+	})
 }
 
-func UnauthorizedFailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusUnauthorized, map[string]any{}, message, ctx)
-}
+// func UnauthorizedFailWithMessage(message string, ctx *gin.Context) {
+// }
 
-func UnauthorizedFailWithDetailed(data any, message string, ctx *gin.Context) {
-	Result(http.StatusUnauthorized, data, message, ctx)
-}
+// func UnauthorizedFailWithDetailed(data any, message string, ctx *gin.Context) {
+// }
 
-func ForbiddenFailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusForbidden, map[string]any{}, message, ctx)
-}
+// func ForbiddenFailWithMessage(message string, ctx *gin.Context) {
+// }
 
+// FailWithMessage is retained for compatibility and writes HTTP 200 with status 400 in the body.
+// Deprecated: use ErrorWithStatus.
 func FailWithMessage(message string, ctx *gin.Context) {
-	Result(http.StatusBadRequest, map[string]any{}, message, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusBadRequest,
+		Msg:  message,
+	})
 }
 
+// FailWithDetailed is retained for compatibility and writes HTTP 200 with status 400 in the body.
+// Deprecated: use ErrorWithStatusAndData.
 func FailWithDetailed(data any, message string, ctx *gin.Context) {
-	Result(http.StatusBadRequest, data, message, ctx)
+	ctx.JSON(http.StatusOK, Response{
+		Code: http.StatusBadRequest,
+		Msg:  message,
+		Data: data,
+	})
 }
 
 type PageResult struct {

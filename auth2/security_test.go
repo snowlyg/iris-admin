@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 var _ TokenValidator = ValidatorFunc(nil)
@@ -83,6 +83,28 @@ func TestJwtRejectsUnexpectedSigningMethodWithoutLeakingToken(t *testing.T) {
 	}
 	if strings.Contains(err.Error(), token) {
 		t.Fatalf("GetClaims error leaked token: %v", err)
+	}
+}
+
+func TestJwtEnforcesClaimExpiry(t *testing.T) {
+	auth := NewJwt(jwtTestSecret)
+
+	token, _, err := auth.Generate(validSecurityClaims())
+	if err != nil {
+		t.Fatalf("generate token: %v", err)
+	}
+	if _, err := auth.GetClaims(token); err != nil {
+		t.Fatalf("GetClaims on unexpired token error = %v", err)
+	}
+
+	expired := validSecurityClaims()
+	expired.ExpiresAt = time.Now().Add(-time.Hour).Unix()
+	expiredToken, _, err := auth.Generate(expired)
+	if err != nil {
+		t.Fatalf("generate expired token: %v", err)
+	}
+	if _, err := auth.GetClaims(expiredToken); err == nil {
+		t.Fatal("GetClaims accepted an expired token")
 	}
 }
 

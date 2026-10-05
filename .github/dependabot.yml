@@ -8,3 +8,9 @@ updates:
       go-dependencies:
         patterns:
           - "*"
+    ignore:
+      # gorm-adapter >= 3.40 implements casbin/v3 interfaces, incompatible with
+      # this repo's casbin/v2 until the v3 migration is done.
+      - dependency-name: github.com/casbin/gorm-adapter/v3
+        versions:
+          - ">= 3.40"

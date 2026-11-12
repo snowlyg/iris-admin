@@ -44,7 +44,11 @@ IrisAdmin 是一个 Apache-2.0 开源的 Go Web Admin / RBAC 脚手架项目，�
  go get github.com/snowlyg/iris-admin@master
 ```
 
-#### 打赏
+#### 支持项目
+
+iris-admin 是免费开源项目。如果它对您有帮助，可以考虑请开发者喝杯咖啡：
 
 > 您的打赏将用于支付网站运行，会在项目介绍中特别鸣谢您
-- [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)
+
+- [PayPal 打赏](https://www.paypal.com/paypalme/snowlyg?country.x=C2&locale.x=zh_XC)
+- [爱发电](https://afdian.com/a/snowlyg)

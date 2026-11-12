@@ -45,7 +45,11 @@ The project is maintained by [snowlyg](https://github.com/snowlyg). Contribution
  go get github.com/snowlyg/iris-admin@master
 ```
 
-## ☕️ Buy me a coffee
+#### Support the project
+
+iris-admin is free and open source. If it helps you, consider buying the developer a coffee:
 
 > Please be sure to leave your name, GitHub account or other social media accounts when you donate by the following means so that I can add it to the list of donors as a token of my appreciation.
-- [donating](https://paypal.me/snowlyg?country.x=C2&locale.x=zh_XC)
+
+- [PayPal](https://www.paypal.com/paypalme/snowlyg?country.x=C2&locale.x=zh_XC)
+- [Afdian](https://afdian.com/a/snowlyg)
